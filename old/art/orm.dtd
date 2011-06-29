@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT art (classes,connectors)>
+    <!ELEMENT classes (class+)>
+        <!ELEMENT class (inherit?,attribute*,associated*)>
+            <!ATTLIST class name CDATA #REQUIRED>
+            <!ATTLIST class database-table CDATA #IMPLIED>
+            <!ATTLIST class association (true|false) #IMPLIED>
+            <!ELEMENT inherit EMPTY>
+                <!ATTLIST inherit from CDATA #REQUIRED>
+                <!ATTLIST inherit implementation (table|concrete|hierarchy) #IMPLIED>
+            <!ELEMENT attribute EMPTY>
+                <!ATTLIST attribute name CDATA               #REQUIRED>
+
+                <!ATTLIST attribute database-field CDATA               #IMPLIED>
+
+                <!ATTLIST attribute type CDATA               #IMPLIED>
+                <!ATTLIST attribute type-size CDATA               #IMPLIED>
+
+                <!ATTLIST attribute key         (true|false)        #IMPLIED>
+                <!ATTLIST attribute composition-key         (true|false)        #IMPLIED>
+                <!ATTLIST attribute mandatory   (true|false)        #IMPLIED>
+                <!ATTLIST attribute default     CDATA               #IMPLIED>
+
+                <!ATTLIST attribute data            CDATA           #IMPLIED>
+                <!ATTLIST attribute data-view       CDATA           #IMPLIED>
+                <!ATTLIST attribute data-input      CDATA           #IMPLIED>
+                <!ATTLIST attribute data-format     CDATA           #IMPLIED>
+                <!ATTLIST attribute data-generator  CDATA           #IMPLIED>
+                <!ATTLIST attribute data-validator  CDATA           #IMPLIED>
+                <!ATTLIST attribute data-options    CDATA           #IMPLIED>
+           <!ELEMENT associated EMPTY>
+                <!ATTLIST associated to CDATA               #REQUIRED>
+                <!ATTLIST associated class CDATA               #IMPLIED>
+                <!ATTLIST associated cardinality (one-to-one|one-to-many|many-to-many)               #IMPLIED>
+                <!ATTLIST associated composition (true|false)               #IMPLIED>
+                <!ATTLIST associated mandatory (true|false)               #IMPLIED><!-- could be a nunber -->
+    <!ELEMENT connectors (connector+)>
+        <!ELEMENT connector (id,type+)>
+                <!ATTLIST connector name CDATA #REQUIRED>
+                    <!ELEMENT type EMPTY>
+                            <!ATTLIST type name CDATA #REQUIRED>
+                            <!ATTLIST type database-type CDATA #REQUIRED>
+                            <!ATTLIST type database-default-size CDATA #REQUIRED>
+                            <!ATTLIST type database-operator CDATA #IMPLIED>
+                    <!ELEMENT id EMPTY>
+                            <!ATTLIST id database-type CDATA #REQUIRED>
+                            <!ATTLIST id database-default-size CDATA #REQUIRED>
+

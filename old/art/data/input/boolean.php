@@ -1,0 +1,1 @@
+<input type="checkbox" name="<?php echo $this->_requestName;?>" <?php echo !empty($this->_value)?'checked="checked"':'';?> id="<?php echo $this->_requestName;?>" class="<?php echo $this->_css.(!empty($this->_options['css'])?' '.$this->_options['css']:'').' data'.$this->_type;?>" validator="<?php echo $this->javascriptValidator();?>" value="on" />
