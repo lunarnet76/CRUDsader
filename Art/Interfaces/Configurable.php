@@ -16,5 +16,6 @@ namespace Art\Interfaces {
      */
     interface Configurable{
         public function setConfiguration(\Art\Block $block=null);
+        public function getConfiguration();
     }   
 }

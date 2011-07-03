@@ -36,8 +36,8 @@ namespace Art {
         public static function start() {
             if (!self::$_isStarted) {
                 $configuration = Configuration::getInstance();
-                if (!empty($configuration->utility->session->path))
-                    session_save_path($configuration->utility->session->path);
+                if (!empty($configuration->session->path))
+                    session_save_path($configuration->session->path);
                 if (!isset($_SESSION))
                     @session_start();
                 if (!isset($_SESSION[self::$_generalNamespace]))

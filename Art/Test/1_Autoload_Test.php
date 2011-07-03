@@ -6,15 +6,15 @@ class AAutoload extends PHPUnit_Framework_TestCase {
         $randomFolder = 'anotherrandomfolder';
         $arandomFolder = 'arandomfolder';
         
-        //$this->assertEquals(\Art\Autoload::getNamespaces(), array());
-        //\Art\Autoload::registerNameSpace($namespace, $arandomFolder);
-        $this->assertEquals(\Art\Autoload::getNamespaces(), array($namespace => $arandomFolder));
+        $this->assertEquals(\Art\Autoload::getNamespaces(), array('Art'=>'../'));// because of the bootstrap
+        \Art\Autoload::registerNameSpace($namespace, $arandomFolder);
+        $this->assertEquals(\Art\Autoload::getNamespaces(), array('Art'=>'../',$namespace => $arandomFolder));
         $this->assertEquals(\Art\Autoload::hasNameSpace($namespace), true);
         \Art\Autoload::registerNameSpace($namespace, $randomFolder);
         $this->assertEquals(\Art\Autoload::getNamespace($namespace), $randomFolder);
         \Art\Autoload::unregisterNameSpace($namespace);
         $this->assertEquals(\Art\Autoload::hasNamespace($namespace), false);
-        $this->assertEquals(\Art\Autoload::getNamespaces(), array());
+        $this->assertEquals(\Art\Autoload::getNamespaces(), array('Art'=>'../'));
     }
 
     public function test_includeClass() {
@@ -32,7 +32,7 @@ class AAutoload extends PHPUnit_Framework_TestCase {
         // the autoloader does not know where is it yet
         $this->assertEquals(\Art\Autoload::isLoadable($class), false);
         \Art\Autoload::registerNameSpace('TestNamespace','parts/1/ClassNamespace/');
-        // file is in class/test/A.php
+        // file is in parts/1/ClassNamespace/A.php
         $this->assertEquals(\Art\Autoload::isLoadable($class), true);
     }
 
@@ -103,7 +103,7 @@ class AAutoload extends PHPUnit_Framework_TestCase {
     }
     
     public function test_simpleAutoload_(){
-        $class='parts/1/ClassNamespace_Simple';
+        $class='Parts_1_NoNamespace_Simple';
         \Art\Autoload::simpleAutoload($class);
         $instance = new $class;
     }

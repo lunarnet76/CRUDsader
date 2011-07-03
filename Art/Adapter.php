@@ -28,21 +28,21 @@ namespace Art {
          */
         public static function factory($type) {
             $configuration = Configuration::getInstance()->adapter;
+            $namespace=false;
             if (is_array($type)) {
                 $namespace = key($type);
-                $adapter = current($type);
-                if (!isset($configuration->{$namespace}->{$adapter}))
-                    throw new AdapterException('adapter "' . $namespace . '.' . $adapter . '" does not exist');
-                $parameter = $configuration->{$namespace}->{$adapter};
-                $type = ucfirst($namespace) . '\\' . ucfirst($adapter);
-                $class = $configuration->classNameSpace . '\\' . $type . '\\' . ucfirst($parameter instanceof Block ? $parameter->key() : $parameter);
+                $type = current($type);
+                if (!isset($configuration->{$namespace}->{$type}))
+                    throw new AdapterException('adapter "' . $namespace . '.' . $type . '" does not exist');
+                $parameter = $configuration->{$namespace}->{$type};
+                $class = $configuration->classNameSpace . '\\' . ucfirst($namespace) . '\\' . ucfirst($type) . '\\' . ucfirst($parameter instanceof Block ? $parameter->key() : $parameter);
             }else {
                 if (!isset($configuration->$type))
                     throw new AdapterException('adapter "' . $type . '" does not exist');
                 $parameter = $configuration->{$type};
                 $class = $configuration->classNameSpace . '\\' . $type . '\\' . ucfirst($parameter instanceof Block ? $parameter->key() : $parameter);
             }
-            $instance = new $class($parameter instanceof Block ? $parameter : null);
+            $instance = new $class($parameter instanceof Block ? $parameter->current() : null);
             if (!$instance instanceof self)
                 throw new AdapterException('adapter class "' . $class . '" does not inherit from Art\Adapter');
             return $instance;
@@ -53,7 +53,7 @@ namespace Art {
          * @final
          */
         final protected function __construct(Block $configuration=null){
-             $this->_configuration = $configuration;
+            $this->_configuration = $configuration;
             $this->init();
         }
         

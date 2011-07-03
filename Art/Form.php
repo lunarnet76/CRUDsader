@@ -16,7 +16,7 @@ namespace Art {
      * @package     Art
      * @todo add handler for checkboxes, as PHP will not create an entry in the $data array in receive($data=false)
      */
-    Class Form extends Form\Component implements Interface_Helpable, IteratorAggregate {
+    Class Form extends Form\Component implements Interfaces\Helpable, \IteratorAggregate {
         protected $_url;
         protected $_session;
         protected $_useSession = true;
@@ -24,8 +24,6 @@ namespace Art {
         protected $_view = 'default';
         protected static $_componentIndex = 0;
         protected static $_helpers = array();
-        // shortcuts
-        private $_htmlTagIsOpened = false;
 
         /**
          * @param string $label
@@ -36,7 +34,7 @@ namespace Art {
             $this->_setId($index);
             $this->_label = $label;
             $this->_url = $url;
-            $sessionNamespace = Session::useNamespace('form_' . $this->_id);
+            $sessionNamespace = Session::useNamespace('Art\\Form\\' . $this->_id);
             if (!isset($sessionNamespace->{$this->_id}))
                 $sessionNamespace->{$this->_id} = array();
             $this->_session = $sessionNamespace->{$this->_id};
@@ -168,8 +166,9 @@ namespace Art {
         }
 
         public function htmlTag() {
-            if (!$this->_htmlTagIsOpened) {
-                $this->_htmlTagIsOpened = true;
+            static $htmlTagIsOpened = false;
+            if (!$htmlTagIsOpened) {
+                $htmlTagIsOpened = true;
                 $htmlAttributes = $this->getHTMLAttributes();
                 $tag = $this->hasParent() ? '<fieldset' : '<form enctype="multipart/form-data" action="' . $this->_url . '"';
                 return $tag . ' required="' . ($this->_isRequired ? 'true' : 'false') . '" class="' . $this->_css . '" ' . $htmlAttributes . ' id="' . $this->_id . '">';
@@ -219,7 +218,7 @@ namespace Art {
             return $this->_helper[$name];
         }
     }
-    class FormException extends \Exception{
+    class FormException extends \Art\Exception{
         
     }
 }

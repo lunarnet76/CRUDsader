@@ -1,11 +1,11 @@
 <?php
-class ArtBlockInstancer extends \Art\Block{
-    public static function getInstance(){
+class ArtBlockInstancer extends \Art\Block {
+
+    public static function getInstance() {
         return new parent();
     }
 }
-
-class ABlock extends PHPUnit_Framework_TestCase {
+class BlockTest extends PHPUnit_Framework_TestCase {
 
     function test_accessors() {
         $instance = ArtBlockInstancer::getInstance();
@@ -25,6 +25,25 @@ class ABlock extends PHPUnit_Framework_TestCase {
         $instance->p1 = 'v1';
         $instance->lock();
         $instance->p1 = 'v2';
+    }
+
+    /**
+     * @depends test_accessors
+     */
+    function test_unlock_() {
+        $instance = ArtBlockInstancer::getInstance();
+        $instance->p1 = 'v1';
+        $instance->lock();
+        $exception = false;
+        try {
+            $instance->p1 = 'v2';
+        } catch (Exception $e) {
+            $exception = true;
+        }
+        $this->assertEquals($exception, true);
+        $instance->unlock();
+        $instance->p1 = 'v2';
+        $this->assertEquals($instance->p1, 'v2');
     }
 
     /**
@@ -93,11 +112,9 @@ class ABlock extends PHPUnit_Framework_TestCase {
      */
     function test_toArray() {
         $instance = ArtBlockInstancer::getInstance();
-        $values=array('p1' => 'v1', 'p2' => 'v2', 'p3' => array('p4' => 'v4', 'p5' => 'v5'));
+        $values = array('p1' => 'v1', 'p2' => 'v2', 'p3' => array('p4' => 'v4', 'p5' => 'v5'));
         $instance->loadArray($values);
-        $this->assertEquals($instance->toArray(),$values);
+        $this->assertEquals($instance->toArray(), $values);
     }
-
 }
-
 ?>

@@ -9,6 +9,15 @@ class ASingleton extends PHPUnit_Framework_TestCase {
         $this->assertEquals($instance instanceof Singletoned,true);
     }
     
+     /**
+     * @expectedException FATAL_ERROR
+    function test_noClone_(){
+        $instance=Singletoned::getInstance();
+        $instance2=clone $instance;
+    }
+      * 
+      */
+    
     /**
      * @expectedException FATAL_ERROR
      
@@ -19,5 +28,3 @@ class ASingleton extends PHPUnit_Framework_TestCase {
      */
 
 }
-
-?>

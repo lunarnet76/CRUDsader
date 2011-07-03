@@ -1,18 +1,17 @@
 <?php
-namespace Art {
-    class Data extends \Art\Form\Component {
+namespace Art\Object {
+    class Attribute extends \Art\Form\Component {
         protected $_value;
 
         public function receive($data=false) {
             if ($request === null)
                 return false;
             $this->_value = $request;
-
             return true;
         }
 
         public function isEmpty() {
-            return false;
+            return empty($this->_value);
         }
 
         public function error() {

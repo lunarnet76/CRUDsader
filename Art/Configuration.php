@@ -38,11 +38,6 @@ namespace Art {
          * @var <type>
          */
         protected static $_defaults = array(
-            'utility' => array(
-                'session' => array(
-                    'path' => false
-                )
-            ),
             'adapter' => array(
                 'classNameSpace' => 'Art\Adapter',
                 'database' => array(
@@ -53,13 +48,18 @@ namespace Art {
                 ),
                 'i18n' => array(
                     'translation' => 'transparent'
-                )
+                ),
+                'identifier'=>array(
+                    'hilo'=>array(
+                        'highIdLength'=>10
+                    )
+                 )
             ),
             'database' => array(
+                'host' => 'localhost',
                 'user' => 'root',
-                'password' => '87428742',
-                'name' => 'core4',
-                'host' => 'localhost'
+                'password' => '',
+                'name' => 'artdb'
             ),
             'debug' => array(
                 'php' => array(
@@ -68,6 +68,9 @@ namespace Art {
                 'database' => array(
                     'profiler' => true
                 )
+            ),
+            'session' => array(
+                'path' => false
             )
         );
 

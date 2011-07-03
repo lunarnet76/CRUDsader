@@ -5,7 +5,10 @@ class ArtConfigurationInstancer extends \Art\Configuration{
     }
 }
 
-class AConfiguration extends PHPUnit_Framework_TestCase {
+/**
+ * @todo test with configuration file having $depths tested in line 119-120 and 125-126 + 140
+ */
+class ConfigurationTest extends PHPUnit_Framework_TestCase {
     function test_instance(){
         $instance=\Art\Configuration::getInstance();
         $this->assertEquals($instance instanceof \Art\Configuration,true);

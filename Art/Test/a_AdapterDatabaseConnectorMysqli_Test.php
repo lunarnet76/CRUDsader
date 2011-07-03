@@ -6,7 +6,7 @@ class ArtAdapterDatabaseConnectorMysqliInstancer extends \Art\Adapter\Database\C
         return new \Art\Adapter\Database\Connector\Mysqli($params);
     }
 }
-class AAdapterDatabaseConnectorArtAdapterDatabaseConnectorMysqliInstancer extends PHPUnit_Framework_TestCase {
+class AdapterDatabaseConnectorMysqliTest extends PHPUnit_Framework_TestCase {
 
     /**
      * @expectedException \Art\Adapter\Database\Connector\MysqliException

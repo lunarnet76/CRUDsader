@@ -84,8 +84,6 @@ namespace Art\Form {
         abstract public function error();
 
         abstract public function isEmpty();
-        
-        abstract public function reset();
 
         abstract public function toArray();
 
@@ -101,7 +99,7 @@ namespace Art\Form {
             return '<div class="' . $type . '">' . $component . '</div>';
         }
     }
-    class ComponentException extends \Exception {
+    class ComponentException extends \Art\Exception {
         
     }
 }

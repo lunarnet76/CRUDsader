@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<art>
+    <attributeTypes>
+        <attributeType name="email" data="email"    dataOptions="'lookup':false"/>
+        <attributeType name="date" data="date"      dataOptions="'today':true"/>
+    </attributeTypes>
+    
+    <classes>
+        <class name="employee" identity="login-type" inherit="">
+            <attribute name="login" type="email" />            
+            <attribute name="type" />
+            <attribute name="created" />
+            <associated to="address"    cardinality="1-1"  class="employeeAddress"  composition="true"  name="hasAddress" table="table_address"/>
+            <associated to="telephone"  cardinality="1-1"  reference="external"     composition="true"  min="2" max="3"/>
+            <associated to="login"      cardinality="1-1"  reference="internal"     composition="true"  />
+            <associated to="photo"      cardinality="1-*"  />
+            <associated to="office"     cardinality="1-*"                       composition="true"  class="employeeOffice"  name="works"/>
+            <associated to="car"        cardinality="*-*"                                           class="employeeUses"  />
+            <associated to="customer"   cardinality="*-*"  />
+        </class>
+        <!-- association classes -->
+        <class name="employeeAddress" association="true">
+            <attribute name="name"/>
+        </class>
+        <class name="employeeOffice" association="true">
+            <attribute name="since" type="date"/>
+        </class>
+        <class name="employeeUses" association="true">
+            <attribute name="lastUsed" type="date"/>
+        </class>
+    </classes>
+</art>
