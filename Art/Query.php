@@ -14,7 +14,7 @@ namespace Art {
      * @package Art
      */
     class Query {
-        protected static $_associationTableAlias = '__ASSOC';
+        protected static $_associationClassAlias = 'assoc';
         protected $_oql;
 
         const REGEXP_SELECT='(?:(?:\s*(SELECT)\s+((?:(?:\*)|(?:\w+\.(?:\w+|\*)\,?)\s*)*))?)';
@@ -45,20 +45,21 @@ namespace Art {
              */
 
             if (empty($matches[4])) {
-                $class = $alias = $matches[5];
+                $className = $alias = $matches[5];
             } else {
-                $class = $matches[4];
+                $className = $matches[4];
                 $alias = $matches[5];
             }
-            if (empty($class))
+            if (empty($className))
                 throw new QueryException('error in FROM : no class specified');
             if (!$alias && (!empty($matches[1]) || !empty($matches[7]) || !empty($matches[9])))
                 throw new QueryException('error in FROM : no alias specified');
-            $tableAliases = array($alias => $class);
+            $tableAliases = array($alias => $className);
             // from
-            if (!$this->_map->classExists($class))
-                throw new QueryException('error in FROM : class "' . $class . '" does not exist');
-            $sql = new Database\Select(array('table' => $this->_map->classGetTable($class), 'alias' => $alias));
+            if (!$this->_map->classExists($className))
+                throw new QueryException('error in FROM : class "' . $className . '" does not exist');
+            $sql = new Database\Select();
+            $sql->from(array('table' => $this->_map->classGetDatabaseTable($className), 'alias' => $alias));
 
             // joins
             if (!empty($matches[6])) {
@@ -74,11 +75,8 @@ namespace Art {
                     $table = $joinInfos[1][$index];
                     $associationName = !empty($joinInfos[2][$index]) ? $joinInfos[2][$index] : $joinedClass;
                     $joinedAlias = $joinInfos[3][$index];
-                    $on = $joinInfos[4][$index];
-                    $associationClassAlias = $joinInfos[5][$index];
-                    if (!$this->_map->classHasAssociation($class, $associationName))
-                        throw new QueryException('error in JOIN : class "' . $class . '" has no association "' . $associationName . '"');
-                    $association = $this->_map->classGetAssociation($class, $associationName);
+                    $fromAlias = $joinInfos[4][$index];
+                    $associationClassAlias = empty($joinInfos[5][$index])?self::$_associationClassAlias++:$joinInfos[5][$index];
                     /* $associationInfos
                       ARRAY(9) {
                       ['to']=>
@@ -101,55 +99,15 @@ namespace Art {
                       int(1)
                       }
                      */
-                    switch ($association['scenario']) {
-                        case '1':
-                            $sql->join(array(
-                                'fromAlias' => $on,
-                                'fromColumn' => 'id',
-                                'toAlias' => $associationClassAlias,
-                                'toColumn' => $class,
-                                'toTable' => $association['databaseTable'],
-                                'type' => 'left'
-                            ));
-
-                            break;/*
-                            if ($association['class']) {
-                                if (empty($associationClassAlias))
-                                    $associationClassAlias = ++self::$_associationTableAlias;
-                                // association table
-
-                                $sql->join(array(
-                                    'fromAlias' => $associationClassAlias,
-                                    'fromColumn' => $joinedClass,
-                                    'toAlias' => $joinedAlias,
-                                    'toColumn' => 'id',
-                                    'toTable' => $association['toTable'],
-                                    'type' => 'left'
-                                ));
-                            }
-                            else if ($association['reference'] == 'internal')
-                                $sql->join(array(
-                                    'fromAlias' => $on,
-                                    'fromColumn' => $joinedClass,
-                                    'toAlias' => $alias,
-                                    'toColumn' => 'id',
-                                    'toTable' => $association['table'],
-                                    'type' => 'left'
-                                ));
-                            else // external
-                                $sql->join(array(
-                                    'fromAlias' => $alias,
-                                    'fromColumn' => 'id',
-                                    'toAlias' => $on,
-                                    'toColumn' => $joinedClass,
-                                    'toTable' => $association['table'],
-                                    'type' => 'left'
-                                ));
-                            break;*/
-                    }
+                     $join=$this->_map->classGetJoin($className, $associationName,$fromAlias,$joinedAlias,$associationClassAlias);
+                     if(isset($join['association']))
+                         $sql->join($join['association']);
+                     $sql->join($join['table']);
+                    
                 }
             }
             pre($sql);
+            \Art\Database::getInstance()->select($sql);
             exit;
         }
 

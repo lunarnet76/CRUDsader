@@ -24,6 +24,10 @@
             <associated to="car"        cardinality="many-to-many"                                            class="employeeUses"  />
             <associated to="customer"   cardinality="many-to-many"  />
         </class>
+        <class name="address">
+            <attribute name="street"/>
+            <attribute name="city"/>
+        </class>
         <!-- association classes -->
         <class name="employeeAddress" association="true">
             <attribute name="name"/>

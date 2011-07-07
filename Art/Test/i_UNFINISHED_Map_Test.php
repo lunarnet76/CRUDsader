@@ -1,15 +1,16 @@
 <?php
-\Art\Configuration::getInstance()->map->file=dirname(__FILE__).'/parts/map.xml';
+\Art\Configuration::getInstance()->adapter->map->loader->xml->file=dirname(__FILE__).'/parts/map.xml';
 class MapTest extends PHPUnit_Framework_TestCase {
 
     function test_validateSchema_(){
         $map=\Art\Map::getInstance();
-        $this->assertEquals($map->validateSchema(),true);
+        $this->assertEquals($map->validate(),true);
     }
     
     
     function test_class_(){
         $map=\Art\Map::getInstance();
+        print_r($map);
         $this->assertEquals($map->classExists('employee'),true);
         $this->assertEquals($map->classExists('contact'),true);
         $this->assertEquals($map->classExists('alienVsPredator'),false);

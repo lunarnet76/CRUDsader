@@ -1,7 +1,9 @@
 <?php
-\Art\Configuration::getInstance()->map->file=dirname(__FILE__).'/parts/map.xml';
 class QueryTest extends PHPUnit_Framework_TestCase {
-
+    function setUp(){
+        
+            \Art\Configuration::getInstance()->adapter->map->loader->xml->file=dirname(__FILE__).'/parts/map.xml';
+    }
     function test_scenario1_() {
         /*
           [1] => SELECT
@@ -26,4 +28,3 @@ class QueryTest extends PHPUnit_Framework_TestCase {
         $query->execute(1);
     }
 }
-?>
