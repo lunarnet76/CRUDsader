@@ -13,29 +13,61 @@
 namespace Art {
     /**
      * Map the ORM schema to classes
-     * @category    ORM
      * @package     Art
-     * @abstract
      */
     class Map extends Singleton {
-        
-        
-        protected $_map = array();
+        /**
+         * @var \Art\Block 
+         */
+        protected $_configuration = NULL;
+        /**
+         * @var \Art\Adapter\Map\Loader 
+         */
+        protected $_adapterLoader = NULL;
+        /**
+         * @var array
+         */
+        protected $_map = NULL;
 
+        /**
+         * constructor, load the map schema
+         */
+        public function init() {
+            $this->_adapterLoader = \Art\Adapter::factory(array('map' => 'loader'));
+            $this->_configuration = \Art\Configuration::getInstance()->map;
+            $this->_adapterLoader->setConfiguration($this->_configuration);
+            $this->_map = $this->_adapterLoader->getSchema($this->_configuration->defaults);
+        }
+
+        /**
+         * validate the schema
+         * @return bool 
+         */
+        public function validateSchema() {
+            return $this->_adapterLoader->validate();
+        }
+
+        /**
+         *  @return bool
+         */
         public function classExists($className) {
-            return true;
+            return isset($this->_map['classes'][$className]);
         }
 
-        public function classGetTable($className) {
-            return 'T' . $className;
+        /**
+         * @param string $className
+         * @return string 
+         */
+        public function classGetDatabaseTable($className) {
+            return $this->_map['classes'][$className]['definition']['databaseTable'];
         }
-
-        public function classHasAssociation($className, $associationName) {
-            return isset($this->_map[$className]['associations'][$associationName]);
+        
+        public function classHasAssociation($className,$associationName){
+            return isset($this->_map['classes'][$className]['associations'][$associationName]);
         }
-
-        public function classGetAssociation($className, $associationName) {
-            return $this->_map[$className]['associations'][$associationName];
+        
+        public function classGetAssociation($className,$associationName){
+            return $this->_map['classes'][$className]['associations'][$associationName];
         }
     }
 }
