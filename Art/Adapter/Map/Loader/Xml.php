@@ -22,8 +22,7 @@ namespace Art\Adapter\Map\Loader {
         /**
          * @param Block $configuration
          */
-        public function setConfiguration(\Art\Block $block=null) {
-            $this->_configuration = $block;
+        public function init() {
             $this->_file = $this->_configuration->file;
             if (!file_exists($this->_file))
                 throw new LoaderException('XML Map File "' . $this->_file . '" does not exist');
@@ -162,7 +161,7 @@ namespace Art\Adapter\Map\Loader {
                         'min' => isset($association['min']) ? (int) $association['min'] : $defaults->associations->min,
                         'max' => isset($association['max']) ? (int) $association['max'] : $defaults->associations->max,
                         'reference' => isset($association['reference']) ? (string) $association['reference'] : false,
-                        'databaseTable' => isset($association['databaseTable']) ? (string) $association['databaseTable'] : $this->_getDatabaseAssociationTable($association)
+                        'databaseTable' => isset($association['databaseTable']) ? (string) $association['databaseTable'] : $this->_getDatabaseAssociationTable(isset($association['name']) ? (string) $association['name'] :false,(string) $association['to'],$name)
                     );
                     if ($ret['classes'][$name]['associations'][$associationName]['cardinality'] == 'one-to-one') {
                         if ($ret['classes'][$name]['associations'][$associationName]['class'])
@@ -178,6 +177,10 @@ namespace Art\Adapter\Map\Loader {
                 }
             }
             return $ret;
+        }
+        
+        protected function _getDatabaseAssociationTable($associationName,$classTo,$classFrom){
+            return $associationName?:($classFrom > $classTo ? $classTo . '2' . $classFrom : $classFrom . '2' . $classTo);
         }
     }
     class LoaderException extends \Art\Exception {

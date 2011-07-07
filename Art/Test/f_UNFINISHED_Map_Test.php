@@ -19,5 +19,4 @@ class MapTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($map->classHasAssociation('employee','hasAddress'),true);
         $this->assertEquals($map->classHasAssociation('employee','alienVsPredator'),false);
     }
-
 }

@@ -53,7 +53,14 @@ namespace Art {
                     'hilo'=>array(
                         'highIdLength'=>10
                     )
-                 )
+                 ),
+                'map'=>array(
+                    'loader'=>array(
+                        'xml'=>array(
+                            'file'=>'map.xml'
+                        )
+                    )
+                )
             ),
             'database' => array(
                 'host' => 'localhost',
@@ -67,6 +74,29 @@ namespace Art {
                 ),
                 'database' => array(
                     'profiler' => true
+                )
+            ),
+            'map' => array(
+                'defaults' => array(
+                    'inheritance'=>'table',
+                    'attributeType'=>array(
+                        'databaseType'=>'VARCHAR',
+                        'options'=>array(),
+                        'class'=>'default',
+                        'polymorphism'=>array(
+                            'databaseField'=>'isa',
+                            'databaseType'=>'VARCHAR',
+                            'length'=>'32',
+                        )
+                    ),
+                    'attribute'=>array(
+                        'type'=>'default'
+                    ),
+                    'associations'=>array(
+                        'cardinality'=>'one-to-one',
+                        'min'=>0,
+                        'max'=>1
+                    )
                 )
             ),
             'session' => array(
