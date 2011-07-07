@@ -89,12 +89,12 @@ namespace Art {
             $this->_isReceived = false;
             if ($data === false)
                 $data = $_POST;
-            if ($data === null || (!$this->hasParent() && !isset($data[$this->_id]))) {
+            if ($data === null || (!$this->hasParentComponent() && !isset($data[$this->_id]))) {
                 foreach ($this->_components as $index => $component)
                     $component->receive(null);
                 return false;
             }
-            if (!$this->hasParent())
+            if (!$this->hasParentComponent())
                 $data = $data[$this->_id];
             foreach ($this->_components as $index => $component) {
                 if (isset($data[$index])) {
@@ -151,8 +151,9 @@ namespace Art {
                 if ($component->isEmpty()) {
                     if ($component->isRequired())
                         $this->_error = 'form_error_required_' . $name;
-                }else if (false !== $error = $component->error())
+                }else if (false !== $error = $component->error()){
                     $this->_error = $error;
+                }
             }
             return $this->_error;
         }
@@ -170,15 +171,15 @@ namespace Art {
             if (!$htmlTagIsOpened) {
                 $htmlTagIsOpened = true;
                 $htmlAttributes = $this->getHTMLAttributes();
-                $tag = $this->hasParent() ? '<fieldset' : '<form enctype="multipart/form-data" action="' . $this->_url . '"';
+                $tag = $this->hasParentComponent() ? '<fieldset' : '<form enctype="multipart/form-data" action="' . $this->_url . '"';
                 return $tag . ' required="' . ($this->_isRequired ? 'true' : 'false') . '" class="' . $this->_css . '" ' . $htmlAttributes . ' id="' . $this->_id . '">';
             } else {
-                return $this->hasParent() ? '</fieldset>' : '</form>';
+                return $this->hasParentComponent() ? '</fieldset>' : '</form>';
             }
         }
 
         public function htmlError() {
-            return $this->_html($this->_error, 'error');
+            return $this->_html(is_bool($this->_error)?\Art\I18n::getInstance()->translate('form_error_general'):$this->_error, 'error');
         }
 
         public function htmlLabel() {
@@ -186,7 +187,7 @@ namespace Art {
         }
 
         public function htmlRow(\Art\Form\Component $component) {
-            return $this->_html($this->_html($component->_label, 'label') . $this->_html($component->toHTML(), 'component'), 'row');
+            return $this->_html($this->_html($component->_label, 'label') . $this->_html($component->toHTML(), 'component') . $this->_html($component->getError(), 'error'), 'row');
         }
         /*         * ACCESSORS ************************* */
 

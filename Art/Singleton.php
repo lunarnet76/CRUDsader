@@ -48,7 +48,7 @@ namespace Art {
         }
 
         /**
-         * forbid calling constructor from outside
+         * forbid cloning
          * @final
          * @access private
          */

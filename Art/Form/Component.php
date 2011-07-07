@@ -32,6 +32,10 @@ namespace Art\Form {
         public function setError($error) {
             $this->_error = $error;
         }
+        
+        public function getError(){
+            return $this->_error;
+        }
 
         public function setLabel($name) {
             $this->_label = $name;
@@ -49,11 +53,11 @@ namespace Art\Form {
             return $this->_isReceived;
         }
 
-        public function hasParent() {
+        public function hasParentComponent() {
             return isset($this->_parent);
         }
 
-        public function getParent() {
+        public function getParentComponent() {
             return $this->_parent;
         }
 
