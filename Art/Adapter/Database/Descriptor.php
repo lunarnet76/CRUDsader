@@ -99,6 +99,7 @@ namespace Art\Adapter\Database {
          * @param array $fields array('col1'=>array('null'=>$bool,'type'=>$type,'length'=>$intOrFloatOrFalse))
          * @param array $identity array('col1','col2')
          * @param string $surrogateKey array('type'=>$type,'length'=>$int,'name'=>$name)
+         * @param array $foreignKeys=array('col1'=>array('table'=>$table,'field'=>$field),'col2');
          * @param array $indexes array('index1'=>array('col1','col2'))
          * @return bool 
          */

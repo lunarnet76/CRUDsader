@@ -1,4 +1,5 @@
 <?php
+
 /**
  * LICENSE: see Art/license.txt
  *
@@ -9,13 +10,16 @@
  * @link        http://www.Art.com/manual/
  * @since       1.0
  */
+
 namespace Art\Adapter\Map\Loader {
+
     /**
      * load the mapping schema from a XML file
      * @abstract
      * @package    Art\Adapter\Map
      */
     class Xml extends \Art\Adapter\Map\Loader {
+
         protected $_file;
         protected $_dom;
 
@@ -32,7 +36,7 @@ namespace Art\Adapter\Map\Loader {
         }
 
         /**
-         * @todo to finish
+         * @todo to finish, add check of unicity of usage of association classes
          * @return bool
          */
         public function validate() {
@@ -61,7 +65,8 @@ namespace Art\Adapter\Map\Loader {
                     'definition' => array(
                         'databaseTable' => isset($class['databaseTable']) ? (string) $class['databaseTable'] : $name,
                         'association' => isset($class['association']) ? (bool) $class['association'] : false,
-                        'identity' => isset($class['identity']) ? explode(',', (string) $class['identity']) : false
+                        'identity' => isset($class['identity']) ? explode(',', (string) $class['identity']) : false,
+                        'databaseIdField' => isset($class['databaseIdField']) ? (string) $class['databaseIdField'] : false
                     ),
                     'inherit' => false,
                     'attributes' => array(),
@@ -80,8 +85,19 @@ namespace Art\Adapter\Map\Loader {
                     $attributeName = (string) $attribute['name'];
                     if (isset($attribute['type']) && !isset($ret['attributeTypes'][(string) $attribute['type']]))
                         throw new LoaderException('Attribute "' . $attributeName . '" type "' . $attribute['type'] . '" is not a valid alias of AttributeType');
+                    $ret['classes'][$name]['attributes'][$attributeName] = true;
                 }
+                // identity
+                if ($ret['classes'][$name]['definition']['identity'])
+                    foreach ($ret['classes'][$name]['definition']['identity'] as $attributeName) {
+                        if (!isset($ret['classes'][$name]['attributes'][$attributeName]))
+                            throw new LoaderException('Attribute "' . $attributeName . '" defined in the identity field does not exist');
+                    }
             }
+            /*
+             * - ref internal must be max=1
+             * - association class cannot have a databasetable
+             */
             return true;
         }
 
@@ -100,9 +116,10 @@ namespace Art\Adapter\Map\Loader {
                     'length' => (int) $attributeType['length'],
                     'class' => isset($attributeType['class']) ? (string) $attributeType['class'] : $defaults->attributeType->class,
                     'databaseType' => isset($attributeType['databaseType']) ? (string) $attributeType['databaseType'] : $defaults->attributeType->databaseType,
-                    'options' => isset($attributeType['options']) ? json_decode(str_replace('\'', '"', (string) $attributeType['options'])) : $defaults->attributeType->options,
+                    'options' => isset($attributeType['options']) ? json_decode(str_replace('\'', '"', (string) $attributeType['options'])) : $defaults->attributeType->options->toArray(),
                 );
             }
+            $ret['attributeTypes']['default'] = $ret['attributeTypes'][$defaults->attribute->type];
             // classes
             $classes = $this->_dom->classes->class;
             foreach ($classes as $class) {
@@ -112,7 +129,8 @@ namespace Art\Adapter\Map\Loader {
                     'definition' => array(
                         'databaseTable' => isset($class['databaseTable']) ? (string) $class['databaseTable'] : $name,
                         'association' => isset($class['association']) ? (bool) $class['association'] : false,
-                        'identity' => isset($class['identity']) ? explode(',', (string) $class['identity']) : array()
+                        'identity' => isset($class['identity']) ? explode(',', (string) $class['identity']) : array(),
+                        'databaseIdField' => isset($class['databaseIdField']) ? (string) $class['databaseIdField'] : $defaults->idField
                     ),
                     'inherit' => false,
                     'attributes' => array(),
@@ -141,7 +159,9 @@ namespace Art\Adapter\Map\Loader {
                         'mandatory' => isset($attribute['mandatory']) ? (string) $attribute['mandatory'] : false,
                         'default' => isset($attribute['default']) ? (string) $attribute['default'] : false,
                         'databaseField' => isset($attribute['databaseField']) ? (string) $attribute['databaseField'] : $attributeName,
-                        'type' => isset($attribute['type']) ? (string) $attribute['type'] : $defaults->attribute->type
+                        'type' => isset($attribute['type']) ? (string) $attribute['type'] : $defaults->attribute->type,
+                        'searchable' => isset($attribute['type']) ? (string) $attribute['type'] : $defaults->attribute->searchable,
+                        'calculated' => isset($attribute['type']) ? (string) $attribute['type'] : false
                     );
                 }
                 // identity
@@ -152,38 +172,34 @@ namespace Art\Adapter\Map\Loader {
                 $associations = $class->associated;
                 foreach ($associations as $association) {
                     $associationName = isset($association['name']) ? (string) $association['name'] : (string) $association['to'];
+                    $ref = isset($association['reference']) ? (string) $association['reference'] : $defaults->associations->reference;
                     $ret['classes'][$name]['associations'][$associationName] = array(
                         'to' => (string) $association['to'],
-                        'name' => $associationName,
-                        'class' => isset($association['class']) ? (string) $association['class'] : false,
-                        'cardinality' => isset($association['cardinality']) ? (string) $association['cardinality'] : $defaults->associations->cardinality,
+                        'name' => isset($association['name']),
                         'composition' => isset($association['composition']) ? (bool) $association['composition'] : false,
                         'min' => isset($association['min']) ? (int) $association['min'] : $defaults->associations->min,
                         'max' => isset($association['max']) ? (int) $association['max'] : $defaults->associations->max,
-                        'reference' => isset($association['reference']) ? (string) $association['reference'] : false,
-                        'databaseTable' => isset($association['databaseTable']) ? (string) $association['databaseTable'] : $this->_getDatabaseAssociationTable(isset($association['name']) ? (string) $association['name'] :false,(string) $association['to'],$name)
+                        'reference' => $ref,
+                        'databaseTable' => isset($association['databaseTable']) ? (string) $association['databaseTable'] : \Art\Map::getDatabaseAssociationTable(isset($association['name']) ? (string) $association['name'] : false, (string) $association['to'], $name)
                     );
-                    if ($ret['classes'][$name]['associations'][$associationName]['cardinality'] == 'one-to-one') {
-                        if ($ret['classes'][$name]['associations'][$associationName]['class'])
-                            $scenario = 1;
-                        else
-                            $scenario=$ret['classes'][$name]['associations'][$associationName]['reference'] == 'external' ? 2 : 3;
-                    }else if ($ret['classes'][$name]['associations'][$associationName]['cardinality']== 'one-to-many') {
-                        $scenario = $ret['classes'][$name]['associations'][$associationName]['class'] ? 4 : 5;
-                    } else {
-                        $scenario = $ret['classes'][$name]['associations'][$associationName]['class'] ? 6 : 7;
+                    switch ($ref) {
+                        case 'internal':
+                        case 'external':
+                            unset($ret['classes'][$name]['associations'][$associationName]['databaseTable']);
+                            unset($ret['classes'][$name]['associations'][$associationName]['class']);
+                            break;
+                        default:
+                            unset($ret['classes'][$name]['associations'][$associationName]['composition']);
                     }
-                    $ret['classes'][$name]['associations'][$associationName]['scenario'] = $scenario;
                 }
             }
             return $ret;
         }
-        
-        protected function _getDatabaseAssociationTable($associationName,$classTo,$classFrom){
-            return $associationName?:($classFrom > $classTo ? $classTo . '2' . $classFrom : $classFrom . '2' . $classTo);
-        }
+
     }
+
     class LoaderException extends \Art\Exception {
         
     }
+
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * LICENSE: see Art/license.txt
@@ -10,12 +11,15 @@
  * @link        http://www.Art.com/manual/
  * @since       1.0
  */
+
 namespace Art {
+
     /**
      * Map the ORM schema to classes
      * @package     Art
      */
     class Map extends Singleton {
+
         /**
          * @var \Art\Block 
          */
@@ -34,8 +38,8 @@ namespace Art {
          */
         public function init() {
             $this->_configuration = \Art\Configuration::getInstance()->map;
-            $this->_adapter['Loader'] = \Art\Adapter::factory(array('map' => 'loader'));
-            $this->_map = $this->_adapter['Loader']->getSchema($this->_configuration->defaults);
+            $this->_adapter['loader'] = \Art\Adapter::factory(array('map' => 'loader'));
+            $this->_map = $this->_adapter['loader']->getSchema($this->_configuration->defaults);
         }
 
         /**
@@ -45,9 +49,10 @@ namespace Art {
         public function validate() {
             return $this->_adapter['loader']->validate();
         }
-        
-        public function extract(){
-            $this->_adapter['extractor']=\Art\Adapter::factory(array('map' => 'extractor'));
+
+        public function extract() {
+            $this->_adapter['extractor'] = \Art\Adapter::factory(array('map' => 'extractor'));
+            $this->_adapter['extractor']->setConfiguration($this->_configuration->defaults);
             return $this->_adapter['extractor']->create($this->_map);
         }
 
@@ -74,14 +79,33 @@ namespace Art {
             return $this->_map['classes'][$className]['associations'][$associationName];
         }
 
-        public function classGetJoin($className, $associationName, $fromAlias, $joinedAlias, $associationClassAlias) {
-            $association = $this->_map['classes'][$className]['associations'][$associationName];
+        public function classGetJoin($className, $associationName, $fromAlias, $joinedAlias, $associationClassAlias=false) {
             if (!isset($this->_map['classes'][$className]['associations'][$associationName]))
-                throw new MapException('error in JOIN : class "' . $className . '" has no association "' . $associationName . '"');
+                throw new MapException('join error : class "' . $className . '" has no association "' . $associationName . '"');
+            $association = $this->_map['classes'][$className]['associations'][$associationName];
             $joins = array();
-            switch ($association['scenario']) {
-                case '1':
-                    // association table
+            switch ($association['reference']) {
+                case 'external':
+                    $joins['table'] = array(
+                        'fromAlias' => $fromAlias,
+                        'fromColumn' => 'id',
+                        'toAlias' => $joinedAlias,
+                        'toColumn' => $association['name']?$associationName:$className,
+                        'toTable' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
+                        'type' => 'left'
+                    );
+                    break;
+                case 'internal':
+                    $joins['table'] = array(
+                        'fromAlias' => $fromAlias,
+                        'fromColumn' => $association['name']?$associationName:$association['to'],
+                        'toAlias' => $joinedAlias,
+                        'toColumn' => 'id',
+                        'toTable' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
+                        'type' => 'left'
+                    );
+                    break;
+                case 'class':
                     $joins['association'] = array(
                         'fromAlias' => $fromAlias,
                         'fromColumn' => 'id',
@@ -90,7 +114,6 @@ namespace Art {
                         'toTable' => $association['databaseTable'],
                         'type' => 'left'
                     );
-                    // association table
                     $joins['table'] = array(
                         'fromAlias' => $associationClassAlias,
                         'fromColumn' => $association['to'],
@@ -99,45 +122,19 @@ namespace Art {
                         'toTable' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
                         'type' => 'left'
                     );
-                    break; /*
-                  if ($association['class']) {
-                  if (empty($associationClassAlias))
-                  $associationClassAlias = ++self::$_associationTableAlias;
-                  // association table
-
-                  $sql->join(array(
-                  'fromAlias' => $associationClassAlias,
-                  'fromColumn' => $joinedClass,
-                  'toAlias' => $joinedAlias,
-                  'toColumn' => 'id',
-                  'toTable' => $association['toTable'],
-                  'type' => 'left'
-                  ));
-                  }
-                  else if ($association['reference'] == 'internal')
-                  $sql->join(array(
-                  'fromAlias' => $on,
-                  'fromColumn' => $joinedClass,
-                  'toAlias' => $alias,
-                  'toColumn' => 'id',
-                  'toTable' => $association['table'],
-                  'type' => 'left'
-                  ));
-                  else // external
-                  $sql->join(array(
-                  'fromAlias' => $alias,
-                  'fromColumn' => 'id',
-                  'toAlias' => $on,
-                  'toColumn' => $joinedClass,
-                  'toTable' => $association['table'],
-                  'type' => 'left'
-                  ));
-                  break; */
+                    break;
             }
             return $joins;
         }
+
+        public static function getDatabaseAssociationTable($associationName, $classTo, $classFrom) {
+            return $associationName? : ($classFrom > $classTo ? $classTo . '2' . $classFrom : $classFrom . '2' . $classTo);
+        }
+
     }
-    class MapException extends \Art\Exception{
+
+    class MapException extends \Art\Exception {
         
     }
+
 }

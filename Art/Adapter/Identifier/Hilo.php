@@ -48,8 +48,8 @@ namespace Art\Adapter\Identifier {
          * @return string
          */
         protected function _getNewHighId() {
-            $highId = date('dmyhis');
-            $highIdLength = $this->_configuration->highIdLength;
+            $highId = date('ysdmhi');
+            $highIdLength = 12;
             $length = strlen($highId);
             if ($length > $highIdLength)
                 $highId = substr($highId, 0, $highIdLength);

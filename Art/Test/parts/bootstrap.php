@@ -20,6 +20,8 @@ spl_autoload_register(array('\Art\Autoload', 'autoLoad'));
 
 require(dirname(__FILE__).'/configuration.ini');
 
+\Art\Configuration::getInstance()->database->password='87428742';
+
 // database
 class Database_Config extends \Art\Block {
     public static $configuration = array(

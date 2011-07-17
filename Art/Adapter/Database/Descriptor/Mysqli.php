@@ -75,7 +75,7 @@ namespace Art\Adapter\Database\Descriptor {
                             $fields.=$joinAlias . '.' . $this->quoteIdentifier($field) . $this->_getAlias($alias) . ',';
                     else
                         $fields.=$joinAlias . '.*,';
-                    $join.=' ' . (isset($info['type']) ? strtoupper($info['type']) : 'LEFT') . ' JOIN ' . $info['toTable'] . ' AS ' . $info['toAlias'] . ' ON ' . $this->quoteIdentifier($info['fromAlias']) . '.' . $this->quoteIdentifier($info['fromColumn']) . '=' . $this->quoteIdentifier($info['toAlias']) . '.' . $this->quoteIdentifier($info['toColumn']);
+                    $join.=' ' . (isset($info['type']) ? strtoupper($info['type']) : 'LEFT') . ' JOIN ' . $info['toTable'] . ' AS ' . $this->quoteIdentifier($info['toAlias']) . ' ON ' . $this->quoteIdentifier($info['fromAlias']) . '.' . $this->quoteIdentifier($info['fromColumn']) . '=' . $this->quoteIdentifier($info['toAlias']) . '.' . $this->quoteIdentifier($info['toColumn']);
                 }
 
             if (!$count)
@@ -238,16 +238,17 @@ namespace Art\Adapter\Database\Descriptor {
             return 'DROP TABLE ' . $this->quoteIdentifier($tableName);
         }
 
-        /**
-         * CREATE TABLE
+         /**
+         * create a table
          * @param string $name
          * @param array $fields array('col1'=>array('null'=>$bool,'type'=>$type,'length'=>$intOrFloatOrFalse))
          * @param array $identity array('col1','col2')
          * @param string $surrogateKey array('type'=>$type,'length'=>$int,'name'=>$name)
+         * @param array $foreignKeys=array('col1'=>array('table'=>$table,'field'=>$field,'onUpdate'=>$clause,'onDelete'=>$clause),'col2');
          * @param array $indexes array('index1'=>array('col1','col2'))
          * @return bool 
          */
-        public function createTable($name, array $fields, array $identity=array(), array $surrogateKey=array(), array $indexes=array()) {
+        public function createTable($name, array $fields, array $identity=array(), array $surrogateKey=array(), array $foreignKeys=array(), array $indexes=array()) {
             $sql = 'CREATE TABLE ' . $this->quoteIdentifier($name) . '(';
             foreach ($fields as $name => $field) {
                 $sql.=$this->quoteIdentifier($name) . ' ' . $field['type'] . (isset($field['length']) ? '(' . $field['length'] . ')' : '') . (isset($field['null']) && $field['null'] ? ' NULL' : ' NOT NULL').',';
@@ -256,10 +257,13 @@ namespace Art\Adapter\Database\Descriptor {
                 $sql.=$this->quoteIdentifier($surrogateKey['name']) . ' ' . $surrogateKey['type'] . (isset($surrogateKey['length']) ? '(' . $surrogateKey['length'] . ')' : '') . ' NOT NULL AUTO_INCREMENT, PRIMARY KEY (' . $this->quoteIdentifier($surrogateKey['name']) . ')';
             }
             if (!empty($identity)) {
-                $sql.=', KEY ' . $this->quoteIdentifier('unicity') . '(';
+                $sql.=', UNIQUE KEY ' . $this->quoteIdentifier('unicity') . '(';
                 foreach ($identity as $key)
                     $sql.= $this->quoteIdentifier($key) . ',';
                 $sql[strlen($sql)-1]= ')';
+            }
+            foreach($foreignKeys as $field=>$infos){
+                $sql.=',INDEX ('.$this->quoteIdentifier($field).'), FOREIGN KEY ('.$this->quoteIdentifier($field).') REFERENCES '.$this->quoteIdentifier($infos['table']).'('.$this->quoteIdentifier($infos['field']).')'.(isset($infos['onDelete'])?' ON DELETE '.$infos['onDelete']:'').(isset($infos['onUpdate'])?' ON UPDATE '.$infos['onUpdate']:'');
             }
             foreach ($indexes as $name => $keys) {
                 if (!empty($keys))

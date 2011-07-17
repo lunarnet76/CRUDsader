@@ -14,7 +14,8 @@
             <!ATTLIST class name CDATA #REQUIRED>
             <!ATTLIST class databaseTable CDATA #IMPLIED>
             <!ATTLIST class identity CDATA #IMPLIED><!-- col1,col2 -->
-            <!ATTLIST class association (true|false) #IMPLIED>
+            <!ATTLIST class databaseIdField CDATA #IMPLIED><!-- col1,col2 -->
+            <!ATTLIST class association (true|false) #IMPLIED><!-- association class are UNIQUE to an association, and named with the association table name-->
 
             <!ELEMENT inherit EMPTY>
                 <!ATTLIST inherit from CDATA #REQUIRED>
@@ -26,14 +27,14 @@
                 <!ATTLIST attribute default             CDATA               #IMPLIED>
                 <!ATTLIST attribute databaseField       CDATA               #IMPLIED>
                 <!ATTLIST attribute type                CDATA               #IMPLIED>
+                <!ATTLIST attribute searchable          (true|false)        #IMPLIED>
+                <!ATTLIST attribute calculated          (true|false)        #IMPLIED>
 
            <!ELEMENT associated EMPTY>
                 <!ATTLIST associated to             CDATA                                   #REQUIRED>
+                <!ATTLIST associated reference (external|internal|class)                    #IMPLIED>
                 <!ATTLIST associated name           CDATA                                   #IMPLIED>
-                <!ATTLIST associated class          CDATA                                   #IMPLIED>
-                <!ATTLIST associated cardinality    (one-to-one|one-to-many|many-to-many)   #IMPLIED>
-                <!ATTLIST associated composition    (true|false)                            #IMPLIED>
                 <!ATTLIST associated min            CDATA                                   #IMPLIED>
                 <!ATTLIST associated max            CDATA                                   #IMPLIED>
-                <!ATTLIST associated reference (external|internal)                          #IMPLIED>
+                <!ATTLIST associated composition (true|false)                    #IMPLIED>
                 <!ATTLIST associated databaseTable CDATA                          #IMPLIED>

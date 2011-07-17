@@ -15,7 +15,7 @@ namespace Art\Form {
      * @package    Art
      * @abstract
      */
-    abstract class Component {
+    abstract class Component implements \Art\Interfaces\Arrayable{
         protected $_id;
         protected $_label = false;
         protected $_parent;
@@ -88,8 +88,6 @@ namespace Art\Form {
         abstract public function error();
 
         abstract public function isEmpty();
-
-        abstract public function toArray();
 
         abstract public function receive($data=false);
 

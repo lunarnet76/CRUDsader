@@ -14,7 +14,7 @@ namespace Art {
      * for configurable objects
      * @package    Art
      */
-    class Block implements \Iterator {
+    class Block implements \Iterator, Interfaces\Arrayable {
         /**
          * @var array
          */

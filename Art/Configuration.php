@@ -49,15 +49,16 @@ namespace Art {
                 'i18n' => array(
                     'translation' => 'transparent'
                 ),
-                'identifier'=>array(
-                    'hilo'=>array(
-                        'highIdLength'=>10
-                    )
-                 ),
+                'identifier'=>'hilo',
                 'map'=>array(
                     'loader'=>array(
                         'xml'=>array(
                             'file'=>'map.xml'
+                        )
+                    ),
+                    'extractor'=>array(
+                        'database'=>array(
+                            
                         )
                     )
                 )
@@ -78,6 +79,7 @@ namespace Art {
             ),
             'map' => array(
                 'defaults' => array(
+                    'idField'=>'id',
                     'inheritance'=>'table',
                     'attributeType'=>array(
                         'databaseType'=>'VARCHAR',
@@ -90,10 +92,11 @@ namespace Art {
                         )
                     ),
                     'attribute'=>array(
-                        'type'=>'default'
+                        'type'=>'default',
+                        'searchable'=>true
                     ),
                     'associations'=>array(
-                        'cardinality'=>'one-to-one',
+                        'reference'=>'internal',
                         'min'=>0,
                         'max'=>1
                     )

@@ -5,6 +5,6 @@ class AdapterIdentifierHiloTest extends PHPUnit_Framework_TestCase {
        $this->assertEquals($instance->getOID('a'),$instance->getOID('b'));
        $this->assertEquals($instance->getOID('c'),$instance->getOID('d'));
        $this->assertEquals($instance->getOID('a'),$instance->getOID('c'));
-       $this->assertEquals(strlen($instance->getOID('a')),11);
+       $this->assertEquals(strlen($instance->getOID('a')),13);
    } 
 }
