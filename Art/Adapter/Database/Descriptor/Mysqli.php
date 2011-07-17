@@ -248,22 +248,20 @@ namespace Art\Adapter\Database\Descriptor {
          * @param array $indexes array('index1'=>array('col1','col2'))
          * @return bool 
          */
-        public function createTable($name, array $fields, array $identity=array(), array $surrogateKey=array(), array $foreignKeys=array(), array $indexes=array()) {
+        public function createTable($name, array $fields, array $identity=array(), array $surrogateKey=array(), array $indexes=array()) {
             $sql = 'CREATE TABLE ' . $this->quoteIdentifier($name) . '(';
+            if (!empty($surrogateKey)) {
+                $sql.=$this->quoteIdentifier($surrogateKey['name']) . ' ' . $surrogateKey['type'] . (isset($surrogateKey['length']) ? '(' . $surrogateKey['length'] . ')' : '') . ' NOT NULL AUTO_INCREMENT,';
+            }
             foreach ($fields as $name => $field) {
                 $sql.=$this->quoteIdentifier($name) . ' ' . $field['type'] . (isset($field['length']) ? '(' . $field['length'] . ')' : '') . (isset($field['null']) && $field['null'] ? ' NULL' : ' NOT NULL').',';
             }
-            if (!empty($surrogateKey)) {
-                $sql.=$this->quoteIdentifier($surrogateKey['name']) . ' ' . $surrogateKey['type'] . (isset($surrogateKey['length']) ? '(' . $surrogateKey['length'] . ')' : '') . ' NOT NULL AUTO_INCREMENT, PRIMARY KEY (' . $this->quoteIdentifier($surrogateKey['name']) . ')';
-            }
+            $sql[strlen($sql)-1]= ' ';
             if (!empty($identity)) {
                 $sql.=', UNIQUE KEY ' . $this->quoteIdentifier('unicity') . '(';
                 foreach ($identity as $key)
                     $sql.= $this->quoteIdentifier($key) . ',';
                 $sql[strlen($sql)-1]= ')';
-            }
-            foreach($foreignKeys as $field=>$infos){
-                $sql.=',INDEX ('.$this->quoteIdentifier($field).'), FOREIGN KEY ('.$this->quoteIdentifier($field).') REFERENCES '.$this->quoteIdentifier($infos['table']).'('.$this->quoteIdentifier($infos['field']).')'.(isset($infos['onDelete'])?' ON DELETE '.$infos['onDelete']:'').(isset($infos['onUpdate'])?' ON UPDATE '.$infos['onUpdate']:'');
             }
             foreach ($indexes as $name => $keys) {
                 if (!empty($keys))
@@ -273,7 +271,18 @@ namespace Art\Adapter\Database\Descriptor {
                     $sql.=$this->quoteIdentifier($key) . ',';
                 $sql.= ')';
             }
+            if(!empty($surrogateKey)){
+                $sql.=', PRIMARY KEY (' . $this->quoteIdentifier($surrogateKey['name']) . ')';
+            }
             return $sql.') ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin';
+        }
+        
+        /**
+         * create a reference between 2 fields of 2 tables
+         * @param type $infos=array('fromTable','toTable','fromField','toField','onUpdate','onDelete') 
+         */
+        public function createTableReference($infos){
+            return 'ALTER TABLE '.($infos['fromTable']).' ADD FOREIGN KEY ('.($infos['fromField']).') REFERENCES '.($infos['toTable']).'('.($infos['toField']).')'.(!empty($infos['onUpdate'])?' ON UPDATE '.$infos['onUpdate']:'').(!empty($infos['onDelete'])?' ON DELETE '.$infos['onDelete']:'');
         }
 
         /**

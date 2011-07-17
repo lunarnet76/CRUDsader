@@ -99,10 +99,15 @@ namespace Art\Adapter\Database {
          * @param array $fields array('col1'=>array('null'=>$bool,'type'=>$type,'length'=>$intOrFloatOrFalse))
          * @param array $identity array('col1','col2')
          * @param string $surrogateKey array('type'=>$type,'length'=>$int,'name'=>$name)
-         * @param array $foreignKeys=array('col1'=>array('table'=>$table,'field'=>$field),'col2');
          * @param array $indexes array('index1'=>array('col1','col2'))
          * @return bool 
          */
         abstract public function createTable($name, array $fields,array $identity=array(),array $surrogateKey=array(),array $indexes=array());
+        
+         /**
+         * create a reference between 2 fields of 2 tables
+         * @param type $infos=array('fromTable','toTable','fromField','toField','onUpdate','onDelete') 
+         */
+        abstract public function createTableReference($infos);
     }
 }

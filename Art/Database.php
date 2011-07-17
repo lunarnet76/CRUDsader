@@ -73,7 +73,7 @@ namespace Art {
         }
 
         /**
-         * quote an identifier (e.g. column name)
+         * quote an identifier (e.g. field name)
          * @param string $string
          * @return string 
          */
@@ -187,12 +187,19 @@ namespace Art {
          * @param array $fields array('col1'=>array('null'=>$bool,'type'=>$type,'length'=>$intOrFloatOrFalse))
          * @param array $identity array('col1','col2')
          * @param string $surrogateKey array('type'=>$type,'length'=>$int,'name'=>$name)
-         * @param array $foreignKeys=array('col1'=>array('table'=>$table,'field'=>$field,'onUpdate'=>$up,'onDelete'=>$del),'col2');
          * @param array $indexes array('index1'=>array('col1','col2'))
          * @return bool 
          */
-        public function createTable($name, array $fields,array $identity=array(),array $surrogateKey=array(),array $foreignKeys=array(),array $indexes=array()) {
-            return $this->query($this->_descriptorAdapter->createTable($name,$fields, $identity,$surrogateKey,$foreignKeys,$indexes), 'createTable');
+        public function createTable($name, array $fields,array $identity=array(),array $surrogateKey=array(),array $indexes=array()) {
+            return $this->query($this->_descriptorAdapter->createTable($name,$fields, $identity,$surrogateKey,$indexes), 'createTable');
+        }
+        
+        /**
+         * create a reference between 2 fields of 2 tables
+         * @param type $infos=array('fromTable','toTable','fromField','toField','onUpdate','onDelete') 
+         */
+        public function createTableReference($infos){
+            return $this->query($this->_descriptorAdapter->createTableReference($infos), 'createTableReference');
         }
     }
 }
