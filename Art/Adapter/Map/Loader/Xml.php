@@ -175,7 +175,7 @@ namespace Art\Adapter\Map\Loader {
                     $ref = isset($association['reference']) ? (string) $association['reference'] : $defaults->associations->reference;
                     $ret['classes'][$name]['associations'][$associationName] = array(
                         'to' => (string) $association['to'],
-                        'name' => isset($association['name']),
+                        'name' => isset($association['name'])?(string)$association['name']:false,
                         'composition' => isset($association['composition']) ? (bool) $association['composition'] : false,
                         'min' => isset($association['min']) ? (int) $association['min'] : $defaults->associations->min,
                         'max' => isset($association['max']) ? (int) $association['max'] : $defaults->associations->max,

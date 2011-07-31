@@ -1,5 +1,4 @@
 <?php
-
 /**
  * LICENSE: see Art/license.txt
  *
@@ -10,7 +9,6 @@
  * @link        http://www.Art.com/manual/
  * @since       1.0
  */
-
 namespace Art\Adapter\Map\Extractor {
 
     /**
@@ -21,6 +19,7 @@ namespace Art\Adapter\Map\Extractor {
     class Database extends \Art\Adapter\Map\Extractor {
 
         public function create(array $map) {
+            $mapObject = \Art\Map::getInstance();
             $tables = array();
             foreach ($map['classes'] as $className => $classInfos) {
                 $tables[$className] = array(
@@ -39,7 +38,7 @@ namespace Art\Adapter\Map\Extractor {
                     $tables[$className]['fields'][$fieldName]['null'] = false;
                 }
             }
-            $fks=array();
+            $fks = array();
             foreach ($map['classes'] as $className => $classInfos) {
                 if ($classInfos['definition']['association'])
                     continue;
@@ -47,13 +46,14 @@ namespace Art\Adapter\Map\Extractor {
                     switch ($associationInfos['reference']) {
                         case 'external':
                             // add fk in external table
-                            $tables[$associationInfos['to']]['fields'][$className] = array(
+                            $field=$associationInfos['name']?$associationInfos['name']:$className;
+                            $tables[$associationInfos['to']]['fields'][$field] = array(
                                 'null' => !$associationInfos['composition'],
                                 'type' => 'bigint',
                                 'length' => 20
                             );
                             // define the fk as a reference
-                            $fks[$map['classes'][$associationInfos['to']]['definition']['databaseTable']][$className] = array('table' => $tables[$className]['name'], 'field' => $classInfos['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
+                            $fks[$map['classes'][$associationInfos['to']]['definition']['databaseTable']][$field] = array('table' => $tables[$className]['name'], 'field' => $classInfos['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
                             break;
                         case 'internal':
                             // add fk in internal table
@@ -66,52 +66,63 @@ namespace Art\Adapter\Map\Extractor {
                             $fks[$className][$associationInfos['to']] = array('table' => $tables[$associationInfos['to']]['name'], 'field' => $map['classes'][$associationInfos['to']]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
                             break;
                         case 'class':
+                            $associationTable = $mapObject->getDatabaseAssociationTable($associationInfos['name'], $className, $associationInfos['to']);
+                            if (!isset($tables[$associationTable])) {
+                                $tables[$associationTable] = array(
+                                    'name' => $associationTable,
+                                    'identity' => array(),
+                                    'fields' => array(),
+                                    'surrogateKey' => array('type' => 'bigint', 'length' => 20, 'name' => $this->_configuration->idField),
+                                    'association' => array(),
+                                    'foreignKeys' => array(),
+                                    'indexes' => array()
+                                );
+                            }
                             // add fk in association table
-                            $tables[$associationName]['fields'][$associationInfos['to']] = array(
+                            $tables[$associationTable]['fields'][$associationInfos['to']] = array(
                                 'null' => false,
                                 'type' => 'bigint',
                                 'length' => 20
                             );
-                            $tables[$associationName]['fields'][$className] = array(
+                            $tables[$associationTable]['fields'][$className] = array(
                                 'null' => false,
                                 'type' => 'bigint',
                                 'length' => 20
                             );
-                             // define the fk as a reference
-                            $fks[$associationName][$associationInfos['to']] = array('table' => $tables[$associationInfos['to']]['name'], 'field' => $map['classes'][$associationInfos['to']]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => 'cascade' );
-                            $fks[$associationName][$className] = array('table' => $tables[$className]['name'], 'field' => $map['classes'][$className]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => 'cascade' );
+                            // define the fk as a reference
+                            $fks[$associationTable][$associationInfos['to']] = array('table' => $tables[$associationInfos['to']]['name'], 'field' => $map['classes'][$associationInfos['to']]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => 'cascade');
+                            $fks[$associationTable][$className] = array('table' => $tables[$className]['name'], 'field' => $map['classes'][$className]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => 'cascade');
+                            //create the table if does not exist
                             break;
                     }
                 }
             }
-            $database=\Art\Database::getInstance();
-            
-            $q=$database->query('set foreign_key_checks = 0','update');
-            $q=$database->query('SHOW TABLES','select');
-            foreach($q as $d){
-                $database->query('DROP TABLE '.current($d));
+            $database = \Art\Database::getInstance();
+
+            $q = $database->query('set foreign_key_checks = 0', 'update');
+            $q = $database->query('SHOW TABLES', 'select');
+            foreach ($q as $d) {
+                $database->query('DROP TABLE ' . current($d));
             }
-            $q=$database->query('set foreign_key_checks = 1','update');
-            foreach($tables as $class=>$infos){
-                $database->createTable($infos['name'],$infos['fields'],$infos['identity'],$infos['surrogateKey'],$infos['foreignKeys'],$infos['indexes']);
+            $q = $database->query('set foreign_key_checks = 1', 'update');
+            foreach ($tables as $class => $infos) {
+                $database->createTable($infos['name'], $infos['fields'], $infos['identity'], $infos['surrogateKey'], $infos['foreignKeys'], $infos['indexes']);
             }
-            foreach($fks as $classFrom=>$fkeys){
-                foreach($fkeys as $fieldFrom=>$infos){
+            foreach ($fks as $classFrom => $fkeys) {
+                foreach ($fkeys as $fieldFrom => $infos) {
                     $database->createTableReference(array(
-                        'fromTable'=>$map['classes'][$classFrom]['definition']['databaseTable'],
-                        'toTable'=>$infos['table'],
-                        'fromField'=>$fieldFrom,
-                        'toField'=>$infos['field'],
-                        'onUpdate'=>$infos['onUpdate'],
-                        'onDelete'=>$infos['onDelete']
+                        'fromTable' => isset($map['classes'][$classFrom])?$map['classes'][$classFrom]['definition']['databaseTable']:$classFrom,
+                        'toTable' => $infos['table'],
+                        'fromField' => $fieldFrom,
+                        'toField' => $infos['field'],
+                        'onUpdate' => $infos['onUpdate'],
+                        'onDelete' => $infos['onDelete']
                     ));
                 }
             }
         }
     }
-
     class DatabaseException extends \Art\Exception {
         
     }
-
 }

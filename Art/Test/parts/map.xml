@@ -15,6 +15,7 @@
             <associated to="photo"    min="0" max="*" reference="external" composition="true" />
             <associated to="company"    min="0" max="1" reference="internal"  />
             <associated to="address"    min="0" max="1" reference="class" name="hasAddress"  />
+            <associated to="address"    min="0" max="*" reference="class"   />
             
         </class>
         
@@ -25,15 +26,18 @@
         <class name="login">
             <attribute name="name"/>
         </class>
-        <class name="address">
-            <attribute name="name"/>
-        </class>
          <class name="photo" >
             <attribute name="name"/>
         </class>
         <class name="company" >
             <attribute name="name"/>
         </class>
+        <class name="address">
+            <attribute name="name"/>
+            <associated to="contact"    min="0" max="*" reference="class"   />
+        </class>
+        
+      
        
     </classes>
 </art>

@@ -62,7 +62,7 @@ namespace Art\Adapter\Database\Descriptor {
                 foreach ($infos['fields'][$fromAlias] as $alias => $field)
                     $fields.=$this->quoteIdentifier($fromAlias) . '.' . $this->quoteIdentifier($field) . $this->_getAlias($alias) . ',';
             else
-                $fields = $fromAlias . '.*,';
+                $fields = $this->quoteIdentifier($fromAlias) . '.*,';
 
             // JOINS
             $join = '';

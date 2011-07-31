@@ -84,11 +84,12 @@ namespace Art {
                 throw new MapException('join error : class "' . $className . '" has no association "' . $associationName . '"');
             $association = $this->_map['classes'][$className]['associations'][$associationName];
             $joins = array();
+            
             switch ($association['reference']) {
                 case 'external':
                     $joins['table'] = array(
                         'fromAlias' => $fromAlias,
-                        'fromColumn' => 'id',
+                        'fromColumn' => $this->_map['classes'][$className]['definition']['databaseIdField'],
                         'toAlias' => $joinedAlias,
                         'toColumn' => $association['name']?$associationName:$className,
                         'toTable' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
@@ -100,7 +101,7 @@ namespace Art {
                         'fromAlias' => $fromAlias,
                         'fromColumn' => $association['name']?$associationName:$association['to'],
                         'toAlias' => $joinedAlias,
-                        'toColumn' => 'id',
+                        'toColumn' => $this->_map['classes'][$association['to']]['definition']['databaseIdField'],
                         'toTable' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
                         'type' => 'left'
                     );
@@ -108,7 +109,7 @@ namespace Art {
                 case 'class':
                     $joins['association'] = array(
                         'fromAlias' => $fromAlias,
-                        'fromColumn' => 'id',
+                        'fromColumn' => $this->_map['classes'][$className]['definition']['databaseIdField'],
                         'toAlias' => $associationClassAlias,
                         'toColumn' => $className,
                         'toTable' => $association['databaseTable'],
@@ -118,7 +119,7 @@ namespace Art {
                         'fromAlias' => $associationClassAlias,
                         'fromColumn' => $association['to'],
                         'toAlias' => $joinedAlias,
-                        'toColumn' => 'id',
+                        'toColumn' => $this->_map['classes'][$association['to']]['definition']['databaseIdField'],
                         'toTable' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
                         'type' => 'left'
                     );

@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(-1);
 function preCallback(){
     print_r(func_get_args());
 }

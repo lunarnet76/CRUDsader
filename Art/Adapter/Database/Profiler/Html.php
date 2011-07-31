@@ -185,6 +185,7 @@ namespace Art\Adapter\Database\Profiler {
                         foreach ($log['results'] as $r) {
                             if ($first) {
                                 $first = false;
+                                if(!$r)continue;
                                 foreach ($r as $k => $o)
                                     echo '<td class="header">' . $k . '</td>';
                             }
