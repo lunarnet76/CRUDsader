@@ -19,7 +19,7 @@ namespace Art {
         /**
          * @var Block
          */
-        protected $_configuration;
+        protected $_configuration=null;
         
         /**
          * only way to get an adapter

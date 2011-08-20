@@ -134,9 +134,7 @@ class MapTest extends PHPUnit_Framework_TestCase {
             $select->join($sc['table']);
             $sql = \Art\Database::getInstance()->getDescriptor()->highLight(\Art\Database::getInstance()->getDescriptor()->select($select));
 
-            ($db->select($select));
+            $this->assertEquals($db->select($select) instanceof Art\Adapter\Database\Rows,true);
         }
-
-        //$db->getProfiler()->display();
     }
 }

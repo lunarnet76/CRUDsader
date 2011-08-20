@@ -51,7 +51,7 @@ namespace Art\Adapter\Database\Descriptor {
          * select and join tables
          * @param \Art\Database_Sql_Select $select
          */
-        public function select(\Art\Database\Select $select, $count=false) {
+        public function select(\Art\Database\Select $select, array $args=null,$count=false) {
             $infos = $select->getAttributes();
             $fromTable = $infos['from']['table'];
             $fromAlias = $infos['from']['alias'];
@@ -77,7 +77,6 @@ namespace Art\Adapter\Database\Descriptor {
                         $fields.=$joinAlias . '.*,';
                     $join.=' ' . (isset($info['type']) ? strtoupper($info['type']) : 'LEFT') . ' JOIN ' . $info['toTable'] . ' AS ' . $this->quoteIdentifier($info['toAlias']) . ' ON ' . $this->quoteIdentifier($info['fromAlias']) . '.' . $this->quoteIdentifier($info['fromColumn']) . '=' . $this->quoteIdentifier($info['toAlias']) . '.' . $this->quoteIdentifier($info['toColumn']);
                 }
-
             if (!$count)
                 $fields[strlen($fields) - 1] = ' ';
             else {
@@ -108,6 +107,15 @@ namespace Art\Adapter\Database\Descriptor {
                 $sql.=' ORDER BY ' . $infos['orderBy'];
             if (!empty($infos['limit']))
                 $sql.=' LIMIT ' . $infos['limit']['results'] . (isset($infos['limit']['offset']) ? ' OFFSET ' . $infos['limit']['offset'] : '');
+            // ARGS
+            if(!empty($args)){
+                $i=0;
+                $unLexicalThis=$this;
+                $sql=preg_replace_callback('|=\s*\?|', function ($infos) use ($args,$i,$unLexicalThis){
+                    $var=$args[$i++];
+                    return '='.($var instanceof \Art\Expression?$var:$unLexicalThis->quote($var));
+                }, $sql);
+            }
             return $sql;
         }
 

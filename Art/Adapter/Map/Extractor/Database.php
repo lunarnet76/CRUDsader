@@ -40,8 +40,6 @@ namespace Art\Adapter\Map\Extractor {
             }
             $fks = array();
             foreach ($map['classes'] as $className => $classInfos) {
-                if ($classInfos['definition']['association'])
-                    continue;
                 foreach ($classInfos['associations'] as $associationName => $associationInfos) {
                     switch ($associationInfos['reference']) {
                         case 'external':
@@ -98,7 +96,6 @@ namespace Art\Adapter\Map\Extractor {
                 }
             }
             $database = \Art\Database::getInstance();
-
             $q = $database->query('set foreign_key_checks = 0', 'update');
             $q = $database->query('SHOW TABLES', 'select');
             foreach ($q as $d) {

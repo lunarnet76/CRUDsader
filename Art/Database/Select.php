@@ -94,6 +94,11 @@ namespace Art\Database {
         public function getAttributes() {
             return $this->_attributes;
         }
+        
+        public function __toString(){
+            $descriptor=\Art\Database::getInstance()->getDescriptor();
+            return $descriptor->highLight($descriptor->select($this));
+        }
     }
     class SelectException extends \Art\Exception {
         

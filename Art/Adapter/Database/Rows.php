@@ -42,5 +42,10 @@ namespace Art\Adapter\Database {
         public function count() {
             return $this->_count;
         }
+        
+        /**
+         * @return array indexed of fields
+         */
+        abstract public function getFields();
     }
 }

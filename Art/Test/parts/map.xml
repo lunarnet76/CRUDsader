@@ -9,18 +9,17 @@
     
     <classes>
         <class name="contact" databaseTable="Tcontact" identity="designation" databaseIdField="contact_id">
-            <attribute name="designation"/>
+            <attribute name="designation" calculated="false" searchable="true" databaseField="designation" />
             
             <associated to="login"    min="0" max="1" reference="external" composition="true" name="hasLogin" />
             <associated to="photo"    min="0" max="*" reference="external" composition="true" />
             <associated to="company"    min="0" max="1" reference="internal"  />
             <associated to="address"    min="0" max="1" reference="class" name="hasAddress"  />
-            <associated to="address"    min="0" max="*" reference="class"   />
             
         </class>
         
         <class name="hasAddress" association="true">
-            <associated to="company"/>
+            <associated to="company" reference="internal"/>
         </class>
         
         <class name="login">
@@ -28,13 +27,15 @@
         </class>
          <class name="photo" >
             <attribute name="name"/>
+            <associated to="contact" min="1" reference="internal"/>
         </class>
         <class name="company" >
             <attribute name="name"/>
+            <associated to="address" min="0" max="1" reference="external" />
         </class>
         <class name="address">
             <attribute name="name"/>
-            <associated to="contact"    min="0" max="*" reference="class"   />
+            <associated to="contact"    min="0" max="*" reference="class"  name="hasAddress" />
         </class>
         
       

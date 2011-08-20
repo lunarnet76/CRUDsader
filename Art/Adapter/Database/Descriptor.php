@@ -40,9 +40,10 @@ namespace Art\Adapter\Database {
 
         /**
          * @abstract
-         * @param \Art\Database\Sql\Select $select $select
+         * @param \Art\Database\Sql\Select $select 
+         * @param array $args 
          */
-        abstract public function select(\Art\Database\Select $select);
+        abstract public function select(\Art\Database\Select $select,array $args=null);
 
         /**
          * insert values in a table

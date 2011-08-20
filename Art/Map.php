@@ -19,7 +19,7 @@ namespace Art {
      * @package     Art
      */
     class Map extends Singleton {
-
+        const BASE_ASSOCIATION_CLASS='__ASSOC__';
         /**
          * @var \Art\Block 
          */
@@ -70,6 +70,14 @@ namespace Art {
         public function classGetDatabaseTable($className) {
             return $this->_map['classes'][$className]['definition']['databaseTable'];
         }
+        
+        public function classGetDatabaseTableField($className,$attributeName) {
+            return $attributeName=='id'?$this->_map['classes'][$className]['definition']['databaseIdField']:$this->_map['classes'][$className]['attributes'][$attributeName]['databaseField'];
+        }
+        
+        public function classGetAttributeCount($className){
+            return $className==self::BASE_ASSOCIATION_CLASS?2:count($this->_map['classes'][$className]['definition']['attributeCount']);
+        }
 
         public function classHasAssociation($className, $associationName) {
             return isset($this->_map['classes'][$className]['associations'][$associationName]);
@@ -78,6 +86,12 @@ namespace Art {
         public function classGetAssociation($className, $associationName) {
             return $this->_map['classes'][$className]['associations'][$associationName];
         }
+        
+        public function classGetInfos($className){
+            return $this->_map['classes'][$className];
+        }
+        
+        
 
         public function classGetJoin($className, $associationName, $fromAlias, $joinedAlias, $associationClassAlias=false) {
             if (!isset($this->_map['classes'][$className]['associations'][$associationName]))
@@ -93,6 +107,7 @@ namespace Art {
                         'toAlias' => $joinedAlias,
                         'toColumn' => $association['name']?$associationName:$className,
                         'toTable' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
+                        'toClass' => $association['to'],
                         'type' => 'left'
                     );
                     break;
@@ -103,6 +118,7 @@ namespace Art {
                         'toAlias' => $joinedAlias,
                         'toColumn' => $this->_map['classes'][$association['to']]['definition']['databaseIdField'],
                         'toTable' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
+                        'toClass' => $association['to'],
                         'type' => 'left'
                     );
                     break;
@@ -113,6 +129,7 @@ namespace Art {
                         'toAlias' => $associationClassAlias,
                         'toColumn' => $className,
                         'toTable' => $association['databaseTable'],
+                        'toClass' => $association['name']?$association['name']:self::BASE_ASSOCIATION_CLASS,
                         'type' => 'left'
                     );
                     $joins['table'] = array(
@@ -121,6 +138,7 @@ namespace Art {
                         'toAlias' => $joinedAlias,
                         'toColumn' => $this->_map['classes'][$association['to']]['definition']['databaseIdField'],
                         'toTable' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
+                        'toClass' => $association['to'],
                         'type' => 'left'
                     );
                     break;

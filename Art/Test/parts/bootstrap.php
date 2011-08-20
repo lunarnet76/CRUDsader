@@ -1,4 +1,61 @@
 <?php
+class Bootstrap{
+    public static $loadedSqlDatabase=false;
+    public static $loadedSqlOrmDatabase=false;
+    public static function loadSQLDatabase(){
+        if(self::$loadedSqlDatabase)return;
+        $db=\Art\Database::getInstance();
+        $q=$db->query('show tables','select');
+        $db->query('SET FOREIGN_KEY_CHECKS = 0;');
+        foreach($q as $table){
+            $db->query('DROP TABLE '.current($table));
+        }
+        $db->query('SET FOREIGN_KEY_CHECKS = 1;');
+        $sqlFile=explode(';',file_get_contents(dirname(__FILE__).'/database.sql'));
+        foreach($sqlFile as $sql){
+            $sql=trim($sql);
+            if(!empty($sql)){
+                //pre($sql);
+                $db->query($sql,'update');
+            }
+        }
+        self::$loadedSqlDatabase=true;
+    }
+    
+    public static function unloadSQLDatabase(){
+        $db=\Art\Database::getInstance();
+        $q=$db->query('show tables','select');
+        $db->query('SET FOREIGN_KEY_CHECKS = 0;');
+        foreach($q as $table){
+            $db->query('DROP TABLE '.current($table));
+        }
+        $db->query('SET FOREIGN_KEY_CHECKS = 1;');
+        self::$loadedSqlDatabase=false;
+        
+    }
+    
+    public static function loadSQLORMDatabase(){
+        if(self::$loadedSqlOrmDatabase)return;
+        $db=\Art\Database::getInstance();
+        $q=$db->query('show tables','select');
+        $db->query('SET FOREIGN_KEY_CHECKS = 0;');
+        foreach($q as $table){
+            $db->query('DROP TABLE '.current($table));
+        }
+         \Art\Configuration::getInstance()->adapter->map->loader->xml->file = dirname(__FILE__) . '/map.xml';
+        \Art\Map::getInstance();
+        $sqlFile=explode(';',file_get_contents(dirname(__FILE__).'/databaseOrm.sql'));
+        foreach($sqlFile as $sql){
+            $sql=trim($sql);
+            if(!empty($sql)){
+                //pre($sql);
+                $db->query($sql,'update');
+            }
+        }
+        $db->query('SET FOREIGN_KEY_CHECKS = 1;');
+        self::$loadedSqlOrmDatabase=true;
+    }
+}
 error_reporting(-1);
 function preCallback(){
     print_r(func_get_args());
@@ -76,5 +133,10 @@ class Class_Test_4 {
 
 }
 
+class AdapterMapExtractorInstancer extends \Art\Adapter\Map\Extractor\Database{
+    public static function getInstance(){
+        return new parent();
+    }
+}
 
 ?>

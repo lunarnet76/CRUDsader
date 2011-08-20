@@ -169,8 +169,8 @@ namespace Art {
             return $this->query($this->_descriptorAdapter->insert($table, $values), 'insert');
         }
 
-        public function select(\Art\Database\Select $select) {
-            return $this->query($this->_descriptorAdapter->select($select), 'select');
+        public function select(\Art\Database\Select $select,array $args=null) {
+            return $this->query($this->_descriptorAdapter->select($select,$args), 'select');
         }
 
         public function update($table, array $values, $where=false) {
