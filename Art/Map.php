@@ -91,8 +91,6 @@ namespace Art {
             return $this->_map['classes'][$className];
         }
         
-        
-
         public function classGetJoin($className, $associationName, $fromAlias, $joinedAlias, $associationClassAlias=false) {
             if (!isset($this->_map['classes'][$className]['associations'][$associationName]))
                 throw new MapException('join error : class "' . $className . '" has no association "' . $associationName . '"');

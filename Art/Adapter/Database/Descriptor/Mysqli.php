@@ -290,7 +290,7 @@ namespace Art\Adapter\Database\Descriptor {
          * @param type $infos=array('fromTable','toTable','fromField','toField','onUpdate','onDelete') 
          */
         public function createTableReference($infos){
-            return 'ALTER TABLE '.($infos['fromTable']).' ADD FOREIGN KEY ('.($infos['fromField']).') REFERENCES '.($infos['toTable']).'('.($infos['toField']).')'.(!empty($infos['onUpdate'])?' ON UPDATE '.$infos['onUpdate']:'').(!empty($infos['onDelete'])?' ON DELETE '.$infos['onDelete']:'');
+            return 'ALTER TABLE '.$this->quoteIdentifier($infos['fromTable']).' ADD FOREIGN KEY ('.$this->quoteIdentifier($infos['fromField']).') REFERENCES '.$this->quoteIdentifier($infos['toTable']).'('.$this->quoteIdentifier($infos['toField']).')'.(!empty($infos['onUpdate'])?' ON UPDATE '.$infos['onUpdate']:'').(!empty($infos['onDelete'])?' ON DELETE '.$infos['onDelete']:'');
         }
 
         /**

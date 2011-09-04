@@ -27,12 +27,15 @@ namespace Art\Adapter\Map\Extractor {
                     'identity' => $classInfos['definition']['identity'],
                     'fields' => array(),
                     'surrogateKey' => array('type' => 'bigint', 'length' => 20, 'name' => $classInfos['definition']['databaseIdField']),
-                    'association' => $classInfos['definition']['association'],
                     'foreignKeys' => array(),
                     'indexes' => array()
                 );
+
                 foreach ($classInfos['attributes'] as $attributeName => $attributeInfos) {
-                    $tables[$className]['fields'][$attributeName] = array('null' => true, 'type' => $map['attributeTypes'][$attributeInfos['type']]['databaseType'], 'length' => $map['attributeTypes'][$attributeInfos['type']]['length']);
+                    if ($attributeName == 'polymorphism')
+                        $tables[$className]['fields'][$attributeName] = array('null' => true, 'type' => $attributeInfos['databaseType'], 'length' => $attributeInfos['length']);
+                    else
+                        $tables[$className]['fields'][$attributeName] = array('null' => true, 'type' => $map['attributeTypes'][$attributeInfos['type']]['databaseType'], 'length' => $map['attributeTypes'][$attributeInfos['type']]['length']);
                 }
                 foreach ($classInfos['definition']['identity'] as $fieldName) {
                     $tables[$className]['fields'][$fieldName]['null'] = false;
@@ -44,7 +47,7 @@ namespace Art\Adapter\Map\Extractor {
                     switch ($associationInfos['reference']) {
                         case 'external':
                             // add fk in external table
-                            $field=$associationInfos['name']?$associationInfos['name']:$className;
+                            $field = $associationInfos['name'] ? $associationInfos['name'] : $className;
                             $tables[$associationInfos['to']]['fields'][$field] = array(
                                 'null' => !$associationInfos['composition'],
                                 'type' => 'bigint',
@@ -63,8 +66,8 @@ namespace Art\Adapter\Map\Extractor {
                             // define the fk as a reference
                             $fks[$className][$associationInfos['to']] = array('table' => $tables[$associationInfos['to']]['name'], 'field' => $map['classes'][$associationInfos['to']]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
                             break;
-                        case 'class':
-                            $associationTable = $mapObject->getDatabaseAssociationTable($associationInfos['name'], $className, $associationInfos['to']);
+                        case 'table':
+                            $associationTable =$associationInfos['databaseTable'];
                             if (!isset($tables[$associationTable])) {
                                 $tables[$associationTable] = array(
                                     'name' => $associationTable,
@@ -88,7 +91,9 @@ namespace Art\Adapter\Map\Extractor {
                                 'length' => 20
                             );
                             // define the fk as a reference
-                            $fks[$associationTable][$associationInfos['to']] = array('table' => $tables[$associationInfos['to']]['name'], 'field' => $map['classes'][$associationInfos['to']]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => 'cascade');
+                            $fks[$associationTable][$associationInfos['to']] = array('table' => 
+                                $tables[$associationInfos['to']]['name'],
+                                'field' => $map['classes'][$associationInfos['to']]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => 'cascade');
                             $fks[$associationTable][$className] = array('table' => $tables[$className]['name'], 'field' => $map['classes'][$className]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => 'cascade');
                             //create the table if does not exist
                             break;
@@ -99,7 +104,7 @@ namespace Art\Adapter\Map\Extractor {
             $q = $database->query('set foreign_key_checks = 0', 'update');
             $q = $database->query('SHOW TABLES', 'select');
             foreach ($q as $d) {
-                $database->query('DROP TABLE ' . current($d));
+                $database->query('DROP TABLE `' . current($d) . '`');
             }
             $q = $database->query('set foreign_key_checks = 1', 'update');
             foreach ($tables as $class => $infos) {
@@ -108,7 +113,7 @@ namespace Art\Adapter\Map\Extractor {
             foreach ($fks as $classFrom => $fkeys) {
                 foreach ($fkeys as $fieldFrom => $infos) {
                     $database->createTableReference(array(
-                        'fromTable' => isset($map['classes'][$classFrom])?$map['classes'][$classFrom]['definition']['databaseTable']:$classFrom,
+                        'fromTable' => isset($map['classes'][$classFrom]) ? $map['classes'][$classFrom]['definition']['databaseTable'] : $classFrom,
                         'toTable' => $infos['table'],
                         'fromField' => $fieldFrom,
                         'toField' => $infos['field'],

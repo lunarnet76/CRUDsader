@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE art SYSTEM "../../Art/Adapter/Map/Loader/Xml.dtd" >
+<art>
+    <attributeTypes>
+        <attributeType alias="default" databaseType="VARCHAR" length="32"/>
+        <attributeType alias="email" class="email" options="'lookup':false" databaseType="VARCHAR" length="255"/>
+        <attributeType alias="date"  class="date"  options="'today':true" databaseType="DATE" length="false"/>
+    </attributeTypes>
+    
+    <classes>
+        <class name="contact" identity="name" databaseTable="Tcontact" databaseIdField="PKid">
+            <attribute name="name" databaseField="Fname" />
+            <associated to="group" name="hasGroup"  min="0"     max="1"     reference="internal"   internalField="FKgroup" composition="true"  />
+            <associated to="email" name="hasEmail"  min="0"     max="*"     reference="external"   externalField="FKcontact" composition="true"  />
+            <associated to="address" name="hasAddress"  min="0"     max="1"     reference="external"   externalField="FKcontact" composition="true"  />
+            <associated to="webSite" name="hasWebSite"  min="0"     max="*"     reference="table"  databaseTable="C2Wb" internalField="FK2contact" externalField="FK2website" composition="true"  />
+        </class>
+        <class name="person" inherit="contact" databaseTable="Tperson" databaseIdField="PKid"/>
+        
+        
+        <class name="group">
+            <attribute name="name" databaseField="Fname"/>
+        </class>
+        <class name="email">
+            <attribute name="address" databaseField="Faddress"/>
+        </class>
+        <class name="address">
+            <attribute name="street" databaseField="Fstreet"/>
+            <attribute name="streetNumber" databaseField="FstreetNumber"/>
+            <attribute name="city" databaseField="Fcity"/>
+            <attribute name="country" databaseField="Fcountry"/>
+        </class>
+        <class name="webSite">
+            <attribute name="url" databaseField="Furl"/>
+        </class>
+    </classes>
+</art>

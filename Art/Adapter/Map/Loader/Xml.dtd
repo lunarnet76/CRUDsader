@@ -10,16 +10,12 @@
             <!ATTLIST attributeType options CDATA #IMPLIED>
 
     <!ELEMENT classes (class+)>
-        <!ELEMENT class (inherit?,attribute*,associated*)>
+        <!ELEMENT class (attribute*,associated*)>
             <!ATTLIST class name CDATA #REQUIRED>
-            <!ATTLIST class databaseTable CDATA #IMPLIED>
             <!ATTLIST class identity CDATA #IMPLIED><!-- col1,col2 -->
+            <!ATTLIST class databaseTable CDATA #IMPLIED>
             <!ATTLIST class databaseIdField CDATA #IMPLIED><!-- col1,col2 -->
-            <!ATTLIST class association (true|false) #IMPLIED><!-- association class are UNIQUE to an association, and named with the association table name-->
-
-            <!ELEMENT inherit EMPTY>
-                <!ATTLIST inherit from CDATA #REQUIRED>
-                <!ATTLIST inherit implementation (table|concrete|hierarchy) #IMPLIED>
+            <!ATTLIST class inherit CDATA #IMPLIED>
 
             <!ELEMENT attribute EMPTY>
                 <!ATTLIST attribute name                CDATA               #REQUIRED>
@@ -32,9 +28,12 @@
 
            <!ELEMENT associated EMPTY>
                 <!ATTLIST associated to             CDATA                                   #REQUIRED>
-                <!ATTLIST associated reference (external|internal|class)                    #IMPLIED>
+                <!ATTLIST associated reference (external|internal|table)                    #IMPLIED>
                 <!ATTLIST associated name           CDATA                                   #IMPLIED>
                 <!ATTLIST associated min            CDATA                                   #IMPLIED>
                 <!ATTLIST associated max            CDATA                                   #IMPLIED>
                 <!ATTLIST associated composition (true|false)                    #IMPLIED>
                 <!ATTLIST associated databaseTable CDATA                          #IMPLIED>
+                <!ATTLIST associated internalField CDATA                          #IMPLIED>
+                <!ATTLIST associated externalField CDATA                          #IMPLIED>
+

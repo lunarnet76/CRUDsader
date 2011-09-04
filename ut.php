@@ -1,5 +1,5 @@
 <?php
-$dir=dirname(__FILE__).'/Art/Test/';
+$dir=dirname(__FILE__).'/Test/';
 chdir($dir);
 if(!isset($_REQUEST['file'])){
     $handle = opendir($dir);
@@ -13,7 +13,6 @@ else {
     $cmd='php parts/phpunit.php --bootstrap parts/bootstrap.php '.(empty($_REQUEST['file'])?'./':$_REQUEST['file']).'';
     echo $cmd.'<br>';
     ob_start();
-    
     print_r(shell_exec($cmd));
     $content=ob_get_clean();
     echo '<pre>'.($content).'</pre>';
