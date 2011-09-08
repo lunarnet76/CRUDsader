@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * LICENSE: see Art/license.txt
@@ -11,7 +10,6 @@
  * @link        http://www.Art.com/manual/
  * @since       1.0
  */
-
 namespace Art {
 
     /**
@@ -70,13 +68,13 @@ namespace Art {
         public function classGetDatabaseTable($className) {
             return $this->_map['classes'][$className]['definition']['databaseTable'];
         }
-        
-        public function classGetDatabaseTableField($className,$attributeName) {
-            return $attributeName=='id'?$this->_map['classes'][$className]['definition']['databaseIdField']:$this->_map['classes'][$className]['attributes'][$attributeName]['databaseField'];
+
+        public function classGetDatabaseTableField($className, $attributeName) {
+            return $attributeName == 'id' ? $this->_map['classes'][$className]['definition']['databaseIdField'] : $this->_map['classes'][$className]['attributes'][$attributeName]['databaseField'];
         }
-        
-        public function classGetAttributeCount($className){
-            return $className==self::BASE_ASSOCIATION_CLASS?2:count($this->_map['classes'][$className]['definition']['attributeCount']);
+
+        public function classGetAttributeCount($className) {
+            return $className == self::BASE_ASSOCIATION_CLASS ? 2 : count($this->_map['classes'][$className]['definition']['attributeCount']);
         }
 
         public function classHasAssociation($className, $associationName) {
@@ -86,24 +84,55 @@ namespace Art {
         public function classGetAssociation($className, $associationName) {
             return $this->_map['classes'][$className]['associations'][$associationName];
         }
-        
-        public function classGetInfos($className){
+
+        public function classGetInfos($className) {
             return $this->_map['classes'][$className];
         }
+
+        public function classHasParent($className) {
+            return $this->classGetParent($className);
+        }
+
+        public function classGetParent($className) {
+            return $this->_map['classes'][$className]['inherit'];
+        }
         
-        public function classGetJoin($className, $associationName, $fromAlias, $joinedAlias, $associationClassAlias=false) {
+        public function classInheritsFrom($className,$inheritFrom) {
+            if($this->classHasParent($className))
+                return  $this->classHasParent($className)==$inheritFrom || $this->classInheritsFrom($this->classGetParent($className),$inheritFrom);
+            return false;
+        }
+
+        public function classGetJoin($className, $associationName, $fromAlias, $joinedAlias) {
+            static $associationAlias='association';
+            if ($associationName == 'parent') {
+                if(!$this->classHasParent($className))
+                     throw new MapException('join error : class "' . $className . '" has no parent');
+                $parentClass = $this->classGetParent($className);
+                return array(
+                    'table' => array(
+                        'fromAlias' => $fromAlias,
+                        'fromColumn' => $this->_map['classes'][$className]['definition']['databaseIdField'],
+                        'toAlias' => $joinedAlias,
+                        'toColumn' => $this->_map['classes'][$parentClass]['definition']['databaseIdField'],
+                        'toTable' => $this->_map['classes'][$parentClass]['definition']['databaseTable'],
+                        'toClass' => $parentClass,
+                        'type' => 'left'
+                    )
+                );
+            }
             if (!isset($this->_map['classes'][$className]['associations'][$associationName]))
                 throw new MapException('join error : class "' . $className . '" has no association "' . $associationName . '"');
             $association = $this->_map['classes'][$className]['associations'][$associationName];
             $joins = array();
-            
+
             switch ($association['reference']) {
                 case 'external':
                     $joins['table'] = array(
                         'fromAlias' => $fromAlias,
                         'fromColumn' => $this->_map['classes'][$className]['definition']['databaseIdField'],
                         'toAlias' => $joinedAlias,
-                        'toColumn' => $association['name']?$associationName:$className,
+                        'toColumn' => $association['externalField'],
                         'toTable' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
                         'toClass' => $association['to'],
                         'type' => 'left'
@@ -112,7 +141,7 @@ namespace Art {
                 case 'internal':
                     $joins['table'] = array(
                         'fromAlias' => $fromAlias,
-                        'fromColumn' => $association['name']?$associationName:$association['to'],
+                        'fromColumn' => $association['internalField'],
                         'toAlias' => $joinedAlias,
                         'toColumn' => $this->_map['classes'][$association['to']]['definition']['databaseIdField'],
                         'toTable' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
@@ -120,18 +149,17 @@ namespace Art {
                         'type' => 'left'
                     );
                     break;
-                case 'class':
+                case 'table':
                     $joins['association'] = array(
                         'fromAlias' => $fromAlias,
                         'fromColumn' => $this->_map['classes'][$className]['definition']['databaseIdField'],
-                        'toAlias' => $associationClassAlias,
+                        'toAlias' => $associationAlias,
                         'toColumn' => $className,
                         'toTable' => $association['databaseTable'],
-                        'toClass' => $association['name']?$association['name']:self::BASE_ASSOCIATION_CLASS,
                         'type' => 'left'
                     );
                     $joins['table'] = array(
-                        'fromAlias' => $associationClassAlias,
+                        'fromAlias' => $associationAlias++,
                         'fromColumn' => $association['to'],
                         'toAlias' => $joinedAlias,
                         'toColumn' => $this->_map['classes'][$association['to']]['definition']['databaseIdField'],
@@ -147,11 +175,8 @@ namespace Art {
         public static function getDatabaseAssociationTable($associationName, $classTo, $classFrom) {
             return $associationName? : ($classFrom > $classTo ? $classTo . '2' . $classFrom : $classFrom . '2' . $classTo);
         }
-
     }
-
     class MapException extends \Art\Exception {
         
     }
-
 }

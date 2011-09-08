@@ -96,7 +96,7 @@ namespace Art\Database {
         }
         
         public function __toString(){
-            $descriptor=\Art\Database::getInstance()->getDescriptor();
+            $descriptor=\Art\Database::getInstance()->getAdapter('descriptor');
             return $descriptor->highLight($descriptor->select($this));
         }
     }

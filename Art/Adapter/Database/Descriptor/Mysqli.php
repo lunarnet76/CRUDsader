@@ -75,7 +75,7 @@ namespace Art\Adapter\Database\Descriptor {
                             $fields.=$joinAlias . '.' . $this->quoteIdentifier($field) . $this->_getAlias($alias) . ',';
                     else
                         $fields.=$joinAlias . '.*,';
-                    $join.=' ' . (isset($info['type']) ? strtoupper($info['type']) : 'LEFT') . ' JOIN ' . $info['toTable'] . ' AS ' . $this->quoteIdentifier($info['toAlias']) . ' ON ' . $this->quoteIdentifier($info['fromAlias']) . '.' . $this->quoteIdentifier($info['fromColumn']) . '=' . $this->quoteIdentifier($info['toAlias']) . '.' . $this->quoteIdentifier($info['toColumn']);
+                    $join.=' ' . (isset($info['type']) ? strtoupper($info['type']) : 'LEFT') . ' JOIN ' . $this->quoteIdentifier($info['toTable']) . ' AS ' . $this->quoteIdentifier($info['toAlias']) . ' ON ' . $this->quoteIdentifier($info['fromAlias']) . '.' . $this->quoteIdentifier($info['fromColumn']) . '=' . $this->quoteIdentifier($info['toAlias']) . '.' . $this->quoteIdentifier($info['toColumn']);
                 }
             if (!$count)
                 $fields[strlen($fields) - 1] = ' ';
@@ -95,8 +95,6 @@ namespace Art\Adapter\Database\Descriptor {
                 $join = false;
                 $infos['limit'] = false;
                 $infos['where'] = false;
-                if (!empty($infos['args'])) // ??? pointless ???
-                    $infos['args'] = array_merge($infos['args'], $infos['args']);
             }
 
             $sql = 'SELECT ' . $fields . 'FROM ' . $from . $join;

@@ -132,10 +132,10 @@ namespace Art\Adapter\Map\Loader {
                 foreach ($infos['associations'] as $associationName => $association) {
                     switch ($association['reference']) {
                         case 'internal':
-                            $ret['classes'][$name]['definition']['attributeCount'][$associationName] = true;
+                            $ret['classes'][$name]['definition']['attributeCount'][$association['internalField']] = true;
                             break;
                         case 'external':
-                            $ret['classes'][$association['to']]['definition']['attributeCount'][$associationName == $association['to'] ? $name : $associationName] = true;
+                            $ret['classes'][$association['to']]['definition']['attributeCount'][$association['externalField']] = true;
                             break;
                     }
                 }

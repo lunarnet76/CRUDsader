@@ -30,7 +30,6 @@ namespace Art\Adapter\Map\Extractor {
                     'foreignKeys' => array(),
                     'indexes' => array()
                 );
-
                 foreach ($classInfos['attributes'] as $attributeName => $attributeInfos) {
                     if ($attributeName == 'polymorphism')
                         $tables[$className]['fields'][$attributeName] = array('null' => true, 'type' => $attributeInfos['databaseType'], 'length' => $attributeInfos['length']);
@@ -40,6 +39,10 @@ namespace Art\Adapter\Map\Extractor {
                 foreach ($classInfos['definition']['identity'] as $fieldName) {
                     $tables[$className]['fields'][$fieldName]['null'] = false;
                 }
+                /*if($classInfos['inherit']){
+                    $clDef=$map['classes'][$className]['definition'];
+                    $fks[$clDef['databaseTable']][$clDef['databaseIdField']] = array('table' => $tables[$className]['name'], 'field' => $classInfos['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
+                }*/
             }
             $fks = array();
             foreach ($map['classes'] as $className => $classInfos) {
@@ -47,24 +50,23 @@ namespace Art\Adapter\Map\Extractor {
                     switch ($associationInfos['reference']) {
                         case 'external':
                             // add fk in external table
-                            $field = $associationInfos['name'] ? $associationInfos['name'] : $className;
-                            $tables[$associationInfos['to']]['fields'][$field] = array(
-                                'null' => !$associationInfos['composition'],
+                            $tables[$associationInfos['to']]['fields'][$associationInfos['externalField']] = array(
+                                'null' =>  true,
                                 'type' => 'bigint',
                                 'length' => 20
                             );
                             // define the fk as a reference
-                            $fks[$map['classes'][$associationInfos['to']]['definition']['databaseTable']][$field] = array('table' => $tables[$className]['name'], 'field' => $classInfos['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
+                            $fks[$map['classes'][$associationInfos['to']]['definition']['databaseTable']][$associationInfos['externalField']] = array('table' => $tables[$className]['name'], 'field' => $classInfos['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
                             break;
                         case 'internal':
                             // add fk in internal table
-                            $tables[$className]['fields'][$associationInfos['to']] = array(
-                                'null' => !$associationInfos['composition'],
+                            $tables[$className]['fields'][$associationInfos['internalField']] = array(
+                                'null' => true,
                                 'type' => 'bigint',
                                 'length' => 20
                             );
                             // define the fk as a reference
-                            $fks[$className][$associationInfos['to']] = array('table' => $tables[$associationInfos['to']]['name'], 'field' => $map['classes'][$associationInfos['to']]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
+                            $fks[$className][$associationInfos['internalField']] = array('table' => $tables[$associationInfos['to']]['name'], 'field' => $map['classes'][$associationInfos['to']]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
                             break;
                         case 'table':
                             $associationTable =$associationInfos['databaseTable'];

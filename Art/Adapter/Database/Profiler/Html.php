@@ -155,7 +155,7 @@ namespace Art\Adapter\Database\Profiler {
                 }
             </style>
             <?php
-            $highlighter = \Art\Database::getInstance()->getDescriptor();
+            $highlighter = \Art\Database::getInstance()->getAdapter('descriptor');
             echo '<div class="profiler">';
             $this->_log = array_reverse($this->_log);
             echo '<div class="timeTotal">Time used :' . $this->_totalTime . '</div>';

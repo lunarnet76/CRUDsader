@@ -61,6 +61,12 @@ namespace Art\Adapter\Database {
         abstract public function executeQueryStatement(array $args);
 
         /**
+         * wether to check or not for foreign keys
+         * @abstract
+         */
+        abstract public function setForeignKeyCheck($bool=true);
+        
+        /**
          * begin a transaction
          * @abstract
          */

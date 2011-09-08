@@ -4,6 +4,7 @@ class AdapterMapExtractorTest extends PHPUnit_Framework_TestCase {
     public function setUp(){
         $c=\Art\Configuration::getInstance();
         $c->adapter->map->loader->xml->file='parts/map.xml';
+        Bootstrap::unloadSQLDatabase();
     }
     
     public function test_create() {

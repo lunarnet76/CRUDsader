@@ -5,6 +5,9 @@ namespace Art\Object\Collection {
         public function __construct($className, \Art\Adapter\Database\Rows $rowSet, array $mapFields) {
             parent::__construct($className);
             if ($rowSet->count()) {
+            pre($rowSet,'rw');
+            /*pre($mapFields);
+             //*/
                 $lastId = false;
                 $aggregatedRows = array();
                 $fields = $rowSet->getFields();
@@ -12,7 +15,7 @@ namespace Art\Object\Collection {
                     if ($lastId === false)
                         $lastId = $row[0];
                     if ($row[0] != $lastId) {
-                        $this->_newObject($row[0], $fields, $mapFields, $aggregatedRows);
+                        $this->_newObject($lastId, $fields, $mapFields, $aggregatedRows);
                         $aggregatedRows = array();
                     }
                     $aggregatedRows[] = $row;
@@ -43,7 +46,7 @@ namespace Art\Object\Collection {
             foreach ($rows as $k => $row) {
                 foreach ($mapFields as $name => $infos) {
                     for ($i = $infos['from']; $i < $infos['to']; $i++) {
-                        $split[$name][$k][$i] = $row[$i];
+                        $split[$name][$k][$i] = isset($row[$i])?$row[$i]:new \Art\Expression\Void();
                     }
                 }
             }
@@ -52,7 +55,7 @@ namespace Art\Object\Collection {
                 if ($i !== 0)
                     self::setAttribute($object, $fields[$i]->name, $rows[0][$i]);
             }
-            pre($split, 'split');
+            // parent
             // associations
             foreach ($object->_infos['associations'] as $name => $associationInfos) {
                 $object->getAssociation($name);
@@ -66,6 +69,7 @@ namespace Art\Object\Collection {
                 $object->_fields[$fieldIndex] = $value;
         }
     }
+    
     // OBJECT
     class Object {
         protected $_class;
@@ -90,7 +94,7 @@ namespace Art\Object\Collection {
         }
 
         public function toArray() {
-            return $this->_fields;
+            return array('persisted'=>$this->_isPersisted,'fields'=>$this->_fields);
         }
     }
     // ASSOC

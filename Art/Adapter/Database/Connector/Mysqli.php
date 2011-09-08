@@ -69,7 +69,7 @@ namespace Art\Adapter\Database\Connector {
                 $this->connect();
             $resource = $this->_connection->query($sql);
             if (false === $resource)
-                throw new MysqliException($this->_connection->error . ' in sql : ' . $sql, $this->_connection->errno);
+                throw new MysqliException($this->_connection->error, $sql, $this->_connection->errno);
             switch ($type) {
                 case 'select':
                 case 'listTable':
@@ -89,6 +89,13 @@ namespace Art\Adapter\Database\Connector {
         }
 
         /**
+         * wether to check or not for foreign keys
+         */
+        public function setForeignKeyCheck($bool=true) {
+            $this->query('SET FOREIGN_KEY_CHECKS = ' . ($bool ? '1' : '0'), 'set');
+        }
+
+        /**
          * prepare a SQL prepared statement, the native MySQL driver does not support it, so we just simulate it
          * @abstract
          * @param string $sql
@@ -97,7 +104,7 @@ namespace Art\Adapter\Database\Connector {
         public function prepareQueryStatement($sql, $type='select') {
             $statment = $this->_connection->prepare($sql);
             if (!$statment)
-                throw new MysqliException('preparing statment failed');
+                throw new MysqliException('preparing statment failed', $sql);
             $this->_preparedStatement = array('sql' => $sql, 'type' => $type, 'statment' => $statment);
         }
 
@@ -116,17 +123,17 @@ namespace Art\Adapter\Database\Connector {
 
             $ref = new \ReflectionClass('mysqli_stmt');
             $method = $ref->getMethod('bind_param');
-            
-            $args2=array(0=>'');
-            foreach($args as $k=>$v){
-                $args2[$k+1]=(string)$v;
+
+            $args2 = array(0 => '');
+            foreach ($args as $k => $v) {
+                $args2[$k + 1] = (string) $v;
                 $args2[0].='s';
             }
-            
+
             $method->invokeArgs($stmt, $args2);
 
-            $execute=$stmt->execute();
-            if(!$execute)
+            $execute = $stmt->execute();
+            if (!$execute)
                 throw new MysqliException($stmt->error);
             switch ($this->_preparedStatement['type']) {
                 case 'select':
@@ -152,10 +159,9 @@ namespace Art\Adapter\Database\Connector {
                         $i++;
                     }
                     return $array;
-                    case 'insert':
-                    case 'delete':
-                        return $stmt->affected_rows;
-                  
+                case 'insert':
+                case 'delete':
+                    return $stmt->affected_rows;
             }
         }
 
@@ -187,6 +193,16 @@ namespace Art\Adapter\Database\Connector {
         }
     }
     class MysqliException extends \Art\Exception {
-        
+        protected $_sql = false;
+
+        public function __construct($message, $sql=false, $errorNo=false) {
+            $this->message = $message;
+            $this->_sql = $sql;
+            $this->code = $errorNo;
+        }
+
+        public function getSQL() {
+            return $this->_sql;
+        }
     }
 }

@@ -13,12 +13,24 @@ namespace Art {
     /**
      * @package     Art
      */
-    class Database extends Singleton {
-        protected $_connectorAdapter;
-        protected $_descriptorAdapter;
-        protected $_profilerAdapter;
-        protected $_resultSetAdapter;
-        protected $_configuration;
+    class Database extends Singleton implements Interfaces\Adaptable{
+        protected $_adapters=array();
+        
+        /**
+         * @param string $name
+         * @return bool
+         */
+        public function hasAdapter($name=false){
+            return isset($this->_adapters[$name]);
+        }
+
+        /**
+         * @param string $name
+         * @return \Art\Adapter
+         */
+        public function getAdapter($name=false){
+            return $this->_adapters[$name];
+        }
 
         /**
          * singletoned constructor
@@ -27,40 +39,18 @@ namespace Art {
         public function init() {
             $configuration = Configuration::getInstance();
             $this->_configuration = $configuration->database;
-            $this->_connectorAdapter = Adapter::factory(array('database' => 'connector'));
-            $this->_connectorAdapter->setConfiguration($this->_configuration);
-            $this->_descriptorAdapter = Adapter::factory(array('database' => 'descriptor'));
+            $this->_adapters['connector'] = Adapter::factory(array('database' => 'connector'));
+            $this->_adapters['connector']->setConfiguration($this->_configuration);
+            $this->_adapters['descriptor'] = Adapter::factory(array('database' => 'descriptor'));
             if ($configuration->debug->database->profiler)
-                $this->_profilerAdapter = Adapter::factory(array('database' => 'profiler'));
+                $this->_adapters['profiler'] = Adapter::factory(array('database' => 'profiler'));
         }
-
+        
         /**
-         * @return \Art\Adapter\Database\Connector 
+         * wether to check or not for foreign keys
          */
-        public function getConnector() {
-            return $this->_connectorAdapter;
-        }
-
-        /**
-         * @return \Art\Adapter\Database\Descriptor 
-         */
-        public function getDescriptor() {
-            return $this->_descriptorAdapter;
-        }
-
-        /**
-         * @return bool 
-         */
-        public function hasProfiler() {
-            return isset($this->_profilerAdapter);
-        }
-
-        /**
-         *
-         * @return \Art\Adapter\Database\Profiler  
-         */
-        public function getProfiler() {
-            return $this->_profilerAdapter;
+        public function setForeignKeyCheck($bool=true){
+            $this->_adapters['connector']->setForeignKeyCheck($bool);
         }
 
         /**
@@ -69,7 +59,7 @@ namespace Art {
          * @return string 
          */
         public function quote($string) {
-            return $this->_descriptorAdapter->quote($string);
+            return $this->_adapters['descriptor']->quote($string);
         }
 
         /**
@@ -78,7 +68,7 @@ namespace Art {
          * @return string 
          */
         public function quoteIdentifier($string) {
-            return $this->_descriptorAdapter->quoteIdentifier($string);
+            return $this->_adapters['descriptor']->quoteIdentifier($string);
         }
         
 
@@ -89,18 +79,18 @@ namespace Art {
          * @return \Art\Adapter\Database\Rows
          */
         public function query($sql, $type='') {
-            if (!$this->hasProfiler())
-                return $this->_connectorAdapter->query($sql, $type);
-            $this->_profilerAdapter->startQuery($sql, $type);
+            if (!$this->hasAdapter('profiler'))
+                return $this->_adapters['connector']->query($sql, $type);
+            $this->_adapters['profiler']->startQuery($sql, $type);
             try {
-                $results = $this->_connectorAdapter->query($sql, $type);
+                $results = $this->_adapters['connector']->query($sql, $type);
                 if ($results instanceof \Art\Adapter\Database\Rows)
-                    $this->_profilerAdapter->stopQuery($results->count(), $results->toArray());
+                    $this->_adapters['profiler']->stopQuery($results->count(), $results->toArray());
                 else
-                    $this->_profilerAdapter->stopQuery($results);
+                    $this->_adapters['profiler']->stopQuery($results);
                 return $results;
             } catch (Exception $e) {
-                $this->_profilerAdapter->stopQueryWithException($e->getMessage());
+                $this->_adapters['profiler']->stopQueryWithException($e->getMessage());
                 throw $e;
             }
         }
@@ -113,12 +103,12 @@ namespace Art {
          */
         public function prepareQueryStatement($sql, $type='') {
             if (!$this->hasProfiler())
-                return $this->_connectorAdapter->prepareQueryStatement($sql, $type);;
-            $this->_profilerAdapter->startQueryStatement($sql, $type);
+                return $this->_adapters['connector']->prepareQueryStatement($sql, $type);;
+            $this->_adapters['profiler']->startQueryStatement($sql, $type);
             try {
-                return $this->_connectorAdapter->prepareQueryStatement($sql, $type);
+                return $this->_adapters['connector']->prepareQueryStatement($sql, $type);
             } catch (Exception $e) {
-                $this->_profilerAdapter->stopQueryWithException($e->getMessage());
+                $this->_adapters['profiler']->stopQueryWithException($e->getMessage());
                 throw $e;
             }
         }
@@ -130,16 +120,16 @@ namespace Art {
          */
         public function executeQueryStatement(array $args) {
             if (!$this->hasProfiler())
-                return $this->_connectorAdapter->executeQueryStatement($args);
+                return $this->_adapters['connector']->executeQueryStatement($args);
             try {
-                $results = $this->_connectorAdapter->executeQueryStatement($args);
+                $results = $this->_adapters['connector']->executeQueryStatement($args);
                 if (is_array($results))
-                    $this->_profilerAdapter->stopQueryStatement(count($results), $results, $args);
+                    $this->_adapters['profiler']->stopQueryStatement(count($results), $results, $args);
                 else
-                    $this->_profilerAdapter->stopQueryStatement($results, null, $args);
+                    $this->_adapters['profiler']->stopQueryStatement($results, null, $args);
                 return $results;
             } catch (Exception $e) {
-                $this->_profilerAdapter->stopQueryStatementWithException($e->getMessage());
+                $this->_adapters['profiler']->stopQueryStatementWithException($e->getMessage());
                 throw $e;
             }
         }
@@ -148,37 +138,37 @@ namespace Art {
          * start a transaction
          */
         public function beginTransaction() {
-            $this->_connectorAdapter->beginTransaction();
+            $this->_adapters['connector']->beginTransaction();
         }
 
         /**
          * ends a transaction with a commit
          */
         public function commit() {
-            $this->_connectorAdapter->commit();
+            $this->_adapters['connector']->commit();
         }
 
         /**
          * ends a transaction with a rollback
          */
         public function rollBack() {
-            $this->_connectorAdapter->rollBack();
+            $this->_adapters['connector']->rollBack();
         }
 
         public function insert($table, array $values) {
-            return $this->query($this->_descriptorAdapter->insert($table, $values), 'insert');
+            return $this->query($this->_adapters['descriptor']->insert($table, $values), 'insert');
         }
 
         public function select(\Art\Database\Select $select,array $args=null) {
-            return $this->query($this->_descriptorAdapter->select($select,$args), 'select');
+            return $this->query($this->_adapters['descriptor']->select($select,$args), 'select');
         }
 
         public function update($table, array $values, $where=false) {
-            return $this->query($this->_descriptorAdapter->update($table, $values, $where), 'insert');
+            return $this->query($this->_adapters['descriptor']->update($table, $values, $where), 'insert');
         }
 
         public function delete($table, $where) {
-            return $this->query($this->_descriptorAdapter->delete($table, $where), 'delete');
+            return $this->query($this->_adapters['descriptor']->delete($table, $where), 'delete');
         }
 
         /**
@@ -191,7 +181,7 @@ namespace Art {
          * @return bool 
          */
         public function createTable($name, array $fields,array $identity=array(),array $surrogateKey=array(),array $indexes=array()) {
-            return $this->query($this->_descriptorAdapter->createTable($name,$fields, $identity,$surrogateKey,$indexes), 'createTable');
+            return $this->query($this->_adapters['descriptor']->createTable($name,$fields, $identity,$surrogateKey,$indexes), 'createTable');
         }
         
         /**
@@ -199,7 +189,7 @@ namespace Art {
          * @param type $infos=array('fromTable','toTable','fromField','toField','onUpdate','onDelete') 
          */
         public function createTableReference($infos){
-            return $this->query($this->_descriptorAdapter->createTableReference($infos), 'createTableReference');
+            return $this->query($this->_adapters['descriptor']->createTableReference($infos), 'createTableReference');
         }
     }
 }

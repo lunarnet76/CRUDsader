@@ -44,7 +44,6 @@ namespace Art {
          * this replace the constructor
          */
         public function init() {
-            
         }
 
         /**
