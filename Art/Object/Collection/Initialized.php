@@ -27,7 +27,7 @@ namespace Art\Object\Collection {
         }
 
         protected function _newObject($id, $fields, $mapFields, $aggregatedRows) {
-            $ret = $this->_objects[$this->_iterator] = new Object($this->_class);
+            $ret = $this->_objects[$this->_iterator] = new Object($this->_class); 
             ObjectWriter::setId($ret, $id);
             ObjectWriter::loadArray($ret, $aggregatedRows, $mapFields, $fields);
             $this->_objectIndexes[$id] = $this->_iterator;
