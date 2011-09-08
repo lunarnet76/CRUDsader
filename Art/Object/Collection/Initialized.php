@@ -5,7 +5,7 @@ namespace Art\Object\Collection {
         public function __construct($className, \Art\Adapter\Database\Rows $rowSet, array $mapFields) {
             parent::__construct($className);
             if ($rowSet->count()) {
-            pre($rowSet,'rw');
+            //pre($rowSet,'rw');
             /*pre($mapFields);
              //*/
                 $lastId = false;
