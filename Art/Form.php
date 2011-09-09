@@ -33,11 +33,11 @@ namespace Art {
             $index = $label !== false ? preg_replace('/[^a-zA-Z0-9_]/', '_', $label) : self::$_componentIndex++;
             $this->_setId($index);
             $this->_label = $label;
-            $this->_url = $url;
-            $sessionNamespace = Session::useNamespace('Art\\Form\\' . $this->_id);
-            if (!isset($sessionNamespace->{$this->_id}))
-                $sessionNamespace->{$this->_id} = array();
-            $this->_session = $sessionNamespace->{$this->_id};
+            $this->_htmlAttributes['action'] = $url;
+            $sessionNamespace = Session::useNamespace('Art\\Form\\' . $index);
+            if (!isset($sessionNamespace->$index))
+                $sessionNamespace->$index = array();
+            $this->_session = $sessionNamespace->$index;
             // token
             if (isset($this->_session->token))
                 $this->_session->oldToken = $this->_session->token;
@@ -53,7 +53,7 @@ namespace Art {
         public function add(\Art\Form\Component $component, $label=false, $required=false) {
             $index = $label !== false ? preg_replace('/[^a-zA-Z0-9_]/', '_', $label) : self::$_componentIndex++;
             $this->_components[$index] = $component;
-            $component->_setId($this->_id . '[' . $index . ']');
+            $component->_setId($this->_htmlAttributes['id'] . '[' . $index . ']');
             $component->_parent = $this;
             $component->setLabel($label);
             $component->setRequired($required);
@@ -67,7 +67,7 @@ namespace Art {
         public function remove($index) {
             if (!isset($this->_components[$index]))
                 throw new FormException('component at index "' . $index . '" does not exist (try alphanum index)');
-            unset($this->_components[$index]->_id);
+            unset($this->_components[$index]->_htmlAttributes['id']);
             unset($this->_components[$index]->_parent);
             unset($this->_components[$index]);
         }
@@ -88,14 +88,14 @@ namespace Art {
         public function receive($data=false) {
             $this->_isReceived = false;
             if ($data === false)
-                $data = $_POST;
-            if ($data === null || (!$this->hasParentComponent() && !isset($data[$this->_id]))) {
+                $data = $_REQUEST;
+            if ($data === null || (!$this->hasParentComponent() && !isset($data[$this->_htmlAttributes['id']]))) {
                 foreach ($this->_components as $index => $component)
                     $component->receive(null);
                 return false;
             }
             if (!$this->hasParentComponent())
-                $data = $data[$this->_id];
+                $data = $data[$this->_htmlAttributes['id']];
             foreach ($this->_components as $index => $component) {
                 if (isset($data[$index])) {
                     $this->_session->$index = $data[$index];
@@ -151,7 +151,7 @@ namespace Art {
                 if ($component->isEmpty()) {
                     if ($component->isRequired())
                         $this->_error = 'form_error_required_' . $name;
-                }else if (false !== $error = $component->error()){
+                }else if (false !== $error = $component->error()) {
                     $this->_error = $error;
                 }
             }
@@ -161,9 +161,14 @@ namespace Art {
 
         public function toHTML() {
             $html = $this->htmlTag() . $this->htmlError() . $this->htmlLabel();
-            foreach ($this->_components as $component)
+            foreach ($this->_components as $component){
                 $html.=$this->htmlRow($component);
+            }
             return $html . $this->htmlTag();
+        }
+
+        public function __toString() {
+            return $this->toHTML();
         }
 
         public function htmlTag() {
@@ -171,36 +176,41 @@ namespace Art {
             if (!$htmlTagIsOpened) {
                 $htmlTagIsOpened = true;
                 $htmlAttributes = $this->getHTMLAttributes();
-                $tag = $this->hasParentComponent() ? '<fieldset' : '<form enctype="multipart/form-data" action="' . $this->_url . '"';
-                return $tag . ' required="' . ($this->_isRequired ? 'true' : 'false') . '" class="' . $this->_css . '" ' . $htmlAttributes . ' id="' . $this->_id . '">';
+                $tag = $this->hasParentComponent() ? '<fieldset' : '<form enctype="multipart/form-data" ' . $htmlAttributes;
+                return $tag . ' required="' . ($this->_isRequired ? 'true' : 'false') . '" ' . $htmlAttributes . '>';
             } else {
-                return $this->hasParentComponent() ? '</fieldset>' : '</form>';
+                return $this->hasParentComponent() ? '</fieldset>' : '<input type="hidden" name="' . $this->_htmlAttributes['id'] . '[token]" value=""><input type="submit" name="' . $this->_htmlAttributes['id'] . '[submit]" style="height:0;visibility:hidden"></form>';
             }
         }
 
         public function htmlError() {
-            return $this->_html(is_bool($this->_error)?\Art\I18n::getInstance()->translate('form_error_general'):$this->_error, 'error');
+            return $this->_html(is_bool($this->_error) ? \Art\I18n::getInstance()->translate('form_error_general') : $this->_error, 'error');
         }
 
         public function htmlLabel() {
             return $this->_html($this->_label, 'title');
         }
 
+        /**
+         * @todo fix the bug
+         * @param \Art\Form\Component $component
+         * @return string 
+         */
         public function htmlRow(\Art\Form\Component $component) {
             return $this->_html($this->_html($component->_label, 'label') . $this->_html($component->toHTML(), 'component') . $this->_html($component->getError(), 'error'), 'row');
         }
-        /*         * ACCESSORS ************************* */
+        /** ACCESSORS ************************* */
 
         public function getComponents() {
             return $this->_components;
         }
 
         public function getUrl() {
-            return $this->_url;
+            return isset($this->_htmlAttributes['action']) ? $this->_htmlAttributes['action'] : false;
         }
 
         public function setUrl($url) {
-            $this->_url = $url;
+            $this->_htmlAttributes['action'] = $url;
         }
 
         public function setView($viewPath) {
@@ -219,7 +229,7 @@ namespace Art {
             return $this->_helper[$name];
         }
     }
-    class FormException extends \Art\Exception{
+    class FormException extends \Art\Exception {
         
     }
 }

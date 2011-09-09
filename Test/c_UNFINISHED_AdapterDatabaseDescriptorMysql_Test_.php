@@ -27,7 +27,6 @@ class AAdapterDatabaseDescriptorMysql extends PHPUnit_Framework_TestCase {
         echo $descriptor->highLight($s, true);
     }
 
-       
     public function test_createTable_(){
         $descriptor = MySQLDescriptor::getInstance();
         $this->assertEquals($descriptor->createTable(

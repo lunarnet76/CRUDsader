@@ -35,7 +35,7 @@ namespace Art {
             $this->_oql = $oql;
         }
 
-        public function _execute() {
+        public function getInfos() {
             if (!$this->_syntaxValidated)
                 if (!$this->validateSyntax())
                     throw new QueryException('bad syntax');
@@ -139,15 +139,15 @@ namespace Art {
             /* TODO : WHERE, ORDER BY, LIMIT */
             $this->_mapFields = $mapFields;
             $this->_sql = $sql;
+            return array('sql'=>$sql,'oql'=>$this->_oql,'mapFields'=>$mapFields);
         }
 
         public function execute($args=NULL) {
-            $this->_execute();
+            $this->getInfos();
             if (!is_array($args))
                 $args = array($args);
-            pre((string)$this->_sql);
             $results = \Art\Database::getInstance()->select($this->_sql, $args);
-            $collection = new \Art\Object\Collection\Initialized($this->_class, $results, $this->_mapFields);
+            $collection = new \Art\Object\Collection\Initialised($this->_class, $results, $this->_mapFields);
             return $collection;
         }
 

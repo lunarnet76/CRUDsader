@@ -1,33 +1,47 @@
 <?php
 namespace Art\Object {
     class Attribute extends \Art\Form\Component {
+        protected $_value;
 
-        public function __construct($name, $wrapper, $options=false) {
+        public function __construct($name, $wrapper, $options=array()) {
             $this->_name = $name;
-            $this->_wrapper = $wrapper;
-            $this->_options = $options;
+            $this->_wrapper = new $wrapper($options);
         }
 
         public function error() {
-            $valid=call_user_func_array(array($this->_wrapper, 'isValid'), array($this->_value, $this->_options));
-            $this->_error=$valid===true?false:($valid===false?true:$valid);
+            $valid = $this->_wrapper->isValid($this->_value);
+            $this->_error = $valid === true ? false : ($valid === false ? true : $valid);
             return $this->_error;
         }
 
         public function isEmpty() {
-            return call_user_func_array(array($this->_wrapper, 'isEmpty'), array($this->_value, $this->_options));
+            return $this->_wrapper->isEmpty($this->_value);
         }
 
         public function toArray() {
-            
+            return $this->_value;
+        }
+
+        public function setValue($value, $mandatory=false) {
+            $this->_error = false;
+            $empty = $this->_wrapper->isEmpty($value);
+            if ($empty && $mandatory) {
+                $this->_error = 'required';
+            }
+            $valid = $this->_wrapper->isValid($value);
+            if ($valid===true) {
+                $this->_value = $empty ? new \Art\Expression\Void : $value;
+            }else
+                $this->_error = $valid===false?true:$valid;
+            return $this->_error===false?true:false;
         }
 
         /**
-         * receive with a form
+         * receive from a form
          * @param type $data 
          */
         public function receive($data=false) {
-            $this->setValue($data);
+            return $this->_setValue($data);
         }
 
         /**
@@ -35,19 +49,15 @@ namespace Art\Object {
          * @param type $value 
          */
         public function setValueFromDatabase($value) {
-            $this->_setValue(call_user_func_array(array($this->_wrapper, 'formatFromDatabase'), array($value, $this->_options)));
+            $this->_setValue($this->_wrapper->formatFromDatabase($value));
         }
 
-        /**
-         * when writing object to database
-         * @param type $value 
-         */
-        public function getValueForDatabase($value) {
-            return call_user_func_array(array($this->_wrapper, 'formatForDatabase'), array($this->_value, $this->_options));
+        public function getValueForDatabase() {
+            return $this->_wrapper->formatForDatabase($this->_value);
         }
 
-        protected function setValue($value) {
-            $this->_value = call_user_func_array(array($this->_wrapper, 'isEmpty'), array($value, $this->_options)) ? new \Art\Expression\Void : $value;
+        protected function _setValue($value) {
+            $this->_value = $this->_wrapper->isEmpty($value) ? new \Art\Expression\Void : $value;
         }
 
         public function getValue() {
@@ -55,8 +65,8 @@ namespace Art\Object {
         }
 
         public function toHTML() {
-            $this->setHTMLAttribute('validator', call_user_func_array(array($this->_wrapper, 'javascriptValidator'), array($this->_options)));
-            return call_user_func_array(array($this->_wrapper, 'HTMLInput'), array($this->_value, $this->_id, $this->_options, $this->getHTMLAttributes()));
+            $this->setHTMLAttribute('validator', $this->_wrapper->javascriptValidator());
+            return $this->_wrapper->HTMLInput($this->_value instanceof \Art\Expression\Void?'':$this->_value, $this->_htmlAttributes['id'], $this->getHTMLAttributes());
         }
     }
 }

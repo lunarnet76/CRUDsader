@@ -31,10 +31,7 @@ namespace Art\Adapter\Map\Extractor {
                     'indexes' => array()
                 );
                 foreach ($classInfos['attributes'] as $attributeName => $attributeInfos) {
-                    if ($attributeName == 'polymorphism')
-                        $tables[$className]['fields'][$attributeName] = array('null' => true, 'type' => $attributeInfos['databaseType'], 'length' => $attributeInfos['length']);
-                    else
-                        $tables[$className]['fields'][$attributeName] = array('null' => true, 'type' => $map['attributeTypes'][$attributeInfos['type']]['databaseType'], 'length' => $map['attributeTypes'][$attributeInfos['type']]['length']);
+                    $tables[$className]['fields'][$attributeInfos['databaseField']] = array('null' => true, 'type' => $map['attributeTypes'][$attributeInfos['type']]['databaseType'], 'length' => $map['attributeTypes'][$attributeInfos['type']]['length']);
                 }
                 foreach ($classInfos['definition']['identity'] as $fieldName) {
                     $tables[$className]['fields'][$fieldName]['null'] = false;

@@ -15,28 +15,22 @@ class QueryTest extends PHPUnit_Framework_TestCase {
     }*/
     
     function test___construct_() {
-        $q=new \Art\Query('SELECT p.*,c.*,e.address,w.url 
+        $q=new \Art\Query('SELECT p.*,c.*
             FROM 
-                person p, 
-                 parent c,
-                 hasEmail e,
-                 webSite w ON e,
+                person p,
+                parent c,
+                 hasEmail e, webSite w ON e,
                  hasGroup g, 
                  hasAddress a,
                  hasWebSite w2 ON p,
-                 parent wp ON w2
-                WHERE
-                    c.id=?
-                    AND
-                    w.url=?
-                ORDER BY
-                    a.address
-                LIMIT 1,10');
-        $q->execute(array(1,"http://website1"));
+                 parent wp ON w2');
+        $r=$q->execute(array(1,"http://website1"));
+        pre($r->toArray(true));
+        
     }
     //*/
 
-    /*function test_execute_ExceptionClassDoesNotExist() {
+    function test_execute_ExceptionClassDoesNotExist() {
         $exception = false;
         try {
             $aq = new \Art\Query('FROM unexistant');
@@ -55,11 +49,11 @@ class QueryTest extends PHPUnit_Framework_TestCase {
             'SELECT * FROM contact c',
             'SELECT c.* FROM contact c',
             'SELECT * FROM contact',
-            'SELECT * FROM contact JOIN parent',
-            'SELECT * FROM contact JOIN parent e',
-            'SELECT * FROM contact c JOIN parent e',
-            'SELECT * FROM contact c JOIN parent e ON c',
-            'SELECT * FROM contact c JOIN parent e  ON  c    JOIN hasEmail he ON c JOIN webSite w ON he',
+            'SELECT * FROM contact , parent',
+            'SELECT * FROM contact , parent e',
+            'SELECT * FROM contact c , parent e',
+            'SELECT * FROM contact c , parent e ON c',
+            'SELECT * FROM contact c , parent e  ON  c    , hasEmail he ON c , webSite w ON he',
             'FROM contact c WHERE c.id=?',
             'FROM contact c WHERE (c.id=? AND c.firstName=?) OR c.lastName=?',
             'FROM contact c WHERE (c.id=? AND (c.osef=? OR c.firstName=?)) OR c.lastName=?',
@@ -73,5 +67,5 @@ class QueryTest extends PHPUnit_Framework_TestCase {
             $aq = new \Art\Query($oql);
             $this->assertEquals($aq->validateSyntax(), true);
         }
-    }*/
+    }
 }

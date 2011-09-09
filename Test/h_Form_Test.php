@@ -19,11 +19,12 @@ class ArtFormComponentRandom extends \Art\Form\Component {
        return $this->_isReceived;
     }
     public function toHTML() {
-            
+            echo '<input type="text">';
     }
 }
 class AForm extends PHPUnit_Framework_TestCase {
 
+    
     function test_Constructor_() {
         $label = 'testform1';
         $url = 'http://www.osef.com';
@@ -75,14 +76,14 @@ class AForm extends PHPUnit_Framework_TestCase {
         $c1 = $form->add(new ArtFormComponentRandom(), 'comment1');
         $c2 = $form->add(new ArtFormComponentRandom(), 'comment2');
 
-        $form2 = $form->add(new \Art\Form());
+        $form2 = $form->add(new \Art\Form('test2'),'test2');
         $form2->useSession(false);
         $c3 = $form2->add(new ArtFormComponentRandom(), 'comment3');
 
         $request = array(
             $label => array(
                 'comment1' => 'value1',
-                4 => array(
+                'test2' => array(
                     'comment3' => 'value3'
                 )
             )

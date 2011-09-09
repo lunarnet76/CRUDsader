@@ -1,12 +1,25 @@
 <?php
-namespace Art\Object\Attribute{
-    abstract class Wrapper{
-        abstract public static function formatForDatabase($value,$options);
-        abstract public static function formatFromDatabase($value,$options);
-        abstract public static function isValid($value,$options);
-        abstract public static function isEmpty($value,$options);
-        abstract public static function HTMLInput($value,$id,$options,$htmlAttributes);
-        abstract public static function javascriptValidator($options);
-        abstract public static function generateRandom($options);
+namespace Art\Object\Attribute {
+    abstract class Wrapper {
+
+        protected $_options;
+        
+        public function __construct($options=array()){
+            $this->_options=$options;
+        }
+        
+        abstract function formatForDatabase($value);
+
+        abstract function formatFromDatabase($value);
+
+        abstract function isValid($value);
+
+        abstract function isEmpty($value);
+
+        abstract function HTMLInput($value, $id, $htmlAttributes);
+
+        abstract function javascriptValidator();
+
+        abstract function generateRandom();
     }
 }

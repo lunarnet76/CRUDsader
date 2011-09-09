@@ -39,6 +39,10 @@ namespace Art {
             $this->_adapter['loader'] = \Art\Adapter::factory(array('map' => 'loader'));
             $this->_map = $this->_adapter['loader']->getSchema($this->_configuration->defaults);
         }
+        
+        public function classGetFieldAttributeType($className,$attributeName){
+            return $this->_map['attributeTypes'][$this->_map['classes'][$className]['attributes'][$attributeName]['type']];
+        }
 
         /**
          * validate the schema

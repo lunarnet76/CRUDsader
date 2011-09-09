@@ -84,12 +84,7 @@ namespace Art {
                     'attributeType'=>array(
                         'databaseType'=>'VARCHAR',
                         'options'=>array(),
-                        'class'=>'default',
-                        'polymorphism'=>array(
-                            'databaseField'=>'isa',
-                            'databaseType'=>'VARCHAR',
-                            'length'=>'32',
-                        )
+                        'class'=>'Base'
                     ),
                     'attribute'=>array(
                         'type'=>'default',

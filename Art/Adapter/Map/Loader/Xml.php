@@ -56,7 +56,7 @@ namespace Art\Adapter\Map\Loader {
                 $alias = (string) $attributeType['alias'];
                 $ret['attributeTypes'][$alias] = array(
                     'length' => (int) $attributeType['length'],
-                    'class' => isset($attributeType['class']) ? (string) $attributeType['class'] : $defaults->attributeType->class,
+                    'class' => '\\Art\\Object\\Attribute\\Wrapper\\'.(isset($attributeType['class']) ? ucfirst((string) $attributeType['class']) : $defaults->attributeType->class),
                     'databaseType' => isset($attributeType['databaseType']) ? (string) $attributeType['databaseType'] : $defaults->attributeType->databaseType,
                     'options' => isset($attributeType['options']) ? json_decode(str_replace('\'', '"', (string) $attributeType['options'])) : $defaults->attributeType->options->toArray(),
                 );
@@ -76,20 +76,13 @@ namespace Art\Adapter\Map\Loader {
                     ),
                     'inherit' => false,
                     'attributes' => array(),
+                    'attributesReversed' => array(),
                     'associations' => array()
                 );
                 // inheritance
                 $parent = false;
                 if (isset($class['inherit'])) {
-                    $parent = (string)$class['inherit'];
-                    $ret['classes'][$name]['inherit'] = $parent;
-                    $ret['classes'][$name]['attributes']['polymorphism'] = array(
-                        'databaseField' => $defaults->attributeType->polymorphism->databaseField,
-                        'databaseType' => $defaults->attributeType->polymorphism->databaseType,
-                        'type' => $defaults->attributeType->polymorphism->type,
-                        'length' => $defaults->attributeType->polymorphism->length
-                    );
-                     $ret['classes'][$name]['definition']['attributeCount']['polymorphism']=true;
+                    $ret['classes'][$name]['inherit'] = (string)$class['inherit'];
                 }
                 // attributes
                 $attributes = $class->attribute;
@@ -104,10 +97,7 @@ namespace Art\Adapter\Map\Loader {
                         'calculated' => isset($attribute['type']) ? (string) $attribute['type'] : false
                     );
                     $ret['classes'][$name]['definition']['attributeCount'][$attributeName] = false;
-                }
-                // identity
-                foreach ($ret['classes'][$name]['definition']['identity'] as $attributeName) {
-                    $ret['classes'][$name]['attributes'][$attributeName]['mandatory'] = true;
+                    $ret['classes'][$name]['attributesReversed'][$ret['classes'][$name]['attributes'][$attributeName]['databaseField']] = $attributeName;
                 }
                 // associations
                 $associations = $class->associated;

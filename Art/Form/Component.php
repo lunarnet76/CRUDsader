@@ -16,21 +16,24 @@ namespace Art\Form {
      * @abstract
      */
     abstract class Component implements \Art\Interfaces\Arrayable{
-        protected $_id;
         protected $_label = false;
         protected $_parent;
+        protected $_value;
         protected $_error = false;
         protected $_isRequired = false;
         protected $_isReceived = false;
-        protected $_css = false;
         protected $_htmlAttributes = array();
 
         public function setCss($cssClass) {
-            $this->_css = $cssClass;
+            $this->_htmlAttributes['class'] = $cssClass;
         }
 
         public function setError($error) {
             $this->_error = $error;
+        }
+        
+        public function getValue(){
+            return $this->_value;
         }
         
         public function getError(){
@@ -62,7 +65,7 @@ namespace Art\Form {
         }
 
         public function getId() {
-            return $this->_id;
+            return $this->_htmlAttributes['id'];
         }
 
         public function getLabel() {
@@ -94,7 +97,12 @@ namespace Art\Form {
         abstract public function toHTML();
 
         protected function _setId($id) {
-            $this->_id = $id;
+            $this->_htmlAttributes['id'] = $id;
+            $this->_htmlAttributes['name'] = $id;
+        }
+        
+        public function toArray(){
+            return $this->_value;
         }
 
         protected function _html($component, $type) {
