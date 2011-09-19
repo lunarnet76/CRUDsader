@@ -1,1 +1,0 @@
-<input type="password" name="<?php echo $this->_input['name'];?>" id="<?php echo $this->_input['id'];?>" class="<?php echo $this->_input['css'].(!empty($this->_options['css'])?' '.$this->_options['css']:'').' data'.$this->_type;?>" value="<?php echo $this->_value;?>" <?php echo $this->_mandatory?'isrequired="isrequired"':'';?> />
