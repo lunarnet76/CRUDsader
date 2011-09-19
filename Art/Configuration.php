@@ -116,7 +116,7 @@ namespace Art {
          * @param string $section
          */
         public function load($filePath, $section=false) {
-            $lines = file($filePath);
+            $lines = @file($filePath);
             if ($lines === false)
                 throw new ConfigurationException('file "' . $filePath . '" could not be read properly');
             $configuration = array();

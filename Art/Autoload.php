@@ -120,9 +120,11 @@ namespace Art {
         protected static function _findIncludePathFor($className) {
             if (isset(self::$_includedClasses[$className]))
                 return self::$_includedClasses[$className];
+            if(isset(self::$_nameSpaces[true]))
+                var_dump(self::$_nameSpaces[true]);
             $pos = strpos($className, '\\');
             if ($pos === false)
-                return isset(self::$_includedClasses[false]) ? self::$_includedClasses[false] . str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php' : false;
+                return false;
             if ($pos === 0) {
                 $pos = strpos($className, '\\', 1);
                 if ($pos === false)

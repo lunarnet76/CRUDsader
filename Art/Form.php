@@ -16,13 +16,18 @@ namespace Art {
      * @package     Art
      * @todo add handler for checkboxes, as PHP will not create an entry in the $data array in receive($data=false)
      */
-    Class Form extends Form\Component implements Interfaces\Helpable, \IteratorAggregate {
+    Class Form extends Form\Component implements Interfaces\Helpable, Interfaces\Sessionisable, \IteratorAggregate {
         protected $_url;
         protected $_session;
+        
         protected $_useSession = true;
         protected $_components = array();
-        protected $_view = 'default';
-        protected static $_componentIndex = 0;
+        protected $_htmlTagIsOpened = false;
+        protected $_htmlAttributes = array(
+            'method' => 'POST'
+        );
+        protected $_componentIndex = 0;
+        protected static $_formIndex = 0;
         protected static $_helpers = array();
 
         /**
@@ -30,7 +35,7 @@ namespace Art {
          * @param string $url
          */
         public function __construct($label=false, $url=false) {
-            $index = $label !== false ? preg_replace('/[^a-zA-Z0-9_]/', '_', $label) : self::$_componentIndex++;
+            $index=$label !== false ? preg_replace('/[^a-zA-Z0-9_]/', '_', $label) : self::$_formIndex++;
             $this->_setId($index);
             $this->_label = $label;
             $this->_htmlAttributes['action'] = $url;
@@ -43,6 +48,18 @@ namespace Art {
                 $this->_session->oldToken = $this->_session->token;
             $this->_session->token = md5(uniqid(rand(), true));
         }
+        
+        public function useSession($bool) {
+            $this->_useSession = $bool;
+        }
+        
+        public function getSession(){
+            return $this->_session;
+        }
+        
+        public function resetSession(){
+            $this->_session->reset();
+        }
 
         /**
          * add an input or element to the form
@@ -51,13 +68,19 @@ namespace Art {
          * @return Form\Component
          */
         public function add(\Art\Form\Component $component, $label=false, $required=false) {
-            $index = $label !== false ? preg_replace('/[^a-zA-Z0-9_]/', '_', $label) : self::$_componentIndex++;
-            $this->_components[$index] = $component;
-            $component->_setId($this->_htmlAttributes['id'] . '[' . $index . ']');
+            $index = $label !== false ? preg_replace('/[^a-zA-Z0-9_]/', '_', $label) : $this->_componentIndex++;
             $component->_parent = $this;
+            $component->_setId($this->_htmlAttributes['name'] . '[' . $index . ']');
             $component->setLabel($label);
             $component->setRequired($required);
+            $this->_components[$index] = $component;
             return $component;
+        }
+        
+        public function _setId($id){
+            parent::_setId($id);
+            foreach($this->_components as $index=>$component)
+                $component->_setId($this->_htmlAttributes['name'] . '[' . $index . ']');
         }
 
         /**
@@ -67,7 +90,7 @@ namespace Art {
         public function remove($index) {
             if (!isset($this->_components[$index]))
                 throw new FormException('component at index "' . $index . '" does not exist (try alphanum index)');
-            unset($this->_components[$index]->_htmlAttributes['id']);
+            unset($this->_components[$index]->_htmlAttributes['name']);
             unset($this->_components[$index]->_parent);
             unset($this->_components[$index]);
         }
@@ -77,7 +100,7 @@ namespace Art {
          * @return ArrayIterator
          */
         public function getIterator() {
-            return new ArrayIterator($this->_components);
+            return new \ArrayIterator($this->_components);
         }
 
         /**
@@ -89,16 +112,17 @@ namespace Art {
             $this->_isReceived = false;
             if ($data === false)
                 $data = $_REQUEST;
-            if ($data === null || (!$this->hasParentComponent() && !isset($data[$this->_htmlAttributes['id']]))) {
+            if ($data === null || (!$this->hasParentComponent() && !isset($data[$this->_htmlAttributes['name']]))) {
                 foreach ($this->_components as $index => $component)
                     $component->receive(null);
                 return false;
             }
             if (!$this->hasParentComponent())
-                $data = $data[$this->_htmlAttributes['id']];
+                $data = $data[$this->_htmlAttributes['name']];
             foreach ($this->_components as $index => $component) {
                 if (isset($data[$index])) {
-                    $this->_session->$index = $data[$index];
+                    if($this->_useSession)
+                        $this->_session->$index = $data[$index];
                     $component->receive($data[$index]);
                 } else if ($this->_useSession && isset($this->_session->$index)) {
                     $component->receive($this->_session->$index);
@@ -114,7 +138,7 @@ namespace Art {
          */
         public function reset() {
             parent::reset();
-            $this->_session->reset();
+            $this->resetSession();
             foreach ($this->_components as $component)
                 $component->reset();
         }
@@ -160,8 +184,8 @@ namespace Art {
         /* OUPUTS ************************ */
 
         public function toHTML() {
-            $html = $this->htmlTag() . $this->htmlError() . $this->htmlLabel();
-            foreach ($this->_components as $component){
+            $html = $this->htmlTag() . $this->htmlLabel() . $this->htmlError();
+            foreach ($this->_components as $component) {
                 $html.=$this->htmlRow($component);
             }
             return $html . $this->htmlTag();
@@ -172,19 +196,18 @@ namespace Art {
         }
 
         public function htmlTag() {
-            static $htmlTagIsOpened = false;
-            if (!$htmlTagIsOpened) {
-                $htmlTagIsOpened = true;
+            if (!$this->_htmlTagIsOpened) {
+                $this->_htmlTagIsOpened = true;
                 $htmlAttributes = $this->getHTMLAttributes();
                 $tag = $this->hasParentComponent() ? '<fieldset' : '<form enctype="multipart/form-data" ' . $htmlAttributes;
                 return $tag . ' required="' . ($this->_isRequired ? 'true' : 'false') . '" ' . $htmlAttributes . '>';
             } else {
-                return $this->hasParentComponent() ? '</fieldset>' : '<input type="hidden" name="' . $this->_htmlAttributes['id'] . '[token]" value=""><input type="submit" name="' . $this->_htmlAttributes['id'] . '[submit]" style="height:0;visibility:hidden"></form>';
+                return $this->hasParentComponent() ? '</fieldset>' : '<input type="hidden" name="' . $this->_htmlAttributes['name'] . '[token]" value=""><input type="submit" name="' . $this->_htmlAttributes['name'] . '[submit]" style="height:0;visibility:hidden"></form>';
             }
         }
 
         public function htmlError() {
-            return $this->_html(is_bool($this->_error) ? \Art\I18n::getInstance()->translate('form_error_general') : $this->_error, 'error');
+            return $this->_html(is_bool($this->_error) && $this->_error ? \Art\I18n::getInstance()->translate('form_error_general') : $this->_error, 'error');
         }
 
         public function htmlLabel() {
@@ -197,10 +220,12 @@ namespace Art {
          * @return string 
          */
         public function htmlRow(\Art\Form\Component $component) {
+            if ($component instanceof self)
+                return $component->toHTML();
             return $this->_html($this->_html($component->_label, 'label') . $this->_html($component->toHTML(), 'component') . $this->_html($component->getError(), 'error'), 'row');
         }
-        /** ACCESSORS ************************* */
 
+        /** ACCESSORS ************************* */
         public function getComponents() {
             return $this->_components;
         }
@@ -215,10 +240,6 @@ namespace Art {
 
         public function setView($viewPath) {
             $this->_view = $viewPath;
-        }
-
-        public function useSession($bool) {
-            $this->_useSession = $bool;
         }
 
         public static function hasHelper($name) {

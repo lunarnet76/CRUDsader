@@ -111,7 +111,7 @@ namespace Art\Adapter\Map\Loader {
                         'name' => isset($association['name']) ? (string) $association['name'] : false,
                         'min' => isset($association['min']) ? (int) $association['min'] : $defaults->associations->min,
                         'max' => isset($association['max']) ? (int) $association['max'] : $defaults->associations->max,
-                        'composition' => isset($association['composition']) ? (bool) $association['composition'] : false,
+                        'composition' => isset($association['composition']) ? ((string) $association['composition'])=='true' : false,
                         'databaseTable' => isset($association['databaseTable']) ? (string) $association['databaseTable'] : \Art\Map::getDatabaseAssociationTable(isset($association['name']) ? (string) $association['name'] : false, $to, $name),
                         'internalField' => isset($association['internalField']) ? (string) $association['internalField'] : $name,
                         'externalField' => isset($association['externalField']) ? (string) $association['externalField'] : $to

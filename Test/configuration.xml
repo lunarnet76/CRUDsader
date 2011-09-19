@@ -1,0 +1,26 @@
+
+<phpunit backupGlobals="true"
+         backupStaticAttributes="false"
+         bootstrap="bootstrap.php"
+         colors="false"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnError="false"
+         stopOnFailure="false"
+         stopOnIncomplete="false"
+         stopOnSkipped="false"
+         testSuiteLoaderFile="suite.xml"
+         strict="false"
+         verbose="false">
+    <testsuites>
+        <testsuite name="Art">
+            <file>Art/Autoload_Test.php</file>
+            <file>Art/Exception_Test.php</file>
+            <file>Art/Singleton_Test.php</file>
+            <file>Art/Block_Test.php</file>
+            <file>Art/Configuration_Test.php</file>
+        </testsuite>
+    </testsuites>
+</phpunit>

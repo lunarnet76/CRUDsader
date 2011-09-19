@@ -15,28 +15,42 @@ namespace Art\Form {
      * @package    Art
      * @abstract
      */
-    abstract class Component implements \Art\Interfaces\Arrayable{
+    abstract class Component implements \Art\Interfaces\Arrayable, \SplSubject {
         protected $_label = false;
+        protected $_observers = array();
         protected $_parent;
         protected $_value;
         protected $_error = false;
         protected $_isRequired = false;
         protected $_isReceived = false;
         protected $_htmlAttributes = array();
+        protected $_extras = array();
 
         public function setCss($cssClass) {
             $this->_htmlAttributes['class'] = $cssClass;
+        }
+        
+        public function setExtra($name,$value){
+            $this->_extras[$name]=$value;
+        }
+        
+        public function getExtra($name){
+            return $this->_extras[$name];
+        }
+        
+        public function hasExtra($name){
+            return isset($this->_extras[$name]);
         }
 
         public function setError($error) {
             $this->_error = $error;
         }
-        
-        public function getValue(){
+
+        public function getValue() {
             return $this->_value;
         }
-        
-        public function getError(){
+
+        public function getError() {
             return $this->_error;
         }
 
@@ -97,16 +111,29 @@ namespace Art\Form {
         abstract public function toHTML();
 
         protected function _setId($id) {
+            $this->_htmlAttributes['name']=$id;
             $this->_htmlAttributes['id'] = $id;
-            $this->_htmlAttributes['name'] = $id;
         }
-        
-        public function toArray(){
+
+        public function toArray() {
             return $this->_value;
         }
 
         protected function _html($component, $type) {
             return '<div class="' . $type . '">' . $component . '</div>';
+        }
+
+        public function attach(\SplObserver $observer) {
+            $this->_observers[spl_object_hash($observer)] = $observer;
+        }
+
+        public function detach(\SplObserver $observer) {
+            unset($this->_observers[spl_object_hash($observer)]);
+        }
+
+        public function notify() {
+            foreach ($this->_observers as $observer)
+                $observer->update($this);
         }
     }
     class ComponentException extends \Art\Exception {

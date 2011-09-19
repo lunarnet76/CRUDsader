@@ -36,7 +36,7 @@ namespace Art {
         }
         
         public static function isEmpty($var){
-            return empty($var) || $var instanceof \Art\Expression\Void;
+            return empty($var) || $var=='NULL';
         }
     }
 }

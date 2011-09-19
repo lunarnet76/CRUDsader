@@ -14,7 +14,7 @@ namespace Art {
      * Object class
      * @package     Art
      */
-    class Object implements Interfaces\Initialisable,  Interfaces\Arrayable {
+    class Object implements Interfaces\Initialisable, Interfaces\Arrayable {
         protected $_class;
         protected $_map;
         protected $_initialised = false;
@@ -32,44 +32,66 @@ namespace Art {
                 throw new ObjectException('class "' . $className . '" does not exist');
         }
         
-        public function getForm($oql=false,$alias=false,\Art\Form $form=null){
-            if($alias===false)
-                $alias=$this->_class;
-            if($form===null)
-                $form=new \Art\Form($this->_class.$this->_isPersisted);
-            $l=strlen($alias)+1;
-            foreach($this->_infos['attributes'] as $name=>$infoAttribute){
-               // if(!$infoAttribute['calculated'])
-                 //   $form->add($this->getAttribute($name),$name,$infoAttribute['mandatory']);
+        public function isPersisted(){
+            return $this->_isPersisted;
+        }
+        
+        public function getClass(){
+            return $this->_class;
+        }
+
+        public function getForm($oql=false, $alias=false, $form=null) {
+            if ($alias === false)
+                $alias = $this->_class . $this->_isPersisted;
+            if ($form === null) {
+                $form = new \Art\Form($alias);
+                $form->setLabel($this->_class);
             }
-            if($alias==$this->_class)
-                $form->add($this->getParent(true)->getForm($oql,$alias.'_parent',$form),$alias.'_parent',true);
-            /*if($oql){
-                $query=new \Art\Query($oql);
-                $infos=$query->getInfos();
-                foreach($infos['mapFields'] as $name=>$useless){
-                    if($name==$this->_class)continue;
-                    $name=substr($name,$l);
-                    if($name=='parent'){
-                       $form->add($this->getParent(true)->getForm($oql,$alias.'_parent',$form),$alias.'_parent',true);
-                    }//else
-                        //$form->add($this->getAssociation($name)->getForm(),$name);
-                }
-            }else{
-                // @todo
-            }*/
+            $this->_getFormAttributes($form, $alias);
+            $this->_getFormAssociations($form,$oql,$alias);
             return $form;
         }
         
-        public function hasParent(){
+        protected function _getFormAssociations(\Art\Form $form,$oql=false, $alias=false){
+            if ($oql) {
+                $l = strlen($alias) + 1;
+                $query = new \Art\Query($oql);
+                $infos = $query->getInfos();
+                foreach ($infos['mapFields'] as $oname => $useless) {
+                    if ($oname == $this->_class)
+                        continue;
+                    $name = substr($oname, $l);
+                    if ($name && $this->hasAssociation($name)){
+                        $formAssociation=$this->getAssociation($name)->getForm($oql = false, $name);
+                        $form->add($formAssociation,$name);
+                        $formAssociation->setLabel($alias.'_'.$name);
+                    }
+                }
+                if ($this->hasParent())
+                    $this->getParent(true)->_getFormAssociations($form,$oql,$alias.'_parent');
+            }
+        }
+
+        protected function _getFormAttributes(\Art\Form $form, $alias=false) {
+            foreach ($this->_infos['attributes'] as $name => $infoAttribute) {
+                if (!$infoAttribute['calculated']) {
+                    $form->add($this->getAttribute($name), $name,$infoAttribute['mandatory']);
+                    $this->getAttribute($name)->setLabel($alias ? $alias . '_' . $name : $name);
+                }
+            }
+            if ($this->hasParent())
+                $this->getParent(true)->_getFormAttributes($form,$alias);
+        }
+
+        public function hasParent() {
             return $this->_infos['inherit'];
         }
-        
-        public function getParent($initialiseIfNot=false){
-            if(!isset($this->_parent)){
-                if(!$initialiseIfNot)
-                    throw new ObjectException ('parent is not initialised');
-                $this->_parent=new \Art\Object($this->_infos['inherit']);
+
+        public function getParent($initialiseIfNot=false) {
+            if (!isset($this->_parent)) {
+                if (!$initialiseIfNot)
+                    throw new ObjectException('parent is not initialised');
+                $this->_parent = new \Art\Object($this->_infos['inherit']);
             }
             return $this->_parent;
         }
@@ -89,7 +111,10 @@ namespace Art {
         }
 
         public function toArray($full=false) {
-            $ret = $full ? array('class' => $this->_class, 'initialised' => $this->_initialised ? 'yes' : 'no', 'persisted' => $this->_isPersisted, 'fields' => $this->_fields) : $this->_fields;
+            $fields = array();
+            foreach ($this->_fields as $name => $object)
+                $fields[$name] = $object->getValue();
+            $ret = $full ? array('class' => $this->_class, 'initialised' => $this->_initialised ? 'yes' : 'no', 'persisted' => $this->_isPersisted, 'fields' => $this->_fields) : $fields;
             if ($this->_parent)
                 $ret['parent'] = $this->_parent->toArray($full);
             if (!empty($this->_associations))
