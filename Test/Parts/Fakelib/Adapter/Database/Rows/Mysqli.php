@@ -1,6 +1,6 @@
 <?php
 namespace Fakelib\Adapter\Database\Rows {
-    class Mysqli extends \Art\Adapter\Database\Rows {
+    class Mysqli extends \CRUDsader\Adapter\Database\Rows {
 
         public function getRessource() {
             return $this->_ressource;

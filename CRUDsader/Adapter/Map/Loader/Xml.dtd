@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT CRUDsader (attributeTypes,classes)>
+    
+    <!ELEMENT attributeTypes (attributeType+)>
+         <!ELEMENT attributeType EMPTY>
+            <!ATTLIST attributeType alias CDATA #REQUIRED>
+            <!ATTLIST attributeType length CDATA #REQUIRED>
+            <!ATTLIST attributeType databaseType CDATA #IMPLIED>
+            <!ATTLIST attributeType class CDATA #IMPLIED>
+            <!ATTLIST attributeType options CDATA #IMPLIED>
+
+    <!ELEMENT classes (class+)>
+        <!ELEMENT class (attribute*,associated*)>
+            <!ATTLIST class name CDATA #REQUIRED>
+            <!ATTLIST class phpClass CDATA #IMPLIED>
+            <!ATTLIST class identity CDATA #IMPLIED><!-- col1,col2 -->
+            <!ATTLIST class databaseTable CDATA #IMPLIED>
+            <!ATTLIST class databaseIdField CDATA #IMPLIED><!-- col1,col2 -->
+            <!ATTLIST class inherit CDATA #IMPLIED>
+
+            <!ELEMENT attribute EMPTY>
+                <!ATTLIST attribute name                CDATA               #REQUIRED>
+                <!ATTLIST attribute required           (true|false)        #IMPLIED>
+                <!ATTLIST attribute default             CDATA               #IMPLIED>
+                <!ATTLIST attribute databaseField       CDATA               #IMPLIED>
+                <!ATTLIST attribute type                CDATA               #IMPLIED>
+                <!ATTLIST attribute searchable          (true|false)        #IMPLIED>
+                <!ATTLIST attribute calculated          (true|false)        #IMPLIED>
+
+           <!ELEMENT associated EMPTY>
+                <!ATTLIST associated to             CDATA                                   #REQUIRED>
+                <!ATTLIST associated reference (external|internal|table)                    #IMPLIED>
+                <!ATTLIST associated name           CDATA                                   #IMPLIED>
+                <!ATTLIST associated min            CDATA                                   #IMPLIED>
+                <!ATTLIST associated max            CDATA                                   #IMPLIED>
+                <!ATTLIST associated composition (true|false)                    #IMPLIED>
+                <!ATTLIST associated databaseTable CDATA                          #IMPLIED>
+                <!ATTLIST associated internalField CDATA                          #IMPLIED>
+                <!ATTLIST associated externalField CDATA                          #IMPLIED>
+

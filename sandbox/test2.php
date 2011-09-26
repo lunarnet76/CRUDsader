@@ -1,7 +1,7 @@
 <?php
-require('../Art/Autoload.php');
-spl_autoload_register(array('\Art\Autoload', 'autoLoad'));
-\Art\Autoload::registerNameSpace('Art', '../Art/');
+require('../CRUDsader/Autoload.php');
+spl_autoload_register(array('\CRUDsader\Autoload', 'autoLoad'));
+\CRUDsader\Autoload::registerNameSpace('CRUDsader', '../CRUDsader/');
 
 function eh() {
     pre(func_get_args());
@@ -16,9 +16,9 @@ function preCallback() {
 }
 
 function pre($v, $title=false) {
-    if ($v instanceof \Art\Interfaces\Arrayable)
+    if ($v instanceof \CRUDsader\Interfaces\Arrayable)
         $v = $v->toArray();
-    \Art\Debug::pre($v, $title);
+    \CRUDsader\Debug::pre($v, $title);
 }
 
 function table($var) {
@@ -41,16 +41,16 @@ function table($var) {
     }
     echo '<table>';
 }
-\Art\Configuration::getInstance()->database->name = 'art_test';
-//\Art\Configuration::getInstance()->debug->database->profiler=true ;
-\Art\Configuration::getInstance()->adapter->map->loader->xml->file = '../Test/Parts/orm.xml';
+\CRUDsader\Configuration::getInstance()->database->name = 'CRUDsader_test';
+//\CRUDsader\Configuration::getInstance()->debug->database->profiler=true ;
+\CRUDsader\Configuration::getInstance()->adapter->map->loader->xml->file = '../Test/Parts/orm.xml';
 
-$form3=new \Art\Form('test');
-$form3->add(new \Art\Form\Component(),'inp');
+$form3=new \CRUDsader\Form('test');
+$form3->add(new \CRUDsader\Form\Component(),'inp');
 
-$form=new \Art\Form();
+$form=new \CRUDsader\Form();
 
-$form2=$form->add(new \Art\Form());
+$form2=$form->add(new \CRUDsader\Form());
 
 $form2->add($form3,'test2');
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE art SYSTEM "../../Art/Adapter/Map/Loader/Xml.dtd" >
-<art>
+<!DOCTYPE CRUDsader SYSTEM "../../CRUDsader/Adapter/Map/Loader/Xml.dtd" >
+<CRUDsader>
     <attributeTypes>
         <attributeType alias="default" databaseType="VARCHAR" length="32" />
         <attributeType alias="email" class="email" options="'lookup':false" databaseType="VARCHAR" length="255"/>
@@ -37,4 +37,4 @@
             <attribute name="url" databaseField="Furl"/>
         </class>
     </classes>
-</art>
+</CRUDsader>

@@ -1,7 +1,7 @@
 <?php
-require('../Art/Autoload.php');
-spl_autoload_register(array('\Art\Autoload', 'autoLoad'));
-\Art\Autoload::registerNameSpace('Art', '../Art/');
+require('../CRUDsader/Autoload.php');
+spl_autoload_register(array('\CRUDsader\Autoload', 'autoLoad'));
+\CRUDsader\Autoload::registerNameSpace('CRUDsader', '../CRUDsader/');
 
 function eh() {
     pre(func_get_args());
@@ -16,9 +16,9 @@ function preCallback() {
 }
 
 function pre($v, $title=false) {
-    if ($v instanceof \Art\Interfaces\Arrayable)
+    if ($v instanceof \CRUDsader\Interfaces\Arrayable)
         $v = $v->toArray();
-    \Art\Debug::pre($v, $title);
+    \CRUDsader\Debug::pre($v, $title);
 }
 
 function table($var) {
@@ -41,19 +41,19 @@ function table($var) {
     }
     echo '<table>';
 }
-\Art\Configuration::getInstance()->database->name = 'art_test';
-\Art\Configuration::getInstance()->debug->database->profiler=true ;
-\Art\Configuration::getInstance()->adapter->map->loader->xml->file = '../Test/Parts/orm.xml';
+\CRUDsader\Configuration::getInstance()->database->name = 'CRUDsader_test';
+\CRUDsader\Configuration::getInstance()->debug->database->profiler=true ;
+\CRUDsader\Configuration::getInstance()->adapter->map->loader->xml->file = '../Test/Parts/orm.xml';
 
 try {
-    $m = \Art\Map::getInstance();
+    $m = \CRUDsader\Map::getInstance();
     $m->extract();
 } catch (Exception $e) {
     pre($e);
     exit;
 }
 mysql_connect('localhost', 'root', '');
-mysql_select_db('art_test');
+mysql_select_db('CRUDsader_test');
 mysql_query('SET FOREIGN_KEY_CHECKS = 0');
 $sqlFile = explode(';', file_get_contents('../Test/Parts/databaseOrmRows.sql'));
 foreach ($sqlFile as $sql) {
@@ -65,7 +65,7 @@ foreach ($sqlFile as $sql) {
 mysql_query('SET FOREIGN_KEY_CHECKS = 1');
 mysql_close();
 
-class Model extends \Art\Object{
+class Model extends \CRUDsader\Object{
     
 }
 
@@ -82,9 +82,9 @@ $oql = 'SELECT p.*,c.*
                     p.id=?
                     ORDER BY p.id ASC LIMIT 3';
 /**/
-$q = new \Art\Query($oql);
+$q = new \CRUDsader\Query($oql);
 
-$r = $q->fetchAll(array(array('>' => new \Art\Expression('0'))));
+$r = $q->fetchAll(array(array('>' => new \CRUDsader\Expression('0'))));
 $o = $r->findById(1);
 
 
@@ -96,7 +96,7 @@ try {
         pre($o,'saved');
     }
 } catch (Exception $e) {
-    if ($e instanceof Art\Adapter\Database\Connector\MysqliException)
+    if ($e instanceof CRUDsader\Adapter\Database\Connector\MysqliException)
         pre($e->getSQL());
     $form->setInputError($e->getMessage());
 }
@@ -104,11 +104,11 @@ try {
 
 echo $form;
 
-$r = $q->fetchAll(array(array('>' => new \Art\Expression('0'))));
+$r = $q->fetchAll(array(array('>' => new \CRUDsader\Expression('0'))));
 $o = $r->findById(1);
 
 pre($o);
 
-echo \Art\Database::getInstance()->getAdapter('profiler')->display(true);
+echo \CRUDsader\Database::getInstance()->getAdapter('profiler')->display(true);
 //pre($o);
 

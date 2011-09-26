@@ -10,13 +10,13 @@ function preCallback() {
 
 function pre($v, $title=false) {
     echo '<b style="color:#ae1414">' . ($title ? strtoupper($title) : '') . '</b>     ****************************************************************************************************************************************************************************************************************************************<br/>';
-    if ($v instanceof \Art\Adapter\Database\Rows) {
+    if ($v instanceof \CRUDsader\Adapter\Database\Rows) {
         table($v);
         return;
     }
     ob_start();
     if (is_string($v) && strpos(rtrim($v), 'SELECT') !== false) {
-        echo \Art\Database::getInstance()->getAdapter('descriptor')->highLight($v);
+        echo \CRUDsader\Database::getInstance()->getAdapter('descriptor')->highLight($v);
         return;
     }
     $out = var_dump($v);
@@ -50,9 +50,9 @@ function table($var) {
 // button
 echo '<a href="ut.php">back</a><br>';
 // autoload
-require_once('../Art/Autoload.php');
-spl_autoload_register(array('\Art\Autoload', 'autoLoad'));
-\Art\Autoload::registerNameSpace('Art', '../Art/');
+require_once('../CRUDsader/Autoload.php');
+spl_autoload_register(array('\CRUDsader\Autoload', 'autoLoad'));
+\CRUDsader\Autoload::registerNameSpace('CRUDsader', '../CRUDsader/');
 
 // error handling
 function eh() {
@@ -103,7 +103,7 @@ class Bootstrap {
         mysql_connect(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD);
         mysql_select_db(DATABASE_NAME);
         mysql_query('SET FOREIGN_KEY_CHECKS = 0');
-        $query = mysql_query('show tables');
+        $query = mysql_query('show tables') or die(mysql_error());
         while ($r = mysql_fetch_assoc($query)) {
             mysql_query('DROP TABLE `' . current($r) . '`');
         }
@@ -127,19 +127,19 @@ class Bootstrap {
         mysql_close();
     }
 }
-class AdapterDatabaseDescriptorMysqliInstancer extends \Art\Adapter\Database\Descriptor\Mysqli {
+class AdapterDatabaseDescriptorMysqliInstancer extends \CRUDsader\Adapter\Database\Descriptor\Mysqli {
 
     public static function getInstance($params=null) {
         return new parent($params);
     }
 }
-class AdapterDatabaseConnectorMysqliInstancer extends \Art\Adapter\Database\Connector\Mysqli {
+class AdapterDatabaseConnectorMysqliInstancer extends \CRUDsader\Adapter\Database\Connector\Mysqli {
 
     public static function getInstance($params=null) {
         return new parent($params);
     }
 }
-class Database_Config extends \Art\Block {
+class Database_Config extends \CRUDsader\Block {
     public static $configuration = array(
         'host' => DATABASE_HOST,
         'user' => DATABASE_USER,
@@ -151,7 +151,7 @@ class Database_Config extends \Art\Block {
         parent::__construct(self::$configuration);
     }
 }
-class Database_BadHostConfig extends \Art\Block {
+class Database_BadHostConfig extends \CRUDsader\Block {
     public static $configuration = array(
         'host' => 'nohost',
         'user' => DATABASE_USER,
@@ -163,7 +163,7 @@ class Database_BadHostConfig extends \Art\Block {
         parent::__construct(self::$configuration);
     }
 }
-class Database_BadNameConfig extends \Art\Block {
+class Database_BadNameConfig extends \CRUDsader\Block {
     public static $configuration = array(
         'host' => DATABASE_HOST,
         'user' => DATABASE_USER,
