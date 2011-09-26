@@ -43,6 +43,10 @@ namespace Art {
         public function classGetFieldAttributeType($className,$attributeName){
             return $this->_map['attributeTypes'][$this->_map['classes'][$className]['attributes'][$attributeName]['type']];
         }
+        
+        public function classGetModelClass($className){
+            return $this->_map['classes'][$className]['definition']['phpClass'];
+        }
 
         /**
          * validate the schema

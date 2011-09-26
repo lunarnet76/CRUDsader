@@ -12,6 +12,7 @@
     <!ELEMENT classes (class+)>
         <!ELEMENT class (attribute*,associated*)>
             <!ATTLIST class name CDATA #REQUIRED>
+            <!ATTLIST class phpClass CDATA #IMPLIED>
             <!ATTLIST class identity CDATA #IMPLIED><!-- col1,col2 -->
             <!ATTLIST class databaseTable CDATA #IMPLIED>
             <!ATTLIST class databaseIdField CDATA #IMPLIED><!-- col1,col2 -->

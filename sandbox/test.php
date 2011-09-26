@@ -65,26 +65,31 @@ foreach ($sqlFile as $sql) {
 mysql_query('SET FOREIGN_KEY_CHECKS = 1');
 mysql_close();
 
+class Model extends \Art\Object{
+    
+}
+
 $oql = 'SELECT p.*,c.*
             FROM 
                 person p,
                 parent c,
                  
-                 hasWebSite w2 ON p
+                 hasWebSite w2 ON p,hasEmail e, webSite w ON e,
+                 hasGroup g, 
+                 hasAddress a,
+                 parent wp ON w2
                  WHERE
                     p.id=?
                     ORDER BY p.id ASC LIMIT 3';
-/*hasEmail e, webSite w ON e,
-                 hasGroup g, 
-                 hasAddress a,,
-                 parent wp ON w2*/
+/**/
 $q = new \Art\Query($oql);
 
 $r = $q->fetchAll(array(array('>' => new \Art\Expression('0'))));
 $o = $r->findById(1);
-pre($o);
+
+
 // FORM
-$form = $o->getForm($oql);
+$form = $o->getForm();
 try {
     if ($form->receiveInput() && $form->inputValid()) {
         $o->save();

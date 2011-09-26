@@ -10,7 +10,8 @@ namespace Art\Object\Collection\Association {
                 $id = $row[$mapFields[$alias]['from']];
                 if (!\Art\Expression::isEmpty($id)) {
                     if (!isset($collection->_objectIndexes[$id])) {
-                        $collection->_objects[$collection->_iterator] = new \Art\Object($collection->_class);
+                        $class=\Art\Map::getInstance()->classGetModelClass($collection->_class);
+                        $collection->_objects[$collection->_iterator] = new $class($collection->_class);
                         \Art\Object\Writer::linkToAssociation($collection->_objects[$collection->_iterator],$collection);
                         $collection->_objectIndexes[$id] = $collection->_iterator;
                         $collection->_iterator++;

@@ -4,14 +4,33 @@ namespace Art\Object\Collection {
         protected $_isModified = false;
         protected $_definition;
         protected $_linkedObject;
-        protected $_formValues=array();
+        protected $_fromClass;
+        protected $_formValues = array();
         protected $_objectsToBeDeleted = array();
 
         public function __construct(\Art\Object $object, $definition, $fromClass) {
+            parent::__construct($definition['to']);
             $this->_linkedObject = $object;
             $this->_definition = $definition;
             $this->_fromClass = $fromClass;
-            $this->_class = $definition['to'];
+        }
+        
+         public function offsetSet($index, $value) {
+             if($this->_iterator==$this->_definition['max'])
+                throw new AssociationException('association cannot have more than "'.$this->_definition['max'].'" objects');
+            $value=parent::offsetSet($index, $value);
+            \Art\Object\Writer::linkToAssociation($value, $this);
+        }
+        
+        /**
+         * @return type 
+         */
+        public function newObject() {
+            if($this->_iterator==$this->_definition['max'])
+                throw new AssociationException('association cannot have more than "'.$this->_definition['max'].'" objects');
+            $object = parent::newObject();
+            \Art\Object\Writer::linkToAssociation($object, $this);
+            return $object;
         }
 
         public function getDefinition() {
@@ -32,28 +51,29 @@ namespace Art\Object\Collection {
                             $unitOfWork->update($object->getDatabaseTable(), array($this->_definition['externalField'] => $this->_linkedObject->isPersisted()));
                             break;
                         default:
-                            $persisted = $object->isPersisted();
                             $object->save($unitOfWork);
-                            if ($object instanceof \Art\Object\Proxy) {
-                                $unitOfWork->delete($this->_definition['databaseTable'], $db->quoteIdentifier($this->_definition['externalField']) . '=' . $db->quote($object->isPersisted()). ' AND '. $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));    
-                                $unitOfWork->insert($this->_definition['databaseTable'], array(
-                                    'id' => \Art\Adapter::factory('identifier')->getOID(array('class' => $this->_class)),
-                                    $this->_definition['externalField'] => $object->isPersisted(),
-                                    $this->_definition['internalField'] => $this->_linkedObject->isPersisted()
-                                ));
-                            } else {
-                                $d = array(
-                                    $this->_definition['externalField'] => $object->isPersisted(),
-                                    $this->_definition['internalField'] => $this->_linkedObject->isPersisted()
-                                );
-                                if ($object->isPersisted() && $object->getLinkedAssociationId()) {
-                                    // update
-                                    $unitOfWork->update($this->_definition['databaseTable'], $d, $db->quoteIdentifier($this->_definition['databaseIdField']) . '=' . $db->quote($object->getLinkedAssociationId()));
+                            if ($this->_linkedObject->isPersisted() && $object->isPersisted()) {
+                                if ($object instanceof \Art\Object\Proxy) {
+                                    $unitOfWork->delete($this->_definition['databaseTable'], $db->quoteIdentifier($this->_definition['externalField']) . '=' . $db->quote($object->isPersisted()) . ' AND ' . $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
+                                    $unitOfWork->insert($this->_definition['databaseTable'], array(
+                                        'id' => \Art\Adapter::factory('identifier')->getOID(array('class' => $this->_class)),
+                                        $this->_definition['externalField'] => $object->isPersisted(),
+                                        $this->_definition['internalField'] => $this->_linkedObject->isPersisted()
+                                    ));
                                 } else {
-                                    $d['id'] = \Art\Adapter::factory('identifier')->getOID(array('class' => $this->_class));
-                                    $unitOfWork->delete($this->_definition['databaseTable'], $db->quoteIdentifier($this->_definition['externalField']) . '=' . $db->quote($object->isPersisted()). ' AND '. $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
-                                    $unitOfWork->insert($this->_definition['databaseTable'], $d);
-                                    \Art\Object\Writer::setLinkedAssociationId($object, $d['id']);
+                                    $d = array(
+                                        $this->_definition['externalField'] => $object->isPersisted(),
+                                        $this->_definition['internalField'] => $this->_linkedObject->isPersisted()
+                                    );
+                                    if ($object->isPersisted() && $object->getLinkedAssociationId()) {
+                                        // update
+                                        $unitOfWork->update($this->_definition['databaseTable'], $d, $db->quoteIdentifier($this->_definition['databaseIdField']) . '=' . $db->quote($object->getLinkedAssociationId()));
+                                    } else {
+                                        $d['id'] = \Art\Adapter::factory('identifier')->getOID(array('class' => $this->_class));
+                                        $unitOfWork->delete($this->_definition['databaseTable'], $db->quoteIdentifier($this->_definition['externalField']) . '=' . $db->quote($object->isPersisted()) . ' AND ' . $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
+                                        $unitOfWork->insert($this->_definition['databaseTable'], $d);
+                                        \Art\Object\Writer::setLinkedAssociationId($object, $d['id']);
+                                    }
                                 }
                             }
                     }
@@ -95,16 +115,6 @@ namespace Art\Object\Collection {
             return $this->_linkedObject;
         }
 
-        /**
-         * @todo check max
-         * @return type 
-         */
-        public function newObject() {
-            // check max
-            $object = parent::newObject();
-            \Art\Object\Writer::linkToAssociation($object, $this);
-            return $object;
-        }
 
         public function getForm($oql=false, $alias=false, \Art\Form $form=null) {
             if (empty($alias))
@@ -113,7 +123,7 @@ namespace Art\Object\Collection {
             $formAssociation->setHtmlLabel($alias);
             $max = $this->_definition['max'] == '*' ? 3 : $this->_definition['max'];
             $this->rewind();
-            $this->_formValues=array();
+            $this->_formValues = array();
             for ($i = 0; $i < $max; $i++) {
                 if (!$this->valid()) {
                     $object = $this->_objects[$this->_iterator] = new \Art\Object($this->_class);
@@ -142,10 +152,10 @@ namespace Art\Object\Collection {
             if ($component instanceof \Art\Form\Component && !$component->inputEmpty() && $component->hasParameter('compositionIndex')) {
                 // replace actual by proxy
                 $index = $component->getParameter('compositionIndex');
-                $value=$component->getInputValue();
-                if(isset($this->_formValues[$value]))
-                        throw new AssociationException($this->_class.'_duplicates');                
-                        $this->_formValues[$value]=$index;
+                $value = $component->getInputValue();
+                if (isset($this->_formValues[$value]))
+                    throw new AssociationException($this->_class . '_duplicates');
+                $this->_formValues[$value] = $index;
                 $target = $this->_objects[$index];
                 $id = $target->isPersisted();
                 if ($id) {
@@ -168,5 +178,7 @@ namespace Art\Object\Collection {
             }
         }
     }
-    class AssociationException extends \Art\Exception{}
+    class AssociationException extends \Art\Exception {
+        
+    }
 }

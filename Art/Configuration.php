@@ -84,6 +84,7 @@ namespace Art {
                 'defaults' => array(
                     'idField'=>'id',
                     'inheritance'=>'table',
+                    'phpClass'=>'\\Art\\Object',
                     'attributeType'=>array(
                         'databaseType'=>'VARCHAR',
                         'options'=>array(),

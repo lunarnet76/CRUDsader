@@ -69,7 +69,8 @@ namespace Art\Adapter\Map\Loader {
                         'databaseTable' => isset($class['databaseTable']) ? (string) $class['databaseTable'] : $name,
                         'identity' => isset($class['identity']) ? explode(',', (string) $class['identity']) : array(),
                         'databaseIdField' => isset($class['databaseIdField']) ? (string) $class['databaseIdField'] : $defaults->idField,
-                        'attributeCount' => array('id' => false)
+                        'attributeCount' => array('id' => false),
+                        'phpClass' => isset($class['phpClass']) ? (string) $class['phpClass'] : $defaults->phpClass,
                     ),
                     'inherit' => false,
                     'attributes' => array(),

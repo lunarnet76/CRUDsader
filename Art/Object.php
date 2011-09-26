@@ -69,7 +69,6 @@ namespace Art {
 
         public function __set($var, $value) {
             switch (true) {
-                // fields
                 case isset($this->_infos['attributes'][$var]):
                     $this->getAttribute($var)->receiveInput($value);
                     if (($this->getAttribute($var)->inputEmpty() && $this->_infos['attributes'][$var]['required']) || $this->getAttribute($var)->inputValid() !== true) {
@@ -77,9 +76,6 @@ namespace Art {
                         $this->getAttribute($var)->receiveInput(null);
                         throw new ObjectException('attribute "' . $var . '" cannot accept "' . $value . '" as a value');
                     }
-                    break;
-                case $this->hasAssociation($var):
-                    // @todo
                     break;
                 case $this->hasParent():
                     return $this->getParent()->__set($var, $value);
@@ -201,6 +197,11 @@ namespace Art {
                     }
                 }
                 if ($this->hasParent())
+                    $this->getParent(true)->_getFormAssociations($form, $oql, $alias . '_parent');
+            }else{
+                foreach($this->_associations as $name=>$association)
+                    $this->getAssociation($name)->getForm($oql, $alias . '_' . $name, $form);
+                  if ($this->hasParent())
                     $this->getParent(true)->_getFormAssociations($form, $oql, $alias . '_parent');
             }
         }
