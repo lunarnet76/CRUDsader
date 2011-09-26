@@ -1,21 +1,21 @@
 <?php
 /**
- * LICENSE: see Art/license.txt
+ * LICENSE: see CRUDsader/license.txt
  *
  * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.Art.com/license/1.txt
+ * @license     http://www.CRUDsader.com/license/1.txt
  * @version     $Id$
- * @link        http://www.Art.com/manual/
+ * @link        http://www.CRUDsader.com/manual/
  * @since       1.0
  */
-namespace Art\Adapter\Map {
+namespace CRUDsader\Adapter\Map {
     /**
      * load the mapping schema from a ressource, all the options are be in the configuration
      * @abstract
-     * @package    Art\Adapter\Map
+     * @package    CRUDsader\Adapter\Map
      */
-    abstract class Loader extends \Art\Adapter{
+    abstract class Loader extends \CRUDsader\Adapter{
         /**
          * return true if resource is validated or array of error otherwise
          * @abstract
@@ -24,12 +24,12 @@ namespace Art\Adapter\Map {
         abstract public function validate();
         /**
          * return the mapping schema as an array
-         * @param \Art\Block $defaults
+         * @param \CRUDsader\Block $defaults
          * @return array 
          */
-        abstract public function getSchema(\Art\Block $block=null);
+        abstract public function getSchema(\CRUDsader\Block $block=null);
     }
-    class LoaderException extends \Art\Exception {
+    class LoaderException extends \CRUDsader\Exception {
         
     }
 }

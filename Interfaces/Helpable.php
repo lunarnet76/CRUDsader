@@ -1,5 +1,5 @@
 <?php
-namespace Art\Interfaces {
+namespace CRUDsader\Interfaces {
     interface Helpable {
 
         public static function hasHelper($name);

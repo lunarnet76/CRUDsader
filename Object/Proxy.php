@@ -1,6 +1,6 @@
 <?php
-namespace Art\Object {
-    class Proxy extends \Art\Object {
+namespace CRUDsader\Object {
+    class Proxy extends \CRUDsader\Object {
 
         public function __construct($className,$id) {
             parent::__construct($className);
@@ -23,7 +23,7 @@ namespace Art\Object {
         }
         
         
-        public function save(\Art\Object\UnitOfWork $unitOfWork=null) {
+        public function save(\CRUDsader\Object\UnitOfWork $unitOfWork=null) {
             
         }
     }

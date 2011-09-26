@@ -1,21 +1,21 @@
 <?php
 /**
- * LICENSE: see Art/license.txt
+ * LICENSE: see CRUDsader/license.txt
  *
  * @author     Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.Art.com/license/2.txt
+ * @license     http://www.CRUDsader.com/license/2.txt
  * @version     $Id$
- * @link        http://www.Art.com/manual/
+ * @link        http://www.CRUDsader.com/manual/
  * @since       1.0
  */
-namespace Art\Adapter\Database {
+namespace CRUDsader\Adapter\Database {
     /**
      * DB Descriptor adapter
      *
-     * @package    Art\Adapter\Database
+     * @package    CRUDsader\Adapter\Database
      */
-    abstract class Descriptor extends \Art\Adapter {
+    abstract class Descriptor extends \CRUDsader\Adapter {
         public static $FIELD_COUNTING_ALIAS = 'counting';
         public static $TABLE_LIMIT_ALIAS = 'limittable';
         public static $OBJECT_ID_FIELD_ALIAS = 'distinctId';
@@ -23,15 +23,15 @@ namespace Art\Adapter\Database {
         public static $TABLE_ALIAS_SUBQUERY = '___sq';
 
         /**
-         * @var \Art\Adapter\Database\Connector 
+         * @var \CRUDsader\Adapter\Database\Connector 
          */
         protected $_connector;
         
         /**
          * set the connector
-         * @param \Art\Adapter\Database\Connector $connector 
+         * @param \CRUDsader\Adapter\Database\Connector $connector 
          */
-        public function setConnector(\Art\Adapter\Database\Connector $connector){
+        public function setConnector(\CRUDsader\Adapter\Database\Connector $connector){
             $this->_connector=$connector;
         }
         
@@ -45,11 +45,11 @@ namespace Art\Adapter\Database {
         abstract public function quoteIdentifier($identifier);
 
         /**
-         * quote a field value, does not quote \Art\Database\Expression object
+         * quote a field value, does not quote \CRUDsader\Database\Expression object
          * @abstract
          * @static
          * @param string $value
-         * @param \Art\Adapter\Database\Connector $connector=null $connector
+         * @param \CRUDsader\Adapter\Database\Connector $connector=null $connector
          * @return string
          */
         abstract public function quote($value);
@@ -126,7 +126,7 @@ namespace Art\Adapter\Database {
         abstract public function countSelect($select);
         
         /**
-         * split a SQL string into colored parts
+         * split a SQL string into colored Parts
          * @param string $sql
          * @return string
          */

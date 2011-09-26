@@ -1,6 +1,6 @@
 <?php
-namespace Art\Form\Component {
-    class Hidden extends \Art\Form\Component {
+namespace CRUDsader\Form\Component {
+    class Hidden extends \CRUDsader\Form\Component {
         public function inputEmpty(){return false;}
 
         public function toHTML(){

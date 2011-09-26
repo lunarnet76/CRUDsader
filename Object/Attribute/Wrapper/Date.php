@@ -1,6 +1,6 @@
 <?php
-namespace Art\Object\Attribute\Wrapper{
-    class Date extends \Art\Object\Attribute\Wrapper{
+namespace CRUDsader\Object\Attribute\Wrapper{
+    class Date extends \CRUDsader\Object\Attribute\Wrapper{
         
         
          public function formatForDatabase($value){

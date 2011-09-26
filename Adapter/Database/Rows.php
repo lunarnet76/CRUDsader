@@ -1,21 +1,21 @@
 <?php
 /**
- * LICENSE: see Art/license.txt
+ * LICENSE: see CRUDsader/license.txt
  *
  * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.Art.com/license/1.txt
+ * @license     http://www.CRUDsader.com/license/1.txt
  * @version     $Id$
- * @link        http://www.Art.com/manual/
+ * @link        http://www.CRUDsader.com/manual/
  * @since       1.0
  */
-namespace Art\Adapter\Database {
+namespace CRUDsader\Adapter\Database {
     /**
      * row set
      * @category   Database
-     * @package    Art
+     * @package    CRUDsader
      */
-    abstract class Rows extends \Art\Adapter implements \Iterator {
+    abstract class Rows extends \CRUDsader\Adapter implements \Iterator {
         /**
          * @var ressource
          */

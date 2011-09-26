@@ -1,6 +1,6 @@
 <?php
-namespace Art\Object {
-    abstract class IdentityMap extends \Art\Singleton{
+namespace CRUDsader\Object {
+    abstract class IdentityMap extends \CRUDsader\Singleton{
         protected static $_objects=array();
 
         public static function exists($class, $id) {
@@ -25,5 +25,5 @@ namespace Art\Object {
             self::$_objects=array();
         }
     }
-    class IdentityMapException extends \Art\Exception{}
+    class IdentityMapException extends \CRUDsader\Exception{}
 }

@@ -1,21 +1,21 @@
 <?php
 /**
- * LICENSE: see Art/license.txt
+ * LICENSE: see CRUDsader/license.txt
  *
  * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.Art.com/license/1.txt
+ * @license     http://www.CRUDsader.com/license/1.txt
  * @version     $Id$
- * @link        http://www.Art.com/manual/
+ * @link        http://www.CRUDsader.com/manual/
  * @since       1.0
  */
-namespace Art\Adapter\Map {
+namespace CRUDsader\Adapter\Map {
     /**
      * extract the map to a datasource (e.g. create all the tables of a database)
      * @abstract
-     * @package    Art\Adapter\Map
+     * @package    CRUDsader\Adapter\Map
      */
-    abstract class Extractor extends \Art\Adapter{
+    abstract class Extractor extends \CRUDsader\Adapter{
         /**
          * create the tables mapped
          * @abstract
@@ -23,7 +23,7 @@ namespace Art\Adapter\Map {
          */
         abstract public function create(array $map);
     }
-    class ExtractorException extends \Art\Exception {
+    class ExtractorException extends \CRUDsader\Exception {
         
     }
 }

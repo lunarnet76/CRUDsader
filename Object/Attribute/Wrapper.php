@@ -1,5 +1,5 @@
 <?php
-namespace Art\Object\Attribute {
+namespace CRUDsader\Object\Attribute {
     abstract class Wrapper {
 
         protected $_options;

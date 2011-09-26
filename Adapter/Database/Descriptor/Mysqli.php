@@ -1,22 +1,22 @@
 <?php
 /**
- * LICENSE: see Art/license.txt
+ * LICENSE: see CRUDsader/license.txt
  *
  * @author Jean-Baptiste Verrey <jeanbaptiste.verrey@gmail.com>
  * @copyright  2011 Jean-Baptiste Verrey
- * @license    http://www.Art.com/license/2.txt
+ * @license    http://www.CRUDsader.com/license/2.txt
  * @version    $Id$
- * @link       http://www.Art.com/manual/
+ * @link       http://www.CRUDsader.com/manual/
  * @since      2.0
  *
- * @package    Art\Adapter\Database
+ * @package    CRUDsader\Adapter\Database
  */
-namespace Art\Adapter\Database\Descriptor {
+namespace CRUDsader\Adapter\Database\Descriptor {
     /**
      * @todo put engine in adapter configuration
      * descriptor for MySQL
      */
-    class Mysqli extends \Art\Adapter\Database\Descriptor {
+    class Mysqli extends \CRUDsader\Adapter\Database\Descriptor {
 
         /**
          * quote table name or table field
@@ -35,7 +35,7 @@ namespace Art\Adapter\Database\Descriptor {
          * @return string
          */
         public function quote($value) {
-            return $value instanceof \Art\Expression ? $value->__toString() : '"' . $this->_connector->escape($value) . '"';
+            return $value instanceof \CRUDsader\Expression ? $value->__toString() : '"' . $this->_connector->escape($value) . '"';
         }
 
         /**
@@ -53,7 +53,7 @@ namespace Art\Adapter\Database\Descriptor {
          * @param array $values
          * @return string
          */
-        public function insert($table, array $values, \Art\Adapter\Database\Connector $connector=null) {
+        public function insert($table, array $values, \CRUDsader\Adapter\Database\Connector $connector=null) {
             if (!count($values))
                 throw new MysqliException('INSERT query cannot be without params');
             $sql = 'INSERT INTO ' . $this->quoteIdentifier($table, $connector);
@@ -236,7 +236,7 @@ namespace Art\Adapter\Database\Descriptor {
         }
 
         /**
-         * split a SQL string into colored parts
+         * split a SQL string into colored Parts
          * @param string $sql
          * @return string
          */
@@ -284,7 +284,7 @@ namespace Art\Adapter\Database\Descriptor {
             return array('INT', 'VARCHAR', 'TEXT', 'DATE', 'TINYINT', 'SMALLINT', 'MEDIUMINT', 'INT', 'BIGINT', 'DECIMAL', 'FLOAT', 'DOUBLE', 'REAL', 'BIT', 'BOOL', 'SERIAL', 'DATE', 'DATETIME', 'TIMESTAMP', 'TIME', 'YEAR', 'STRING', 'CHAR', 'VARCHAR', 'TINYTEXT', 'TEXT', 'MEDIUMTEXT', 'LONGTEXT', 'BINARY', 'VARBINARY', 'TINYBLOB', 'TINYBLOB', 'MEDIUMBLOB', 'BLOB', 'LONGBLOB', 'ENUM', 'SET', 'GEOMETRY', 'POINT', 'LINESTRING', 'POLYGON', 'MULTIPOINT', 'MULTILINESTRING', 'MULTIPOLYGON', 'GEOMETRYCOLLECTION');
         }
     }
-    class MysqliException extends \Art\Exception {
+    class MysqliException extends \CRUDsader\Exception {
         
     }
 }

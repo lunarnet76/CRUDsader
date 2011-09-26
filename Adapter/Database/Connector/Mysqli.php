@@ -1,21 +1,21 @@
 <?php
 /**
- * LICENSE: see Art/license.txt
+ * LICENSE: see CRUDsader/license.txt
  *
  * @author      Jean-Baptiste Verrey <jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.Art.com/license/1.txt
+ * @license     http://www.CRUDsader.com/license/1.txt
  * @version     $Id$
- * @link        http://www.Art.com/manual/
+ * @link        http://www.CRUDsader.com/manual/
  * @since       1.0
  */
-namespace Art\Adapter\Database\Connector {
+namespace CRUDsader\Adapter\Database\Connector {
     /**
      * MySQL connector
-     * @package     Art
+     * @package     CRUDsader
      * @abstract
      */
-    class Mysqli extends \Art\Adapter\Database\Connector {
+    class Mysqli extends \CRUDsader\Adapter\Database\Connector {
         /**
          * @var ressource
          */
@@ -84,7 +84,7 @@ namespace Art\Adapter\Database\Connector {
                 case 'select':
                 case 'listTables':
                     $rows = array();
-                    $rowSet = \Art\Adapter::Factory(array('database' => 'rows'));
+                    $rowSet = \CRUDsader\Adapter::Factory(array('database' => 'rows'));
                     $rowSet->setResource($resource, $resource->num_rows);
                     $ret = $rowSet;
                     break;
@@ -124,7 +124,7 @@ namespace Art\Adapter\Database\Connector {
          * execute a SQL prepared statement
          * @abstract
          * @param array $args the values to replaced the ? in the prepared statement
-         * @return \Art\Database\Result
+         * @return \CRUDsader\Database\Result
          */
         public function executeQueryStatement(array $args) {
             if (!isset($this->_connection))
@@ -203,6 +203,6 @@ namespace Art\Adapter\Database\Connector {
             $this->_transaction=false;
         }
     }
-    class MysqliException extends \Art\Adapter\Database\ConnectorException {
+    class MysqliException extends \CRUDsader\Adapter\Database\ConnectorException {
     }
 }

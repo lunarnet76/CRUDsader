@@ -1,21 +1,21 @@
 <?php
 /**
- * LICENSE: see Art/license.txt
+ * LICENSE: see CRUDsader/license.txt
  *
  * @author Jean-Baptiste Verrey <jeanbaptiste.verrey@gmail.com>
  * @copyright  2010 Jean-Baptiste Verrey
- * @license    http://www.Art.com/license/2.txt
+ * @license    http://www.CRUDsader.com/license/2.txt
  * @version    $Id$
- * @link       http://www.Art.com/manual/
+ * @link       http://www.CRUDsader.com/manual/
  * @since      2.0
  */
-namespace Art\Adapter\Database\Rows {
+namespace CRUDsader\Adapter\Database\Rows {
     /**
      * DB results adapter for MySQL
      * @category   Adapter,Database
-     * @package    Art2
+     * @package    CRUDsader2
      */
-    class Mysqli extends \Art\Adapter\Database\Rows {
+    class Mysqli extends \CRUDsader\Adapter\Database\Rows {
         /**
          * @var array|bool current row
          */

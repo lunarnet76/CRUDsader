@@ -1,21 +1,21 @@
 <?php
 /**
- * LICENSE: see Art/license.txt
+ * LICENSE: see CRUDsader/license.txt
  *
  * @author     Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.Art.com/license/2.txt
+ * @license     http://www.CRUDsader.com/license/2.txt
  * @version     $Id$
- * @link        http://www.Art.com/manual/
+ * @link        http://www.CRUDsader.com/manual/
  * @since       1.0
  */
-namespace Art\Form {
+namespace CRUDsader\Form {
     /**
      * @category   Form
-     * @package    Art
+     * @package    CRUDsader
      * @abstract
      */
-    class Component implements \Art\Interfaces\Arrayable, \Art\Interfaces\Parametrable, \SplSubject {
+    class Component implements \CRUDsader\Interfaces\Arrayable, \CRUDsader\Interfaces\Parametrable, \SplSubject {
         protected $_parameters = array();
         protected $_observers = array();
         protected $_htmlAttributes = array();
@@ -29,7 +29,7 @@ namespace Art\Form {
         
         public function __construct(array $options=array()){
             $this->_options=$options;
-            $this->_inputValue=new \Art\Expression\Nil;
+            $this->_inputValue=new \CRUDsader\Expression\Nil;
         }
 
         // ** INTERFACE ** parametrable
@@ -57,7 +57,7 @@ namespace Art\Form {
 
         /**
          * @param string $name
-         * @return \Art\Adapter
+         * @return \CRUDsader\Adapter
          */
         public function getParameter($name=false) {
             return $this->_parameters[$name];
@@ -245,14 +245,14 @@ namespace Art\Form {
         }
 
         public function toArray() {
-            return isset($this->_inputValue) && !$this->_inputValue instanceof \Art\Expression\Nil?$this->_inputValue:'EXPRESSION_NULL';
+            return isset($this->_inputValue) && !$this->_inputValue instanceof \CRUDsader\Expression\Nil?$this->_inputValue:'EXPRESSION_NULL';
         }
 
         public function __toString() {
             return $this->toHTML();
         }
     }
-    class ComponentException extends \Art\Exception {
+    class ComponentException extends \CRUDsader\Exception {
         
     }
 }

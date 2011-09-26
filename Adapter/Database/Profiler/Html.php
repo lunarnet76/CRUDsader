@@ -2,21 +2,21 @@
 /**
  * DB profiler firephp
  *
- * LICENSE: see Art/license.txt
+ * LICENSE: see CRUDsader/license.txt
  *
  * @author Jean-Baptiste Verrey <jeanbaptiste.verrey@gmail.com>
  * @copyright  2010 Jean-Baptiste Verrey
- * @license    http://www.Art.com/license/2.txt
+ * @license    http://www.CRUDsader.com/license/2.txt
  * @version    $Id$
- * @link       http://www.Art.com/manual/
+ * @link       http://www.CRUDsader.com/manual/
  * @since      2.0
  */
-namespace Art\Adapter\Database\Profiler {
+namespace CRUDsader\Adapter\Database\Profiler {
     /**
      * @category   Adapter,Database
-     * @package    Art2
+     * @package    CRUDsader2
      */
-    class Html extends \Art\Adapter\Database\Profiler {
+    class Html extends \CRUDsader\Adapter\Database\Profiler {
         /**
          * the actual SQL logged
          * @var string
@@ -155,7 +155,7 @@ namespace Art\Adapter\Database\Profiler {
                 }
             </style>
             <?php
-            $highlighter = \Art\Database::getInstance()->getAdapter('descriptor');
+            $highlighter = \CRUDsader\Database::getInstance()->getAdapter('descriptor');
             echo '<div class="profiler">';
             $this->_log = array_reverse($this->_log);
             echo '<div class="timeTotal">Time used :' . $this->_totalTime . '</div>';

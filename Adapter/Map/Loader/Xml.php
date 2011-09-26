@@ -1,22 +1,22 @@
 <?php
 /**
- * LICENSE: see Art/license.txt
+ * LICENSE: see CRUDsader/license.txt
  *
  * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.Art.com/license/1.txt
+ * @license     http://www.CRUDsader.com/license/1.txt
  * @version     $Id$
- * @link        http://www.Art.com/manual/
+ * @link        http://www.CRUDsader.com/manual/
  * @since       1.0
  */
-namespace Art\Adapter\Map\Loader {
+namespace CRUDsader\Adapter\Map\Loader {
 
     /**
      * load the mapping schema from a XML file
      * @abstract
-     * @package    Art\Adapter\Map
+     * @package    CRUDsader\Adapter\Map
      */
-    class Xml extends \Art\Adapter\Map\Loader {
+    class Xml extends \CRUDsader\Adapter\Map\Loader {
         protected $_file;
         protected $_dom;
 
@@ -42,10 +42,10 @@ namespace Art\Adapter\Map\Loader {
 
         /**
          * return the mapping schema as an array
-         * @param \Art\Block $defaults
+         * @param \CRUDsader\Block $defaults
          * @return array 
          */
-        public function getSchema(\Art\Block $defaults=null) {
+        public function getSchema(\CRUDsader\Block $defaults=null) {
             $ret = array('attributeTypes' => array(), 'classes' => array());
             // attributeTypes
             $attributeTypes = $this->_dom->attributeTypes->attributeType;
@@ -53,7 +53,7 @@ namespace Art\Adapter\Map\Loader {
                 $alias = (string) $attributeType['alias'];
                 $ret['attributeTypes'][$alias] = array(
                     'length' => (int) $attributeType['length'],
-                    'class' => '\\Art\\Object\\Attribute\\Wrapper\\'.(isset($attributeType['class']) ? ucfirst((string) $attributeType['class']) : $defaults->attributeType->class),
+                    'class' => '\\CRUDsader\\Object\\Attribute\\Wrapper\\'.(isset($attributeType['class']) ? ucfirst((string) $attributeType['class']) : $defaults->attributeType->class),
                     'databaseType' => isset($attributeType['databaseType']) ? (string) $attributeType['databaseType'] : $defaults->attributeType->databaseType,
                     'options' => isset($attributeType['options']) ? json_decode(str_replace('\'', '"', (string) $attributeType['options'])) : $defaults->attributeType->options->toArray(),
                 );
@@ -110,7 +110,7 @@ namespace Art\Adapter\Map\Loader {
                         'min' => isset($association['min']) ? (int) $association['min'] : $defaults->associations->min,
                         'max' => isset($association['max']) ? (int) $association['max'] : $defaults->associations->max,
                         'composition' => isset($association['composition']) ? ((string) $association['composition'])=='true' : false,
-                        'databaseTable' => isset($association['databaseTable']) ? (string) $association['databaseTable'] : \Art\Map::getDatabaseAssociationTable(isset($association['name']) ? (string) $association['name'] : false, $to, $name),
+                        'databaseTable' => isset($association['databaseTable']) ? (string) $association['databaseTable'] : \CRUDsader\Map::getDatabaseAssociationTable(isset($association['name']) ? (string) $association['name'] : false, $to, $name),
                         'databaseIdField' => isset($association['databaseIdField']) ? (string) $association['databaseIdField'] : $defaults->associations->databaseIdField,
                         'internalField' => isset($association['internalField']) ? (string) $association['internalField'] : $name,
                         'externalField' => isset($association['externalField']) ? (string) $association['externalField'] : $to
@@ -132,7 +132,7 @@ namespace Art\Adapter\Map\Loader {
             return $ret;
         }
     }
-    class LoaderException extends \Art\Exception {
+    class LoaderException extends \CRUDsader\Exception {
         
     }
 }

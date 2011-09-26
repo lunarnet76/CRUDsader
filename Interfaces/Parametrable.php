@@ -1,5 +1,5 @@
 <?php
-namespace Art\Interfaces {
+namespace CRUDsader\Interfaces {
     interface Parametrable {
         /**
          * @param string $name
@@ -19,7 +19,7 @@ namespace Art\Interfaces {
 
         /**
          * @param string $name
-         * @return \Art\Adapter
+         * @return \CRUDsader\Adapter
          */
         public function getParameter($name=false);
         

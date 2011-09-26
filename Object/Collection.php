@@ -1,6 +1,6 @@
 <?php
-namespace Art\Object {
-    class Collection implements \Art\Interfaces\Initialisable, \ArrayAccess, \Iterator {
+namespace CRUDsader\Object {
+    class Collection implements \CRUDsader\Interfaces\Initialisable, \ArrayAccess, \Iterator {
         protected $_initialised = false;
         protected $_class = null;
         protected $_classInfos;
@@ -10,7 +10,7 @@ namespace Art\Object {
 
         public function __construct($className) {
             $this->_class = $className;
-            $this->_classInfos = \Art\Map::getInstance()->classGetInfos($this->_class);
+            $this->_classInfos = \CRUDsader\Map::getInstance()->classGetInfos($this->_class);
         }
 
         public function toArray($full=false) {
@@ -35,7 +35,7 @@ namespace Art\Object {
         // ITERATOR
 
         public function offsetSet($index, $value) {
-            if (!$value instanceof \Art\Object || $value->getClass() != $this->_class)
+            if (!$value instanceof \CRUDsader\Object || $value->getClass() != $this->_class)
                 throw new CollectionException('you can add only object of class "' . $this->_class . '"');
             $this->_initialised=true;
             $this->_objects[] = $value;
@@ -106,7 +106,7 @@ namespace Art\Object {
             return isset($this->_objects[$this->_iterator]);
         }
     }
-    class CollectionException extends \Art\Exception {
+    class CollectionException extends \CRUDsader\Exception {
         
     }
 }

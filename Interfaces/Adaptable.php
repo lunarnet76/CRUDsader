@@ -1,5 +1,5 @@
 <?php
-namespace Art\Interfaces {
+namespace CRUDsader\Interfaces {
     interface Adaptable {
         /**
          * @param string $name
@@ -9,7 +9,7 @@ namespace Art\Interfaces {
 
         /**
          * @param string $name
-         * @return \Art\Adapter
+         * @return \CRUDsader\Adapter
          */
         public function getAdapter($name=false);
         

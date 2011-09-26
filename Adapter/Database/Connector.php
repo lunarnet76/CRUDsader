@@ -1,21 +1,21 @@
 <?php
 /**
- * LICENSE: see Art/license.txt
+ * LICENSE: see CRUDsader/license.txt
  *
  * @author     Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.Art.com/license/2.txt
+ * @license     http://www.CRUDsader.com/license/2.txt
  * @version     $Id$
- * @link        http://www.Art.com/manual/
+ * @link        http://www.CRUDsader.com/manual/
  * @since       1.0
  */
-namespace Art\Adapter\Database {
+namespace CRUDsader\Adapter\Database {
     /**
      * DB Connector adapter
      * @category   Database
-     * @package    Art
+     * @package    CRUDsader
      */
-    abstract class Connector extends \Art\Adapter{
+    abstract class Connector extends \CRUDsader\Adapter{
         /**
          * @var ressource
          */
@@ -59,7 +59,7 @@ namespace Art\Adapter\Database {
          * @abstract
          * @param string $sql
          * @param string $type optional, the type of query like SELECT or UPDATE
-         * @return Art_Database_Result
+         * @return CRUDsader_Database_Result
          */
         abstract public function query($sql, $type='select');
 
@@ -75,7 +75,7 @@ namespace Art\Adapter\Database {
          * execute a SQL prepared statement
          * @abstract
          * @param array $args the values to replaced the ? in the prepared statement
-         * @return Art_Database_Result
+         * @return CRUDsader_Database_Result
          */
         abstract public function executeQueryStatement(array $args);
 
@@ -103,7 +103,7 @@ namespace Art\Adapter\Database {
          */
         abstract public function rollBack();
     }
-    class ConnectorException extends \Art\Exception {
+    class ConnectorException extends \CRUDsader\Exception {
         protected $_sql = false;
 
         public function __construct($message, $sql=false, $errorNo=false) {

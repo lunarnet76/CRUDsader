@@ -1,5 +1,5 @@
 <?php
-namespace Art\Object {
+namespace CRUDsader\Object {
     class UnitOfWork {
         protected $_transactions = array();
 
@@ -18,7 +18,7 @@ namespace Art\Object {
         public function execute() {
             if (empty($this->_transactions))
                 return;
-            $database = \Art\Database::getInstance();
+            $database = \CRUDsader\Database::getInstance();
             $database->beginTransaction();
             $lastExecuted = false;
             try {
@@ -39,7 +39,7 @@ namespace Art\Object {
             }
         }
     }
-    class UnitOfWorkException extends \Art\Exception{
+    class UnitOfWorkException extends \CRUDsader\Exception{
         
     }
 }

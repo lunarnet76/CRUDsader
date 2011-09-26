@@ -1,21 +1,21 @@
 <?php
 /**
- * LICENSE: see Art/license.txt
+ * LICENSE: see CRUDsader/license.txt
  *
  * @author     Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.Art.com/license/2.txt
+ * @license     http://www.CRUDsader.com/license/2.txt
  * @version     $Id$
- * @link        http://www.Art.com/manual/
+ * @link        http://www.CRUDsader.com/manual/
  * @since       1.0
  */
-namespace Art\Adapter\Identifier {
+namespace CRUDsader\Adapter\Identifier {
     /**
-     * @package    Art\Adapter\Identifier
+     * @package    CRUDsader\Adapter\Identifier
      */
-    class MysqlAI extends \Art\Adapter\Identifier {
+    class MysqlAI extends \CRUDsader\Adapter\Identifier {
         public function getOID($classInfos){
-            return new \Art\Expression\Nil();
+            return new \CRUDsader\Expression\Nil();
         }
     }
 }

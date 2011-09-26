@@ -1,12 +1,12 @@
 <?php
-namespace Art\Object {
-    class Writer extends \Art\Object {
+namespace CRUDsader\Object {
+    class Writer extends \CRUDsader\Object {
 
         public static function write(parent $object, $id, $alias, &$rows, &$fields, &$mapFields) {
-            $map = \Art\Map::getInstance();
+            $map = \CRUDsader\Map::getInstance();
             if (!$object->_initialised) {
                 $object->_isPersisted = $id;
-                \Art\Object\IdentityMap::add($object);
+                \CRUDsader\Object\IdentityMap::add($object);
                 $object->_initialised = true;
                 for ($i = $mapFields[$alias]['from']+1; $i < $mapFields[$alias]['to']; $i++) {
                     if (isset($object->_infos['attributesReversed'][$fields[$i]])) {
@@ -33,7 +33,7 @@ namespace Art\Object {
             // associations
             foreach ($object->_infos['associations'] as $name => $associationInfos) {
                 if (isset($mapFields[$alias . '_' . $name]))
-                    \Art\Object\Collection\Association\Writer::write($object->getAssociation($name), $alias . '_' . $name, $rows, $fields, $mapFields);
+                    \CRUDsader\Object\Collection\Association\Writer::write($object->getAssociation($name), $alias . '_' . $name, $rows, $fields, $mapFields);
             }
         }
 
@@ -43,7 +43,7 @@ namespace Art\Object {
                 self::setModified($object->getParent());
         }
 
-        public static function linkToAssociation(parent $object, \Art\Object\Collection\Association $association) {
+        public static function linkToAssociation(parent $object, \CRUDsader\Object\Collection\Association $association) {
             $object->_linkedAssociation = $association;
         }
         

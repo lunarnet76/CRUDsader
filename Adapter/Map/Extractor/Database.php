@@ -1,25 +1,25 @@
 <?php
 /**
- * LICENSE: see Art/license.txt
+ * LICENSE: see CRUDsader/license.txt
  *
  * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.Art.com/license/1.txt
+ * @license     http://www.CRUDsader.com/license/1.txt
  * @version     $Id$
- * @link        http://www.Art.com/manual/
+ * @link        http://www.CRUDsader.com/manual/
  * @since       1.0
  */
-namespace Art\Adapter\Map\Extractor {
+namespace CRUDsader\Adapter\Map\Extractor {
 
     /**
      * create the mapping tables
      * @abstract
-     * @package    Art\Adapter\Map
+     * @package    CRUDsader\Adapter\Map
      */
-    class Database extends \Art\Adapter\Map\Extractor {
+    class Database extends \CRUDsader\Adapter\Map\Extractor {
 
         public function create(array $map) {
-            $mapObject = \Art\Map::getInstance();
+            $mapObject = \CRUDsader\Map::getInstance();
             $tables = array();
             foreach ($map['classes'] as $className => $classInfos) {
                 $tables[$className] = array(
@@ -100,7 +100,7 @@ namespace Art\Adapter\Map\Extractor {
                     }
                 }
             }
-            $database = \Art\Database::getInstance();
+            $database = \CRUDsader\Database::getInstance();
             $q = $database->setForeignKeyCheck(false);
             $q = $database->listTables();
             foreach ($q as $d) {
@@ -124,7 +124,7 @@ namespace Art\Adapter\Map\Extractor {
             }
         }
     }
-    class DatabaseException extends \Art\Exception {
+    class DatabaseException extends \CRUDsader\Exception {
         
     }
 }

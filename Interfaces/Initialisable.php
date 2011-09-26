@@ -1,5 +1,5 @@
 <?php
-namespace Art\Interfaces {
+namespace CRUDsader\Interfaces {
     interface Initialisable {
 
         function isInitialised();
