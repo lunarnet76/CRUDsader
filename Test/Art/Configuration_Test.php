@@ -4,7 +4,7 @@ class ArtConfigurationInstancer extends \Art\Configuration {
         return parent::$_defaults;
     }
 }
-class ConfigurationTest extends PHPUnit_Framework_TestCase {
+class Configuration_Test extends PHPUnit_Framework_TestCase {
 
     function test_instance() {
         $instance = \Art\Configuration::getInstance();

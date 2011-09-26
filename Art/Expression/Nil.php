@@ -14,7 +14,7 @@ namespace Art\Expression {
      * NULL wrapper
      * @package    Art
      */
-    class Void extends \Art\Expression {
+    class Nil extends \Art\Expression {
         /**
          * the expression in itself
          * @var string

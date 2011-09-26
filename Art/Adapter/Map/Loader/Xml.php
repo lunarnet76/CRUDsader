@@ -37,9 +37,6 @@ namespace Art\Adapter\Map\Loader {
          * @return bool
          */
         public function validate() {
-            /*
-             * - ref internal must be max=1
-             */
             return true;
         }
 
@@ -89,12 +86,12 @@ namespace Art\Adapter\Map\Loader {
                 foreach ($attributes as $attribute) {
                     $attributeName = (string) $attribute['name'];
                     $ret['classes'][$name]['attributes'][$attributeName] = array(
-                        'mandatory' => isset($attribute['mandatory']) ? (string) $attribute['mandatory'] : false,
+                        'required' => isset($attribute['required']) ? ((string) $attribute['required'])=='true' : false,
                         'default' => isset($attribute['default']) ? (string) $attribute['default'] : false,
                         'databaseField' => isset($attribute['databaseField']) ? (string) $attribute['databaseField'] : $attributeName,
                         'type' => isset($attribute['type']) ? (string) $attribute['type'] : $defaults->attribute->type,
-                        'searchable' => isset($attribute['type']) ? (string) $attribute['type'] : $defaults->attribute->searchable,
-                        'calculated' => isset($attribute['type']) ? (string) $attribute['type'] : false
+                        'searchable' => isset($attribute['searchable']) ? (string) $attribute['searchable'] : $defaults->attribute->searchable,
+                        'calculated' => isset($attribute['calculated']) ? (string) $attribute['calculated'] : false
                     );
                     $ret['classes'][$name]['definition']['attributeCount'][$attributeName] = false;
                     $ret['classes'][$name]['attributesReversed'][$ret['classes'][$name]['attributes'][$attributeName]['databaseField']] = $attributeName;
@@ -113,6 +110,7 @@ namespace Art\Adapter\Map\Loader {
                         'max' => isset($association['max']) ? (int) $association['max'] : $defaults->associations->max,
                         'composition' => isset($association['composition']) ? ((string) $association['composition'])=='true' : false,
                         'databaseTable' => isset($association['databaseTable']) ? (string) $association['databaseTable'] : \Art\Map::getDatabaseAssociationTable(isset($association['name']) ? (string) $association['name'] : false, $to, $name),
+                        'databaseIdField' => isset($association['databaseIdField']) ? (string) $association['databaseIdField'] : $defaults->associations->databaseIdField,
                         'internalField' => isset($association['internalField']) ? (string) $association['internalField'] : $name,
                         'externalField' => isset($association['externalField']) ? (string) $association['externalField'] : $to
                     );

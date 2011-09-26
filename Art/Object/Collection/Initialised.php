@@ -11,16 +11,17 @@ namespace Art\Object\Collection {
                     $id = current($row);
                     if (!\Art\Expression::isEmpty($id)) {
                         if (!isset($this->_objectIndexes[$id])) {
-                            $this->_objects[$this->_iterator] = new \Art\Object($this->_class);
+                            $this->_objects[$this->_iterator] = \Art\Object\IdentityMap::exists($this->_class,$id)?\Art\Object\IdentityMap::get($this->_class,$id):new \Art\Object($this->_class);
                             $this->_objectIndexes[$id] = $this->_iterator;
                             $this->_iterator++;
                         }
                         $aggregate[$id][] = $row;
                     }
                 }
-            }
-            foreach ($aggregate as $id => $rows) {
-                \Art\Object\Writer::write($this->_objects[$this->_objectIndexes[$id]],$id, $this->_class,$rows, $fields, $mapFields);
+                foreach ($aggregate as $id => $rows) {
+                    if(!\Art\Object\IdentityMap::exists($this->_class,$id))
+                        \Art\Object\Writer::write($this->_objects[$this->_objectIndexes[$id]], $id, $this->_class, $rows, $fields, $mapFields);
+                }
             }
         }
     }

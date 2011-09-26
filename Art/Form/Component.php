@@ -15,125 +15,241 @@ namespace Art\Form {
      * @package    Art
      * @abstract
      */
-    abstract class Component implements \Art\Interfaces\Arrayable, \SplSubject {
-        protected $_label = false;
+    class Component implements \Art\Interfaces\Arrayable, \Art\Interfaces\Parametrable, \SplSubject {
+        protected $_parameters = array();
         protected $_observers = array();
-        protected $_parent;
-        protected $_value;
-        protected $_error = false;
-        protected $_isRequired = false;
-        protected $_isReceived = false;
         protected $_htmlAttributes = array();
-        protected $_extras = array();
-
-        public function setCss($cssClass) {
-            $this->_htmlAttributes['class'] = $cssClass;
-        }
+        protected $_htmlLabel = false;
+        protected $_inputParent;
+        protected $_inputValue=null;
+        protected $_inputError = false;
+        protected $_inputRequired = false;
+        protected $_inputReceived = false;
+        protected $_options = array();
         
-        public function setExtra($name,$value){
-            $this->_extras[$name]=$value;
-        }
-        
-        public function getExtra($name){
-            return $this->_extras[$name];
-        }
-        
-        public function hasExtra($name){
-            return isset($this->_extras[$name]);
+        public function __construct(array $options=array()){
+            $this->_options=$options;
+            $this->_inputValue=new \Art\Expression\Nil;
         }
 
-        public function setError($error) {
-            $this->_error = $error;
+        // ** INTERFACE ** parametrable
+        /**
+         * @param string $name
+         */
+        public function setParameter($name=false, $value=null) {
+            $this->_parameters[$name] = $value;
         }
 
-        public function getValue() {
-            return $this->_value;
+        /**
+         * @param string $name
+         */
+        public function unsetParameter($name=false) {
+            unset($this->_parameters[$name]);
         }
 
-        public function getError() {
-            return $this->_error;
+        /**
+         * @param string $name
+         * @return bool
+         */
+        public function hasParameter($name=false) {
+            return isset($this->_parameters[$name]);
         }
 
-        public function setLabel($name) {
-            $this->_label = $name;
+        /**
+         * @param string $name
+         * @return \Art\Adapter
+         */
+        public function getParameter($name=false) {
+            return $this->_parameters[$name];
         }
 
-        public function setRequired($bool) {
-            $this->_isRequired = $bool;
+        /**
+         * @return array
+         */
+        public function getParameters() {
+            return $this->_parameters;
         }
 
-        public function isRequired() {
-            return $this->_isRequired;
-        }
-
-        public function isReceived() {
-            return $this->_isReceived;
-        }
-
-        public function hasParentComponent() {
-            return isset($this->_parent);
-        }
-
-        public function getParentComponent() {
-            return $this->_parent;
-        }
-
-        public function getId() {
-            return $this->_htmlAttributes['id'];
-        }
-
-        public function getLabel() {
-            return $this->_label;
-        }
-
-        public function reset() {
-            $this->_error = false;
-        }
-
-        public function setHTMLAttribute($attributeName, $attributeValue) {
-            $this->_htmlAttributes[$attributeName] = $attributeValue;
-        }
-
-        public function getHTMLAttributes() {
-            $ret = '';
-            foreach ($this->_htmlAttributes as $attributeName => $attributeValue) {
-                $ret.=$attributeName . '="' . $attributeValue . '" ';
-            }
-            return $ret;
-        }
-
-        abstract public function error();
-
-        abstract public function isEmpty();
-
-        abstract public function receive($data=false);
-
-        abstract public function toHTML();
-
-        protected function _setId($id) {
-            $this->_htmlAttributes['name']=$id;
-            $this->_htmlAttributes['id'] = $id;
-        }
-
-        public function toArray() {
-            return $this->_value;
-        }
-
-        protected function _html($component, $type) {
-            return '<div class="' . $type . '">' . $component . '</div>';
-        }
-
+        // ** INTERFACE ** SplSubject
+        /**
+         * start being observerd by this object
+         * @param \SplObserver $observer 
+         */
         public function attach(\SplObserver $observer) {
             $this->_observers[spl_object_hash($observer)] = $observer;
         }
 
+        /**
+         * stop being observed by this object
+         * @param \SplObserver $observer 
+         */
         public function detach(\SplObserver $observer) {
             unset($this->_observers[spl_object_hash($observer)]);
         }
 
+        /**
+         * notify all observers that we have been updated
+         */
         public function notify() {
             foreach ($this->_observers as $observer)
                 $observer->update($this);
+        }
+
+        // ** Html **
+        /**
+         * set an Html attribute tag value
+         * @param string $attributeName
+         * @param string $attributeValue 
+         */
+        public function setHtmlAttribute($attributeName, $attributeValue) {
+            $this->_htmlAttributes[$attributeName] = $attributeValue;
+        }
+
+        /**
+         * set an Html attribute tag value
+         * @param string $attributeName
+         * @param string $attributeValue 
+         */
+        public function setHtmlAttributes(array $associativeAttributes) {
+            $this->_htmlAttributes = $associativeAttributes;
+        }
+
+        /**
+         * set an Html attribute tag value
+         * @param string $attributeName
+         * @param string $attributeValue 
+         */
+        public function unsetHtmlAttribute($attributeName) {
+            unset($this->_htmlAttributes[$attributeName]);
+        }
+
+        /**
+         * get an Html attribute tag value
+         * @param type $attributeName
+         * @return type 
+         */
+        public function getHtmlAttribute($attributeName) {
+            return $this->_htmlAttributes[$attributeName];
+        }
+
+        /**
+         * get an Html attribute tag value
+         * @param type $attributeName
+         * @return type 
+         */
+        public function hasHtmlAttribute($attributeName) {
+            return isset($this->_htmlAttributes[$attributeName]);
+        }
+
+        /**
+         * get all the Html tag values as a string
+         * @return string 
+         */
+        public function getHtmlAttributes() {
+            return $this->_htmlAttributes;
+        }
+
+        /**
+         * get all the Html tag values as a string
+         * @return string 
+         */
+        public function getHtmlAttributesToHtml() {
+            $ret = '';
+            foreach ($this->_htmlAttributes as $tagName => $tagValue)
+                $ret.=' ' . $tagName . '="' . $tagValue . '"';
+            return $ret;
+        }
+
+        public function wrapHtml($component, $cssClass) {
+            return '<div class="' . $cssClass . '">' . $component . '</div>';
+        }
+
+        public function setHtmlLabel($name) {
+            $this->_htmlLabel = $name;
+        }
+
+        public function getHtmlLabel() {
+            return $this->_htmlLabel;
+        }
+        
+        public function labeltoHtml() {
+            return $this->wrapHtml($this->_htmlLabel.($this->inputRequired()?'<span class="star">*</span>':''), 'label');
+        }
+
+        public function toHtml() {
+            return '<input type="text"' . $this->getHtmlAttributesToHtml() . ' value="' . (isset($this->_inputValue)?$this->_inputValue:'') . '"/>';
+        }
+
+        // ** FORM **
+        public function receiveInput($data=null) {
+            $this->_inputValue = $data;
+            $this->_inputReceived = true;
+            $this->notify();
+        }
+
+        public function inputReceived() {
+            return $this->_inputReceived;
+        }
+
+        public function getInputValue() {
+            return $this->_inputValue;
+        }
+
+        public function inputEmpty() {
+            return empty($this->_inputValue);
+        }
+
+        public function setInputRequired($bool) {
+            $this->_inputRequired = $bool;
+        }
+
+        public function inputRequired() {
+            return $this->_inputRequired;
+        }
+
+        /**
+         * return true if valid, string or false otherwise
+         * @return type 
+         */
+        public function inputValid() {
+            return $this->_inputError ? $this->_inputError : $this->_inputValid();
+        }
+
+        /**
+         * return true if valid, string or false otherwise
+         * @return type 
+         */
+        protected function _inputValid() {
+            return true;
+        }
+
+        public function setInputError($error) {
+            $this->_inputError = $error;
+        }
+
+        public function getInputError() {
+            return $this->_inputError;
+        }
+
+        public function resetInput() {
+            $this->_inputError = false;
+            unset($this->_inputValue);
+        }
+
+        public function hasInputParent() {
+            return isset($this->_inputParent);
+        }
+
+        public function getInputParent() {
+            return $this->_inputParent;
+        }
+
+        public function toArray() {
+            return isset($this->_inputValue) && !$this->_inputValue instanceof \Art\Expression\Nil?$this->_inputValue:'EXPRESSION_NULL';
+        }
+
+        public function __toString() {
+            return $this->toHTML();
         }
     }
     class ComponentException extends \Art\Exception {

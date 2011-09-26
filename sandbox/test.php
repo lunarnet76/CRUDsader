@@ -5,6 +5,8 @@ spl_autoload_register(array('\Art\Autoload', 'autoLoad'));
 
 function eh() {
     pre(func_get_args());
+    pre(debug_backtrace());
+    die('ERROR');
     return true;
 }
 set_error_handler('eh');
@@ -14,6 +16,8 @@ function preCallback() {
 }
 
 function pre($v, $title=false) {
+    if ($v instanceof \Art\Interfaces\Arrayable)
+        $v = $v->toArray();
     \Art\Debug::pre($v, $title);
 }
 
@@ -37,54 +41,69 @@ function table($var) {
     }
     echo '<table>';
 }
-\Art\Configuration::getInstance()->adapter->map->loader->xml->file = '../Test/parts/map.xml';
+\Art\Configuration::getInstance()->database->name = 'art_test';
+\Art\Configuration::getInstance()->debug->database->profiler=true ;
+\Art\Configuration::getInstance()->adapter->map->loader->xml->file = '../Test/Parts/orm.xml';
 
-$form = array(
-    new \Art\Form('a'),
-    new \Art\Form('b'),
-    new \Art\Form('c'),
-    new \Art\Form('d'),
-    new \Art\Form('e')
-);
-
-
-$form[0]->add($form[1]);
-$form[1]->add($form[2], '2f');
-$form[2]->add($form[3], '3f');
-$form[3]->add($form[4], '4f');
-$test = $form[4]->add(new \Art\Form\Component\Input());
-$test2 = $form[4]->add(new \Art\Form\Component\Input(), '2i');
-$form[0]->resetSession();
-
-$post = array(
-    'a' => array(
-        '0' => array(
-            '2f' => array(
-                '3f' => array(
-                    '4f' => array(
-                        '0' => 'test',
-                        '2i' => 'test2',
-                    )
-                )
-            )
-        )
-    )
-);
-if ($form[0]->receive($post) && !$form[0]->error()) {
-    pre($test->getValue(), 'VALUE');
-    pre($test2->getValue(), 'VALUE');
+try {
+    $m = \Art\Map::getInstance();
+    $m->extract();
+} catch (Exception $e) {
+    pre($e);
+    exit;
 }
-echo $form[0];
-pre($form[0]->getSession()->toArray(),'session');
-pre('FINI');
-pre($test->getHTMLAttributes());
-pre($form[0]);
-pre($_REQUEST);
-
-/*$person=new Object('person');
-$form=$person->getForm('FROM person p,parent c,hasEmail e');
-
-if($form->receive() && !$form->error()){
-    //pre($person->toArray());
+mysql_connect('localhost', 'root', '');
+mysql_select_db('art_test');
+mysql_query('SET FOREIGN_KEY_CHECKS = 0');
+$sqlFile = explode(';', file_get_contents('../Test/Parts/databaseOrmRows.sql'));
+foreach ($sqlFile as $sql) {
+    $sql = trim($sql);
+    if (!empty($sql)) {
+        mysql_query($sql) or die($sql . mysql_error());
+    }
 }
-    echo $form;*/
+mysql_query('SET FOREIGN_KEY_CHECKS = 1');
+mysql_close();
+
+$oql = 'SELECT p.*,c.*
+            FROM 
+                person p,
+                parent c,
+                 
+                 hasWebSite w2 ON p
+                 WHERE
+                    p.id=?
+                    ORDER BY p.id ASC LIMIT 3';
+/*hasEmail e, webSite w ON e,
+                 hasGroup g, 
+                 hasAddress a,,
+                 parent wp ON w2*/
+$q = new \Art\Query($oql);
+
+$r = $q->fetchAll(array(array('>' => new \Art\Expression('0'))));
+$o = $r->findById(1);
+pre($o);
+// FORM
+$form = $o->getForm($oql);
+try {
+    if ($form->receiveInput() && $form->inputValid()) {
+        $o->save();
+        pre($o,'saved');
+    }
+} catch (Exception $e) {
+    if ($e instanceof Art\Adapter\Database\Connector\MysqliException)
+        pre($e->getSQL());
+    $form->setInputError($e->getMessage());
+}
+
+
+echo $form;
+
+$r = $q->fetchAll(array(array('>' => new \Art\Expression('0'))));
+$o = $r->findById(1);
+
+pre($o);
+
+echo \Art\Database::getInstance()->getAdapter('profiler')->display(true);
+//pre($o);
+

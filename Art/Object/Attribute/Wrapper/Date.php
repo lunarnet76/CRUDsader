@@ -1,11 +1,16 @@
 <?php
 namespace Art\Object\Attribute\Wrapper{
-    class Base extends \Art\Object\Attribute\Wrapper{
+    class Date extends \Art\Object\Attribute\Wrapper{
+        
+        
          public function formatForDatabase($value){
-             return $value;
+             $x=explode('/',$value);
+             return $x[2].'-'.$x[1].'-'.$x[0];
          }
+         
          public function formatFromDatabase($value){
-             return $value;
+             $x=explode('-',$value);
+             return $x[2].'/'.$x[1].'/'.$x[0];
          }
          public function isValid($value){
              return true;

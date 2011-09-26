@@ -42,14 +42,25 @@ namespace Art {
         public function hasAdapter($name=false) {
             return isset($this->_adapters[$name]);
         }
-
+        
         /**
-         * return the translation of the index
-         * @param string $index
-         * @return string
+         * @return array
          */
-        public function translate($index) {
-            return $this->_adapters['translation']->translate($index);
+        public function getAdapters(){
+            return $this->_adapters;
         }
+
+        public function __call($name, $arguments) {
+            switch($name){
+                case 'translate':
+                    return call_user_func_array(array($this->_adapters['translation'],$name), $arguments);
+                    break;
+                default:
+                    throw new I18nException('call to undefined function "'.$name.'"');
+            }
+        }
+    }
+    class I18nException extends \Art\Exception{
+        
     }
 }

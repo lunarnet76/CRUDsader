@@ -115,12 +115,12 @@ namespace Art {
                 $parentClass = $this->classGetParent($className);
                 return array(
                     'table' => array(
-                        'fromAlias' => $fromAlias,
-                        'fromColumn' => $this->_map['classes'][$className]['definition']['databaseIdField'],
-                        'toAlias' => $joinedAlias,
-                        'toColumn' => $this->_map['classes'][$parentClass]['definition']['databaseIdField'],
-                        'toTable' => $this->_map['classes'][$parentClass]['definition']['databaseTable'],
-                        'toClass' => $parentClass,
+                        'table' => $this->_map['classes'][$parentClass]['definition']['databaseTable'],
+                        'alias' => $joinedAlias,
+                        'field' => $this->_map['classes'][$parentClass]['definition']['databaseIdField'],
+                        'joinAlias' => $fromAlias,
+                        'joinField' => $this->_map['classes'][$className]['definition']['databaseIdField'],
+                        'class' => $parentClass,
                         'type' => 'left'
                     )
                 );
@@ -133,42 +133,43 @@ namespace Art {
             switch ($association['reference']) {
                 case 'external':
                     $joins['table'] = array(
-                        'fromAlias' => $fromAlias,
-                        'fromColumn' => $this->_map['classes'][$className]['definition']['databaseIdField'],
-                        'toAlias' => $joinedAlias,
-                        'toColumn' => $association['externalField'],
-                        'toTable' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
-                        'toClass' => $association['to'],
+                        'table' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
+                        'alias' => $joinedAlias,
+                        'field' => $association['externalField'],
+                        'joinAlias' => $fromAlias,
+                        'joinField' => $this->_map['classes'][$className]['definition']['databaseIdField'],
+                        'class' => $association['to'],
                         'type' => 'left'
                     );
                     break;
                 case 'internal':
                     $joins['table'] = array(
-                        'fromAlias' => $fromAlias,
-                        'fromColumn' => $association['internalField'],
-                        'toAlias' => $joinedAlias,
-                        'toColumn' => $this->_map['classes'][$association['to']]['definition']['databaseIdField'],
-                        'toTable' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
-                        'toClass' => $association['to'],
+                        'table' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
+                        'alias' => $joinedAlias,
+                        'field' => $this->_map['classes'][$association['to']]['definition']['databaseIdField'],
+                        'joinAlias' => $fromAlias,
+                        'joinField' => $association['internalField'],
+                        'class' => $association['to'],
                         'type' => 'left'
                     );
                     break;
                 case 'table':
+                    $associationAlias=$associationAlias++;
                     $joins['association'] = array(
-                        'fromAlias' => $fromAlias,
-                        'fromColumn' => $this->_map['classes'][$className]['definition']['databaseIdField'],
-                        'toAlias' => $associationAlias,
-                        'toColumn' => $className,
-                        'toTable' => $association['databaseTable'],
+                        'table' => $association['databaseTable'],
+                        'alias' =>$associationAlias,
+                        'field' => $association['internalField'],
+                        'joinAlias' => $fromAlias,
+                        'joinField' => $this->_map['classes'][$className]['definition']['databaseIdField'],
                         'type' => 'left'
                     );
                     $joins['table'] = array(
-                        'fromAlias' => $associationAlias++,
-                        'fromColumn' => $association['to'],
-                        'toAlias' => $joinedAlias,
-                        'toColumn' => $this->_map['classes'][$association['to']]['definition']['databaseIdField'],
-                        'toTable' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
-                        'toClass' => $association['to'],
+                        'table' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
+                        'alias' =>$joinedAlias,
+                        'field' => $this->_map['classes'][$association['to']]['definition']['databaseIdField'],
+                        'joinAlias' => $associationAlias,
+                        'joinField' => $association['externalField'],
+                        'class' => $association['to'],
                         'type' => 'left'
                     );
                     break;

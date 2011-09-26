@@ -16,7 +16,19 @@ namespace Art\Adapter\Database {
      * @package    Art
      */
     abstract class Connector extends \Art\Adapter{
-
+        /**
+         * @var ressource
+         */
+        protected $_inTransaction = false;
+        
+        /**
+         * check if connector is in transaction
+         * @return bool
+         */
+        public function isInTransaction(){
+            return $this->_transaction;
+        }
+        
         /**
          * connect to the DB
          * @abstract
@@ -28,6 +40,13 @@ namespace Art\Adapter\Database {
          * @abstract
          */
         abstract public function disconnect();
+        
+        /**
+         * wether we are connected to the DB
+         * @abstract
+         * @return bool
+         */
+        abstract public function isConnected();
         
         /**
          * real_escape_string
@@ -83,5 +102,18 @@ namespace Art\Adapter\Database {
          * @abstract
          */
         abstract public function rollBack();
+    }
+    class ConnectorException extends \Art\Exception {
+        protected $_sql = false;
+
+        public function __construct($message, $sql=false, $errorNo=false) {
+            $this->message = $message;
+            $this->_sql = $sql;
+            $this->code = $errorNo;
+        }
+
+        public function getSQL() {
+            return $this->_sql;
+        }
     }
 }

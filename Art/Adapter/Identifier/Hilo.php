@@ -13,7 +13,7 @@ namespace Art\Adapter\Identifier {
     /**
      * @package    Art\Adapter\Identifier
      */
-    class Hilo extends \Art\Adapter {
+    class Hilo extends \Art\Adapter\Identifier {
         /**
          * @var \Art\Session
          */
@@ -23,7 +23,7 @@ namespace Art\Adapter\Identifier {
          * constructor
          */
         public function init() {
-            $this->_session = \Art\Session::useNamespace('Art\\Adapter\\Identifier');
+            $this->_session = \Art\Session::useNamespace('Art\\Adapter\\Identifier\\Hilo');
             $this->_session->highId = isset($this->_session->highId) ? $this->_session->highId : $this->_getNewHighId();
             if (!isset($this->_session->lowId))
                 $this->_session->lowId = array();
@@ -34,11 +34,11 @@ namespace Art\Adapter\Identifier {
          * @access public
          * @return string
          */
-        public function getOID($class) {
-            if (!isset($this->_session->lowId->$class))
-                $this->_session->lowId->$class = 0;
-            $this->_session->lowId->$class++;
-            $oid = $this->_session->lowId->$class . $this->_session->highId;
+        public function getOID($classInfos) {
+            if (!isset($this->_session->lowId->{$classInfos['class']}))
+                $this->_session->lowId->{$classInfos['class']} = 0;
+            $this->_session->lowId->{$classInfos['class']}++;
+            $oid = $this->_session->lowId->{$classInfos['class']} . $this->_session->highId;
             return $oid;
         }
 

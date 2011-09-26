@@ -3,7 +3,7 @@ class ArtSingletonInstancer extends Art\Singleton {
     
 }
 
-class SingletonTest extends PHPUnit_Framework_TestCase {
+class Singleton_Test extends PHPUnit_Framework_TestCase {
 
     function test_getInstance_() {
         $instance = ArtSingletonInstancer::getInstance();

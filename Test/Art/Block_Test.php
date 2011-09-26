@@ -5,7 +5,7 @@ class ArtBlockInstancer extends \Art\Block {
     }
 }
 
-class BlockTest extends PHPUnit_Framework_TestCase {
+class Block_Test extends PHPUnit_Framework_TestCase {
 
     // test __get,__isset,__unset,__set
     function test_accessors() {

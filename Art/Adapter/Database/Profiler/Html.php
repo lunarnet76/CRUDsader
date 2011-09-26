@@ -163,9 +163,9 @@ namespace Art\Adapter\Database\Profiler {
                 if (isset($log['displayed']))
                     continue;
                 echo '<div class="log">';
-
+                
                 echo '<div class="container query">';
-                echo $highlighter->highLight($log['query']).(isset($log['time']) ? $log['time'] : 'not executed');
+                echo $highlighter->highLight($log['query']).(isset($log['time']) ? '' : 'not executed');
                 echo '</div>';
                 if (isset($log['args'])) {
                     echo '<div class="container">';
@@ -194,6 +194,7 @@ namespace Art\Adapter\Database\Profiler {
                                 echo '<td>' . $o . '</td>';
                             echo '</tr>';
                         }
+                        //$log['results']->rewind();
                         echo '</table></div>';
                     }else
                         echo '<div class="container time">' . $log['time'] . '</div>';

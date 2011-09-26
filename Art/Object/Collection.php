@@ -1,6 +1,6 @@
 <?php
 namespace Art\Object {
-    class Collection implements \Art\Interfaces\Initialisable, \ArrayAccess {
+    class Collection implements \Art\Interfaces\Initialisable, \ArrayAccess,\Iterator {
         protected $_initialised = false;
         protected $_class = null;
         protected $_classInfos = null;
@@ -15,8 +15,10 @@ namespace Art\Object {
 
         public function toArray($full=false) {
             $ret = array('class' => $this->_class, 'initialised' => $this->_initialised ? 'yes' : 'no', 'objects' => array(), 'indexMap' => $this->_objectIndexes);
-            foreach ($this->_objects as $k => $object)
-                $ret['objects'][$k] = $object->toArray($full);
+            $ret['objects']=array('modified'=>$this->_isModified?'yes':'no');
+            foreach ($this->_objects as $k => $object){
+                $ret['objects'][$k.':'.$this->_objects[$k]->isPersisted().'@'.$this->_objects[$k]->getLinkedAssociationId()] = $object->toArray($full);
+            }
             return $full ? $ret : $ret['objects'];
         }
 
@@ -26,7 +28,8 @@ namespace Art\Object {
         
         public function newObject(){
             // check max
-            return $this->_objects[++$this->_iterator]=new \Art\Object($this->_class);
+            $this->_objects[++$this->_iterator]=new \Art\Object($this->_class);
+            return $this->_objects[$this->_iterator];
         }
 
         // ITERATOR
@@ -36,13 +39,13 @@ namespace Art\Object {
                 throw new Art_Object_Collection_Exception('you can add only object of class "' . $this->_class . '"');
             if (isset($index)) {
                 $this->_objects[$index] = $this->_transformObject($value);
-                $this->_objectsIds[] = $index;
+                $this->_objectIndexes[] = $index;
                 return $this->_objects[$index];
             } else {
                 $value = $this->_transformObject($value);
                 $this->_objects[] = $value;
                 end($this->_objects);
-                $this->_objectsIds[] = key($this->_objects);
+                $this->_objectIndexes[] = key($this->_objects);
                 return $value;
             }*/
         }
@@ -54,13 +57,18 @@ namespace Art\Object {
         public function offsetGet($index) {
             if (isset($this->_objects[$index]))
                 return $this->_objects[$index];
-            if (isset($this->_objectsIds[$index]) && isset($this->_objects[$this->_objectsIds[$index]]))
-                return $this->_objects[$this->_objectsIds[$index]];
             throw new CollectionException('no object at index "' . $index . '"');
         }
 
         public function offsetExists($index) {
             return isset($this->_objects[$index]);
+        }
+        
+        public function findById($index){
+            if (isset($this->_objectIndexes[$index])){
+                return $this->_objects[$this->_objectIndexes[$index]];
+            }
+            throw new CollectionException('no object with id "' . $index . '"');
         }
 
         /**
@@ -75,7 +83,7 @@ namespace Art\Object {
          * @return Crudsader_Object
          */
         public function current() {
-            return $this->_objects[$this->_objectIndexes[$this->_iterator]];
+            return $this->_objects[$this->_iterator];
         }
 
         /**
@@ -83,7 +91,7 @@ namespace Art\Object {
          * @return string
          */
         public function key() {
-            return $this->_objects[$this->_objectIndexes[$this->_iterator]]->hasId() ? $this->_objects[$this->_objectIndexes[$this->_iterator]]->getId() : false;
+            return $this->_objects[$this->_iterator]->hasId() ? $this->_objects[$this->_iterator]->getId() : false;
         }
 
         /**
@@ -98,7 +106,7 @@ namespace Art\Object {
          * @return bool
          */
         public function valid() {
-            return isset($this->_objectIndexes[$this->_iterator]) && isset($this->_objects[$this->_objectIndexes[$this->_iterator]]);
+            return isset($this->_objects[$this->_iterator]);
         }
     }
     class CollectionException extends \Art\Exception{}

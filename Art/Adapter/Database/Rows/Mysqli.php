@@ -19,30 +19,37 @@ namespace Art\Adapter\Database\Rows {
         /**
          * @var array|bool current row
          */
-        protected $_current = false;
-        protected $_fields = NULL;
+        protected $_current = null;
+        protected $_fields = array();
+
         /**
          *
          * @var bool wether the result set has been iterated
          */
         protected $_iterated = false;
+        protected $_rowIterator = 0;
 
         public function setResource($ressource, $count=false) {
-            parent::setResource($ressource,$count);
-            $this->_fields=$this->_ressource->fetch_fields();
+            parent::setResource($ressource, $count);
+            $fields = $this->_ressource->fetch_fields();
+            foreach ($fields as $field) {
+                $this->_fields[] = $field->name;
+            }
         }
-        
-        public function getFields(){
+
+        public function getFields() {
             return $this->_fields;
         }
-        
+
         public function rewind() {
             if (!$this->_count)
                 return;
             if (!$this->_iterated)
                 $this->_iterated = true;
-            else
+            else {
                 $this->_ressource->data_seek(0);
+                $this->_rowIterator = 0;
+            }
             $this->_current = $this->_ressource->fetch_row();
         }
 
@@ -51,15 +58,20 @@ namespace Art\Adapter\Database\Rows {
         }
 
         public function current() {
+            if (!$this->_iterated) {
+                $this->_iterated = true;
+                $this->_current = $this->_ressource->fetch_row();
+            }
             return $this->_current;
         }
 
         public function key() {
-            return key($this->_current);
+            return $this->_rowIterator;
         }
 
         public function next() {
             $this->_current = $this->_ressource->fetch_row();
+            $this->_rowIterator++;
             return $this->_current;
         }
 

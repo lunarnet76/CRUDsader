@@ -1,6 +1,6 @@
 <?php
 
-class ExceptionTest extends PHPUnit_Framework_TestCase {
+class Exception_Test extends PHPUnit_Framework_TestCase {
     /**
      * @expectedException \Art\Exception
      */

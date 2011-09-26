@@ -18,8 +18,23 @@ namespace Art\Adapter\Database {
     abstract class Descriptor extends \Art\Adapter {
         public static $FIELD_COUNTING_ALIAS = 'counting';
         public static $TABLE_LIMIT_ALIAS = 'limittable';
-        public static $ID_FIELD = 'id';
+        public static $OBJECT_ID_FIELD_ALIAS = 'distinctId';
+        public static $OBJECT_TMP_TABLE_ALIAS = 'object';
+        public static $TABLE_ALIAS_SUBQUERY = '___sq';
 
+        /**
+         * @var \Art\Adapter\Database\Connector 
+         */
+        protected $_connector;
+        
+        /**
+         * set the connector
+         * @param \Art\Adapter\Database\Connector $connector 
+         */
+        public function setConnector(\Art\Adapter\Database\Connector $connector){
+            $this->_connector=$connector;
+        }
+        
         /**
          * quote table name or table field
          * @abstract
@@ -34,16 +49,10 @@ namespace Art\Adapter\Database {
          * @abstract
          * @static
          * @param string $value
+         * @param \Art\Adapter\Database\Connector $connector=null $connector
          * @return string
          */
         abstract public function quote($value);
-
-        /**
-         * @abstract
-         * @param \Art\Database\Sql\Select $select 
-         * @param array $args 
-         */
-        abstract public function select(\Art\Database\Select $select,array $args=null);
 
         /**
          * insert values in a table
@@ -74,17 +83,10 @@ namespace Art\Adapter\Database {
         abstract public function delete($table, $where);
 
         /**
-         * split a SQL string into colored parts
-         * @param string $sql
-         * @return string
-         */
-        abstract public function highLight($sql);
-
-        /**
          * list all the tables
          * @return string
          */
-        abstract public function listTable();
+        abstract public function listTables();
 
         /**
          * delete a table
@@ -110,5 +112,24 @@ namespace Art\Adapter\Database {
          * @param type $infos=array('fromTable','toTable','fromField','toField','onUpdate','onDelete') 
          */
         abstract public function createTableReference($infos);
+        
+         /**
+         * @abstract
+         * @param array $select 
+         */
+        abstract public function select($select);
+        
+        /**
+         * @abstract
+         * @param array $select 
+         */
+        abstract public function countSelect($select);
+        
+        /**
+         * split a SQL string into colored parts
+         * @param string $sql
+         * @return string
+         */
+        abstract public function highLight($sql);
     }
 }

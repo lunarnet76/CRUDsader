@@ -141,9 +141,10 @@ namespace Art {
          */
         public static function load($className) {
             $filePath = self::isLoadable($className);
-            if ($filePath)
+            if ($filePath){
+                 self::$_includedClasses[$className]=$filePath;
                 require($filePath);
-            else
+            }else
                 throw new AutoloadException('class "' . $className . '" cannot be loaded');
         }
 
@@ -153,9 +154,10 @@ namespace Art {
          */
         public static function autoload($className) {
             $filePath = self::_findIncludePathFor($className);
-            if ($filePath)
+            if ($filePath){
+                 self::$_includedClasses[$className]=$filePath;
                 include($filePath);
-            else
+            }else
                 throw new AutoloadException('class "' . $className . '" cannot be autoloaded');
         }
 

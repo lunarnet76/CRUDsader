@@ -95,7 +95,7 @@ namespace Art {
             echo '<div class="debug" style="background-color:' . $color . ';border-top:1px solid black;margin-bottom:5px">' . ($title != '' ? '<h3>' . $title . '</h3>' : ''); //(isset($d['File'])?$d['File'] . ':' . $d['Line']:'')
             if (!is_array($v) && !is_object($v)) {
                 if (strpos($v, 'SELECT') === 0) {
-                    echo Art_Adapter_Factory::getInstance(array('database' => 'descriptor'))->highLight($v);
+                    echo \Art\Database::getInstance()->highLight($v);
                 } else {
                     echo gettype($v) . ' : ';
                     print_r($v);

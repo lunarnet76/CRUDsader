@@ -45,6 +45,15 @@ namespace Art\Adapter\Database\Connector {
                 return;
             if (false === $this->_connection->close())
                 throw new MysqliException('can\'t disconnect from database');
+            unset($this->_connection);
+        }
+        
+        /**
+         * wether we are connected to the DB
+         * @return bool 
+         */
+        public function isConnected(){
+            return isset($this->_connection);
         }
 
         /**
@@ -71,8 +80,9 @@ namespace Art\Adapter\Database\Connector {
             if (false === $resource)
                 throw new MysqliException($this->_connection->error, $sql, $this->_connection->errno);
             switch ($type) {
+                case 'countSelect':
                 case 'select':
-                case 'listTable':
+                case 'listTables':
                     $rows = array();
                     $rowSet = \Art\Adapter::Factory(array('database' => 'rows'));
                     $rowSet->setResource($resource, $resource->num_rows);
@@ -102,6 +112,8 @@ namespace Art\Adapter\Database\Connector {
          * @param string $type optional, the type of query like SELECT or UPDATE
          */
         public function prepareQueryStatement($sql, $type='select') {
+             if (!isset($this->_connection))
+                $this->connect();
             $statment = $this->_connection->prepare($sql);
             if (!$statment)
                 throw new MysqliException('preparing statment failed', $sql);
@@ -129,28 +141,20 @@ namespace Art\Adapter\Database\Connector {
                 $args2[$k + 1] = (string) $v;
                 $args2[0].='s';
             }
-
             $method->invokeArgs($stmt, $args2);
-
             $execute = $stmt->execute();
             if (!$execute)
                 throw new MysqliException($stmt->error);
             switch ($this->_preparedStatement['type']) {
                 case 'select':
                     $array = array();
-
-
                     $stmt->store_result();
-
                     $variables = array();
                     $data = array();
                     $meta = $stmt->result_metadata();
-
                     while ($field = $meta->fetch_field())
                         $variables[] = &$data[$field->name];
-
                     call_user_func_array(array($stmt, 'bind_result'), $variables);
-
                     $i = 0;
                     while ($stmt->fetch()) {
                         $array[$i] = array();
@@ -172,6 +176,7 @@ namespace Art\Adapter\Database\Connector {
         public function beginTransaction() {
             if (!isset($this->_connection))
                 $this->connect();
+            $this->_inTransaction=true;
             $this->query('START TRANSACTION', 'transaction');
             $this->query('BEGIN', 'transaction');
         }
@@ -181,7 +186,10 @@ namespace Art\Adapter\Database\Connector {
          * @abstract
          */
         public function commit() {
+            if(!$this->_inTransaction)
+                throw new MysqliException('you must start a transaction to commit');
             $this->query('COMMIT', 'transaction');
+            $this->_transaction=false;
         }
 
         /**
@@ -189,20 +197,12 @@ namespace Art\Adapter\Database\Connector {
          * @abstract
          */
         public function rollBack() {
+            if(!$this->_inTransaction)
+                throw new MysqliException('you must start a transaction to rollback');
             $this->query('ROLLBACK', 'transaction');
+            $this->_transaction=false;
         }
     }
-    class MysqliException extends \Art\Exception {
-        protected $_sql = false;
-
-        public function __construct($message, $sql=false, $errorNo=false) {
-            $this->message = $message;
-            $this->_sql = $sql;
-            $this->code = $errorNo;
-        }
-
-        public function getSQL() {
-            return $this->_sql;
-        }
+    class MysqliException extends \Art\Adapter\Database\ConnectorException {
     }
 }

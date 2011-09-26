@@ -47,13 +47,13 @@ namespace Art {
                     'profiler' => 'html'
                 ),
                 'i18n' => array(
-                    'translation' => 'transparent'
+                    'translation' => 'none'
                 ),
                 'identifier'=>'hilo',
                 'map'=>array(
                     'loader'=>array(
                         'xml'=>array(
-                            'file'=>'map.xml'
+                            'file'=>'orm.xml'
                         )
                     ),
                     'extractor'=>array(
@@ -74,8 +74,11 @@ namespace Art {
                     'error' => true
                 ),
                 'database' => array(
-                    'profiler' => true
+                    'profiler' => false
                 )
+            ),
+            'query'=>array(
+                'limit'=>50// limit the number of object to that, all the time
             ),
             'map' => array(
                 'defaults' => array(
@@ -84,7 +87,7 @@ namespace Art {
                     'attributeType'=>array(
                         'databaseType'=>'VARCHAR',
                         'options'=>array(),
-                        'class'=>'Base'
+                        'class'=>'String'
                     ),
                     'attribute'=>array(
                         'type'=>'default',
@@ -93,7 +96,8 @@ namespace Art {
                     'associations'=>array(
                         'reference'=>'internal',
                         'min'=>0,
-                        'max'=>1
+                        'max'=>1,
+                        'databaseIdField'=>'id'
                     )
                 )
             ),

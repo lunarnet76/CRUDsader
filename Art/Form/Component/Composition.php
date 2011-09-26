@@ -1,19 +1,14 @@
 <?php
 namespace Art\Form\Component {
     class Composition extends \Art\Form\Component {
-        public function error(){return false;}
-
-        public function isEmpty(){
-            return empty($this->_value);
-        }
-
-        public function receive($data=null){
-            $this->_value=empty($data)?$this->_value:$data;
-            $this->notify();
-        }
 
         public function toHTML(){
-            return '<select '.$this->getHTMLAttributes().' ><option>'.$this->_value.'</option></select>';
+            $query=new \Art\Query('SELECT * FROM '.$this->_options['class']);
+            $html='<select '.$this->getHtmlAttributesToHtml().' ><option value="">Select</option>';
+            foreach($query->fetchAll() as $object){
+                $html.='<option value="'.$object->isPersisted().'" '.(!$this->_inputValue instanceof \Art\Expression\Nil && $this->_inputValue==$object->isPersisted()?'selected="selected"':'').'>'.$object.'</option>';
+            }
+            return $html.'</select>';
         }
     }
 }

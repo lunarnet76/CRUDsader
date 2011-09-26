@@ -19,7 +19,7 @@
 
             <!ELEMENT attribute EMPTY>
                 <!ATTLIST attribute name                CDATA               #REQUIRED>
-                <!ATTLIST attribute mandatory           (true|false)        #IMPLIED>
+                <!ATTLIST attribute required           (true|false)        #IMPLIED>
                 <!ATTLIST attribute default             CDATA               #IMPLIED>
                 <!ATTLIST attribute databaseField       CDATA               #IMPLIED>
                 <!ATTLIST attribute type                CDATA               #IMPLIED>

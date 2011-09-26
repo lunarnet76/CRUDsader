@@ -1,74 +1,16 @@
 <?php
-class Bootstrap {
-    public static $loadedSqlDatabase = false;
-    public static $loadedSqlOrmDatabase = false;
-
-    public static function loadSQLDatabase() {
-        if (self::$loadedSqlDatabase)
-            return;
-        $db = \Art\Database::getInstance();
-        $q = $db->query('show tables', 'select');
-        $db->setForeignKeyCheck(false);
-        foreach ($q as $table) {
-            $db->query('DROP TABLE `' . current($table) . '`');
-        }
-        $db->setForeignKeyCheck(true);
-        $sqlFile = explode(';', file_get_contents(dirname(__FILE__) . '/database.sql'));
-        foreach ($sqlFile as $sql) {
-            $sql = trim($sql);
-            if (!empty($sql)) {
-                //pre($sql);
-                $db->query($sql, 'update');
-            }
-        }
-        self::$loadedSqlDatabase = true;
-    }
-
-    public static function unloadSQLDatabase() {
-        $db = \Art\Database::getInstance();
-        $q = $db->query('show tables', 'select');
-        $db->setForeignKeyCheck(false);
-        foreach ($q as $table) {
-            $db->query('DROP TABLE `' . current($table) . '`');
-        }
-        $db->setForeignKeyCheck(true);
-        self::$loadedSqlDatabase = false;
-    }
-
-    public static function loadSQLORMDatabase() {
-        if (self::$loadedSqlOrmDatabase)
-            return;
-        $db = \Art\Database::getInstance();
-        $q = $db->query('show tables', 'select');
-
-        $db->setForeignKeyCheck(false);
-        if ($q->count())
-            foreach ($q as $table) {
-                $db->query('DROP TABLE `' . current($table) . '`');
-            }
-        \Art\Configuration::getInstance()->adapter->map->loader->xml->file = dirname(__FILE__) . '/map.xml';
-        \Art\Map::getInstance();
-        $sqlFile = explode(';', file_get_contents(dirname(__FILE__) . '/databaseOrm.sql'));
-        foreach ($sqlFile as $sql) {
-            $sql = trim($sql);
-            if (!empty($sql)) {
-                //pre($sql);
-                $db->query($sql, 'update');
-            }
-        }
-        $db->setForeignKeyCheck(true);
-        self::$loadedSqlOrmDatabase = true;
-    }
-}
+// css
+echo '<style type="text/css">' . file_get_contents('Parts/css/design.css') . file_get_contents('Parts/css/layout.css') . '</style><div class="template_content">';
+// debug
 error_reporting(-1);
-echo '<style type="text/css">'.  file_get_contents('Parts/css/design.css').file_get_contents('Parts/css/layout.css').'</style><div class="template_content">';
+
 function preCallback() {
     print_r(func_get_args());
 }
 
 function pre($v, $title=false) {
-    echo '<b style="color:#ae1414">'.($title ? strtoupper($title) : '') . '</b>     ****************************************************************************************************************************************************************************************************************************************<br/>';
-    if($v instanceof \Art\Adapter\Database\Rows){
+    echo '<b style="color:#ae1414">' . ($title ? strtoupper($title) : '') . '</b>     ****************************************************************************************************************************************************************************************************************************************<br/>';
+    if ($v instanceof \Art\Adapter\Database\Rows) {
         table($v);
         return;
     }
@@ -105,36 +47,98 @@ function table($var) {
     }
     echo '<table>';
 }
-
+// button
 echo '<a href="ut.php">back</a><br>';
+// autoload
 require_once('../Art/Autoload.php');
 spl_autoload_register(array('\Art\Autoload', 'autoLoad'));
 \Art\Autoload::registerNameSpace('Art', '../Art/');
 
-function eh(){
-    if(!error_reporting())return;
+// error handling
+function eh() {
+    if (!error_reporting())
+        return;
     pre(func_get_args());
+    pre(get_included_files());
     die('ERROR');
 }
 set_error_handler('eh');
-
-
 register_shutdown_function('shutdownFunction');
+
 function shutDownFunction() {
     $error = error_get_last();
-    if($error!==null){
+    if ($error !== null) {
         echo 'error';
         pre($error);
         pre(xdebug_get_function_stack());
     }
     exit(1);
 }
+// bug of xml file, and for some reason it is not possible to use simplexml
+$file = file_get_contents('configuration.xml');
+preg_match_all('|\<const\s+name\=\"([^\"]*)\"\s+value\=\"([^\"]*)\"|', $file, $matches, PREG_PATTERN_ORDER);
+foreach ($matches[1] as $index => $match) {
+    define($match, $matches[2][$index]);
+}
+//
+class Bootstrap {
 
+    public static function setUpDatabase() {
+        self::tearDownDatabase();
+        mysql_connect(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD);
+        mysql_select_db(DATABASE_NAME);
+        mysql_query('SET FOREIGN_KEY_CHECKS = 0');
+        $sqlFile = explode(';', file_get_contents(dirname(__FILE__) . '/Parts/database.sql'));
+        foreach ($sqlFile as $sql) {
+            $sql = trim($sql);
+            if (!empty($sql)) {
+                mysql_query($sql);
+            }
+        }
+        mysql_query('SET FOREIGN_KEY_CHECKS = 1');
+        mysql_close();
+    }
 
-/*
+    public static function tearDownDatabase() {
+        mysql_connect(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD);
+        mysql_select_db(DATABASE_NAME);
+        mysql_query('SET FOREIGN_KEY_CHECKS = 0');
+        $query = mysql_query('show tables');
+        while ($r = mysql_fetch_assoc($query)) {
+            mysql_query('DROP TABLE `' . current($r) . '`');
+        }
+        mysql_query('SET FOREIGN_KEY_CHECKS = 1');
+        mysql_close();
+    }
 
-require(dirname(__FILE__) . '/Parts/configuration.ini');
-// database
+    public static function setUpORMDatabase() {
+        self::tearDownDatabase();
+        mysql_connect(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD);
+        mysql_select_db(DATABASE_NAME);
+        mysql_query('SET FOREIGN_KEY_CHECKS = 0');
+        $sqlFile = explode(';', file_get_contents(dirname(__FILE__) . '/Parts/databaseOrm.sql'));
+        foreach ($sqlFile as $sql) {
+            $sql = trim($sql);
+            if (!empty($sql)) {
+                mysql_query($sql) or die(mysql_error());
+            }
+        }
+        mysql_query('SET FOREIGN_KEY_CHECKS = 1');
+        mysql_close();
+    }
+}
+class AdapterDatabaseDescriptorMysqliInstancer extends \Art\Adapter\Database\Descriptor\Mysqli {
+
+    public static function getInstance($params=null) {
+        return new parent($params);
+    }
+}
+class AdapterDatabaseConnectorMysqliInstancer extends \Art\Adapter\Database\Connector\Mysqli {
+
+    public static function getInstance($params=null) {
+        return new parent($params);
+    }
+}
 class Database_Config extends \Art\Block {
     public static $configuration = array(
         'host' => DATABASE_HOST,
@@ -171,28 +175,3 @@ class Database_BadNameConfig extends \Art\Block {
         parent::__construct(self::$configuration);
     }
 }
-// random
-class Class_Test_1 {
-    
-}
-class Class_Test_2 {
-    
-}
-class Class_Test_3 {
-    
-}
-class Class_Test_4 {
-    
-}
-class AdapterMapExtractorInstancer extends \Art\Adapter\Map\Extractor\Database {
-
-    public static function getInstance() {
-        return new parent();
-    }
-}
-class ArtAdapterDatabaseRowsMysqliInstancer extends \Art\Adapter\Database\Rows\Mysqli {
-
-    public static function getInstance() {
-        return new parent();
-    }
-}*/

@@ -8,11 +8,23 @@ namespace Art\Object {
             $this->_initialised=true;
         }
         
+        /**
+         * check if an object with the same identity exists in database
+         * @return bool 
+         */
+        protected function _checkIdentity(){
+            return true;
+        }
+        
         public function toArray($full=false){
-            if(!$full)return parent::toArray (false);
-            $parent=parent::toArray(true);
-            $parent['proxy']=true;
+            $parent=parent::toArray($full);
+            $parent['id'].='[PROXY]';
             return $parent;
+        }
+        
+        
+        public function save(\Art\Object\UnitOfWork $unitOfWork=null) {
+            
         }
     }
 }

@@ -12,5 +12,10 @@ namespace Art\Interfaces {
          * @return \Art\Adapter
          */
         public function getAdapter($name=false);
+        
+        /**
+         * @return array
+         */
+        public function getAdapters();
     }
 }

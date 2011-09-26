@@ -23,6 +23,9 @@ input{
 .error{
     color:#ae1414;
 }
+.star{
+    color:#ae1414;
+}
 form div.error:first{
     width:100%;
     clear:both;

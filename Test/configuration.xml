@@ -1,19 +1,12 @@
-
-<phpunit backupGlobals="true"
-         backupStaticAttributes="false"
+<phpunit 
          bootstrap="bootstrap.php"
-         colors="false"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnError="false"
-         stopOnFailure="false"
-         stopOnIncomplete="false"
-         stopOnSkipped="false"
-         testSuiteLoaderFile="suite.xml"
-         strict="false"
          verbose="false">
+    <php>
+        <const name="DATABASE_HOST" value="localhost" />
+        <const name="DATABASE_USER" value="root" />
+        <const name="DATABASE_PASSWORD" value="" />
+        <const name="DATABASE_NAME" value="art_test" />
+    </php>
     <testsuites>
         <testsuite name="Art">
             <file>Art/Autoload_Test.php</file>
@@ -21,6 +14,30 @@
             <file>Art/Singleton_Test.php</file>
             <file>Art/Block_Test.php</file>
             <file>Art/Configuration_Test.php</file>
+            <file>Art/Expression_Test.php</file>
+            <file>Art/Expression/Nil_Test.php</file><!-- empty -->
+            <file>Art/Expression/Now_Test.php</file><!-- empty -->
+            <file>Art/Session_Test.php</file>
+            <file>Art/Adapter_Test.php</file>
+            <file>Art/Adapter/Database/Connector/Mysqli_Test.php</file>
+            <file>Art/Adapter/Database/Connector_Test.php</file>
+            <file>Art/Adapter/Database/Profiler_Test.php</file><!-- empty -->
+            <file>Art/Adapter/Database/Profiler/Html_Test.php</file><!-- empty -->
+            <file>Art/Adapter/Database/Rows_Test.php</file><!-- empty -->
+            <file>Art/Adapter/Database/Rows/Mysqli_Test.php</file>
+            <file>Art/Adapter/Database/Descriptor_Test.php</file><!-- empty -->
+            <file>Art/Adapter/Database/Descriptor/Mysqli_Test.php</file>
+            <file>Art/Database_Test.php</file>
+            <file>Art/Adapter/Identifier_Test.php</file><!-- empty -->
+            <file>Art/Adapter/Identifier/MysqlAI_Test.php</file><!-- empty -->
+            <file>Art/Adapter/Identifier/Hilo_Test.php</file>
+            <file>Art/Adapter/I18n/Translation/None_Test.php</file>
+            <file>Art/I18n_Test.php</file>
+            <file>Art/Form/Component_Test.php</file>
+            <file>Art/Form/Component/Hidden_Test.php</file>
+            <file>Art/Form_Test.php</file>
+            <file>Art/Object/IdentityMap_Test.php</file>
+            
         </testsuite>
     </testsuites>
 </phpunit>

@@ -11,6 +11,7 @@ namespace Art\Object\Collection\Association {
                 if (!\Art\Expression::isEmpty($id)) {
                     if (!isset($collection->_objectIndexes[$id])) {
                         $collection->_objects[$collection->_iterator] = new \Art\Object($collection->_class);
+                        \Art\Object\Writer::linkToAssociation($collection->_objects[$collection->_iterator],$collection);
                         $collection->_objectIndexes[$id] = $collection->_iterator;
                         $collection->_iterator++;
                     }

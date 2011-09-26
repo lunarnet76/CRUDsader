@@ -14,7 +14,16 @@ namespace Art {
      * @package     Art
      */
     class Database extends Singleton implements Interfaces\Adaptable{
+        /**
+         * list of all adapters
+         * @var array 
+         */
         protected $_adapters=array();
+        
+        /**
+         * @var string
+         */
+        protected $_sql=false;
         
         /**
          * @param string $name
@@ -31,6 +40,22 @@ namespace Art {
         public function getAdapter($name=false){
             return $this->_adapters[$name];
         }
+        
+        /**
+         * @return array
+         */
+        public function getAdapters(){
+            return $this->_adapters;
+        }
+        
+        /**
+         * get last SQL query
+         * @return string 
+         */
+        public function getSql(){
+            return $this->_sql;
+        }
+
 
         /**
          * singletoned constructor
@@ -42,43 +67,19 @@ namespace Art {
             $this->_adapters['connector'] = Adapter::factory(array('database' => 'connector'));
             $this->_adapters['connector']->setConfiguration($this->_configuration);
             $this->_adapters['descriptor'] = Adapter::factory(array('database' => 'descriptor'));
+            $this->_adapters['descriptor']->setConnector($this->_adapters['connector']);
             if ($configuration->debug->database->profiler)
                 $this->_adapters['profiler'] = Adapter::factory(array('database' => 'profiler'));
         }
         
-        /**
-         * wether to check or not for foreign keys
-         */
-        public function setForeignKeyCheck($bool=true){
-            $this->_adapters['connector']->setForeignKeyCheck($bool);
-        }
-
-        /**
-         * quote a value
-         * @param string $string
-         * @return string 
-         */
-        public function quote($string) {
-            return $this->_adapters['descriptor']->quote($string);
-        }
-
-        /**
-         * quote an identifier (e.g. field name)
-         * @param string $string
-         * @return string 
-         */
-        public function quoteIdentifier($string) {
-            return $this->_adapters['descriptor']->quoteIdentifier($string);
-        }
-        
-
-        /**
+         /**
          * execute a SQL query, return is dependant of the $type
          * @param string $sql
          * @param string $type
          * @return \Art\Adapter\Database\Rows
          */
         public function query($sql, $type='') {
+            $this->_sql=$sql;
             if (!$this->hasAdapter('profiler'))
                 return $this->_adapters['connector']->query($sql, $type);
             $this->_adapters['profiler']->startQuery($sql, $type);
@@ -94,15 +95,16 @@ namespace Art {
                 throw $e;
             }
         }
-
-         /**
+        
+        /**
          * prepare a SQL statment
          * @param string $sql
          * @param string $type
          * @return \Art\Adapter\Database\Rows
          */
         public function prepareQueryStatement($sql, $type='') {
-            if (!$this->hasProfiler())
+            $this->_sql=$sql;
+            if (!$this->hasAdapter('profiler'))
                 return $this->_adapters['connector']->prepareQueryStatement($sql, $type);;
             $this->_adapters['profiler']->startQueryStatement($sql, $type);
             try {
@@ -119,7 +121,7 @@ namespace Art {
          * @return array|int|bool 
          */
         public function executeQueryStatement(array $args) {
-            if (!$this->hasProfiler())
+            if (!$this->hasAdapter('profiler'))
                 return $this->_adapters['connector']->executeQueryStatement($args);
             try {
                 $results = $this->_adapters['connector']->executeQueryStatement($args);
@@ -133,63 +135,39 @@ namespace Art {
                 throw $e;
             }
         }
-
-        /**
-         * start a transaction
-         */
-        public function beginTransaction() {
-            $this->_adapters['connector']->beginTransaction();
-        }
-
-        /**
-         * ends a transaction with a commit
-         */
-        public function commit() {
-            $this->_adapters['connector']->commit();
-        }
-
-        /**
-         * ends a transaction with a rollback
-         */
-        public function rollBack() {
-            $this->_adapters['connector']->rollBack();
-        }
-
-        public function insert($table, array $values) {
-            return $this->query($this->_adapters['descriptor']->insert($table, $values), 'insert');
-        }
-
-        public function select(\Art\Database\Select $select,array $args=null) {
-            return $this->query($this->_adapters['descriptor']->select($select,$args), 'select');
-        }
-
-        public function update($table, array $values, $where=false) {
-            return $this->query($this->_adapters['descriptor']->update($table, $values, $where), 'insert');
-        }
-
-        public function delete($table, $where) {
-            return $this->query($this->_adapters['descriptor']->delete($table, $where), 'delete');
-        }
-
-        /**
-         * CREATE TABLE
-         * @param string $name
-         * @param array $fields array('col1'=>array('null'=>$bool,'type'=>$type,'length'=>$intOrFloatOrFalse))
-         * @param array $identity array('col1','col2')
-         * @param string $surrogateKey array('type'=>$type,'length'=>$int,'name'=>$name)
-         * @param array $indexes array('index1'=>array('col1','col2'))
-         * @return bool 
-         */
-        public function createTable($name, array $fields,array $identity=array(),array $surrogateKey=array(),array $indexes=array()) {
-            return $this->query($this->_adapters['descriptor']->createTable($name,$fields, $identity,$surrogateKey,$indexes), 'createTable');
-        }
         
-        /**
-         * create a reference between 2 fields of 2 tables
-         * @param type $infos=array('fromTable','toTable','fromField','toField','onUpdate','onDelete') 
-         */
-        public function createTableReference($infos){
-            return $this->query($this->_adapters['descriptor']->createTableReference($infos), 'createTableReference');
+        public function __call($name, $arguments) {
+            switch($name){
+                case 'setForeignKeyCheck':
+                case 'beginTransaction':
+                case 'commit':
+                case 'rollBack':
+                case 'isConnected':
+                case 'isInTransaction':
+                case 'escape':
+                    return call_user_func_array(array($this->_adapters['connector'],$name), $arguments);
+                    break;
+                case 'quote':
+                case 'quoteIdentifier':
+                    return call_user_func_array(array($this->_adapters['descriptor'],$name), $arguments);
+                    break;
+                case 'select':
+                case 'countSelect':
+                case 'listTables':
+                case 'insert':
+                case 'update':
+                case 'delete':
+                case 'createTable':
+                case 'createTableReference':
+                    return $this->query(call_user_func_array(array($this->_adapters['descriptor'],$name), $arguments),$name);
+                    break;
+                case 'highLight':
+                    return call_user_func_array(array($this->_adapters['descriptor'],$name), $arguments);
+                    break;
+                default:
+                    throw new DatabaseException('call to undefined function "'.$name.'"');
+            }
         }
     }
+    class DatabaseException extends \Art\Exception{}
 }
