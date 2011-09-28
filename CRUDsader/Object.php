@@ -70,10 +70,10 @@ namespace CRUDsader {
         public function __set($var, $value) {
             switch (true) {
                 case isset($this->_infos['attributes'][$var]):
-                    $this->getAttribute($var)->receiveInput($value);
+                    $this->getAttribute($var)->inputReceive($value);
                     if (($this->getAttribute($var)->inputEmpty() && $this->_infos['attributes'][$var]['required']) || $this->getAttribute($var)->inputValid() !== true) {
                         // return to base value
-                        $this->getAttribute($var)->receiveInput(null);
+                        $this->getAttribute($var)->inputReceive(null);
                         throw new ObjectException('attribute "' . $var . '" cannot accept "' . $value . '" as a value');
                     }
                     break;
@@ -276,7 +276,7 @@ namespace CRUDsader {
         public function getAttribute($name) {
             if (!isset($this->_fields[$name])) {
                 $type = $this->_map->classGetFieldAttributeType($this->_class, $name);
-                $this->_fields[$name] = new Object\Attribute($name, $type['class'], $type['options']);
+                $this->_fields[$name] = new Object\Attribute($name, $type['phpClass'].$type['class'], $type['options']);
                 $this->_fields[$name]->attach($this);
             }
             return $this->_fields[$name];

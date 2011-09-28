@@ -1,7 +1,21 @@
 <?php
 class CRUDsaderConfigurationInstancer extends \CRUDsader\Configuration {
+
     public static function getDefaults() {
         return parent::$_defaults;
+    }
+}
+class CRUDsaderConfigurationInstancer2 extends \CRUDsader\Configuration {
+    public static $_instance = null;
+
+    protected function __construct() {
+        // parent::__construct(self::$_defaults);
+    }
+
+    public static function getInstance() {
+        if (!isset(self::$_instance))
+            self::$_instance = new self();
+        return self::$_instance;
     }
 }
 class Configuration_Test extends PHPUnit_Framework_TestCase {
@@ -23,28 +37,24 @@ class Configuration_Test extends PHPUnit_Framework_TestCase {
      * @depends test_instance
      */
     function test_loadFile_() {
-        $instance = \CRUDsader\Configuration::getInstance();
+        $instance = CRUDsaderConfigurationInstancer2::getInstance();
         $instance->load('Parts/Fakefile/configuration.ini', false);
+        pre($instance->toArray());
+        exit;
         $this->assertEquals($instance->a instanceof \CRUDsader\Block, true);
         $instance = \CRUDsader\Configuration::getInstance();
         $instance->load('Parts/Fakefile/configuration.ini', 'namespace2');
         $this->assertEquals($instance->a, 'l');
+        $instance->load('Parts/Fakefile/configuration.ini', 'namespace3');
+        $this->assertEquals($instance->m->n->o->p->q, '6 aand cowejf owejfo wejog wejog jwe END');
     }
-    
+
     /**
      * @expectedException CRUDsader\ConfigurationException
      */
-    function test_loadFile_ExceptionUnexistantFile(){
+    function test_loadFile_ExceptionUnexistantFile() {
         $instance = \CRUDsader\Configuration::getInstance();
         $instance->load('Parts/Fakefile/doesnotexist.ini', false);
-    }
-    
-    /**
-     * @expectedException CRUDsader\ConfigurationException
-     */
-    function test_loadFile_ExceptionBadNamespace(){
-        $instance = \CRUDsader\Configuration::getInstance();
-        $instance->load('Parts/Fakefile/badNamespace.ini', false);
     }
 
     /**
@@ -60,5 +70,4 @@ class Configuration_Test extends PHPUnit_Framework_TestCase {
         $this->assertEquals(isset($instance->z), true);
         $this->assertEquals(isset($instance->b), true);
     }
-    
 }

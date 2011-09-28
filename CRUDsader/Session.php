@@ -76,6 +76,7 @@ namespace CRUDsader {
          * @static
          */
         public static function destroy() {
+            unset($_SESSION[self::$_generalNamespace]);
             $_SESSION[self::$_generalNamespace] = array();
         }
 

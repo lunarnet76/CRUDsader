@@ -24,7 +24,7 @@ namespace CRUDsader {
             return self::$_configuration->php;
         }
 
-        public static function setConfiguration(CRUDsader_Block $configuration) {
+        public static function setConfiguration(Block $configuration) {
             self::$_configuration = $configuration;
         }
 

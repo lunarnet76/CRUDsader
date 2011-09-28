@@ -28,6 +28,12 @@ namespace CRUDsader {
          * @var array($nameSpaceName=>$folder)
          */
         protected static $_nameSpaces = array();
+        
+        /**
+         * @static
+         * @var string
+         */
+        public static $simpleAutoloadPath='';
 
         /**
          * all classes from this nameSpace will be mapped to the specified folder
@@ -120,11 +126,9 @@ namespace CRUDsader {
         protected static function _findIncludePathFor($className) {
             if (isset(self::$_includedClasses[$className]))
                 return self::$_includedClasses[$className];
-            if(isset(self::$_nameSpaces[true]))
-                var_dump(self::$_nameSpaces[true]);
             $pos = strpos($className, '\\');
             if ($pos === false)
-                return false;
+                return self::$simpleAutoloadPath.str_replace('_','/',$className).'.php';
             if ($pos === 0) {
                 $pos = strpos($className, '\\', 1);
                 if ($pos === false)
@@ -166,7 +170,7 @@ namespace CRUDsader {
          * @param <type> $className
          */
         public static function simpleAutoload($className) {
-            include(str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php');
+            include(self::$simpleAutoloadPath.str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php');
         }
     }
     class AutoloadException extends \Exception {

@@ -137,7 +137,7 @@ namespace CRUDsader\Object\Collection {
                     $component->setHtmlLabel($i == 0 ? $alias : ' ');
                     $component->setParameter('compositionIndex', $this->_iterator);
                     if ($object->isPersisted())
-                        $component->receiveInput($object->isPersisted());
+                        $component->inputReceive($object->isPersisted());
                     $component->attach($this);
                 }
                 $this->next();

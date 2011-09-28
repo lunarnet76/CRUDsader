@@ -14,7 +14,11 @@ namespace CRUDsader {
      * Internalization and Localization
      * @package     CRUDsader
      */
-    class I18n extends Singleton implements Interfaces\Adaptable {
+    class I18n extends Singleton implements Interfaces\Adaptable,  Interfaces\Configurable {
+        /**
+         * @var \CRUDsader\Block
+         */
+        protected $_configuration ;
         /**
          * @var array
          */
@@ -25,6 +29,8 @@ namespace CRUDsader {
          */
         public function init() {
             $this->_adapters['translation'] = Adapter::factory(array('i18n' => 'translation'));
+            $this->_configuration=\CRUDsader\Configuration::getInstance()->i18n;
+            date_default_timezone_set($this->_configuration->timezone);
         }
 
         /**
@@ -48,6 +54,20 @@ namespace CRUDsader {
          */
         public function getAdapters(){
             return $this->_adapters;
+        }
+        
+        /**
+         * @param Block $configuration
+         */
+         public function setConfiguration(Block $configuration=null) {
+            $this->_configuration = $configuration;
+        }
+
+        /**
+         * @return Block
+         */
+        public function getConfiguration() {
+            return $this->_configuration;
         }
 
         public function __call($name, $arguments) {

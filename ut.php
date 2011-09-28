@@ -8,7 +8,7 @@ function rd($dir) {
         die('cant read');
     while (false !== ($file = readdir($handle))) {
         if ($file != '.' && $file != '..') {
-            $dirname=str_replace(dirname(__FILE__).'/Test/Art/','',$dir);
+            $dirname=str_replace(dirname(__FILE__).'/Test/CRUDsader/','',$dir);
             if (is_dir($dir . $file)) {
                 rd($dir .  $file.'/');
             }
@@ -19,7 +19,7 @@ function rd($dir) {
 }
 if (!isset($_REQUEST['file']) && !isset($_REQUEST['all'])) {
     echo '<a style="text-decoration:none" href="' . $_SERVER['PHP_SELF'] . '?all=true">ALL</a><br>';
-    rd($dir . '/Art/');
+    rd($dir . '/CRUDsader/');
 }
 if (isset($_REQUEST['all'])) {
     $cmd = 'php phpunit.php --bootstrap bootstrap.php --coverage-html coverage --configuration configuration.xml 2>&1'; //Art/'.(empty($_REQUEST['file'])?'./':$_REQUEST['file']).'
@@ -28,10 +28,10 @@ if (isset($_REQUEST['all'])) {
     print_r(shell_exec($cmd));
     $content = ob_get_clean();
     echo '<pre>' . ($content) . '</pre>';
-    echo '<a style="text-decoration:none" target="_blank" href="Test/coverage/Art.html">coverage</a>';
+    echo '<a style="text-decoration:none" target="_blank" href="Test/coverage/CRUDsader.html">coverage</a>';
 }
 if (isset($_REQUEST['file'])) {
-    $cmd = 'php phpunit.php --bootstrap bootstrap.php Art/' . (empty($_REQUEST['file']) ? './' : $_REQUEST['file']) . ' 2>&1'; //
+    $cmd = 'php phpunit.php --bootstrap bootstrap.php CRUDsader/' . (empty($_REQUEST['file']) ? './' : $_REQUEST['file']) . ' 2>&1'; //
     echo $cmd . '<br>';
     ob_start();
     print_r(shell_exec($cmd));

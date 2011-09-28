@@ -41,18 +41,10 @@ function table($var) {
     }
     echo '<table>';
 }
-\CRUDsader\Configuration::getInstance()->database->name = 'CRUDsader_test';
-//\CRUDsader\Configuration::getInstance()->debug->database->profiler=true ;
-\CRUDsader\Configuration::getInstance()->adapter->map->loader->xml->file = '../Test/Parts/orm.xml';
+\CRUDsader\Configuration::getInstance()->adapter->mvc->router->explicit=array(
+    'blog/'=>'Controller/Blog'
+);
+$fc=\CRUDsader\MVC\Controller\Front::getInstance();
+$fc->route();
 
-$form3=new \CRUDsader\Form('test');
-$form3->add(new \CRUDsader\Form\Component(),'inp');
-
-$form=new \CRUDsader\Form();
-
-$form2=$form->add(new \CRUDsader\Form());
-
-$form2->add($form3,'test2');
-
-
-echo $form;
+//$fc->dispatch();
