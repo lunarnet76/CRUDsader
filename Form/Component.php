@@ -177,11 +177,11 @@ namespace CRUDsader\Form {
         }
 
         public function toHtml() {
-            return '<input type="text"' . $this->getHtmlAttributesToHtml() . ' value="' . (isset($this->_inputValue)?$this->_inputValue:'') . '"/>';
+            return '<input type="text"' . $this->getHtmlAttributesToHtml() . ' value="' . (!\CRUDsader\Expression::isEmpty($this->_inputValue)?$this->_inputValue:'') . '"/>';
         }
 
         // ** FORM **
-        public function receiveInput($data=null) {
+        public function inputReceive($data=null) {
             $this->_inputValue = $data;
             $this->_inputReceived = true;
             $this->notify();

@@ -36,7 +36,7 @@ namespace CRUDsader {
         }
         
         public static function isEmpty($var){
-            return empty($var) || $var=='NULL';
+            return empty($var) || (string)$var=='NULL';
         }
     }
 }

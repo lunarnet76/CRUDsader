@@ -16,7 +16,7 @@ namespace CRUDsader {
      * @package     CRUDsader
      * @todo add handler for checkboxes, as PHP will not create an entry in the $data array in receive($data=false)
      */
-    Class Form extends Form\Component implements Interfaces\Helpable, Interfaces\Sessionisable, \IteratorAggregate, \ArrayAccess {
+    Class Form extends Form\Component implements Interfaces\Helpable, Interfaces\Sessionisable, \IteratorAggregate, \ArrayAccess,\CRUDsader\Interfaces\Configurable{
         protected $_url;
         protected $_session;
         protected $_tokenInput = false;
@@ -45,6 +45,27 @@ namespace CRUDsader {
                 $this->_session->token = md5(uniqid(rand(), true));
             }else
                 $this->_session->oldToken = $this->_session->token = md5(uniqid(rand(), true));
+            $this->_configuration=\CRUDsader\Configuration::getInstance()->form;
+        }
+        
+        public function view($file){
+            ob_start();
+            require($this->_configuration->view->path.$file.'.php');
+            return ob_get_clean();
+        }
+        
+        /**
+         * @param Block $configuration
+         */
+         public function setConfiguration(\CRUDsader\Block $configuration=null) {
+            $this->_configuration = $configuration;
+        }
+
+        /**
+         * @return Block
+         */
+        public function getConfiguration() {
+            return $this->_configuration;
         }
 
         public function checkToken() {
@@ -137,7 +158,7 @@ namespace CRUDsader {
          * @param bool|null|array $request
          * @return <type>
          */
-        public function receiveInput($data=null) {
+        public function inputReceive($data=null) {
             if ($data === null && !$this->hasInputParent())
                 $data = $_REQUEST;
             $this->_isReceived = false;
@@ -149,14 +170,14 @@ namespace CRUDsader {
             foreach ($this->_components as $index => $component) {
                 if (isset($data[$index])) {
                     if ($this->_useSession){
-                        $component->receiveInput($data[$index]);
+                        $component->inputReceive($data[$index]);
                         $this->_session->$index = $data[$index];
                     }else
-                        $component->receiveInput($data[$index]);
+                        $component->inputReceive($data[$index]);
                 } else if ($this->_useSession && isset($this->_session->$index)) {
-                    $component->receiveInput($component instanceof self?$this->_session->$index->toArray():$this->_session->$index);
+                    $component->inputReceive($component instanceof self?$this->_session->$index->toArray():$this->_session->$index);
                 }else
-                    $component->receiveInput(null);
+                    $component->inputReceive(null);
             }
             // token
             if (isset($data['token'])) {
@@ -221,7 +242,7 @@ namespace CRUDsader {
         /* OUPUTS ************************ */
 
         public function toHTML() {
-            $html = $this->htmlTag() . $this->labeltoHtml() . $this->htmlError();
+            $html = $this->htmlTag() . $this->wrapHtml($this->_htmlLabel, 'title') . $this->htmlError();
             foreach ($this->_components as $component) {
                 $html.=$this->htmlRow($component);
             }
@@ -232,7 +253,7 @@ namespace CRUDsader {
             if (!$this->wrapHtmlTagIsOpened) {
                 $this->wrapHtmlTagIsOpened = true;
                 $htmlAttributes = $this->getHtmlAttributesToHtml();
-                $tag = $this->hasInputParent() ? '<fieldset' : '<form enctype="multipCRUDsader/form-data" ' . $htmlAttributes;
+                $tag = $this->hasInputParent() ? '<fieldset' : '<form enctype="multiparts/form-data" ' . $htmlAttributes;
                 return $tag . ' required="' . ($this->inputRequired() ? 'true' : 'false') . '" ' . $htmlAttributes . '>';
             } else {
                 $this->wrapHtmlTagIsOpened = false;

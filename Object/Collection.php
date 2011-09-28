@@ -15,7 +15,7 @@ namespace CRUDsader\Object {
 
         public function toArray($full=false) {
             $ret = array('class' => $this->_class, 'initialised' => $this->_initialised ? 'yes' : 'no', 'objects' => array(), 'indexMap' => $this->_objectIndexes);
-            $ret['objects'] = array('modified' => $this->_isModified ? 'yes' : 'no');
+            $ret['objects'] = array('modified' => $this instanceof \CRUDsader\Object\Collection\Association && $this->_isModified ? 'yes' : 'no');
             foreach ($this->_objects as $k => $object) {
                 $ret['objects'][$k . ':' . $this->_objects[$k]->isPersisted() . '@' . $this->_objects[$k]->getLinkedAssociationId()] = $object->toArray($full);
             }

@@ -53,7 +53,8 @@ namespace CRUDsader\Adapter\Map\Loader {
                 $alias = (string) $attributeType['alias'];
                 $ret['attributeTypes'][$alias] = array(
                     'length' => (int) $attributeType['length'],
-                    'class' => '\\CRUDsader\\Object\\Attribute\\Wrapper\\'.(isset($attributeType['class']) ? ucfirst((string) $attributeType['class']) : $defaults->attributeType->class),
+                    'class' => (isset($attributeType['class']) ? ucfirst((string) $attributeType['class']) : $defaults->attributeType->class),
+                    'phpClass' => (isset($attributeType['phpClass']) ? ucfirst((string) $attributeType['phpClass']) : $defaults->attributeType->phpClass),
                     'databaseType' => isset($attributeType['databaseType']) ? (string) $attributeType['databaseType'] : $defaults->attributeType->databaseType,
                     'options' => isset($attributeType['options']) ? json_decode(str_replace('\'', '"', (string) $attributeType['options'])) : $defaults->attributeType->options->toArray(),
                 );

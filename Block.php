@@ -133,7 +133,7 @@ namespace CRUDsader {
         }
 
         function rewind() {
-            rewind($this->_properties);
+            reset($this->_properties);
         }
 
         function current() {
@@ -149,7 +149,7 @@ namespace CRUDsader {
         }
 
         function valid() {
-            return valid($this->_properties);
+            return current($this->_properties);
         }
     }
     class BlockException extends \CRUDsader\Exception {
