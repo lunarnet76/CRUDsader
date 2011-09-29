@@ -27,8 +27,9 @@ namespace CRUDsader\Object {
         public function setValueFromDatabase($value) {
             if(empty($value) || $this->_wrapper->isEmpty($value))
                 $this->_inputValue=new \CRUDsader\Expression\Nil();
-            else
+            else{
                 $this->_inputValue = $this->_wrapper->formatFromDatabase($value);
+            }
         }
 
         public function getValueForDatabase() {

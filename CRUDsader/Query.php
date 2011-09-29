@@ -171,7 +171,7 @@ namespace CRUDsader {
         public function fetch($args=NULL) {
             $results = $this->_fetch($args, false);
             $collection = new \CRUDsader\Object\Collection\Initialised($this->_class, $results, $this->_mapFields);
-            return $collection;
+            return $collection->count()?$collection[0]:false;
         }
 
         protected function _fetch($args=NULL, $all=true) {

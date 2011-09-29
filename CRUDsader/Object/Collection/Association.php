@@ -14,20 +14,20 @@ namespace CRUDsader\Object\Collection {
             $this->_definition = $definition;
             $this->_fromClass = $fromClass;
         }
-        
-         public function offsetSet($index, $value) {
-             if($this->_iterator==$this->_definition['max'])
-                throw new AssociationException('association cannot have more than "'.$this->_definition['max'].'" objects');
-            $value=parent::offsetSet($index, $value);
+
+        public function offsetSet($index, $value) {
+            if ($this->_iterator == $this->_definition['max'])
+                throw new AssociationException('association cannot have more than "' . $this->_definition['max'] . '" objects');
+            $value = parent::offsetSet($index, $value);
             \CRUDsader\Object\Writer::linkToAssociation($value, $this);
         }
-        
+
         /**
          * @return type 
          */
         public function newObject() {
-            if($this->_iterator==$this->_definition['max'])
-                throw new AssociationException('association cannot have more than "'.$this->_definition['max'].'" objects');
+            if ($this->_iterator == $this->_definition['max'])
+                throw new AssociationException('association cannot have more than "' . $this->_definition['max'] . '" objects');
             $object = parent::newObject();
             \CRUDsader\Object\Writer::linkToAssociation($object, $this);
             return $object;
@@ -44,11 +44,13 @@ namespace CRUDsader\Object\Collection {
                     switch ($this->_definition['reference']) {
                         case 'internal':
                             $object->save($unitOfWork);
-                            $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => $object->isPersisted()));
+                            $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => $object->isPersisted()), 'id=' . $this->_linkedObject->isPersisted());
                             break;
                         case 'external':
+                            $infos = $object->getInfos();
                             $object->save($unitOfWork);
-                            $unitOfWork->update($object->getDatabaseTable(), array($this->_definition['externalField'] => $this->_linkedObject->isPersisted()));
+                            if ($object->isPersisted())
+                                $unitOfWork->update($object->getDatabaseTable(), array($this->_definition['externalField'] => $this->_linkedObject->isPersisted()), $db->quoteIdentifier($infos['definition']['databaseIdField']) . '=' . $object->isPersisted());
                             break;
                         default:
                             $object->save($unitOfWork);
@@ -115,23 +117,27 @@ namespace CRUDsader\Object\Collection {
             return $this->_linkedObject;
         }
 
-
         public function getForm($oql=false, $alias=false, \CRUDsader\Form $form=null) {
             if (empty($alias))
                 $alias = $this->_class;
             $formAssociation = $form->add(new \CRUDsader\Form($alias));
-            $formAssociation->setHtmlLabel($alias);
+            $formAssociation->setHtmlLabel(\CRUDsader\I18n::getInstance()->translate($alias));
             $max = $this->_definition['max'] == '*' ? 3 : $this->_definition['max'];
+            if ($this->_definition['min'] > $max)
+                $max = $this->_definition['min'];
             $this->rewind();
             $this->_formValues = array();
             for ($i = 0; $i < $max; $i++) {
                 if (!$this->valid()) {
                     $object = $this->_objects[$this->_iterator] = new \CRUDsader\Object($this->_class);
+                    \CRUDsader\Object\Writer::linkToAssociation($object, $this);
                 } else {
                     $object = $this->current();
                 }
                 if ($this->_definition['composition']) {
-                    $object->getForm($oql, $alias, $formAssociation);
+                    $form2 = $formAssociation->add(new \CRUDsader\Form($i), $i);
+                    $form2->setHtmlLabel(false);
+                    $object->getForm($oql, $alias, $form2);
                 } else {
                     $component = $formAssociation->add(new \CRUDsader\Form\Component\Composition(array('class' => $this->_class)), $i, false);
                     $component->setHtmlLabel($i == 0 ? $alias : ' ');
