@@ -1,6 +1,6 @@
 <?php
 namespace CRUDsader\Object {
-    class Collection implements \CRUDsader\Interfaces\Initialisable, \ArrayAccess, \Iterator {
+    class Collection implements \CRUDsader\Interfaces\Initialisable,\CRUDsader\Interfaces\Arrayable, \ArrayAccess, \Iterator {
         protected $_initialised = false;
         protected $_class = null;
         protected $_classInfos;
@@ -21,7 +21,11 @@ namespace CRUDsader\Object {
             }
             return $full ? $ret : $ret['objects'];
         }
-
+        
+        public function count(){
+            return count($this->_objects);
+        }
+        
         public function isInitialised() {
             return $this->_initialised;
         }

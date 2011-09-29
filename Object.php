@@ -36,11 +36,49 @@ namespace CRUDsader {
                 throw new ObjectException('class "' . $className . '" does not exist');
         }
 
+        public function toHTML($base=false, $prefix=false, $allowedClasses=false) {
+            $html = '';
+            if (!$base)
+                $html.='<div class="object">';
+            //else
+              //  $html.='<div class="subobject">';
+            $base.= ( $base ? '_' : '') . $this->_class;
+            if (!$this->hasParent())
+                $html.='<div class="title">' . \CRUDsader\I18n::getInstance()->translate($prefix . $base) . '</div>';
+            foreach ($this->_fields as $name => $attribute) {
+                $html.='<div class="row"><div class="label">' . \CRUDsader\I18n::getInstance()->translate($prefix . $this->_class . '_' . $name) . '</div><div class="value">' . $attribute->getInputValue() . '</div></div>';
+                
+            }
+            if ($this->hasParent())
+                $html.=$this->getParent()->toHTML(false, $prefix, $allowedClasses);
+            
+            foreach ($this->_associations as $name => $association) {
+                if (isset($allowedClasses[$name]) && !$allowedClasses[$name])
+                    continue;
+                $html.='<div class="title">' . \CRUDsader\I18n::getInstance()->translate($prefix . $this->_class . '_' . $name) . '</div>';
+                $collection = $this->getAssociation($name);
+                $first = true;
+                foreach ($collection as $object) {
+                    if ($first)
+                        $first = false;
+                    else
+                        $html.='<div class="row">&nbsp;</div>';
+                    $html.=$object->toHTML($base, $prefix, $allowedClasses);
+                }
+            }
+            $html.='</div>';
+            return $html;
+        }
+
+        public function getInfos() {
+            return $this->_infos;
+        }
+
         public function getLinkedAssociation() {
             return $this->_linkedAssociation;
         }
-        
-         public function getLinkedAssociationId() {
+
+        public function getLinkedAssociationId() {
             return $this->_linkedAssociationId;
         }
 
@@ -93,15 +131,19 @@ namespace CRUDsader {
                 if (!$this->_checkIdentity()) {
                     throw new ObjectException($this->_class . '_already_exists');
                 }
+                $db = \CRUDsader\Database::getInstance();
                 // update
                 $paramsToSave = $this->_getParamsForSave();
                 if ($this->_isPersisted) {
                     $db = \CRUDsader\Database::getInstance();
                     \CRUDsader\Object\IdentityMap::add($this);
-                } else
-                    $paramsToSave[$this->_infos['definition']['databaseIdField']] = \CRUDsader\Adapter::factory('identifier')->getOID();
-                if (!empty($paramsToSave))
                     $unitOfWork->update($this->_infos['definition']['databaseTable'], $paramsToSave, $db->quoteIdentifier($this->_infos['definition']['databaseIdField']) . '=' . $this->_isPersisted);
+                } else {
+                    $oid = \CRUDsader\Adapter::factory('identifier')->getOID(array('class' => $this->_class));
+                    $paramsToSave[$this->_infos['definition']['databaseIdField']] = $oid;
+                    $unitOfWork->insert($this->_infos['definition']['databaseTable'], $paramsToSave, $db->quoteIdentifier($this->_infos['definition']['databaseIdField']) . '=' . $oid);
+                    $this->_isPersisted = $oid;
+                }
                 if ($this->hasParent())
                     $this->getParent()->save($unitOfWork);
                 foreach ($this->_associations as $association)
@@ -120,10 +162,10 @@ namespace CRUDsader {
             if ($this->_isPersisted) {
                 $db = \CRUDsader\Database::getInstance();
                 \CRUDsader\Object\IdentityMap::remove($this);
-                $db->delete($this->_infos['definition']['databaseTable'],$db->quoteIdentifier($this->_infos['definition']['databaseIdField']) . '=' . $this->_isPersisted);
+                $db->delete($this->_infos['definition']['databaseTable'], $db->quoteIdentifier($this->_infos['definition']['databaseIdField']) . '=' . $this->_isPersisted);
             }
             foreach ($this->_associations as $association)
-                    $association->delete($unitOfWork);
+                $association->delete($unitOfWork);
             if (isset($unitOfWorkToBeExecuted)) {
                 $unitOfWork->execute();
             }
@@ -176,7 +218,7 @@ namespace CRUDsader {
                 $alias = $this->_class;
             if ($form === null) {
                 $form = new \CRUDsader\Form();
-                $form->setHtmlLabel($alias);
+                $form->setHtmlLabel(\CRUDsader\I18n::getInstance()->translate($alias));
             }
             $this->_getFormAttributes($form, $oql, $alias);
             $this->_getFormAssociations($form, $oql, $alias);
@@ -198,10 +240,10 @@ namespace CRUDsader {
                 }
                 if ($this->hasParent())
                     $this->getParent(true)->_getFormAssociations($form, $oql, $alias . '_parent');
-            }else{
-                foreach($this->_associations as $name=>$association)
+            }else {
+                foreach ($this->_associations as $name => $association)
                     $this->getAssociation($name)->getForm($oql, $alias . '_' . $name, $form);
-                  if ($this->hasParent())
+                if ($this->hasParent())
                     $this->getParent(true)->_getFormAssociations($form, $oql, $alias . '_parent');
             }
         }
@@ -218,7 +260,7 @@ namespace CRUDsader {
             foreach ($this->_infos['attributes'] as $name => $infoAttribute) {
                 if (!$infoAttribute['calculated']) {
                     $form->add($this->getAttribute($name), $name, $infoAttribute['required']);
-                    $this->getAttribute($name)->setHtmlLabel($alias ? $alias . '_' . $name : $this->_class . '_' . $name);
+                    $this->getAttribute($name)->setHtmlLabel(\CRUDsader\I18n::getInstance()->translate($alias ? $alias . '_' . $name : $this->_class . '_' . $name));
                 }
             }
             if ($this->hasParent())
@@ -276,7 +318,7 @@ namespace CRUDsader {
         public function getAttribute($name) {
             if (!isset($this->_fields[$name])) {
                 $type = $this->_map->classGetFieldAttributeType($this->_class, $name);
-                $this->_fields[$name] = new Object\Attribute($name, $type['phpClass'].$type['class'], $type['options']);
+                $this->_fields[$name] = new Object\Attribute($name, $type['phpClass'] . $type['class'], $type['options']);
                 $this->_fields[$name]->attach($this);
             }
             return $this->_fields[$name];
@@ -288,7 +330,7 @@ namespace CRUDsader {
          * @param \SplSubject $subject 
          */
         public function update(\SplSubject $subject) {
-            if ($subject instanceof \CRUDsader\Object\Attribute || $subject instanceof \CRUDsader\Object) {
+            if (($subject instanceof \CRUDsader\Object\Attribute && !$subject->inputEmpty()) || $subject instanceof \CRUDsader\Object) {
                 $this->_isModified = true;
                 if ($this->_linkedAssociation)
                     $this->_linkedAssociation->update($this);

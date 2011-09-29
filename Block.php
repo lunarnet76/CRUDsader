@@ -149,7 +149,7 @@ namespace CRUDsader {
         }
 
         function valid() {
-            return current($this->_properties);
+            return current($this->_properties)!==false;
         }
     }
     class BlockException extends \CRUDsader\Exception {

@@ -79,7 +79,9 @@ namespace CRUDsader\MVC\Controller {
         public function route($route=false) {
             $this->_adapters['router'] = \CRUDsader\Adapter::factory(array('mvc' => 'router'));
             $this->_adapters['router']->setConfiguration($this->_configuration);
-            $route = $this->_adapters['router']->route($route ? $route : $_SERVER['REQUEST_URI']);
+            $sp=strpos($_SERVER['REQUEST_URI'],'?');
+            $su=$sp!==false?substr($_SERVER['REQUEST_URI'],0,$sp):$_SERVER['REQUEST_URI'];
+            $route = $this->_adapters['router']->route($route ? $route : $su);
             if (!$route)
                 throw new FrontException('cannot find the route');
             $module = $this->_adapters['router']->getModule();
@@ -92,12 +94,12 @@ namespace CRUDsader\MVC\Controller {
             \CRUDsader\Autoload::registerNameSpace('Input', $path . 'input/');
             \CRUDsader\Configuration::getInstance()->form->view->path=$path.'form/';
             // init plugins
-            pre($this->_configuration->modules);
             $plugins=$this->_configuration->modules->{$this->_adapters['router']->getModule()};
             foreach ($plugins as $pluginName=>$pluginOptions) {
                 $class = 'Plugin\\' . $pluginName;
                 $plugin = $this->_modulePlugins[$pluginName] = call_user_func_array(array($class,'getInstance'),array());
-                $plugin->setConfiguration($pluginOptions);
+                if($pluginOptions instanceof \CRUDsader\Block)
+                    $plugin->setConfiguration($pluginOptions);
                 $plugin->postRoute($this->_adapters['router']);
             }
         }
@@ -127,7 +129,7 @@ namespace CRUDsader\MVC\Controller {
             if (isset($options['url']))
                 return $options['url'];
             if (isset($options['route']))
-                return 'http://'.$this->_configuration->server.$this->_configuration->baseRewrite.$options['route'].$this->_configuration->route->suffix;
+                return 'http://'.$this->_configuration->server.$this->_configuration->baseRewrite.$options['route'].$this->_configuration->route->suffix.'?'.(!empty($options['params']) ? http_build_query($options['params']) : http_build_query($this->_adapters['router']->getParams()));
             $defaults = array(
                 'protocol' => 'http://',
                 'server' => $this->_configuration->server,
