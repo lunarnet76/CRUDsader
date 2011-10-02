@@ -8,6 +8,10 @@ namespace CRUDsader\Object {
             $this->_wrapper = new $wrapper($options);
         }
         
+        public function getWrapper(){
+            return $this->_wrapper;
+        }
+        
         /**
          * return true if valid, string or false otherwise
          * @return type 
@@ -38,7 +42,7 @@ namespace CRUDsader\Object {
 
 
         public function getValue() {
-            return $this->_inputValue;
+            return $this->_wrapper->getValue($this->_inputValue);
         }
 
         public function toHTML() {

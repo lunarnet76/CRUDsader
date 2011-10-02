@@ -31,25 +31,25 @@ namespace CRUDsader\Adapter\Map\Extractor {
                     'indexes' => array()
                 );
                 foreach ($classInfos['attributes'] as $attributeName => $attributeInfos) {
-                    $tables[$className]['fields'][$attributeInfos['databaseField']] = array('null' => true, 'type' => $map['attributeTypes'][$attributeInfos['type']]['databaseType'], 'length' => $map['attributeTypes'][$attributeInfos['type']]['length']?$map['attributeTypes'][$attributeInfos['type']]['length']:false);
+                    $tables[$className]['fields'][$attributeInfos['databaseField']] = array('null' => true, 'type' => $map['attributeTypes'][$attributeInfos['type']]['databaseType'], 'length' => $map['attributeTypes'][$attributeInfos['type']]['length'] ? $map['attributeTypes'][$attributeInfos['type']]['length'] : false);
                 }
-                /*if($classInfos['inherit']){
-                    $clDef=$map['classes'][$className]['definition'];
-                    $fks[$clDef['databaseTable']][$clDef['databaseIdField']] = array('table' => $tables[$className]['name'], 'field' => $classInfos['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
-                }*/
+                /* if($classInfos['inherit']){
+                  $clDef=$map['classes'][$className]['definition'];
+                  $fks[$clDef['databaseTable']][$clDef['databaseIdField']] = array('table' => $tables[$className]['name'], 'field' => $classInfos['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
+                  } */
             }
             $fks = array();
             foreach ($map['classes'] as $className => $classInfos) {
                 foreach ($classInfos['definition']['identity'] as $fieldName) {
                     $tables[$className]['fields'][$classInfos['attributes'][$fieldName]['databaseField']]['null'] = false;
-                    $tables[$className]['identity'][]=$classInfos['attributes'][$fieldName]['databaseField'];
+                    $tables[$className]['identity'][] = $classInfos['attributes'][$fieldName]['databaseField'];
                 }
                 foreach ($classInfos['associations'] as $associationName => $associationInfos) {
                     switch ($associationInfos['reference']) {
                         case 'external':
                             // add fk in external table
                             $tables[$associationInfos['to']]['fields'][$associationInfos['externalField']] = array(
-                                'null' =>  true,
+                                'null' => true,
                                 'type' => 'bigint',
                                 'length' => 20
                             );
@@ -67,7 +67,7 @@ namespace CRUDsader\Adapter\Map\Extractor {
                             $fks[$className][$associationInfos['internalField']] = array('table' => $tables[$associationInfos['to']]['name'], 'field' => $map['classes'][$associationInfos['to']]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
                             break;
                         case 'table':
-                            $associationTable =$associationInfos['databaseTable'];
+                            $associationTable = $associationInfos['databaseTable'];
                             if (!isset($tables[$associationTable])) {
                                 $tables[$associationTable] = array(
                                     'name' => $associationTable,
@@ -91,7 +91,7 @@ namespace CRUDsader\Adapter\Map\Extractor {
                                 'length' => 20
                             );
                             // define the fk as a reference
-                            $fks[$associationTable][$associationInfos['externalField']] = array('table' => 
+                            $fks[$associationTable][$associationInfos['externalField']] = array('table' =>
                                 $tables[$associationInfos['to']]['name'],
                                 'field' => $map['classes'][$associationInfos['to']]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => 'cascade');
                             $fks[$associationTable][$associationInfos['internalField']] = array('table' => $tables[$className]['name'], 'field' => $map['classes'][$className]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => 'cascade');

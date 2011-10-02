@@ -16,10 +16,12 @@ namespace CRUDsader\Object\Collection {
         }
 
         public function offsetSet($index, $value) {
-            if ($this->_iterator == $this->_definition['max'])
-                throw new AssociationException('association cannot have more than "' . $this->_definition['max'] . '" objects');
+            if ($this->_definition['max'] != '*' && $this->_iterator == $this->_definition['max'])
+                throw new AssociationException('association "' . $this->_definition['to'] . '" cannot have more than "' . $this->_definition['max'] . '" objects');
             $value = parent::offsetSet($index, $value);
             \CRUDsader\Object\Writer::linkToAssociation($value, $this);
+            \CRUDsader\Object\Writer::setModified($this->_linkedObject);
+            $this->_isModified = true;
         }
 
         /**
@@ -120,6 +122,7 @@ namespace CRUDsader\Object\Collection {
         public function getForm($oql=false, $alias=false, \CRUDsader\Form $form=null) {
             if (empty($alias))
                 $alias = $this->_class;
+            $this->_initialised=true;
             $formAssociation = $form->add(new \CRUDsader\Form($alias));
             $formAssociation->setHtmlLabel(\CRUDsader\I18n::getInstance()->translate($alias));
             $max = $this->_definition['max'] == '*' ? 3 : $this->_definition['max'];
@@ -127,7 +130,7 @@ namespace CRUDsader\Object\Collection {
                 $max = $this->_definition['min'];
             $this->rewind();
             $this->_formValues = array();
-            for ($i = 0; $i < $max; $i++) {
+            for ($i = $this->_definition['min']; $i < $max; $i++) {
                 if (!$this->valid()) {
                     $object = $this->_objects[$this->_iterator] = new \CRUDsader\Object($this->_class);
                     \CRUDsader\Object\Writer::linkToAssociation($object, $this);
@@ -135,7 +138,7 @@ namespace CRUDsader\Object\Collection {
                     $object = $this->current();
                 }
                 if ($this->_definition['composition']) {
-                    $form2 = $formAssociation->add(new \CRUDsader\Form($i), $i);
+                    $form2 = $formAssociation->add(new \CRUDsader\Form());
                     $form2->setHtmlLabel(false);
                     $object->getForm($oql, $alias, $form2);
                 } else {
@@ -182,6 +185,13 @@ namespace CRUDsader\Object\Collection {
                 \CRUDsader\Object\Writer::setModified($this->_linkedObject);
                 $this->_isModified = true;
             }
+        }
+
+        public function rewind() {
+
+            if (!$this->_initialised)
+                throw new AssociationException('collection is not initialised');
+            parent::rewind();
         }
     }
     class AssociationException extends \CRUDsader\Exception {

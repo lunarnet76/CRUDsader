@@ -112,7 +112,7 @@ namespace CRUDsader {
         }
 
         public function classGetJoin($className, $associationName, $fromAlias, $joinedAlias) {
-            static $associationAlias='association';
+            static $associationAliasTmp='association';
             if ($associationName == 'parent') {
                 if(!$this->classHasParent($className))
                      throw new MapException('join error : class "' . $className . '" has no parent');
@@ -133,7 +133,6 @@ namespace CRUDsader {
                 throw new MapException('join error : class "' . $className . '" has no association "' . $associationName . '"');
             $association = $this->_map['classes'][$className]['associations'][$associationName];
             $joins = array();
-
             switch ($association['reference']) {
                 case 'external':
                     $joins['table'] = array(
@@ -158,7 +157,7 @@ namespace CRUDsader {
                     );
                     break;
                 case 'table':
-                    $associationAlias=$associationAlias++;
+                    $associationAlias=$associationAliasTmp++;
                     $joins['association'] = array(
                         'table' => $association['databaseTable'],
                         'alias' =>$associationAlias,

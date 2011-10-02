@@ -45,7 +45,7 @@ namespace CRUDsader\Adapter\MVC {
         }
 
         public function getParams() {
-            return $this->_params;
+            return http_build_query($this->_params);
         }
 
         public function setModule($module) {
@@ -73,5 +73,7 @@ namespace CRUDsader\Adapter\MVC {
          * @return bool|array false or array with module class function and params
          */
         abstract public function route($uri);
+        
+        abstract public function url($options=array());
     }
 }

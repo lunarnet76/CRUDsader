@@ -86,7 +86,7 @@ namespace CRUDsader {
                             $join = $this->_map->classGetJoin($fromClass, $associationName, $fromAlias, $joinedAlias);
                             if (isset($join['association'])) {
                                 // join
-                                $sql['join'] = ($join['association']);
+                                $sql['joins'][] = ($join['association']);
                                 // map fields
                                 $countFieldsFrom+=$countFields = 3;
                                 $mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '_' . $associationName . '_association';
@@ -186,7 +186,8 @@ namespace CRUDsader {
                 if (!empty($this->_sql['where']))
                     $this->_sql['where'] = preg_replace_callback('|(\w*)\.(\w*)=\?|', function($p) use($alias2class, $map, $db, $args) {
                                 static $argsIndex = -1;
-                                return $db->quoteIdentifier($p[1]) . '.' . $db->quoteIdentifier($map->classGetDatabaseTableField($alias2class[$p[1]], $p[2])) . (is_array($args[++$argsIndex]) ? key($args[$argsIndex]) . ' ' . $db->quote(current($args[$argsIndex])) : '=' . $db->quote($args[$argsIndex]));
+                                $calculation=(is_array($args[++$argsIndex]) ?key($args[$argsIndex]) . ' ' . $db->quote(current($args[$argsIndex])) : '=' . $db->quote($args[$argsIndex]));
+                                return $db->quoteIdentifier($p[1]) . '.' . $db->quoteIdentifier($map->classGetDatabaseTableField($alias2class[$p[1]], $p[2])) . $calculation;
                             }, $this->_sql['where']);
                 if (!empty($this->_sql['order']))
                     $this->_sql['order'] = preg_replace_callback('|(\w*)\.(\w*)\s*(\w*)?|', function($p) use($alias2class, $db, $map) {

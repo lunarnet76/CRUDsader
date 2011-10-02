@@ -58,6 +58,7 @@ namespace CRUDsader\Adapter\Map\Loader {
                     'databaseType' => isset($attributeType['databaseType']) ? (string) $attributeType['databaseType'] : $defaults->attributeType->databaseType,
                     'options' => isset($attributeType['options']) ? json_decode(str_replace('\'', '"', (string) $attributeType['options'])) : $defaults->attributeType->options->toArray(),
                 );
+                $ret['attributeTypes'][$alias]['options']['length']=(int) $attributeType['length'];
             }
             $ret['attributeTypes']['default'] = $ret['attributeTypes'][$defaults->attribute->type];
             // classes
@@ -113,9 +114,12 @@ namespace CRUDsader\Adapter\Map\Loader {
                         'composition' => isset($association['composition']) ? ((string) $association['composition'])=='true' : false,
                         'databaseTable' => isset($association['databaseTable']) ? (string) $association['databaseTable'] : \CRUDsader\Map::getDatabaseAssociationTable(isset($association['name']) ? (string) $association['name'] : false, $to, $name),
                         'databaseIdField' => isset($association['databaseIdField']) ? (string) $association['databaseIdField'] : $defaults->associations->databaseIdField,
-                        'internalField' => isset($association['internalField']) ? (string) $association['internalField'] : $name,
-                        'externalField' => isset($association['externalField']) ? (string) $association['externalField'] : $to
+                        'internalField' => isset($association['internalField']) ? (string) $association['internalField'] : $to,
+                        'externalField' => isset($association['externalField']) ? (string) $association['externalField'] : $name
                     );
+                    
+                            if ($ret['classes'][$name]['associations'][$associationName]['internalField'] == $ret['classes'][$name]['associations'][$associationName]['externalField'])
+                                $ret['classes'][$name]['associations'][$associationName]['externalField'] .='2';
                 }
             }
             foreach ($ret['classes'] as $name => $infos) {

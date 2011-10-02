@@ -25,7 +25,7 @@ namespace CRUDsader\MVC\Controller {
          */
         public function init() {
             $this->_configuration = \CRUDsader\Configuration::getInstance()->mvc;
-            $this->_adapters['routerHistoric'] = \CRUDsader\Adapter::factory(array('mvc'=>'routerHistoric'));
+            $this->_adapters['routerHistoric'] = \CRUDsader\Adapter::factory(array('mvc' => 'routerHistoric'));
         }
         /**
          * list of all adapters
@@ -55,7 +55,7 @@ namespace CRUDsader\MVC\Controller {
         public function getAdapters() {
             return $this->_adapters;
         }
-        
+
         public function moduleHasPlugin($pluginName) {
             return isset($this->_modulePlugins[$pluginName]);
         }
@@ -69,18 +69,18 @@ namespace CRUDsader\MVC\Controller {
         }
 
         public function getURL($protocole='http://') {
-            return $protocole .  $this->_configuration->server.$this->_configuration->baseRewrite;
+            return $protocole . $this->_configuration->server . $this->_configuration->baseRewrite;
         }
-        
-        public function getLastURL(){
+
+        public function getLastURL() {
             return $this->_adapters['routerHistoric']->getLast()->uri;
         }
 
         public function route($route=false) {
             $this->_adapters['router'] = \CRUDsader\Adapter::factory(array('mvc' => 'router'));
             $this->_adapters['router']->setConfiguration($this->_configuration);
-            $sp=strpos($_SERVER['REQUEST_URI'],'?');
-            $su=$sp!==false?substr($_SERVER['REQUEST_URI'],0,$sp):$_SERVER['REQUEST_URI'];
+            $sp = strpos($_SERVER['REQUEST_URI'], '?');
+            $su = $sp !== false ? substr($_SERVER['REQUEST_URI'], 0, $sp) : $_SERVER['REQUEST_URI'];
             $route = $this->_adapters['router']->route($route ? $route : $su);
             if (!$route)
                 throw new FrontException('cannot find the route');
@@ -92,13 +92,13 @@ namespace CRUDsader\MVC\Controller {
             \CRUDsader\Autoload::registerNameSpace('Plugin', $path . 'plugin/');
             \CRUDsader\Autoload::registerNameSpace('Model', $path . 'model/');
             \CRUDsader\Autoload::registerNameSpace('Input', $path . 'input/');
-            \CRUDsader\Configuration::getInstance()->form->view->path=$path.'form/';
+            \CRUDsader\Configuration::getInstance()->form->view->path = $path . 'form/';
             // init plugins
-            $plugins=$this->_configuration->modules->{$this->_adapters['router']->getModule()};
-            foreach ($plugins as $pluginName=>$pluginOptions) {
+            $plugins = $this->_configuration->modules->{$this->_adapters['router']->getModule()};
+            foreach ($plugins as $pluginName => $pluginOptions) {
                 $class = 'Plugin\\' . $pluginName;
-                $plugin = $this->_modulePlugins[$pluginName] = call_user_func_array(array($class,'getInstance'),array());
-                if($pluginOptions instanceof \CRUDsader\Block)
+                $plugin = $this->_modulePlugins[$pluginName] = call_user_func_array(array($class, 'getInstance'), array());
+                if ($pluginOptions instanceof \CRUDsader\Block)
                     $plugin->setConfiguration($pluginOptions);
                 $plugin->postRoute($this->_adapters['router']);
             }
@@ -112,12 +112,15 @@ namespace CRUDsader\MVC\Controller {
             // plugins
             foreach ($this->_modulePlugins as $plugin)
                 $plugin->preDispatch();
-            $this->_instanceController = call_user_func_array(array('Controller\\' . ucFirst(ucfirst($this->_adapters['router']->getController())),'getInstance'),array($this, $this->_adapters['router']->toArray()));
+            $this->_instanceController = call_user_func_array(array('Controller\\' . ucFirst(ucfirst($this->_adapters['router']->getController())), 'getInstance'), array($this, $this->_adapters['router']->toArray()));
             $this->_instanceController->setConfiguration($this->_configuration);
             $this->_instanceController->setRouter($this->_adapters['router']);
-            if (!method_exists($this->_instanceController, $this->_adapters['router']->getAction() . 'Action') && !method_exists($this->_instanceController, '__call'))
-                throw new Art_Mvc_Controller_Front_Exception('URL not found, no function ' . $this->_adapters['router']->getAction());
-            $this->_instanceController->{$this->_adapters['router']->getAction() . 'Action'}();
+            if (method_exists($this->_instanceController, $this->_adapters['router']->getAction() . 'Action'))
+                $this->_instanceController->{$this->_adapters['router']->getAction() . 'Action'}();
+            else if (method_exists($this->_instanceController, '__callAction'))
+                $this->_instanceController->__callAction($this->_adapters['router']->getAction());
+            else
+                throw new FrontException('URL not found, no function ' . $this->_adapters['router']->getAction());
             $this->_instanceController->renderTemplate();
             if (!$this->_skipRouterHistoric)
                 $this->_adapters['routerHistoric']->registerRoute($this->_adapters['router']);
@@ -125,24 +128,8 @@ namespace CRUDsader\MVC\Controller {
                 $plugin->postDispatch();
         }
 
-        public function url(array $options=array()) {
-            if (isset($options['url']))
-                return $options['url'];
-            if (isset($options['route']))
-                return 'http://'.$this->_configuration->server.$this->_configuration->baseRewrite.$options['route'].$this->_configuration->route->suffix.'?'.(!empty($options['params']) ? http_build_query($options['params']) : http_build_query($this->_adapters['router']->getParams()));
-            $defaults = array(
-                'protocol' => 'http://',
-                'server' => $this->_configuration->server,
-                'path' => $this->_configuration->baseRewrite,
-                'module' => $this->_adapters['router']->getModule() . '/',
-                'controller' => $this->_adapters['router']->getController() . '/',
-                'action' => $this->_adapters['router']->getAction()
-            );
-            $url = '';
-            foreach ($defaults as $name => $default)
-                $url.=isset($options[$name]) ? $options[$name] . ($name != 'action' ? '/' : '') : $default;
-            $url.=!empty($options['params']) ? http_build_query($options['params']) : http_build_query($this->_adapters['router']->getParams());
-            return $url;
+        public function url($options=array()) {
+            return $this->_adapters['router']->url($options);
         }
 
         public function getInstanceController() {
