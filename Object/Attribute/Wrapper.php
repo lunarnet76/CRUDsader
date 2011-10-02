@@ -21,5 +21,9 @@ namespace CRUDsader\Object\Attribute {
         abstract function javascriptValidator();
 
         abstract function generateRandom();
+        
+        public function getValue($value){
+            return $value;
+        }
     }
 }

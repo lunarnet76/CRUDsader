@@ -4,6 +4,7 @@ namespace CRUDsader\Object\Collection\Association {
 
         public static function write(parent $collection, $alias, &$rows, &$fields, &$mapFields) {
             // simply create an object for each different id
+            $collection->_initialised=true;
             $lastId = false;
             $aggregate = array();
             foreach ($rows as $i => $row) {

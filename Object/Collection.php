@@ -22,6 +22,11 @@ namespace CRUDsader\Object {
             return $full ? $ret : $ret['objects'];
         }
         
+        public function getLast(){
+            $count=count($this->_objects);
+            return $count?$this->_objects[$count-1]:null;
+        }
+        
         public function count(){
             return count($this->_objects);
         }

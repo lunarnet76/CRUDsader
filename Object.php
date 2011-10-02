@@ -35,23 +35,24 @@ namespace CRUDsader {
             if (!Map::getInstance()->classExists($className))
                 throw new ObjectException('class "' . $className . '" does not exist');
         }
+        
+        public function getId(){
+            return $this->isPersisted();
+        }
 
         public function toHTML($base=false, $prefix=false, $allowedClasses=false) {
             $html = '';
             if (!$base)
                 $html.='<div class="object">';
-            //else
-              //  $html.='<div class="subobject">';
             $base.= ( $base ? '_' : '') . $this->_class;
             if (!$this->hasParent())
                 $html.='<div class="title">' . \CRUDsader\I18n::getInstance()->translate($prefix . $base) . '</div>';
             foreach ($this->_fields as $name => $attribute) {
                 $html.='<div class="row"><div class="label">' . \CRUDsader\I18n::getInstance()->translate($prefix . $this->_class . '_' . $name) . '</div><div class="value">' . $attribute->getInputValue() . '</div></div>';
-                
             }
             if ($this->hasParent())
                 $html.=$this->getParent()->toHTML(false, $prefix, $allowedClasses);
-            
+
             foreach ($this->_associations as $name => $association) {
                 if (isset($allowedClasses[$name]) && !$allowedClasses[$name])
                     continue;
@@ -83,7 +84,7 @@ namespace CRUDsader {
         }
 
         public function __get($var) {
-            if (!$this->_initialised)
+            if (!$this->_initialised && $this->_isPersisted)
                 throw new ObjectException('Object is not initialised');
             switch (true) {
                 case isset($this->_infos['attributes'][$var]):
@@ -113,7 +114,8 @@ namespace CRUDsader {
                         // return to base value
                         $this->getAttribute($var)->inputReceive(null);
                         throw new ObjectException('attribute "' . $var . '" cannot accept "' . $value . '" as a value');
-                    }
+                    }else
+                        $this->_initialised=true;
                     break;
                 case $this->hasParent():
                     return $this->getParent()->__set($var, $value);
@@ -128,9 +130,9 @@ namespace CRUDsader {
                     $unitOfWorkToBeExecuted = true;
                 }
                 // identity check
-                if (!$this->_checkIdentity()) {
+                $this->validateForSave();
+                if (!$this->_checkIdentity())
                     throw new ObjectException($this->_class . '_already_exists');
-                }
                 $db = \CRUDsader\Database::getInstance();
                 // update
                 $paramsToSave = $this->_getParamsForSave();
@@ -151,6 +153,18 @@ namespace CRUDsader {
                 if (isset($unitOfWorkToBeExecuted)) {
                     $unitOfWork->execute();
                 }
+            }
+        }
+
+        public function validateForSave() {
+            foreach ($this->_infos['attributes'] as $name => $attributeInfos) {
+                if (!isset($this->_fields[$name]) && $attributeInfos['required'])
+                    throw new ObjectException('class needs attribute "' . $name . '" initialised');
+                $attribute = $this->getAttribute($name);
+                if ($attribute->inputEmpty() && $attributeInfos['required'])
+                    throw new ObjectException('class needs attribute "' . $name . '" to be filled');
+                 if (!$attribute->inputValid())
+                    throw new ObjectException('class needs attribute "' . $name . '" to be valid');
             }
         }
 
@@ -178,9 +192,16 @@ namespace CRUDsader {
         public function _getParamsForSave() {
             $ret = array();
             foreach ($this->_fields as $k => $attribute) {
-                $ret[$this->_infos['attributes'][$k]['databaseField']] = $attribute->getValueForDatabase();
+                if($this->_infos['attributes'][$k]['calculated'])
+                    $ret[$this->_infos['attributes'][$k]['databaseField']] = $this->calculateAttribute($k);
+                else
+                    $ret[$this->_infos['attributes'][$k]['databaseField']] = $attribute->getValueForDatabase();
             }
             return $ret;
+        }
+        
+        public function calculateAttribute($attributeName){
+            return $this->_fields[$attributeName]->getValueForDatabase();;
         }
 
         /**
@@ -332,6 +353,7 @@ namespace CRUDsader {
         public function update(\SplSubject $subject) {
             if (($subject instanceof \CRUDsader\Object\Attribute && !$subject->inputEmpty()) || $subject instanceof \CRUDsader\Object) {
                 $this->_isModified = true;
+                $this->_initialised=true;
                 if ($this->_linkedAssociation)
                     $this->_linkedAssociation->update($this);
                 if ($this->hasParent())

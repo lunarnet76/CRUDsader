@@ -1,24 +1,62 @@
 <?php
+/**
+ * route like 
+ * ${server.baseRewrite}/$language/$moduleControllerName/$function$suffix?$params
+ * ${server.baseRewrite}/$language/$function$suffix?$params
+ * ${server.baseRewrite}/$function$suffix?$params
+ */
 namespace CRUDsader\Adapter\MVC\Router {
     class Explicit extends \CRUDsader\Adapter\MVC\Router {
 
         function route($uri) {
-            $real = substr($uri, strlen($this->_configuration->baseRewrite),-strlen($this->_configuration->route->suffix));
+            $st = strlen($this->_configuration->route->suffix);
+            $real = $st ? substr($uri, strlen($this->_configuration->baseRewrite), -$st) : substr($uri, strlen($this->_configuration->baseRewrite));
+            $this->_route = $real;
             $routes = $this->_configuration->routes;
-            $this->_route=$real;
-            if (!isset($routes->$real)){
-                // take default route
+            $ex = explode($this->_configuration->route->separator, $real);
+            // find controller
+            if (isset($routes->{$ex[0]})) {
+                $language = false;
+                $route = $routes->{$ex[0]};
+                $action = isset($ex[1])?$ex[1]:false;
+            } else if (isset($ex[1]) && isset($routes->{$ex[1]})) {
+                $language = $ex[0];
+                $route = $routes->{$ex[1]};
+                $action = isset($ex[2]) ? $ex[2] : false;
+            } else {
+                $language = false;
+                $route = false;
+                $action = false;
+            }
+            if (!$route) {
                 $this->_module = $this->_configuration->default->module;
                 $this->_controller = $this->_configuration->default->controller;
-                return true;
+            } else {
+                if (isset($route->module))
+                    $this->_module = $route->module;
+                else
+                    $this->_module = $this->_configuration->default->module;
+                if (isset($route->controller))
+                    $this->_controller = $route->controller;
+                else
+                    $this->_controller = $this->_configuration->default->controller;
             }
-            if (isset($routes->$real->module))
-                $this->_module = $routes->$real->module;
-            if (isset($routes->$real->controller))
-                $this->_controller = $routes->$real->controller;
-            if (isset($routes->$real->action))
-                $this->_action = $routes->$real->action;
+            if (isset($route->action))
+                $this->_action = $route->action;
+            else
+                $this->_action = $action ? $action : $this->_configuration->default->action;
             return true;
+        }
+
+        public function url($options=array()) {
+            if(!is_array($options))
+                return 'http://' . $this->_configuration->server . $this->_configuration->baseRewrite.$options;
+            if (isset($options['url']))
+                return $options['url'];
+            if (isset($options['route'])) {
+                return 'http://' . $this->_configuration->server . $this->_configuration->baseRewrite . $options['route'] . $this->_configuration->route->suffix . (!empty($options['params']) ? '?' . http_build_query($options['params']) : $this->getParams());
+            }
+            return false;
         }
     }
 }

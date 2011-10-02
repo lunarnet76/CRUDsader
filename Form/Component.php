@@ -103,6 +103,7 @@ namespace CRUDsader\Form {
          */
         public function setHtmlAttribute($attributeName, $attributeValue) {
             $this->_htmlAttributes[$attributeName] = $attributeValue;
+            return $this;
         }
 
         /**
@@ -112,6 +113,7 @@ namespace CRUDsader\Form {
          */
         public function setHtmlAttributes(array $associativeAttributes) {
             $this->_htmlAttributes = $associativeAttributes;
+            return $this;
         }
 
         /**
@@ -166,6 +168,7 @@ namespace CRUDsader\Form {
 
         public function setHtmlLabel($name) {
             $this->_htmlLabel = $name;
+            return $this;
         }
 
         public function getHtmlLabel() {
@@ -201,6 +204,7 @@ namespace CRUDsader\Form {
 
         public function setInputRequired($bool) {
             $this->_inputRequired = $bool;
+            return $this;
         }
 
         public function inputRequired() {

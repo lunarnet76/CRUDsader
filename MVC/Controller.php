@@ -49,13 +49,8 @@ namespace CRUDsader\MVC {
             }
         }
 
-        public function __call($name, $arguments) {
+        public function __call($name,$arguments) {
             return call_user_func_array(array($this->_frontController, $name), $arguments);
-        }
-
-        public function link(array $options=array()) {
-            $options['url'] = $this->url($options);
-            return new \CRUDsader\Mvc\Link($options);
         }
 
         public function image($options=array()) {

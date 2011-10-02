@@ -1,9 +1,9 @@
 <?php
 namespace CRUDsader\Object\Attribute\Wrapper {
-    class String extends \CRUDsader\Object\Attribute\Wrapper {
+    class Text extends \CRUDsader\Object\Attribute\Wrapper {
 
         public function formatForDatabase($value) {
-            return filter_var($value,FILTER_SANITIZE_STRING);
+            return nl2br(filter_var($value,FILTER_SANITIZE_STRING));
         }
 
         public function formatFromDatabase($value) {
@@ -11,16 +11,19 @@ namespace CRUDsader\Object\Attribute\Wrapper {
         }
 
         public function isValid($value) {
-            if(strlen(filter_var($value,FILTER_SANITIZE_STRING))>$this->_options['length'])return 'string_error_too_long_'.$this->_options['length'];
             return true;
         }
+        public function getValue($value){
+            return nl2br($value);
+        }
+        
 
         public function isEmpty($value) {
             return empty($value);
         }
 
         public function HTMLInput($value, $id, $htmlAttributes) {
-            return '<input type="text" name="' . $id . '" value="' . $value . '" ' . $htmlAttributes . '/>';
+            return '<textarea name="' . $id . '" ' . $htmlAttributes . '>'.$value.'</textarea>';
         }
 
         public function javascriptValidator() {

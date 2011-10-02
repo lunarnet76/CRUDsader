@@ -46,9 +46,10 @@ namespace CRUDsader {
             }else
                 $this->_session->oldToken = $this->_session->token = md5(uniqid(rand(), true));
             $this->_configuration=\CRUDsader\Configuration::getInstance()->form;
+            $this->add(new \CRUDsader\Form\Component\Submit(),'submit')->setHtmlLabel(false);
         }
         
-        public function view($file){
+        public function view($file,$context=false){
             ob_start();
             require($this->_configuration->view->path.$file.'.php');
             return ob_get_clean();
@@ -86,7 +87,6 @@ namespace CRUDsader {
         }
 
         public function _setId($id) {
-            // if($this->hasInputParent())return;
             $this->_htmlAttributes['name'] = $id;
             foreach ($this->_components as $index => $component) {
                 if ($component instanceof self)
@@ -243,10 +243,11 @@ namespace CRUDsader {
 
         public function toHTML() {
             $html = $this->htmlTag() . $this->wrapHtml($this->_htmlLabel, 'title') . $this->htmlError();
-            foreach ($this->_components as $component) {
+            foreach ($this->_components as $index=>$component) {
+                if($index==='submit')continue;
                 $html.=$this->htmlRow($component);
             }
-            return $html . $this->htmlTag();
+            return $html .(!$this->hasInputParent() && isset($this->_components['submit'])?$this->htmlRow($this->_components['submit']):''). $this->htmlTag();
         }
 
         public function htmlTag() {
@@ -257,7 +258,7 @@ namespace CRUDsader {
                 return $tag . ' required="' . ($this->inputRequired() ? 'true' : 'false') . '" ' . $htmlAttributes . '>';
             } else {
                 $this->wrapHtmlTagIsOpened = false;
-                return $this->hasInputParent() ? '</fieldset>' : '<input type="hidden" name="' . $this->_htmlAttributes['name'] . '[token]" value="' . $this->_session->token . '"/><input type="submit" name="' . $this->_htmlAttributes['name'] . '[submit]"/></form>';
+                return $this->hasInputParent() ? '</fieldset>' : '<div class="row"><div class="component"><input type="hidden" name="' . $this->_htmlAttributes['name'] . '[token]" value="' . $this->_session->token . '"/></div></div></form>';
             }
         }
 
