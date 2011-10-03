@@ -11,8 +11,7 @@ namespace CRUDsader\Object\Collection\Association {
                 $id = $row[$mapFields[$alias]['from']];
                 if (!\CRUDsader\Expression::isEmpty($id)) {
                     if (!isset($collection->_objectIndexes[$id])) {
-                        $class=\CRUDsader\Map::getInstance()->classGetModelClass($collection->_class);
-                        $collection->_objects[$collection->_iterator] = new $class($collection->_class);
+                        $collection->_objects[$collection->_iterator] = \CRUDsader\Object::instance($collection->_class);
                         \CRUDsader\Object\Writer::linkToAssociation($collection->_objects[$collection->_iterator],$collection);
                         $collection->_objectIndexes[$id] = $collection->_iterator;
                         $collection->_iterator++;

@@ -83,6 +83,12 @@ namespace CRUDsader\MVC {
         public function getMeta($type) {
             return $this->_metas[$type];
         }
+        
+        public function linkMetas(){
+            foreach($this->_metas as $type=>$v){
+                echo '<meta name="'.$type.'" content="'.addslashes($v).'">';
+            }
+        }
 
         public function setHeader($name, $content) {
             $this->_headers[$name] = $content;
@@ -146,11 +152,11 @@ namespace CRUDsader\MVC {
             $applicationPath = $this->_frontController->getApplicationPath();
             foreach ($this->_views as $infos) {
                 switch (true) {
-                    case file_exists($applicationPath . $router->getModule() . '/View/' . ($infos['controller'] ? str_replace('\\', '/', $infos['controller']) . '/' : '') . $infos['action'] . '.' . $suffix):
-                        $path = $applicationPath . $router->getModule() . '/View/' . ($infos['controller'] ? str_replace('\\', '/', $infos['controller']) . '/' : '') . $infos['action'] . '.' . $suffix;
+                    case file_exists($applicationPath . '/view/'.$this->_router->getModule().'/' . ($infos['controller'] ? str_replace('\\', '/', $infos['controller']) . '/' : '') . $infos['action'] . '.' . $suffix):
+                        $path = $applicationPath . '/view/'.$this->_router->getModule().'/' . ($infos['controller'] ? str_replace('\\', '/', $infos['controller']) . '/' : '') . $infos['action'] . '.' . $suffix;
                         break;
                     default:
-                        $path = $this->_frontController->getApplicationPath() . $router->getModule() . '/view/default.' . $suffix;
+                        $path = $this->_frontController->getApplicationPath() .'/view/default.' . $suffix;
                 }
                 require($path);
             }
@@ -165,8 +171,8 @@ namespace CRUDsader\MVC {
                 $this->_template = $this->_configuration->view->template;
             $this->preRender();
             if ($this->_template) {
-                $file = $this->_frontController->getApplicationPath() . $this->_router->getModule() . '/view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
-                $path = file_exists($file) ? $file : $this->_frontController->getApplicationPath() . $this->_router->getModule() . '/view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
+                $file = $this->_frontController->getApplicationPath()  . 'View/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
+                $path = file_exists($file) ? $file : $this->_frontController->getApplicationPath() .  'View/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
                 require($path);
             }else
                 $this->render();

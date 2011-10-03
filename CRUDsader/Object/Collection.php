@@ -36,8 +36,7 @@ namespace CRUDsader\Object {
         }
 
         public function newObject() {
-            $class=$this->_classInfos['definition']['phpClass'];
-            $this->_objects[++$this->_iterator] = new $class($this->_class);
+            $this->_objects[++$this->_iterator] = \CRUDsader\Object::instance($this->_class);
             return $this->_objects[$this->_iterator];
         }
 
@@ -47,7 +46,7 @@ namespace CRUDsader\Object {
             if (!$value instanceof \CRUDsader\Object || $value->getClass() != $this->_class)
                 throw new CollectionException('you can add only object of class "' . $this->_class . '"');
             $this->_initialised=true;
-            $this->_objects[] = $value;
+            $this->_objects[$index] = $value;
             if ($value->isPersisted()) 
                 $this->_objectIndexes[$value->isPersisted()] = count($this->_objects)-1;
             return $value;
@@ -57,6 +56,8 @@ namespace CRUDsader\Object {
             if(isset($this->_objectIndexes[$index])){
                 unset($this->_objects[$this->_objectIndexes[$index]]);
                 unset($this->_objectIndexes[$index]);
+            }else if(isset($this->_objects[$index])){
+                unset($this->_objects[$index]);
             }
         }
 

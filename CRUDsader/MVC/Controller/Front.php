@@ -87,12 +87,12 @@ namespace CRUDsader\MVC\Controller {
             $module = $this->_adapters['router']->getModule();
             if ($module && !isset($this->_configuration->modules->$module))
                 throw new FrontException('module "' . $module . '" does not exist or is not in the configuration');
-            $path = $this->_configuration->applicationPath . ($module ? $module . '/' : '');
-            \CRUDsader\Autoload::registerNameSpace('Controller', $path . 'controller/');
-            \CRUDsader\Autoload::registerNameSpace('Plugin', $path . 'plugin/');
-            \CRUDsader\Autoload::registerNameSpace('Model', $path . 'model/');
-            \CRUDsader\Autoload::registerNameSpace('Input', $path . 'input/');
-            \CRUDsader\Configuration::getInstance()->form->view->path = $path . 'form/';
+            $path = $this->_configuration->applicationPath;
+            \CRUDsader\Autoload::registerNameSpace('Controller', $path . 'Controller/' . ($module ? $module . '/' : ''));
+            \CRUDsader\Autoload::registerNameSpace('Plugin', $path.'Plugin/');
+            \CRUDsader\Autoload::registerNameSpace('Model', $path.'Model/');
+            \CRUDsader\Autoload::registerNameSpace('Input', $path . 'Input/');
+            \CRUDsader\Configuration::getInstance()->form->view->path = $path . 'View/form/';
             // init plugins
             $plugins = $this->_configuration->modules->{$this->_adapters['router']->getModule()};
             foreach ($plugins as $pluginName => $pluginOptions) {

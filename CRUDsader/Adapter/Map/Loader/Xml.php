@@ -94,11 +94,13 @@ namespace CRUDsader\Adapter\Map\Loader {
                         'databaseField' => isset($attribute['databaseField']) ? (string) $attribute['databaseField'] : $attributeName,
                         'type' => isset($attribute['type']) ? (string) $attribute['type'] : $defaults->attribute->type,
                         'searchable' => isset($attribute['searchable']) ? (string) $attribute['searchable'] : $defaults->attribute->searchable,
-                        'calculated' => isset($attribute['calculated']) ? (string) $attribute['calculated'] : false
+                        'calculated' => isset($attribute['calculated']) ? (string) $attribute['calculated'] : false,
+                        'input' => isset($attribute['input']) ? ((string) $attribute['input'])=='true' : true
                     );
                     $ret['classes'][$name]['definition']['attributeCount'][$attributeName] = false;
                     $ret['classes'][$name]['attributesReversed'][$ret['classes'][$name]['attributes'][$attributeName]['databaseField']] = $attributeName;
                 }
+                $ret['classes'][$name]['definition']['abstract']=empty($ret['classes'][$name]['attributes']);
                 // associations
                 $associations = $class->associated;
                 foreach ($associations as $association) {

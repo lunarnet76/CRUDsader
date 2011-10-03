@@ -20,13 +20,11 @@ namespace CRUDsader\Object {
                     }
                 }
                 // parent
-                $parentClassAlias = $object->_class . '_parent';
+                $parentClassAlias = $alias . '_parent';
                 if (isset($mapFields[$parentClassAlias])) {
                     $parentClass=$map->classGetParent($object->_class);
-                    $class=$map->classGetModelClass($parentClass);
-                    $object->_parent = new $class($parentClass);
+                    $object->_parent = \CRUDsader\Object::instance($parentClass);
                     $object->_parent->_isPersisted = $id;
-                    $object->_parent->_initialised= true;
                     self::write($object->_parent, $id, $parentClassAlias, $rows, $fields, $mapFields);
                 }
             }

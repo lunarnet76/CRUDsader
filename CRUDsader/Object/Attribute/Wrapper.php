@@ -8,19 +8,31 @@ namespace CRUDsader\Object\Attribute {
             $this->_options=$options;
         }
         
-        abstract function formatForDatabase($value);
+        public function formatForDatabase($value){
+            return filter_var($value,FILTER_SANITIZE_STRING);;
+        }
 
-        abstract function formatFromDatabase($value);
+        function formatFromDatabase($value){
+            return $value;
+        }
 
-        abstract function isValid($value);
+        function isValid($value){
+            return true;
+        }
 
-        abstract function isEmpty($value);
+        public function isEmpty($value){
+            return \CRUDsader\Expression::isEmpty($value);
+        }
 
         abstract function HTMLInput($value, $id, $htmlAttributes);
 
-        abstract function javascriptValidator();
+        public function javascriptValidator() {
+            return '';
+        }
 
-        abstract function generateRandom();
+        public function generateRandom() {
+            return base_convert(rand(10e16, 10e20), 10, 36);
+        }
         
         public function getValue($value){
             return $value;
