@@ -16,7 +16,7 @@ namespace CRUDsader\Object\Collection {
         }
 
         public function offsetSet($index, $value) {
-            if ($this->_definition['max'] != '*' && $this->_iterator == $this->_definition['max'])
+            if (!isset($this->_objects[$index]) && $this->_definition['max'] != '*' && $this->_iterator == $this->_definition['max'])
                 throw new AssociationException('association "' . $this->_definition['to'] . '" cannot have more than "' . $this->_definition['max'] . '" objects');
             $value = parent::offsetSet($index, $value);
             \CRUDsader\Object\Writer::linkToAssociation($value, $this);
@@ -70,7 +70,7 @@ namespace CRUDsader\Object\Collection {
                                         $this->_definition['internalField'] => $this->_linkedObject->isPersisted()
                                     );
                                     if ($object->isPersisted() && $object->getLinkedAssociationId()) {
-                                        // update
+                                        // update   
                                         $unitOfWork->update($this->_definition['databaseTable'], $d, $db->quoteIdentifier($this->_definition['databaseIdField']) . '=' . $db->quote($object->getLinkedAssociationId()));
                                     } else {
                                         $d['id'] = \CRUDsader\Adapter::factory('identifier')->getOID(array('class' => $this->_class));
@@ -109,6 +109,7 @@ namespace CRUDsader\Object\Collection {
                             $object->delete($unitOfWork);
                 }
             }
+            $this->_objects=array();
         }
 
         public function isModified() {
@@ -122,8 +123,8 @@ namespace CRUDsader\Object\Collection {
         public function getForm($oql=false, $alias=false, \CRUDsader\Form $form=null) {
             if (empty($alias))
                 $alias = $this->_class;
-            $this->_initialised=true;
-            $formAssociation = $form->add(new \CRUDsader\Form($alias));
+            $this->_initialised = true;
+            $formAssociation = $form->add(new \CRUDsader\Form($alias), $this->_definition['name'] ? $this->_definition['name'] : $this->_definition['to']);
             $formAssociation->setHtmlLabel(\CRUDsader\I18n::getInstance()->translate($alias));
             $max = $this->_definition['max'] == '*' ? 3 : $this->_definition['max'];
             if ($this->_definition['min'] > $max)
@@ -132,7 +133,7 @@ namespace CRUDsader\Object\Collection {
             $this->_formValues = array();
             for ($i = $this->_definition['min']; $i < $max; $i++) {
                 if (!$this->valid()) {
-                    $object = $this->_objects[$this->_iterator] = new \CRUDsader\Object($this->_class);
+                    $object = $this->_objects[$this->_iterator] = \CRUDsader\Object::instance($this->_class);
                     \CRUDsader\Object\Writer::linkToAssociation($object, $this);
                 } else {
                     $object = $this->current();

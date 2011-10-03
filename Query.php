@@ -50,7 +50,7 @@ namespace CRUDsader {
             $this->_class = $className = $this->_matches[4];
             if (!$this->_map->classExists($this->_class))
                 throw new QueryException('error in FROM : class "' . $this->_class . '" does not exist');
-            $alias = $lastAlias = !empty($this->_matches[5]) ? $this->_matches[5] : $this->_tmpAliases++;
+            $alias = $lastAlias = !empty($this->_matches[5]) ? $this->_matches[5] : ++$this->_tmpAliases;
             // init vars
             $classToParentAlias = array();
             $alias2class = array($alias => $className);
@@ -66,7 +66,7 @@ namespace CRUDsader {
                     $fromAlias = !empty($matchesJoin[3][$index]) ? $matchesJoin[3][$index] : $alias;
                     if (!isset($alias2class[$fromAlias]))
                         throw new QueryException('error in JOIN : alias "' . $fromAlias . '" does not exist');
-                    $joinedAlias = !empty($matchesJoin[2][$index]) ? $matchesJoin[2][$index] : $this->_tmpAliases++;
+                    $joinedAlias = !empty($matchesJoin[2][$index]) ? $matchesJoin[2][$index] : ++$this->_tmpAliases;
                     $fromClass = isset($alias2class[$fromAlias]) ? $alias2class[$fromAlias] : $className;
                     $alias2class[$fromAlias] = $fromClass;
                     if ($associationName == 'parent') {
@@ -104,7 +104,7 @@ namespace CRUDsader {
                             while ($this->_map->classHasParent($fromClass)) {
                                 // join parent table
                                 if (!isset($classToParentAlias[$fromClass])) {
-                                    $classToParentAlias[$fromClass] = $joinedAlias = $this->_tmpAliases++;
+                                    $classToParentAlias[$fromClass] = $joinedAlias = ++$this->_tmpAliases;
                                     $join = $this->_map->classGetJoin($fromClass, 'parent', $fromAlias, $joinedAlias);
                                     $sql['joins'][] = ($join['table']);
                                     // map fields
