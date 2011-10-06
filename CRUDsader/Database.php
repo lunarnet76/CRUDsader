@@ -85,9 +85,10 @@ namespace CRUDsader {
             $this->_adapters['profiler']->startQuery($sql, $type);
             try {
                 $results = $this->_adapters['connector']->query($sql, $type);
-                if ($results instanceof \CRUDsader\Adapter\Database\Rows)
+                if ($results instanceof \CRUDsader\Adapter\Database\Rows){
                     $this->_adapters['profiler']->stopQuery($results->count(), $results->toArray());
-                else
+                    $results->rewind();
+                }else
                     $this->_adapters['profiler']->stopQuery($results);
                 return $results;
             } catch (Exception $e) {

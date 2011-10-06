@@ -76,7 +76,7 @@ namespace CRUDsader {
             return $this->_configuration;
         }
     }
-    class AdapterException extends Exception {
+    class AdapterException extends \CRUDsader\Exception  {
         
     }
 }

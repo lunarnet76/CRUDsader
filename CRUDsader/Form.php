@@ -16,7 +16,7 @@ namespace CRUDsader {
      * @package     CRUDsader
      * @todo add handler for checkboxes, as PHP will not create an entry in the $data array in receive($data=false)
      */
-    Class Form extends Form\Component implements Interfaces\Helpable, Interfaces\Sessionisable, \IteratorAggregate, \ArrayAccess,\CRUDsader\Interfaces\Configurable{
+    Class Form extends Form\Component implements Interfaces\Helpable, Interfaces\Sessionisable, \IteratorAggregate, \ArrayAccess, \CRUDsader\Interfaces\Configurable {
         protected $_url;
         protected $_session;
         protected $_tokenInput = false;
@@ -45,20 +45,20 @@ namespace CRUDsader {
                 $this->_session->token = md5(uniqid(rand(), true));
             }else
                 $this->_session->oldToken = $this->_session->token = md5(uniqid(rand(), true));
-            $this->_configuration=\CRUDsader\Configuration::getInstance()->form;
-            $this->add(new \CRUDsader\Form\Component\Submit(),'submit')->setHtmlLabel(false);
+            $this->_configuration = \CRUDsader\Configuration::getInstance()->form;
+            $this->add(new \CRUDsader\Form\Component\Submit(), 'submit')->setHtmlLabel(false);
         }
-        
-        public function view($file,$context=false){
+
+        public function view($file, $context=false) {
             ob_start();
-            require($this->_configuration->view->path.$file.'.php');
+            require($this->_configuration->view->path . $file . '.php');
             return ob_get_clean();
         }
-        
+
         /**
          * @param Block $configuration
          */
-         public function setConfiguration(\CRUDsader\Block $configuration=null) {
+        public function setConfiguration(\CRUDsader\Block $configuration=null) {
             $this->_configuration = $configuration;
         }
 
@@ -169,13 +169,16 @@ namespace CRUDsader {
                 $data = $data[$this->_htmlAttributes['name']];
             foreach ($this->_components as $index => $component) {
                 if (isset($data[$index])) {
-                    if ($this->_useSession){
+                    if ($this->_useSession) {
                         $component->inputReceive($data[$index]);
                         $this->_session->$index = $data[$index];
                     }else
                         $component->inputReceive($data[$index]);
                 } else if ($this->_useSession && isset($this->_session->$index)) {
-                    $component->inputReceive($component instanceof self?$this->_session->$index->toArray():$this->_session->$index);
+                    if ($component->hasParameter('isCheckbox'))
+                        $component->inputReceive(false);
+                    else
+                        $component->inputReceive($component instanceof self ? $this->_session->$index->toArray() : $this->_session->$index);
                 }else
                     $component->inputReceive(null);
             }
@@ -210,11 +213,11 @@ namespace CRUDsader {
         /**
          * the component is reset to a state before he receive anything
          */
-        public function resetInput() {
-            parent::resetInput();
+        public function inputReset() {
+            parent::inputReset();
             $this->resetSession();
             foreach ($this->_components as $component) {
-                $component->resetInput();
+                $component->inputReset();
             }
         }
 
@@ -243,11 +246,12 @@ namespace CRUDsader {
 
         public function toHTML() {
             $html = $this->htmlTag() . $this->wrapHtml($this->_htmlLabel, 'title') . $this->htmlError();
-            foreach ($this->_components as $index=>$component) {
-                if($index==='submit')continue;
+            foreach ($this->_components as $index => $component) {
+                if ($index === 'submit')
+                    continue;
                 $html.=$this->htmlRow($component);
             }
-            return $html .(!$this->hasInputParent() && isset($this->_components['submit'])?$this->htmlRow($this->_components['submit']):''). $this->htmlTag();
+            return $html . (!$this->hasInputParent() && isset($this->_components['submit']) ? $this->htmlRow($this->_components['submit']) : '') . $this->htmlTag();
         }
 
         public function htmlTag() {

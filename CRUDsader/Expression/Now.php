@@ -26,7 +26,7 @@ namespace CRUDsader\Expression {
         }
 
         public function __toString() {
-            return date('Y-m-d');
+            return date('Y-m-d h:i:s');
         }
     }
 }

@@ -91,10 +91,16 @@ namespace CRUDsader\Adapter\Map\Extractor {
                                 'length' => 20
                             );
                             // define the fk as a reference
-                            $fks[$associationTable][$associationInfos['externalField']] = array('table' =>
-                                $tables[$associationInfos['to']]['name'],
-                                'field' => $map['classes'][$associationInfos['to']]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => 'cascade');
-                            $fks[$associationTable][$associationInfos['internalField']] = array('table' => $tables[$className]['name'], 'field' => $map['classes'][$className]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => 'cascade');
+                            $fks[$associationTable][$associationInfos['externalField']] = array(
+                                'table' =>$tables[$associationInfos['to']]['name'],
+                                'field' => $map['classes'][$associationInfos['to']]['definition']['databaseIdField'], 
+                                'onUpdate' => 'restrict', 'onDelete' => 'cascade'
+                                );
+                            $fks[$associationTable][$associationInfos['internalField']] = array(
+                                'table' => $tables[$className]['name'], 
+                                'field' => $map['classes'][$className]['definition']['databaseIdField'], 
+                                'onUpdate' => 'restrict', 'onDelete' => 'cascade'
+                                );
                             //create the table if does not exist
                             break;
                     }

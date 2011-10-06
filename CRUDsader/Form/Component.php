@@ -235,9 +235,9 @@ namespace CRUDsader\Form {
             return $this->_inputError;
         }
 
-        public function resetInput() {
+        public function inputReset() {
             $this->_inputError = false;
-            unset($this->_inputValue);
+            $this->_inputValue=new \CRUDsader\Expression\Nil;
         }
 
         public function hasInputParent() {

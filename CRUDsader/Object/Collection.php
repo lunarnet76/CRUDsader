@@ -46,9 +46,10 @@ namespace CRUDsader\Object {
             if (!$value instanceof \CRUDsader\Object || $value->getClass() != $this->_class)
                 throw new CollectionException('you can add only object of class "' . $this->_class . '"');
             $this->_initialised=true;
+            $index=isset($index)?$index:count($this->_objects);
             $this->_objects[$index] = $value;
             if ($value->isPersisted()) 
-                $this->_objectIndexes[$value->isPersisted()] = count($this->_objects)-1;
+                $this->_objectIndexes[$value->isPersisted()] = $index;
             return $value;
         }
         

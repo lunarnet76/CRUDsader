@@ -19,6 +19,7 @@ namespace CRUDsader\Object {
             if (empty($this->_transactions))
                 return;
             $database = \CRUDsader\Database::getInstance();
+            //$database->setForeignKeyCheck(false);
             $database->beginTransaction();
             $lastExecuted = false;
             try {
@@ -33,13 +34,15 @@ namespace CRUDsader\Object {
                     $lastExecuted = $id;
                 }
                 $database->commit();
+                //$database->setForeignKeyCheck(true);
             } catch (Exception $e) {
                 $database->rollBack();
+                //$database->setForeignKeyCheck(true);
                 throw new UnitOfWorkException('transaction failed : ' . $e->getMessage());
             }
         }
     }
-    class UnitOfWorkException extends \CRUDsader\Exception{
+    class UnitOfWorkException extends \CRUDsader\Exception {
         
     }
 }

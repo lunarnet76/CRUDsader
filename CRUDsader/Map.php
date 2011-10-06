@@ -159,11 +159,11 @@ namespace CRUDsader {
                 case 'table':
                     $associationAlias=$associationAliasTmp++;
                     $joins['association'] = array(
-                        'table' => $association['databaseTable'],
-                        'alias' =>$associationAlias,
-                        'field' => $association['internalField'],
-                        'joinAlias' => $fromAlias,
-                        'joinField' => $this->_map['classes'][$className]['definition']['databaseIdField'],
+                        'table' => $association['databaseTable'],// file2post
+                        'alias' =>$associationAlias, // 
+                        'field' => $association['internalField'],// post
+                        'joinAlias' => $fromAlias, // j
+                        'joinField' => $this->_map['classes'][$className]['definition']['databaseIdField'],// id
                         'type' => 'left'
                     );
                     $joins['table'] = array(

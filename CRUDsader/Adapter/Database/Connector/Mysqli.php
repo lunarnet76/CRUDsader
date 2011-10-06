@@ -80,13 +80,19 @@ namespace CRUDsader\Adapter\Database\Connector {
             if (false === $resource)
                 throw new MysqliException($this->_connection->error, $sql, $this->_connection->errno);
             switch ($type) {
-                case 'countSelect':
                 case 'select':
                 case 'listTables':
                     $rows = array();
                     $rowSet = \CRUDsader\Adapter::Factory(array('database' => 'rows'));
                     $rowSet->setResource($resource, $resource->num_rows);
                     $ret = $rowSet;
+                    break;
+                case 'countSelect':
+                    $rows = array();
+                    $rowSet = \CRUDsader\Adapter::Factory(array('database' => 'rows'));
+                    $rowSet->setResource($resource, $resource->num_rows);
+                    $r = $rowSet->current();
+                    $ret=$r[0];
                     break;
                 case 'delete':
                 case 'update':

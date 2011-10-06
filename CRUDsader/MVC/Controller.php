@@ -67,7 +67,7 @@ namespace CRUDsader\MVC {
         }
 
         // helpers
-        public function redirect(array $options=array()) {
+        public function redirect($options=array()) {
             if (\CRUDsader\Debug::isActivated())
                 echo '<a href="' . $this->url($options) . '">' . $this->url($options) . '</a>';
             else
@@ -152,11 +152,11 @@ namespace CRUDsader\MVC {
             $applicationPath = $this->_frontController->getApplicationPath();
             foreach ($this->_views as $infos) {
                 switch (true) {
-                    case file_exists($applicationPath . '/view/'.$this->_router->getModule().'/' . ($infos['controller'] ? str_replace('\\', '/', $infos['controller']) . '/' : '') . $infos['action'] . '.' . $suffix):
-                        $path = $applicationPath . '/view/'.$this->_router->getModule().'/' . ($infos['controller'] ? str_replace('\\', '/', $infos['controller']) . '/' : '') . $infos['action'] . '.' . $suffix;
+                    case file_exists($applicationPath . 'view/'.$this->_router->getModule().'/' . ($infos['controller'] ?$infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix):
+                        $path = $applicationPath . 'view/'.$this->_router->getModule().'/' . ($infos['controller'] ? $infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix;
                         break;
                     default:
-                        $path = $this->_frontController->getApplicationPath() .'/view/default.' . $suffix;
+                        $path = $this->_frontController->getApplicationPath() .'view/default.' . $suffix;
                 }
                 require($path);
             }
@@ -171,8 +171,8 @@ namespace CRUDsader\MVC {
                 $this->_template = $this->_configuration->view->template;
             $this->preRender();
             if ($this->_template) {
-                $file = $this->_frontController->getApplicationPath()  . 'View/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
-                $path = file_exists($file) ? $file : $this->_frontController->getApplicationPath() .  'View/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
+                $file = $this->_frontController->getApplicationPath()  . 'view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
+                $path = file_exists($file) ? $file : $this->_frontController->getApplicationPath() .  'view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
                 require($path);
             }else
                 $this->render();
@@ -190,13 +190,13 @@ namespace CRUDsader\MVC {
             $this->_views['base'] = array('controller' => $controller, 'action' => $action);
         }
 
-        public function renderPart($action, $controller=false) {
+       /* public function renderPart($action, $controller=false) {
             $infos = array('action' => $action, 'controller' => $controller);
             $path = file_exists($this->_frontController->getModuleDirectory() . $this->_frontController->getModule() . '/view/' . ($infos['controller'] ? str_replace('_', '/', $infos['controller']) . '/' : '') . $infos['action'] . $suffix) ? $this->_frontController->getModuleDirectory() . $this->_frontController->getModule() . '/view/' . ($infos['controller'] ? str_replace('_', '/', $infos['controller']) . '/' : '') . $infos['action'] . $suffix : 'module/' . $this->_frontController->getModule() . '/view/default' . $suffix;
             ob_start();
             require($path);
             return ob_get_clean();
-        }
+        }*/
 
         public function addView($action, $controller=false) {
             $this->_views[] = array('controller' => $controller ? $controller : false, 'action' => $action);

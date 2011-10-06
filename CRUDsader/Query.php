@@ -16,6 +16,7 @@ namespace CRUDsader {
      */
     class Query {
         protected $_oql;
+        protected $_db;
         protected $_fetched = false;
         protected $_sql;
         protected $_class;
@@ -36,6 +37,7 @@ namespace CRUDsader {
 
         public function __construct($oql) {
             $this->_oql = $oql;
+            $this->_db = \CRUDsader\Database::getInstance();
             $this->_configuration = \CRUDsader\Configuration::getInstance()->query;
         }
 
@@ -44,12 +46,12 @@ namespace CRUDsader {
                 return $this->_infos;
             if (!$this->_syntaxValidated)
                 if (!$this->validateSyntax())
-                    throw new QueryException('bad syntax');
+                    throw new QueryException($this, 'bad syntax');
             $this->_map = Map::getInstance();
             // FROM
             $this->_class = $className = $this->_matches[4];
             if (!$this->_map->classExists($this->_class))
-                throw new QueryException('error in FROM : class "' . $this->_class . '" does not exist');
+                throw new QueryException($this, 'error in FROM : class "' . $this->_class . '" does not exist');
             $alias = $lastAlias = !empty($this->_matches[5]) ? $this->_matches[5] : ++$this->_tmpAliases;
             // init vars
             $classToParentAlias = array();
@@ -65,7 +67,7 @@ namespace CRUDsader {
                 foreach ($matchesJoin[1] as $index => $associationName) {
                     $fromAlias = !empty($matchesJoin[3][$index]) ? $matchesJoin[3][$index] : $alias;
                     if (!isset($alias2class[$fromAlias]))
-                        throw new QueryException('error in JOIN : alias "' . $fromAlias . '" does not exist');
+                        throw new QueryException($this, 'error in JOIN : alias "' . $fromAlias . '" does not exist');
                     $joinedAlias = !empty($matchesJoin[2][$index]) ? $matchesJoin[2][$index] : ++$this->_tmpAliases;
                     $fromClass = isset($alias2class[$fromAlias]) ? $alias2class[$fromAlias] : $className;
                     $alias2class[$fromAlias] = $fromClass;
@@ -163,30 +165,56 @@ namespace CRUDsader {
         }
 
         public function fetchAll($args=NULL) {
-            $results = $this->_fetch($args);
+            $this->_fetch($args);
+            $results = $this->_db->select($this->_sql);
             $collection = new \CRUDsader\Object\Collection\Initialised($this->_class, $results, $this->_mapFields);
             return $collection;
         }
 
         public function fetch($args=NULL) {
-            $results = $this->_fetch($args, false);
+            $this->_fetch($args, false);
+            $results = $this->_db->select($this->_sql);
             $collection = new \CRUDsader\Object\Collection\Initialised($this->_class, $results, $this->_mapFields);
-            return $collection->count()?$collection[0]:false;
+            return $collection->count() ? $collection[0] : false;
+        }
+
+        public function paginate(array $options, $args=NULL) {
+            if(!isset($options['index']))
+                throw new QueryException('you must specify the index option');
+            $session = \CRUDsader\Session::useNamespace('\\CRUDsader\\Query\\' . $options['index']);
+            if (!isset($session->paginate)) {
+                $this->_fetch($args, true);
+                $session->paginate = array(
+                    'class' => $this->_class,
+                    'sql' => $this->_sql,
+                    'oql' => $this->_oql,
+                    'mapFields' => $this->_mapFields,
+                    'alias2class' => $this->_alias2class,
+                );
+            } else {
+                $infos = $session->paginate->toArray();
+                $this->_alias2class = $infos['alias2class'];
+                $this->_mapFields = $infos['mapFields'];
+                $this->_sql = $infos['sql'];
+                $this->_oql = $infos['oql'];
+                $this->_class = $infos['class'];
+            }
+            return new \CRUDsader\Query\Pagination($this, $options, $args);
         }
 
         protected function _fetch($args=NULL, $all=true) {
             $this->getInfos();
             if (!is_array($args))
                 $args = array($args);
-            $db = \CRUDsader\Database::getInstance();
             $alias2class = $this->_alias2class;
             $map = Map::getInstance();
             $argsIndex = -1;
             if (!$this->_fetched) {
+                $db = $this->_db;
                 if (!empty($this->_sql['where']))
                     $this->_sql['where'] = preg_replace_callback('|(\w*)\.(\w*)=\?|', function($p) use($alias2class, $map, $db, $args) {
                                 static $argsIndex = -1;
-                                $calculation=(is_array($args[++$argsIndex]) ?key($args[$argsIndex]) . ' ' . $db->quote(current($args[$argsIndex])) : '=' . $db->quote($args[$argsIndex]));
+                                $calculation = (is_array($args[++$argsIndex]) ? key($args[$argsIndex]) . ' ' . $db->quote(current($args[$argsIndex])) : '=' . $db->quote($args[$argsIndex]));
                                 return $db->quoteIdentifier($p[1]) . '.' . $db->quoteIdentifier($map->classGetDatabaseTableField($alias2class[$p[1]], $p[2])) . $calculation;
                             }, $this->_sql['where']);
                 if (!empty($this->_sql['order']))
@@ -197,7 +225,6 @@ namespace CRUDsader {
             if (!$all)
                 $this->_sql['limit'] = array('count' => 1);
             $this->_fetched = true;
-            return $db->select($this->_sql);
         }
 
         /**
@@ -218,6 +245,10 @@ namespace CRUDsader {
         }
     }
     class QueryException extends \CRUDsader\Exception {
-        
+
+        public function __construct($query, $error) {
+            $this->message = $error;
+            $this->query = $query;
+        }
     }
 }
