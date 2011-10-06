@@ -4,7 +4,7 @@ namespace CRUDsader\Object\Attribute {
 
         protected $_options;
         
-        public function __construct($options=array()){
+        public function __construct(\CRUDsader\Object\Attribute $attribute,$options=array()){
             $this->_options=$options;
         }
         

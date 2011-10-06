@@ -176,10 +176,6 @@ namespace CRUDsader\Adapter\Database\Descriptor {
             }
             if (!empty($select['where'])) 
                 $sql.=' WHERE '.$select['where'];
-            if (!empty($select['order'])) 
-                $sql.=' ORDER BY '.$select['order'];
-            if (!empty($select['limit'])) 
-                $sql.=' LIMIT ' . (isset($select['limit']['from']) ? $select['limit']['from'] . ',' : '') . $select['limit']['count'];
             return $sql;
         }
         

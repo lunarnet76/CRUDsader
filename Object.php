@@ -22,13 +22,14 @@ namespace CRUDsader {
         protected $_linkedAssociation = false;
         protected $_linkedAssociationId = false;
         protected $_parent;
+        protected $_child;
         protected $_isPersisted = false;
         protected $_infos;
         protected $_fields = array();
         protected $_associations = array();
         protected $_observers = array();
 
-        public function __construct($className) {
+        protected function __construct($className) {
             $this->_class = $className;
             $this->_map = \CRUDsader\Map::getInstance();
             $this->_infos = $this->_map->classGetInfos($this->_class);
@@ -234,9 +235,7 @@ namespace CRUDsader {
                     throw new ObjectException('cannot save as attribute "' . $fieldName . '" is empty');
                 $where[] = $db->quoteIdentifier($this->_infos['attributes'][$fieldName]['databaseField']) . '=' . $db->quote($this->getAttribute($fieldName)->getValueForDatabase());
             }
-            $query = $db->countSelect(array('from' => array('table' => $this->_infos['definition']['databaseTable'], 'alias' => 't', 'id' => $this->_infos['definition']['databaseIdField']), 'where' => implode(' AND ', $where), 'limit' => array('count' => 1)));
-            $countRow = $query->current();
-            return $countRow[0] == 0;
+            return $db->countSelect(array('from' => array('table' => $this->_infos['definition']['databaseTable'], 'alias' => 't', 'id' => $this->_infos['definition']['databaseIdField']), 'where' => implode(' AND ', $where), 'limit' => array('count' => 1)));
         }
 
         public function isPersisted() {
@@ -308,6 +307,7 @@ namespace CRUDsader {
         public function getParent() {
             if (!isset($this->_parent) && $this->_infos['inherit']) {
                 $this->_parent = \CRUDsader\Object::instance($this->_infos['inherit']);
+                $this->_parent->_child=$this;
             }
             return $this->_parent;
         }

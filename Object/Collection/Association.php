@@ -61,13 +61,13 @@ namespace CRUDsader\Object\Collection {
                                     $unitOfWork->delete($this->_definition['databaseTable'], $db->quoteIdentifier($this->_definition['externalField']) . '=' . $db->quote($object->isPersisted()) . ' AND ' . $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
                                     $unitOfWork->insert($this->_definition['databaseTable'], array(
                                         'id' => \CRUDsader\Adapter::factory('identifier')->getOID(array('class' => $this->_class)),
-                                        $this->_definition['externalField'] => $object->isPersisted(),
-                                        $this->_definition['internalField'] => $this->_linkedObject->isPersisted()
+                                        $this->_definition['internalField'] => $this->_linkedObject->isPersisted(),
+                                        $this->_definition['externalField'] => $object->isPersisted()
                                     ));
                                 } else {
                                     $d = array(
-                                        $this->_definition['externalField'] => $object->isPersisted(),
-                                        $this->_definition['internalField'] => $this->_linkedObject->isPersisted()
+                                        $this->_definition['internalField'] =>$this->_linkedObject->isPersisted(),
+                                        $this->_definition['externalField'] =>  $object->isPersisted()
                                     );
                                     if ($object->isPersisted() && $object->getLinkedAssociationId()) {
                                         // update   

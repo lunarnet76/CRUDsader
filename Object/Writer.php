@@ -25,6 +25,7 @@ namespace CRUDsader\Object {
                     $parentClass=$map->classGetParent($object->_class);
                     $object->_parent = \CRUDsader\Object::instance($parentClass);
                     $object->_parent->_isPersisted = $id;
+                    $object->_parent->_child= $object;
                     self::write($object->_parent, $id, $parentClassAlias, $rows, $fields, $mapFields);
                 }
             }

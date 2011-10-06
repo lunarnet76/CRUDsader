@@ -1,17 +1,17 @@
 <?php
 namespace CRUDsader\Object {
     class Attribute extends \CRUDsader\Form\Component {
-        
+
         public function __construct($name, $wrapper, $options=array()) {
             parent::__construct();
             $this->_name = $name;
-            $this->_wrapper = new $wrapper($options);
+            $this->_wrapper = new $wrapper($this,$options);
         }
-        
-        public function getWrapper(){
+
+        public function getWrapper() {
             return $this->_wrapper;
         }
-        
+
         /**
          * return true if valid, string or false otherwise
          * @return type 
@@ -26,20 +26,22 @@ namespace CRUDsader\Object {
 
         /**
          * when writing object from database
-         * @param type $value 
+         * @param type $value
+
+
          */
         public function setValueFromDatabase($value) {
-            if(empty($value) || $this->_wrapper->isEmpty($value))
-                $this->_inputValue=new \CRUDsader\Expression\Nil();
-            else{
-                $this->_inputValue = $this->_wrapper->formatFromDatabase($value);
+            if (empty($value) || $this->_wrapper->isEmpty($value))
+                $this->_inputValue = new \CRUDsader\Expression\Nil();
+            else {
+                $this->_inputValue = $this->_wrapper->formatFromDatabase($value
+                );
             }
         }
 
         public function getValueForDatabase() {
-            return $this->_inputValue instanceof \CRUDsader\Expression\Nil || $this->inputEmpty()?$this->_inputValue:$this->_wrapper->formatForDatabase($this->_inputValue);
+            return $this->_inputValue instanceof \CRUDsader\Expression\Nil || $this->inputEmpty() ? $this->_inputValue : $this->_wrapper->formatForDatabase($this->_inputValue);
         }
-
 
         public function getValue() {
             return $this->_wrapper->getValue($this->_inputValue);
@@ -47,7 +49,7 @@ namespace CRUDsader\Object {
 
         public function toHTML() {
             $this->setHTMLAttribute('validator', $this->_wrapper->javascriptValidator());
-            return $this->_wrapper->HTMLInput($this->_inputValue instanceof \CRUDsader\Expression\Nil?'':$this->_inputValue, $this->_htmlAttributes['id'], $this->getHTMLAttributesToHtml());
+            return $this->_wrapper->HTMLInput($this->_inputValue instanceof \CRUDsader\Expression\Nil ? '' : $this->_inputValue, $this->_htmlAttributes['id'], $this->getHTMLAttributesToHtml());
         }
     }
 }

@@ -116,8 +116,8 @@ namespace CRUDsader\Adapter\Map\Loader {
                         'composition' => isset($association['composition']) ? ((string) $association['composition'])=='true' : false,
                         'databaseTable' => isset($association['databaseTable']) ? (string) $association['databaseTable'] : \CRUDsader\Map::getDatabaseAssociationTable(isset($association['name']) ? (string) $association['name'] : false, $to, $name),
                         'databaseIdField' => isset($association['databaseIdField']) ? (string) $association['databaseIdField'] : $defaults->associations->databaseIdField,
-                        'internalField' => isset($association['internalField']) ? (string) $association['internalField'] : $to,
-                        'externalField' => isset($association['externalField']) ? (string) $association['externalField'] : $name
+                        'internalField' => isset($association['internalField']) ? (string) $association['internalField'] : $name,
+                        'externalField' => isset($association['externalField']) ? (string) $association['externalField'] : $to
                     );
                     
                             if ($ret['classes'][$name]['associations'][$associationName]['internalField'] == $ret['classes'][$name]['associations'][$associationName]['externalField'])

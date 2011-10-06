@@ -76,6 +76,11 @@ namespace CRUDsader\MVC\Controller {
             return $this->_adapters['routerHistoric']->getLast()->uri;
         }
 
+        /**
+         * specify a route or route following the URI
+         * @param string|bool $route
+         * @return string modulename 
+         */
         public function route($route=false) {
             $this->_adapters['router'] = \CRUDsader\Adapter::factory(array('mvc' => 'router'));
             $this->_adapters['router']->setConfiguration($this->_configuration);
@@ -87,12 +92,6 @@ namespace CRUDsader\MVC\Controller {
             $module = $this->_adapters['router']->getModule();
             if ($module && !isset($this->_configuration->modules->$module))
                 throw new FrontException('module "' . $module . '" does not exist or is not in the configuration');
-            $path = $this->_configuration->applicationPath;
-            \CRUDsader\Autoload::registerNameSpace('Controller', $path . 'Controller/' . ($module ? $module . '/' : ''));
-            \CRUDsader\Autoload::registerNameSpace('Plugin', $path.'Plugin/');
-            \CRUDsader\Autoload::registerNameSpace('Model', $path.'Model/');
-            \CRUDsader\Autoload::registerNameSpace('Input', $path . 'Input/');
-            \CRUDsader\Configuration::getInstance()->form->view->path = $path . 'View/form/';
             // init plugins
             $plugins = $this->_configuration->modules->{$this->_adapters['router']->getModule()};
             foreach ($plugins as $pluginName => $pluginOptions) {
@@ -102,6 +101,7 @@ namespace CRUDsader\MVC\Controller {
                     $plugin->setConfiguration($pluginOptions);
                 $plugin->postRoute($this->_adapters['router']);
             }
+            return $this->_adapters['router']->getModule();
         }
 
         public function skipRouterHistoric($bool=true) {
@@ -112,7 +112,7 @@ namespace CRUDsader\MVC\Controller {
             // plugins
             foreach ($this->_modulePlugins as $plugin)
                 $plugin->preDispatch();
-            $this->_instanceController = call_user_func_array(array('Controller\\' . ucFirst(ucfirst($this->_adapters['router']->getController())), 'getInstance'), array($this, $this->_adapters['router']->toArray()));
+            $this->_instanceController = call_user_func_array(array('Controller\\' . ucFirst($this->_adapters['router']->getController()), 'getInstance'), array($this, $this->_adapters['router']->toArray()));
             $this->_instanceController->setConfiguration($this->_configuration);
             $this->_instanceController->setRouter($this->_adapters['router']);
             if (method_exists($this->_instanceController, $this->_adapters['router']->getAction() . 'Action'))

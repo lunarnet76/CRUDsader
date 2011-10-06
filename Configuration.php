@@ -181,16 +181,20 @@ namespace CRUDsader {
                             $depth = strlen($match[1]) / 4;
                             $name = $match[2];
                             if ($depth == 0) {
-                                $configuration[$namespace][$match[2]] = array();
+                                if (!isset($configuration[$namespace][$match[2]]))
+                                    $configuration[$namespace][$match[2]] = array();
                                 $depths[$depth] = &$configuration[$namespace][$match[2]];
                             } else if ($depth == $lastDepth) {
-                                $depths[$depth - 1][$match[2]] = array();
+                                if (!isset($depths[$depth - 1][$match[2]]))
+                                    $depths[$depth - 1][$match[2]] = array();
                                 $depths[$depth] = &$depths[$depth - 1][$match[2]];
                             } else if ($depth > $lastDepth) {
-                                $depths[$lastDepth][$match[2]] = array();
+                                if (!isset($depths[$lastDepth][$match[2]]))
+                                    $depths[$lastDepth][$match[2]] = array();
                                 $depths[$depth] = &$depths[$lastDepth][$match[2]];
                             } else {
-                                $depths[$lastDepth - $depth - 1][$match[2]] = array();
+                                if(!isset($depths[$lastDepth - $depth - 1][$match[2]]))
+                                    $depths[$lastDepth - $depth - 1][$match[2]] = array();
                                 $depths[$depth] = &$depths[$lastDepth - $depth - 1][$match[2]];
                             }
                             $lastDepth = $depth;
