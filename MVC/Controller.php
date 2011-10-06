@@ -102,17 +102,12 @@ namespace CRUDsader\MVC {
             $this->_title = $value;
         }
 
+        /**
+         * include CSS and JS files, CSS first, as it is important to ensure CSS to be dowloaded in parallel
+         * 
+         */ 
         public function linkFiles(array $linkFiles) {
             $output = '';
-            if (!empty($linkFiles['js']))
-                foreach ($linkFiles['js'] as $file) {
-                    if (is_array($file)) {
-                        $folder = $file[1];
-                        $file = $file[0];
-                    }else
-                        $folder = false;
-                    $output.='<script type="text/javascript" src="' . $this->_frontController->getURL() . ($folder == 'module' ? $this->_frontController->getApplicationPath() . $this->_router->getModule() . '/js/' : 'lib/' . $folder) . $file . '.js"></script>';
-                }
             if (!empty($linkFiles['css']))
                 foreach ($linkFiles['css'] as $file) {
                     if (is_array($file)) {
@@ -121,6 +116,15 @@ namespace CRUDsader\MVC {
                     }else
                         $folder = false;
                     $output.='<link rel="stylesheet" type="text/css" href="' . $this->_frontController->getURL() . 'file/' .($folder == 'module' ? $this->_frontController->getApplicationPath() . $this->_router->getModule() . '/css/' : $folder) . $file . '.css"/>';
+                }
+            if (!empty($linkFiles['js']))
+                foreach ($linkFiles['js'] as $file) {
+                    if (is_array($file)) {
+                        $folder = $file[1];
+                        $file = $file[0];
+                    }else
+                        $folder = false;
+                    $output.='<script type="text/javascript" src="' . $this->_frontController->getURL() . ($folder == 'module' ? $this->_frontController->getApplicationPath() . $this->_router->getModule() . '/js/' : 'lib/' . $folder) . $file . '.js"></script>';
                 }
             return $output;
         }
