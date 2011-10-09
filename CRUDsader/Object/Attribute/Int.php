@@ -14,9 +14,10 @@ namespace CRUDsader\Object\Attribute {
 
         protected function _inputValid() {
             if ($this->_inputValue instanceof \CRUDsader\Expression)
-                return true;
+                $ret=true;
             else
-                return filter_var($this->_inputValue, FILTER_VALIDATE_INT);
+                 $ret=filter_var($this->_inputValue, FILTER_VALIDATE_INT)!==false;
+            return $ret;
         }
     }
 }
