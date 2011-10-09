@@ -1,17 +1,14 @@
 <?php
 /**
- * LICENSE: see CRUDsader/license.txt
- *
  * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.CRUDsader.com/license/1.txt
- * @version     $Id$
- * @link        http://www.CRUDsader.com/manual/
- * @since       1.0
+ * @license     see license.txt
+ * @since       0.1
  */
 namespace CRUDsader {
     /**
-     * @package    CRUDsader
+     * tools for handling common use of NULL and date
+     * @package CRUDsader
      */
     class Expression {
         /**
@@ -19,6 +16,11 @@ namespace CRUDsader {
          * @var string
          */
         protected $_expression;
+        /**
+         * wether to quote or not when saving to database
+         * @var bool
+         */
+        protected $_quote = false;
 
         /**
          * @param string $expression
@@ -35,6 +37,19 @@ namespace CRUDsader {
             return $this->_expression;
         }
         
+        /**
+         * @return bool
+         */
+        public function isToBeQuoted() {
+            return $this->_quote;
+        }
+        
+        /**
+         * return if a var is empty or an expression that is null
+         * @static
+         * @param mix $var
+         * @return bool 
+         */
         public static function isEmpty($var){
             return empty($var) || (string)$var=='NULL';
         }

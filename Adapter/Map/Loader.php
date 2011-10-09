@@ -1,13 +1,9 @@
 <?php
 /**
- * LICENSE: see CRUDsader/license.txt
- *
  * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.CRUDsader.com/license/1.txt
- * @version     $Id$
- * @link        http://www.CRUDsader.com/manual/
- * @since       1.0
+ * @license     see license.txt
+ * @since       0.1
  */
 namespace CRUDsader\Adapter\Map {
     /**
@@ -19,9 +15,10 @@ namespace CRUDsader\Adapter\Map {
         /**
          * return true if resource is validated or array of error otherwise
          * @abstract
+         * @param \CRUDsader\Block $defaults
          * @return true|array array of errors
          */
-        abstract public function validate();
+        abstract public function validate(\CRUDsader\Block $block=null);
         /**
          * return the mapping schema as an array
          * @param \CRUDsader\Block $defaults

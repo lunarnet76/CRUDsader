@@ -1,4 +1,10 @@
 <?php
+/**
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
+ * @copyright   2011 Jean-Baptiste Verrey
+ * @license     see license.txt
+ * @since       0.1
+ */
 namespace CRUDsader\Object {
     class Collection implements \CRUDsader\Interfaces\Initialisable,\CRUDsader\Interfaces\Arrayable, \ArrayAccess, \Iterator {
         protected $_initialised = false;
@@ -50,7 +56,7 @@ namespace CRUDsader\Object {
             $this->_objects[$index] = $value;
             if ($value->isPersisted()) 
                 $this->_objectIndexes[$value->isPersisted()] = $index;
-            return $value;
+            return $this->_objects[$index];
         }
         
         public function offsetUnset($index) {

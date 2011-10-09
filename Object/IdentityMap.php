@@ -1,4 +1,10 @@
 <?php
+/**
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
+ * @copyright   2011 Jean-Baptiste Verrey
+ * @license     see license.txt
+ * @since       0.1
+ */
 namespace CRUDsader\Object {
     abstract class IdentityMap extends \CRUDsader\Singleton{
         protected static $_objects=array();

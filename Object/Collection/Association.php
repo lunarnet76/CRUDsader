@@ -1,4 +1,10 @@
 <?php
+/**
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
+ * @copyright   2011 Jean-Baptiste Verrey
+ * @license     see license.txt
+ * @since       0.1
+ */
 namespace CRUDsader\Object\Collection {
     class Association extends \CRUDsader\Object\Collection implements \SplObserver {
         protected $_isModified = false;
@@ -22,6 +28,7 @@ namespace CRUDsader\Object\Collection {
             \CRUDsader\Object\Writer::linkToAssociation($value, $this);
             \CRUDsader\Object\Writer::setModified($this->_linkedObject);
             $this->_isModified = true;
+            return $value;
         }
 
         /**
@@ -42,7 +49,30 @@ namespace CRUDsader\Object\Collection {
         public function save(\CRUDsader\Object\UnitOfWork $unitOfWork=null) {
             $db = \CRUDsader\Database::getInstance();
             if ($this->_isModified) {
-                foreach ($this->_objects as $object) {
+                foreach ($this->_objects as $index => $object) {
+                    if (isset($this->_objectsToBeDeleted[$index])) {
+                        switch ($this->_definition['reference']) {
+                            case 'internal':
+                                if ($this->_definition['composition'])
+                                    $object->delete($unitOfWork);
+                                $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => new \CRUDsader\Expression\Nil));
+                                break;
+                            case 'external':
+                                if ($this->_definition['composition'])
+                                    $object->delete($unitOfWork);
+                                $unitOfWork->update($object->getDatabaseTable(), array($this->_definition['externalField'] => new \CRUDsader\Expression\Nil));
+                                break;
+                            default:
+                                $d = array(
+                                    $db->quoteIdentifier($this->_definition['externalField']) . '=' . $db->quote($object->isPersisted()),
+                                    $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted())
+                                );
+                                $unitOfWork->delete($this->_definition['databaseTable'], implode(' AND ', $d));
+                                if ($this->_definition['composition'])
+                                    $object->delete($unitOfWork);
+                        }
+                        continue;
+                    }
                     switch ($this->_definition['reference']) {
                         case 'internal':
                             $object->save($unitOfWork);
@@ -66,8 +96,8 @@ namespace CRUDsader\Object\Collection {
                                     ));
                                 } else {
                                     $d = array(
-                                        $this->_definition['internalField'] =>$this->_linkedObject->isPersisted(),
-                                        $this->_definition['externalField'] =>  $object->isPersisted()
+                                        $this->_definition['internalField'] => $this->_linkedObject->isPersisted(),
+                                        $this->_definition['externalField'] => $object->isPersisted()
                                     );
                                     if ($object->isPersisted() && $object->getLinkedAssociationId()) {
                                         // update   
@@ -92,12 +122,12 @@ namespace CRUDsader\Object\Collection {
                     case 'internal':
                         if ($this->_definition['composition'])
                             $object->delete($unitOfWork);
-                        $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => new \CRUDsader\Expression\Nil));
+                        $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['externalField'] => new \CRUDsader\Expression\Nil));
                         break;
                     case 'external':
                         if ($this->_definition['composition'])
                             $object->delete($unitOfWork);
-                        $unitOfWork->update($object->getDatabaseTable(), array($this->_definition['externalField'] => new \CRUDsader\Expression\Nil));
+                        $unitOfWork->update($object->getDatabaseTable(), array($this->_definition['internalField'] => new \CRUDsader\Expression\Nil));
                         break;
                     default:
                         $d = array(
@@ -109,7 +139,7 @@ namespace CRUDsader\Object\Collection {
                             $object->delete($unitOfWork);
                 }
             }
-            $this->_objects=array();
+            $this->_objects = array();
         }
 
         public function isModified() {
@@ -159,28 +189,36 @@ namespace CRUDsader\Object\Collection {
          * @param \SplSubject $component 
          */
         public function update(\SplSubject $component) {
-            if ($component instanceof \CRUDsader\Form\Component && !$component->inputEmpty() && $component->hasParameter('compositionIndex')) {
-                // replace actual by proxy
+            if ($component instanceof \CRUDsader\Form\Component && $component->hasParameter('compositionIndex')) {
                 $index = $component->getParameter('compositionIndex');
                 $value = $component->getInputValue();
-                if (isset($this->_formValues[$value]))
+                $empty = $component->inputEmpty();
+                if (!$empty && isset($this->_formValues[$value]))
                     throw new AssociationException($this->_class . '_duplicates');
-                $this->_formValues[$value] = $index;
                 $target = $this->_objects[$index];
-                $id = $target->isPersisted();
-                if ($id) {
-                    if ($id == $value) {
-                        // do nothing, nothing has changed
-                    } else {
-                        $this->_objectsToBeDeleted[] = $target;
+                // has the target changed ???
+                if ($target->isPersisted()) {
+                    if ($empty) {// delete the object. in DB as well
+                        $this->_objectsToBeDeleted[$index] = true;
+                        $this->_isModified = true;
+                    } else
+                    if ($value != $target->isPersisted()) {// replace by proxy
                         unset($this->_objects[$index]);
-                        if (isset($this->_objectIndexes[$id]))
-                            unset($this->_objectIndexes[$id]);
+                        if (isset($this->_objectIndexes[$target->isPersisted()]))
+                            unset($this->_objectIndexes[$target->isPersisted()]);
                         $this->_objects[$index] = new \CRUDsader\Object\Proxy($this->_class, $component->getInputValue());
+                        $this->_isModified = true;
                     }
-                }else
+                }else if ($empty) {// delete object
+                    unset($this->_objects[$index]);
+                } else {
+                    // replace by proxy
+                    unset($this->_objects[$index]);
+                    if (isset($this->_objectIndexes[$target->isPersisted()]))
+                        unset($this->_objectIndexes[$target->isPersisted()]);
                     $this->_objects[$index] = new \CRUDsader\Object\Proxy($this->_class, $component->getInputValue());
-                $this->_isModified = true;
+                    $this->_isModified = true;
+                }
             }
             if ($component instanceof \CRUDsader\Object) {
                 \CRUDsader\Object\Writer::setModified($this->_linkedObject);

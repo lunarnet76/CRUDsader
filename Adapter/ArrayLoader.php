@@ -7,13 +7,13 @@
  */
 namespace CRUDsader\Adapter {
     /**
-     * return a unique Object identifier
+     * create an array from a source
      * @package CRUDsader\Adapter
      */
-    abstract class Identifier extends \CRUDsader\Adapter{
+    abstract class ArrayLoader extends \CRUDsader\Adapter {
         /**
-         * return a unique OID
+         * @return array
          */
-        abstract public function getOID($classInfos);
+        abstract public function load($options=null);
     }
 }

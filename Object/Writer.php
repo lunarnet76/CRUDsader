@@ -1,4 +1,10 @@
 <?php
+/**
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
+ * @copyright   2011 Jean-Baptiste Verrey
+ * @license     see license.txt
+ * @since       0.1
+ */
 namespace CRUDsader\Object {
     class Writer extends \CRUDsader\Object {
 
@@ -8,26 +14,28 @@ namespace CRUDsader\Object {
                 $object->_isPersisted = $id;
                 \CRUDsader\Object\IdentityMap::add($object);
                 $object->_initialised = true;
-                for ($i = $mapFields[$alias]['from']+1; $i < $mapFields[$alias]['to']; $i++) {
+                for ($i = $mapFields[$alias]['from'] + 1; $i < $mapFields[$alias]['to']; $i++) {
                     if (isset($object->_infos['attributesReversed'][$fields[$i]])) {
                         $object->getAttribute($object->_infos['attributesReversed'][$fields[$i]])->setValueFromDatabase($rows[0][$i]);
                     }
                 }
-                if($object->_linkedAssociation){
-                    $definition=$object->_linkedAssociation->getDefinition();
-                    if($definition['reference']=='table'){
-                        $object->_linkedAssociationId=$rows[0][$mapFields[$alias]['from']-3];
+                if ($object->_linkedAssociation) {
+                    $definition = $object->_linkedAssociation->getDefinition();
+                    if ($definition['reference'] == 'table') {
+                        $object->_linkedAssociationId = $rows[0][$mapFields[$alias]['from'] - 3];
                     }
                 }
-                // parent
-                $parentClassAlias = $alias . '_parent';
-                if (isset($mapFields[$parentClassAlias])) {
-                    $parentClass=$map->classGetParent($object->_class);
+            }
+            // parent
+            $parentClassAlias = $alias . '_parent';
+            if (isset($mapFields[$parentClassAlias])) {
+                if (!isset($object->_parent)) {
+                    $parentClass = $map->classGetParent($object->_class);
                     $object->_parent = \CRUDsader\Object::instance($parentClass);
                     $object->_parent->_isPersisted = $id;
-                    $object->_parent->_child= $object;
-                    self::write($object->_parent, $id, $parentClassAlias, $rows, $fields, $mapFields);
+                    $object->_parent->_child = $object;
                 }
+                self::write($object->_parent, $id, $parentClassAlias, $rows, $fields, $mapFields);
             }
             // associations
             foreach ($object->_infos['associations'] as $name => $associationInfos) {
@@ -45,9 +53,9 @@ namespace CRUDsader\Object {
         public static function linkToAssociation(parent $object, \CRUDsader\Object\Collection\Association $association) {
             $object->_linkedAssociation = $association;
         }
-        
-        public static function setLinkedAssociationId(parent $object,$id){
-            $object->_linkedAssociationId=$id;
+
+        public static function setLinkedAssociationId(parent $object, $id) {
+            $object->_linkedAssociationId = $id;
         }
     }
 }

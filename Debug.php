@@ -1,21 +1,15 @@
 <?php
 /**
- * provide some debug and dump tools
- *
- * LICENSE: see CRUDsader/license.txt
- *
- * @author Jean-Baptiste Verrey <jeanbaptiste.verrey@gmail.com>
- * @copyright  2010 Jean-Baptiste Verrey
- * @license    http://www.CRUDsader.com/license/2.txt
- * @version    $Id$
- * @link       http://www.CRUDsader.com/manual/
- * @since      2.0
- */
-/**
- * @category   Configuration
- * @package    CRUDsader2
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
+ * @copyright   2011 Jean-Baptiste Verrey
+ * @license     see license.txt
+ * @since       0.1
  */
 namespace CRUDsader {
+    /**
+     * Debug tools
+     * @package CRUDsader
+     */
     class Debug {
         protected static $_configuration;
         protected static $_chrono = array();

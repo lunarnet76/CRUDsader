@@ -1,20 +1,15 @@
 <?php
 /**
- * LICENSE: see CRUDsader/license.txt
- *
- * @author Jean-Baptiste Verrey <jeanbaptiste.verrey@gmail.com>
- * @copyright  2011 Jean-Baptiste Verrey
- * @license    http://www.CRUDsader.com/license/2.txt
- * @version    $Id$
- * @link       http://www.CRUDsader.com/manual/
- * @since      2.0
- *
- * @package    CRUDsader\Adapter\Database
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
+ * @copyright   2011 Jean-Baptiste Verrey
+ * @license     see license.txt
+ * @since       0.1
  */
 namespace CRUDsader\Adapter\Database\Descriptor {
     /**
      * @todo put engine in adapter configuration
      * descriptor for MySQL
+     * @package CRUDsader\Adapter\Database\Descriptor
      */
     class Mysqli extends \CRUDsader\Adapter\Database\Descriptor {
 
@@ -35,7 +30,7 @@ namespace CRUDsader\Adapter\Database\Descriptor {
          * @return string
          */
         public function quote($value) {
-            return $value instanceof \CRUDsader\Expression ? $value->__toString() : '"' . $this->_connector->escape($value) . '"';
+            return $value instanceof \CRUDsader\Expression ? ($value->isToBeQuoted()?'"'.$value->__toString().'"':$value->__toString()) : '"' . $this->_connector->escape($value) . '"';
         }
 
         /**
@@ -174,18 +169,18 @@ namespace CRUDsader\Adapter\Database\Descriptor {
                     $sql.=' LEFT JOIN `' . $join['table'] . '` AS `' . $join['alias'] . '` ON `' . $join['alias'] . '`.`' . $join['field'] . '`=`' . $join['joinAlias'] . '`.`' . $join['joinField'] . '`';
                 }
             }
-            if (!empty($select['where'])) 
-                $sql.=' WHERE '.$select['where'];
+            if (!empty($select['where']))
+                $sql.=' WHERE ' . $select['where'];
             return $sql;
         }
-        
+
         /**
-         *SELECT statment
+         * SELECT statment
          * @param array $select
          */
-        public function select($select){
+        public function select($select) {
             $sql = 'SELECT ';
-            $unLexicalThis=$this;
+            $unLexicalThis = $this;
             $fields = array();
             if (!empty($select['fields'])) {
                 foreach ($select['fields'] as $field) {
@@ -202,33 +197,16 @@ namespace CRUDsader\Adapter\Database\Descriptor {
                     $joins.=' LEFT JOIN `' . $join['table'] . '` AS `' . $join['alias'] . self::$TABLE_ALIAS_SUBQUERY . '` ON `' . $join['alias'] . self::$TABLE_ALIAS_SUBQUERY . '`.`' . $join['field'] . '`=`' . $join['joinAlias'] . self::$TABLE_ALIAS_SUBQUERY . '`.`' . $join['joinField'] . '`';
                 }
             }
-            if (!empty($select['where'])) 
-                $sql.=' WHERE '.$select['where'];
+            if (!empty($select['where']))
+                $sql.=' WHERE ' . $select['where'];
             $sql.=' GROUP BY `' . $select['from']['alias'] . '`.`' . $select['from']['id'] . '`';
-            if (!empty($select['order'])) 
-                $sql.=' ORDER BY '.$select['order'];
-            if (!empty($select['limit'])) 
+            if (!empty($select['order']))
+                $sql.=' ORDER BY ' . $select['order'];
+            if (!empty($select['limit']))
                 $sql.=' LIMIT ' . (isset($select['limit']['from']) ? $select['limit']['from'] . ',' : '') . $select['limit']['count'];
             $sql.=') AS `' . self::$OBJECT_TMP_TABLE_ALIAS . '` LEFT JOIN `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '` ON `' . self::$OBJECT_TMP_TABLE_ALIAS . '`.`' . self::$OBJECT_ID_FIELD_ALIAS . '`=' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '.`' . $select['from']['id'] . '`';
-            
+
             return $sql . $joins;
-        }
-
-        protected function _highLightCallback($matches) {
-            $newLines = array('SELECT', 'FROM', 'WHERE', 'DISTINCT', 'NULL', ',', 'AND', 'LIMIT');
-            $newLine = array('JOIN', 'OR', '(', ')');
-            $newLineBefore = array('LEFT');
-            $tabAfterAndBefore = array('AS');
-
-            if (in_array($matches[0], $newLines))
-                return "\n" . $matches[0] . "\n";
-            if (in_array($matches[0], $newLine))
-                return $matches[0] . "\n";
-            if (in_array($matches[0], $newLineBefore))
-                return "\n" . $matches[0];
-            if (in_array($matches[0], $tabAfterAndBefore))
-                return '    ' . $matches[0] . "    ";
-            return '    ' . $matches[0];
         }
 
         /**
@@ -238,7 +216,22 @@ namespace CRUDsader\Adapter\Database\Descriptor {
          */
         public function highLight($sql, $cli=false) {
             if ($cli)
-                return preg_replace_callback('/([\w\`\']+|\,|\(|\))/', array($this, '_highLightCallback'), $sql);
+                return preg_replace_callback('/([\w\`\']+|\,|\(|\))/', function($matches) {
+                                    $newLines = array('SELECT', 'FROM', 'WHERE', 'DISTINCT', 'NULL', ',', 'AND', 'LIMIT');
+                                    $newLine = array('JOIN', 'OR', '(', ')');
+                                    $newLineBefore = array('LEFT');
+                                    $tabAfterAndBefore = array('AS');
+
+                                    if (in_array($matches[0], $newLines))
+                                        return "\n" . $matches[0] . "\n";
+                                    if (in_array($matches[0], $newLine))
+                                        return $matches[0] . "\n";
+                                    if (in_array($matches[0], $newLineBefore))
+                                        return "\n" . $matches[0];
+                                    if (in_array($matches[0], $tabAfterAndBefore))
+                                        return '    ' . $matches[0] . "    ";
+                                    return '    ' . $matches[0];
+                                }, $sql);
             return '<div style="border-top: 1px solid black; background-color: rgb(233, 233, 233); margin-bottom: 5px;">' . str_replace(array(
                         'CREATE TABLE',
                         'SELECT',

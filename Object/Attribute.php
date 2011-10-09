@@ -1,15 +1,17 @@
 <?php
+/**
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
+ * @copyright   2011 Jean-Baptiste Verrey
+ * @license     see license.txt
+ * @since       0.1
+ */
 namespace CRUDsader\Object {
     class Attribute extends \CRUDsader\Form\Component {
+        protected $_name;
 
-        public function __construct($name, $wrapper, $options=array()) {
-            parent::__construct();
+        public function __construct($name, $options=array()) {
+            parent::__construct($options);
             $this->_name = $name;
-            $this->_wrapper = new $wrapper($this,$options);
-        }
-
-        public function getWrapper() {
-            return $this->_wrapper;
         }
 
         /**
@@ -17,39 +19,46 @@ namespace CRUDsader\Object {
          * @return type 
          */
         protected function _inputValid() {
-            return $this->_wrapper->isValid($this->_inputValue);
+            return true;
         }
 
+        /**
+         * @return bool
+         */
         public function inputEmpty() {
-            return $this->_inputValue instanceof \CRUDsader\Expression\Nil || $this->_wrapper->isEmpty($this->_inputValue);
+            return \CRUDsader\Expression::isEmpty($this->_inputValue);
         }
 
         /**
          * when writing object from database
          * @param type $value
-
-
          */
         public function setValueFromDatabase($value) {
-            if (empty($value) || $this->_wrapper->isEmpty($value))
+            if (\CRUDsader\Expression::isEmpty($value))
                 $this->_inputValue = new \CRUDsader\Expression\Nil();
-            else {
-                $this->_inputValue = $this->_wrapper->formatFromDatabase($value
-                );
-            }
+            else
+                $this->_inputValue = $value;
         }
 
         public function getValueForDatabase() {
-            return $this->_inputValue instanceof \CRUDsader\Expression\Nil || $this->inputEmpty() ? $this->_inputValue : $this->_wrapper->formatForDatabase($this->_inputValue);
+            return $this->inputEmpty() ? new \CRUDsader\Expression\Nil : $this->_inputValue;
         }
 
         public function getValue() {
-            return $this->_wrapper->getValue($this->_inputValue);
+            return $this->inputEmpty() ? new \CRUDsader\Expression\Nil : $this->_inputValue;
         }
 
         public function toHTML() {
-            $this->setHTMLAttribute('validator', $this->_wrapper->javascriptValidator());
-            return $this->_wrapper->HTMLInput($this->_inputValue instanceof \CRUDsader\Expression\Nil ? '' : $this->_inputValue, $this->_htmlAttributes['id'], $this->getHTMLAttributesToHtml());
+            $this->_htmlAttributes['validator'] = $this->javascriptValidator();
+            return parent::toHtml();
+        }
+
+        public function javascriptValidator() {
+            return '';
+        }
+
+        public function generateRandom() {
+            return base_convert(rand(10e16, 10e20), 10, 36);
         }
     }
 }

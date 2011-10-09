@@ -1,24 +1,19 @@
 <?php
 /**
- * LICENSE: see CRUDsader/license.txt
- *
- * @author     Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.CRUDsader.com/license/2.txt
- * @version     $Id$
- * @link        http://www.CRUDsader.com/manual/
- * @since       1.0
+ * @license     see license.txt
+ * @since       0.1
  */
 namespace CRUDsader\Form {
     /**
-     * @category   Form
-     * @package    CRUDsader
+     * @package    CRUDsader\Form
      * @abstract
      */
     class Component implements \CRUDsader\Interfaces\Arrayable, \CRUDsader\Interfaces\Parametrable, \SplSubject {
         protected $_parameters = array();
         protected $_observers = array();
-        protected $_htmlAttributes = array();
+        protected $_htmlAttributes = array('type'=>'text');
         protected $_htmlLabel = false;
         protected $_inputParent;
         protected $_inputValue=null;
@@ -180,7 +175,8 @@ namespace CRUDsader\Form {
         }
 
         public function toHtml() {
-            return '<input type="text"' . $this->getHtmlAttributesToHtml() . ' value="' . (!\CRUDsader\Expression::isEmpty($this->_inputValue)?$this->_inputValue:'') . '"/>';
+            $this->_htmlAttributes['value']=(!\CRUDsader\Expression::isEmpty($this->_inputValue)?$this->_inputValue:'');
+            return '<input ' . $this->getHtmlAttributesToHtml() . '/>';
         }
 
         // ** FORM **
@@ -188,6 +184,10 @@ namespace CRUDsader\Form {
             $this->_inputValue = $data;
             $this->_inputReceived = true;
             $this->notify();
+        }
+        
+        public function inputReceiveDefault($data){
+            $this->_inputValue = $data;
         }
 
         public function inputReceived() {

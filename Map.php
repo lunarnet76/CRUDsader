@@ -1,14 +1,9 @@
 <?php
 /**
- *
- * LICENSE: see CRUDsader/license.txt
- *
- * @author      Jean-Baptiste Verrey <jeanbaptiste.verrey@gmail.com>
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.CRUDsader.com/license/1.txt
- * @version     $Id$
- * @link        http://www.CRUDsader.com/manual/
- * @since       1.0
+ * @license     see license.txt
+ * @since       0.1
  */
 namespace CRUDsader {
 
@@ -16,7 +11,7 @@ namespace CRUDsader {
      * Map the ORM schema to classes
      * @package     CRUDsader
      */
-    class Map extends Singleton {
+    class Map extends Singleton implements Interfaces\Configurable{
         const BASE_ASSOCIATION_CLASS='__ASSOC__';
         /**
          * @var \CRUDsader\Block 
@@ -35,10 +30,26 @@ namespace CRUDsader {
          * constructor, load the map schema
          */
         public function init() {
-            $this->_configuration = \CRUDsader\Configuration::getInstance()->map;
+            $this->setConfiguration(\CRUDsader\Configuration::getInstance()->map);
+        }
+        
+        /**
+         * @param Block $configuration
+         */
+        public function setConfiguration(\CRUDsader\Block $configuration=null) {
+            $this->_configuration = $configuration;
             $this->_adapter['loader'] = \CRUDsader\Adapter::factory(array('map' => 'loader'));
             $this->_map = $this->_adapter['loader']->getSchema($this->_configuration->defaults);
         }
+
+        /**
+         * @return Block
+         */
+        public function getConfiguration() {
+            return $this->_configuration;
+        }
+        
+        
         
         public function classGetFieldAttributeType($className,$attributeName){
             return $this->_map['attributeTypes'][$this->_map['classes'][$className]['attributes'][$attributeName]['type']];
@@ -53,7 +64,7 @@ namespace CRUDsader {
          * @return bool 
          */
         public function validate() {
-            return $this->_adapter['loader']->validate();
+            return $this->_adapter['loader']->validate($this->_configuration->defaults);
         }
 
         public function extract() {

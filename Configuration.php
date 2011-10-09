@@ -1,18 +1,14 @@
 <?php
 /**
- * LICENSE: see CRUDsader/license.txt
- *
- * @author      Jean-Baptiste Verrey <jeanbaptiste.verrey@gmail.com>
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.CRUDsader.com/license/1.txt
- * @version     $Id$
- * @link        http://www.CRUDsader.com/manual/
- * @since       1.0
+ * @license     see license.txt
+ * @since       0.1
  */
 namespace CRUDsader {
     /**
      * singleton containing all the configuration of the application and framework, can be loaded with file or array
-     * @package    CRUDsader
+     * @package CRUDsader
      */
     class Configuration extends Block {
         /**
@@ -115,11 +111,7 @@ namespace CRUDsader {
                         'databaseType' => 'VARCHAR',
                         'options' => array(),
                         'class' => 'String',
-                        'phpClass' => '\\CRUDsader\\Object\\Attribute\\Wrapper\\'
-                    ),
-                    'attribute' => array(
-                        'type' => 'default',
-                        'searchable' => true
+                        'phpClass' => '\\CRUDsader\\Object\\Attribute\\'
                     ),
                     'associations' => array(
                         'reference' => 'internal',
@@ -140,78 +132,21 @@ namespace CRUDsader {
         /**
          * singletoned constructor
          * @access protected
+         * @test test_instance_defaults
          */
         protected function __construct() {
             parent::__construct(self::$_defaults);
         }
-
+        
         /**
-         * load configuration from a file
-         * @param string $filePath
-         * @param string $section
+         *
+         * @param type $adapter
+         * @param type $options 
+         * @test test_load_
          */
-        public function load($filePath, $section=false) {
-            $lines = @file($filePath);
-            if ($lines === false)
-                throw new ConfigurationException('file "' . $filePath . '" could not be read properly');
-            $configuration = array();
-            $depths = array();
-            $lastDepth = $depth = 0;
-            $namespace = false;
-            foreach ($lines as $lineNumber => $line) {
-                switch ($line[0]) {
-                    case '#':break; // comments
-                    case '[':// namespace
-                        if (!preg_match('|^\[([^\:\]\s]*)(\:([^\]\s\:]*)){0,1}\]\s*$|', $line, $match))
-                            throw new ConfigurationException('file "' . $filePath . '":' . $lineNumber . ' error :"' . $line . '" is not a proper namespace');
-
-                        if ($section && $namespace == $section) {
-                            break 2;
-                        }
-                        $namespace = $match[1];
-                        $configuration[$namespace] = array();
-                        if (isset($match[3])) {
-                            if (!isset($configuration[$match[3]]))
-                                throw new ConfigurationException('section "' . $namespace . '" cannot inherit from unexistant section "' . $match[3] . '"');
-                            $configuration[$namespace] = $configuration[$match[3]];
-                        }
-                        break;
-                    default:// config line
-                        if (preg_match('|^(\s*)([^:]*)\:\s*$|', $line, $match)) {// key:
-                            $depth = strlen($match[1]) / 4;
-                            $name = $match[2];
-                            if ($depth == 0) {
-                                if (!isset($configuration[$namespace][$match[2]]))
-                                    $configuration[$namespace][$match[2]] = array();
-                                $depths[$depth] = &$configuration[$namespace][$match[2]];
-                            } else if ($depth == $lastDepth) {
-                                if (!isset($depths[$depth - 1][$match[2]]))
-                                    $depths[$depth - 1][$match[2]] = array();
-                                $depths[$depth] = &$depths[$depth - 1][$match[2]];
-                            } else if ($depth > $lastDepth) {
-                                if (!isset($depths[$lastDepth][$match[2]]))
-                                    $depths[$lastDepth][$match[2]] = array();
-                                $depths[$depth] = &$depths[$lastDepth][$match[2]];
-                            } else {
-                                if(!isset($depths[$lastDepth - $depth - 1][$match[2]]))
-                                    $depths[$lastDepth - $depth - 1][$match[2]] = array();
-                                $depths[$depth] = &$depths[$lastDepth - $depth - 1][$match[2]];
-                            }
-                            $lastDepth = $depth;
-                        } else if (preg_match('|^(\s*)([^:]*)\=\s*(.*)$|', $line, $match)) {// key: value
-                            if (strlen($match[1]) / 4 == 0) {
-                                $configuration[$namespace][$match[2]] = rtrim($match[3]);
-                            }
-                            else
-                                $depths[$depth][$match[2]] = rtrim($match[3]);
-                        }else {// is a value
-                            $depths[$depth][] = $line;
-                        }
-                }
-            }
-            if ($section && !isset($configuration[$section]))
-                throw new ConfigurationException('section "' . $section . '" does not exist');
-            $this->loadArray($section ? $configuration[$section] : $configuration);
+        public function load($adapter,$options){
+            $loader=\CRUDsader\Adapter::factory('configuration');
+            $this->loadArray($loader->load($options));
         }
     }
     class ConfigurationException extends \CRUDsader\Exception {

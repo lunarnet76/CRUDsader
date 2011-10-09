@@ -1,13 +1,25 @@
 <?php
 /**
- * route like 
- * ${server.baseRewrite}/$language/$moduleControllerName/$function$suffix?$params
- * ${server.baseRewrite}/$language/$function$suffix?$params
- * ${server.baseRewrite}/$function$suffix?$params
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
+ * @copyright   2011 Jean-Baptiste Verrey
+ * @license     see license.txt
+ * @since       0.1
  */
-namespace CRUDsader\Adapter\MVC\Router {
-    class Explicit extends \CRUDsader\Adapter\MVC\Router {
+namespace CRUDsader\Adapter\Mvc\Router {
+    /**
+     * route like 
+     * ${server.baseRewrite}/$language/$moduleControllerName/$function$suffix?$params
+     * ${server.baseRewrite}/$language/$function$suffix?$params
+     * ${server.baseRewrite}/$function$suffix?$params
+     * @package CRUDsader\Adapter\Mvc\Router
+     */
+    class Explicit extends \CRUDsader\Adapter\Mvc\Router {
 
+        /**
+         * calculate a route
+         * @param string $uri
+         * @return bool wether it was found or not 
+         */
         function route($uri) {
             $st = strlen($this->_configuration->route->suffix);
             $real = $st ? substr($uri, strlen($this->_configuration->baseRewrite), -$st) : substr($uri, strlen($this->_configuration->baseRewrite));
@@ -18,7 +30,7 @@ namespace CRUDsader\Adapter\MVC\Router {
             if (isset($routes->{$ex[0]})) {
                 $language = false;
                 $route = $routes->{$ex[0]};
-                $action = isset($ex[1])?$ex[1]:false;
+                $action = isset($ex[1]) ? $ex[1] : false;
             } else if (isset($ex[1]) && isset($routes->{$ex[1]})) {
                 $language = $ex[0];
                 $route = $routes->{$ex[1]};
@@ -48,15 +60,8 @@ namespace CRUDsader\Adapter\MVC\Router {
             return true;
         }
 
-        public function url($options=array()) {
-            if(!is_array($options))
-                return 'http://' . $this->_configuration->server . $this->_configuration->baseRewrite.$options;
-            if (isset($options['url']))
-                return $options['url'];
-            if (isset($options['route'])) {
-                return 'http://' . $this->_configuration->server . $this->_configuration->baseRewrite . $options['route'] . $this->_configuration->route->suffix . (!empty($options['params']) ? '?' . http_build_query($options['params']) : $this->getParams());
-            }
-            return false;
+        public function url($url) {
+            return 'http://' . $this->_configuration->server . $this->_configuration->baseRewrite . $url;
         }
     }
 }

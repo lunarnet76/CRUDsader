@@ -1,18 +1,13 @@
 <?php
 /**
- * LICENSE: see CRUDsader/license.txt
- *
  * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.CRUDsader.com/license/1.txt
- * @version     $Id$
- * @link        http://www.CRUDsader.com/manual/
- * @since       1.0
+ * @license     see license.txt
+ * @since       0.1
  */
 namespace CRUDsader\Adapter\Map\Extractor {
-
     /**
-     * create the mapping tables
+     * create the mapped tables
      * @abstract
      * @package    CRUDsader\Adapter\Map
      */
@@ -56,7 +51,7 @@ namespace CRUDsader\Adapter\Map\Extractor {
                             // define the fk as a reference
                             $fks[$map['classes'][$associationInfos['to']]['definition']['databaseTable']][$associationInfos['externalField']] = array('table' => $tables[$className]['name'], 'field' => $classInfos['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
                             break;
-                        case 'internal':
+                            case 'internal':
                             // add fk in internal table
                             $tables[$className]['fields'][$associationInfos['internalField']] = array(
                                 'null' => true,

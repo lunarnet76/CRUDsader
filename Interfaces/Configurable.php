@@ -11,7 +11,7 @@
  */
 namespace CRUDsader\Interfaces {
     /**
-     * @category   Interfaces
+     * object can be configured ?
      * @package    CRUDsader
      */
     interface Configurable{
