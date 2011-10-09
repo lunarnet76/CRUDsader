@@ -60,7 +60,8 @@ namespace CRUDsader {
                 'mvc' => array(
                     'router' => 'explicit',
                     'routerHistoric' => 'lilo'
-                )
+                ),
+                'arrayLoader'=>'yaml'
             ),
             'database' => array(
                 'host' => 'localhost',
@@ -145,7 +146,7 @@ namespace CRUDsader {
          * @test test_load_
          */
         public function load($adapter,$options){
-            $loader=\CRUDsader\Adapter::factory('configuration');
+            $loader=\CRUDsader\Adapter::factory('arrayLoader');
             $this->loadArray($loader->load($options));
         }
     }
