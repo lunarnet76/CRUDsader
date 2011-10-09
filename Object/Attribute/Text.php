@@ -8,8 +8,9 @@
 namespace CRUDsader\Object\Attribute {
     class Text extends \CRUDsader\Object\Attribute\String {
         public function toHTML() {
-            $this->_htmlAttributes['validator'] = $this->javascriptValidator();
-            return '<textarea ' . $this->getHtmlAttributesToHtml() . '>'.(!\CRUDsader\Expression::isEmpty($this->_inputValue)?$this->_inputValue:'').'</textarea>';
+            if (isset($this->_htmlAttributes['value']))
+                unset($this->_htmlAttributes['value']);
+            return '<textarea ' . $this->getHtmlAttributesToHtml() . '>' . (!\CRUDsader\Expression::isEmpty($this->_inputValue) ? $this->_inputValue : '') . '</textarea>';
         }
     }
 }
