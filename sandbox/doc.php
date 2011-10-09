@@ -390,7 +390,7 @@ echo '</pre>';
 echo '<h3>line ' . __LINE__ . ' getting users which OQL "From user", fetching only one object</h3>';
 $query = new \CRUDsader\Query('FROM user');
 $user = $query->fetch();
-echo '<pre>';
+echo '<pre>'; 
 print_r($user->toArray());
 echo '</pre>';
 
