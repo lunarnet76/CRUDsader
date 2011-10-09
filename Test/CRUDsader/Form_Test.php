@@ -28,7 +28,7 @@ class Form_Test extends PHPUnit_Framework_TestCase {
                 'token' => $form->getSession()->token
             )
         );
-        $receive = $form->receiveInput();
+        $receive = $form->inputReceive();
         $valid = $form->inputValid();
         $token = $form->checkToken();
         $this->assertEquals($receive, true);
@@ -54,7 +54,7 @@ class Form_Test extends PHPUnit_Framework_TestCase {
                 'token' => $form->getSession()->token
             )
         );
-        $receive = $form->receiveInput();
+        $receive = $form->inputReceive();
         $valid = $form->inputValid();
         $token = $form->checkToken();
         $this->assertEquals($receive, true);
@@ -74,7 +74,7 @@ class Form_Test extends PHPUnit_Framework_TestCase {
                 'token' => ''
             )
         );
-        $receive = $form->receiveInput();
+        $receive = $form->inputReceive();
         $valid = $form->inputValid();
         $token = $form->checkToken();
         $this->assertEquals($receive, true);
@@ -82,7 +82,7 @@ class Form_Test extends PHPUnit_Framework_TestCase {
         $this->assertEquals($token, false);
 
         $_REQUEST = array();
-        $receive = $form->receiveInput();
+        $receive = $form->inputReceive();
         $this->assertEquals($receive, false);
     }
 }

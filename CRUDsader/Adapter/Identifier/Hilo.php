@@ -1,16 +1,13 @@
 <?php
 /**
- * LICENSE: see CRUDsader/license.txt
- *
- * @author     Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.CRUDsader.com/license/2.txt
- * @version     $Id$
- * @link        http://www.CRUDsader.com/manual/
- * @since       1.0
+ * @license     see license.txt
+ * @since       0.1
  */
 namespace CRUDsader\Adapter\Identifier {
     /**
+     * use the HiLo concept to return unique object identifier
      * @package    CRUDsader\Adapter\Identifier
      */
     class Hilo extends \CRUDsader\Adapter\Identifier {

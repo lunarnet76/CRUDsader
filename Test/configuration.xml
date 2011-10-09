@@ -1,6 +1,6 @@
 <phpunit 
          bootstrap="bootstrap.php"
-         verbose="false">
+         verbose="false" processIsolation="false">
     <php>
         <const name="DATABASE_HOST" value="localhost" />
         <const name="DATABASE_USER" value="root" />
@@ -19,7 +19,9 @@
             <file>CRUDsader/Expression/Now_Test.php</file><!-- empty -->
             <file>CRUDsader/Session_Test.php</file>
             <file>CRUDsader/Adapter_Test.php</file>
+            
             <file>CRUDsader/Adapter/Database/Connector/Mysqli_Test.php</file>
+            
             <file>CRUDsader/Adapter/Database/Connector_Test.php</file>
             <file>CRUDsader/Adapter/Database/Profiler_Test.php</file><!-- empty -->
             <file>CRUDsader/Adapter/Database/Profiler/Html_Test.php</file><!-- empty -->
@@ -29,7 +31,6 @@
             <file>CRUDsader/Adapter/Database/Descriptor/Mysqli_Test.php</file>
             <file>CRUDsader/Database_Test.php</file>
             <file>CRUDsader/Adapter/Identifier_Test.php</file><!-- empty -->
-            <file>CRUDsader/Adapter/Identifier/MysqlAI_Test.php</file><!-- empty -->
             <file>CRUDsader/Adapter/Identifier/Hilo_Test.php</file>
             <file>CRUDsader/Adapter/I18n/Translation/None_Test.php</file>
             <file>CRUDsader/I18n_Test.php</file>
@@ -37,7 +38,20 @@
             <file>CRUDsader/Form/Component/Hidden_Test.php</file>
             <file>CRUDsader/Form_Test.php</file>
             <file>CRUDsader/Object/IdentityMap_Test.php</file>
+            <!--
+            <file>CRUDsader/Adapter/ArrayLoader</file>
+            <file>CRUDsader/Adapter/ArrayLoader/Yaml.php</file>
+            <file>\CRUDsader\Adapter\I18n\Translation\Ini.php</file>
+            <file>\CRUDsader\Adapter\Mvc/Router_Test.php</file>
+            <file>\CRUDsader\Adapter\Mvc/Router/Explicit_Test.php</file>
+            <file>\CRUDsader\Adapter\Mvc/RouterHistoric/Lilo_Test.php</file>
+            <file>\CRUDsader\Adapter\Map/Loader</file>
+            <file>\CRUDsader\Adapter\Map/Extractor</file>
+            <file>\CRUDsader\Adapter\Map/Extractor/Database</file>
+            <file>\CRUDsader\Adapter\Map/Loader/xml</file>
             
+            
+            -->
         </testsuite>
     </testsuites>
 </phpunit>

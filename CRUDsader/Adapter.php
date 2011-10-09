@@ -1,19 +1,14 @@
 <?php
 /**
- * LICENSE: see CRUDsader/license.txt
- *
- * @author     Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.CRUDsader.com/license/2.txt
- * @version     $Id$
- * @link        http://www.CRUDsader.com/manual/
- * @since       1.0
+ * @license     see license.txt
+ * @since       0.1
  */
 namespace CRUDsader {
     /**
-     * @category   Adapter
-     * @package    CRUDsader
      * @abstract
+     * @package CRUDsader
      */
     abstract class Adapter implements Interfaces\Configurable{
         /**
@@ -25,9 +20,13 @@ namespace CRUDsader {
          * only way to get an adapter
          * @param string|array $type array(namespace=>adapter)
          * @return self 
+         * @test test_factory
          */
         public static function factory($type) {
-            $configuration = Configuration::getInstance()->adapter;
+            $instanceConfiguration=Configuration::getInstance();
+            if(!isset($instanceConfiguration->adapter))
+                    throw new AdapterException('Adapter factory must be configured');
+            $configuration = $instanceConfiguration->adapter;
             $namespace=false;
             if (is_array($type)) {
                 $namespace = key($type);
@@ -58,7 +57,7 @@ namespace CRUDsader {
         }
         
         /**
-         * constructor for child
+         * constructor for children
          */
         public function init(){}
         

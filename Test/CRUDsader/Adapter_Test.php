@@ -4,19 +4,24 @@ class Adapter_Test extends PHPUnit_Framework_TestCase {
     function setUp(){
         \CRUDsader\Autoload::registerNameSpace('Fakelib', 'Parts/Fakelib/');
         \CRUDsader\Configuration::getInstance()->adapter->classNameSpace = 'Fakelib\\Adapter';
-        \CRUDsader\Configuration::getInstance()->adapter->i18n = 'ini';
         \CRUDsader\Configuration::getInstance()->adapter->database=array('connector'=>'mysql');
+        \CRUDsader\Configuration::getInstance()->adapter->ns='Aclass';
+    }
+    
+    function tearDown(){
+        \CRUDsader\Autoload::unregisterNameSpace('Fakelib');
+        \CRUDsader\Configuration::getInstance()->adapter->classNameSpace = 'CRUDsader\\Adapter';
+        \CRUDsader\Configuration::getInstance()->adapter->database=array('connector'=>'mysqli');
+        unset(\CRUDsader\Configuration::getInstance()->adapter->ns);
     }
 
     function test_factory() {
-        $instance1 = \CRUDsader\Adapter::factory('i18n');
-        $this->assertEquals($instance1 instanceof Fakelib\Adapter\I18n\Ini, true);
-    }
-
-    function test_factoryArray_() {
+        $instance1 = \CRUDsader\Adapter::factory('ns');
+        $this->assertEquals($instance1 instanceof Fakelib\Adapter\Ns\Aclass, true);
         $instance1 = \CRUDsader\Adapter::factory(array('database'=>'connector'));
         $this->assertEquals($instance1 instanceof Fakelib\Adapter\Database\Connector\Mysql, true);
     }
+
 
     function test_factoryIsNotSingleton_() {
         $instance1 = \CRUDsader\Adapter::factory(array('database' => 'connector'));

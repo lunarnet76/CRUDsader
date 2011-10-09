@@ -4,7 +4,7 @@ namespace CRUDsader\Form\Component {
         public function inputEmpty(){return false;}
 
         public function toHTML(){
-            return '<input type="hidden" '.$this->getHtmlAttributesToHtml().' value="'.$this->getInputValue().'">';
+            return '<input type="hidden" '.$this->getHtmlAttributesToHtml().' value="'.(!\CRUDsader\Expression::isEmpty($this->_inputValue)?$this->_inputValue:'').'">';
         }
     }
 }

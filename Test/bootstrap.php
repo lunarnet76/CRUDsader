@@ -61,14 +61,16 @@ function eh() {
     pre(func_get_args());
     pre(get_included_files());
     die('ERROR');
+    return false;
 }
 set_error_handler('eh');
 register_shutdown_function('shutdownFunction');
 
 function shutDownFunction() {
     $error = error_get_last();
+ 
     if ($error !== null) {
-        echo 'error';
+        echo 'eRRORRR';
         pre($error);
         pre(xdebug_get_function_stack());
     }

@@ -56,6 +56,7 @@ class AdapterDatabaseConnectorMysqli_Test extends PHPUnit_Framework_TestCase {
         $this->assertEquals($q, 2);
         $q = $instance->query('SHOW TABLES', 'other'); // useless query, just to test the return value
         $this->assertEquals($q, true);
+        \CRUDsader\Configuration::getInstance()->adapter->classNameSpace = 'CRUDsader\\Adapter';
     }
 
     /**

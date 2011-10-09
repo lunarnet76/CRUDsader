@@ -1,19 +1,15 @@
 <?php
 /**
- * LICENSE: see CRUDsader/license.txt
- *
- * @author      Jean-Baptiste Verrey <jeanbaptiste.verrey@gmail.com>
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.CRUDsader.com/license/1.txt
- * @version     $Id$
- * @link        http://www.CRUDsader.com/manual/
- * @since       1.0
+ * @license     see license.txt
+ * @since       0.1
  */
 namespace CRUDsader {
     /**
      * utility to include classes depending on their namespace or that follows the PEAR naming convention : My_Class mapped to My/Class.php
-     * @package     CRUDsader
      * @abstract
+     * @package CRUDsader
      */
     abstract class Autoload {
         /**
@@ -39,6 +35,7 @@ namespace CRUDsader {
          * all classes from this nameSpace will be mapped to the specified folder
          * @param string $nameSpace
          * @param string $folder
+         * @test test_Namespaces
          */
         public static function registerNameSpace($nameSpace, $folder) {
             self::$_nameSpaces[$nameSpace] = $folder;
@@ -48,6 +45,7 @@ namespace CRUDsader {
          * return if wether a nameSpace is mapped
          * @param string $nameSpace
          * @return bool
+         * @test test_Namespaces
          */
         public static function hasNameSpace($nameSpace) {
             return isset(self::$_nameSpaces[$nameSpace]);
@@ -57,6 +55,7 @@ namespace CRUDsader {
          * return the folder mapped to the nameSpace
          * @param string $nameSpace
          * @return string
+         * @test test_Namespaces
          */
         public static function getNamespace($nameSpace) {
             return self::$_nameSpaces[$nameSpace];
@@ -65,6 +64,7 @@ namespace CRUDsader {
         /**
          * unmap a namespace
          * @param string $name
+         * @test test_Namespaces
          */
         public static function unregisterNameSpace($name) {
             unset(self::$_nameSpaces[$name]);
@@ -73,6 +73,7 @@ namespace CRUDsader {
         /**
          * provide the list of mapped namespaces
          * @return array
+         * @test test_Namespaces
          */
         public static function getNamespaces() {
             return self::$_nameSpaces;
@@ -82,6 +83,7 @@ namespace CRUDsader {
          * return if a class has been included by the autoloader
          * @param string $className
          * @return bool
+         * @est test_includeClass
          */
         public static function hasClass($className) {
             return isset(self::$_includedClasses[$className]);
@@ -91,6 +93,7 @@ namespace CRUDsader {
          * manually add an included class to the autoloader
          * @param string $className
          * @param string $filePath
+         * @test test_includeClass
          */
         public static function includeClass($className, $filePath) {
             self::$_includedClasses[$className] = $filePath;
@@ -100,6 +103,7 @@ namespace CRUDsader {
          * manually remove an included class to the autoloader
          * @param string $className
          * @param string $filePath
+         * @test_includeClass
          */
         public static function unincludeClass($className) {
             unset(self::$_includedClasses[$className]);
@@ -118,10 +122,53 @@ namespace CRUDsader {
         }
 
         /**
+         * load a class, checking if the namespace and file exists first
+         * @param string $className
+         */
+        public static function load($className) {
+            $filePath = self::isLoadable($className);
+            if ($filePath){
+                 self::$_includedClasses[$className]=$filePath;
+                require($filePath);
+            }else
+                throw new AutoloadException('class "' . $className . '" cannot be loaded');
+        }
+
+        /**
+         * load a class, for performance reason it does not check wether if the file exists
+         * @param string $className
+         */
+        public static function autoload($className) {
+            $filePath = self::_findIncludePathFor($className);
+            if ($filePath){
+                 self::$_includedClasses[$className]=$filePath;
+                include($filePath);
+            }else
+                throw new AutoloadException('class "' . $className . '" cannot be autoloaded');
+        }
+
+        /**
+         * load a class simply following the PEAR naming convention
+         * @param string $className
+         */
+        public static function simpleAutoload($className) {
+            include(self::$simpleAutoloadPath.str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php');
+        }
+        
+        /**
+         * register the autoload and the default namespace
+         * @static
+         */
+        public static function register(){
+            self::registerNameSpace('CRUDsader', __DIR__.'/');
+            spl_autoload_register(array('CRUDsader\Autoload', 'autoload'));
+        }
+        
+        /**
          * return the include path for the classname to be included, using the namespace
          * @static
-         * @param <type> $className
-         * @return <type>
+         * @param string $className
+         * @return string
          */
         protected static function _findIncludePathFor($className) {
             if (isset(self::$_includedClasses[$className]))
@@ -137,40 +184,6 @@ namespace CRUDsader {
             }else
                 $namespace = substr($className, 0, $pos);
             return isset(self::$_nameSpaces[$namespace]) ? self::$_nameSpaces[$namespace] . str_replace('\\', DIRECTORY_SEPARATOR, substr($className, $pos + 1)) . '.php' : false;
-        }
-
-        /**
-         * load a class, checking if the namespace and file exists first
-         * @param string $className
-         */
-        public static function load($className) {
-            $filePath = self::isLoadable($className);
-            if ($filePath){
-                 self::$_includedClasses[$className]=$filePath;
-                require($filePath);
-            }else
-                throw new AutoloadException('class "' . $className . '" cannot be loaded');
-        }
-
-        /**
-         * load a class, for performance reason it does not check wether if the file exists
-         * @param <type> $className
-         */
-        public static function autoload($className) {
-            $filePath = self::_findIncludePathFor($className);
-            if ($filePath){
-                 self::$_includedClasses[$className]=$filePath;
-                include($filePath);
-            }else
-                throw new AutoloadException('class "' . $className . '" cannot be autoloaded');
-        }
-
-        /**
-         * load a class simply following the PEAR naming convention
-         * @param <type> $className
-         */
-        public static function simpleAutoload($className) {
-            include(self::$simpleAutoloadPath.str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php');
         }
     }
     class AutoloadException extends \Exception {

@@ -1,13 +1,9 @@
 <?php
 /**
- * LICENSE: see CRUDsader/license.txt
- *
- * @author      Jean-Baptiste Verrey <jeanbaptiste.verrey@gmail.com>
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.CRUDsader.com/license/1.txt
- * @version     $Id$
- * @link        http://www.CRUDsader.com/manual/
- * @since       1.0
+ * @license     see license.txt
+ * @since       0.1
  */
 namespace CRUDsader {
     /**
@@ -35,11 +31,23 @@ namespace CRUDsader {
             $this->_infos = $this->_map->classGetInfos($this->_class);
             if (!Map::getInstance()->classExists($className))
                 throw new ObjectException('class "' . $className . '" does not exist');
+            foreach ($this->_infos['attributes'] as $attributeName => $attributeInfos) {
+                if (isset($attributeInfos['default'])) {
+                    $this->getAttribute($attributeName)->inputReceiveDefault($attributeInfos['default']);
+                }
+            }
         }
 
         public static function instance($className) {
-            $class = \CRUDsader\Map::getInstance()->classGetModelClass($className);
+            $map = \CRUDsader\Map::getInstance();
+            if (!$map->classExists($className))
+                throw new ObjectException('class "' . $className . '" does not exist');
+            $class = $map->classGetModelClass($className);
             return new $class($className);
+        }
+
+        protected function _($attributeName) {
+            return $this->getAttribute($attributeName)->getInputValue();
         }
 
         public function getId() {
@@ -130,6 +138,8 @@ namespace CRUDsader {
         }
 
         public function save(\CRUDsader\Object\UnitOfWork $unitOfWork=null) {
+            if (!$this->_checkRequiredFields())
+                throw new ObjectException($this->_class . '_fields_required');
             if ($this->_isModified || $this->_infos['definition']['abstract']) {
                 if ($unitOfWork === null) {
                     $unitOfWork = new \CRUDsader\Object\UnitOfWork();
@@ -160,6 +170,16 @@ namespace CRUDsader {
                     $unitOfWork->execute();
                 }
             }
+        }
+        
+        protected function _checkRequiredFields(){
+            foreach($this->_infos['attributes'] as $attributeName=>$attributeInfos){
+                if($attributeInfos['required']){
+                    if(!isset($this->_fields[$attributeName]) || $this->_fields[$attributeName]->inputEmpty())
+                            return false;
+                }
+            }
+            return true;
         }
 
         public function saveAssociations(\CRUDsader\Object\UnitOfWork $unitOfWork) {
@@ -203,11 +223,15 @@ namespace CRUDsader {
             return $this->_infos['definition']['databaseTable'];
         }
 
+        public function getDatabaseIdField() {
+            return $this->_infos['definition']['databaseIdField'];
+        }
+
         public function _getParamsForSave() {
             $ret = array();
             foreach ($this->_fields as $k => $attribute) {
                 if ($this->_infos['attributes'][$k]['calculated']) {
-                    $ret[$this->_infos['attributes'][$k]['databaseField']] = $this->calculateAttribute($k);
+                    $this->getAttribute($k)->inputReceiveDefault($ret[$this->_infos['attributes'][$k]['databaseField']] = $this->calculateAttribute($k));
                 }else
                     $ret[$this->_infos['attributes'][$k]['databaseField']] = $attribute->getValueForDatabase();
             }
@@ -235,7 +259,7 @@ namespace CRUDsader {
                     throw new ObjectException('cannot save as attribute "' . $fieldName . '" is empty');
                 $where[] = $db->quoteIdentifier($this->_infos['attributes'][$fieldName]['databaseField']) . '=' . $db->quote($this->getAttribute($fieldName)->getValueForDatabase());
             }
-            return $db->countSelect(array('from' => array('table' => $this->_infos['definition']['databaseTable'], 'alias' => 't', 'id' => $this->_infos['definition']['databaseIdField']), 'where' => implode(' AND ', $where), 'limit' => array('count' => 1)));
+            return 0 == $db->countSelect(array('from' => array('table' => $this->_infos['definition']['databaseTable'], 'alias' => 't', 'id' => $this->_infos['definition']['databaseIdField']), 'where' => implode(' AND ', $where), 'limit' => array('count' => 1)));
         }
 
         public function isPersisted() {
@@ -282,11 +306,11 @@ namespace CRUDsader {
         }
 
         public function __toString() {
-            $ret = '';
+            $ret = array();
             foreach ($this->_fields as $name => $field) {
-                $ret.=$field->inputEmpty() ? '' : $field->getValue() . ' ,';
+                $ret[] = $field->inputEmpty() ? '' : $field->getValue();
             }
-            return $ret . ($this->hasParent() ? $this->getParent()->__toString() : '');
+            return implode(',', $ret) . ($this->hasParent() ? ',' . $this->getParent()->__toString() : '');
         }
 
         protected function _getFormAttributes(\CRUDsader\Form $form, $oql=false, $alias=false) {
@@ -307,7 +331,7 @@ namespace CRUDsader {
         public function getParent() {
             if (!isset($this->_parent) && $this->_infos['inherit']) {
                 $this->_parent = \CRUDsader\Object::instance($this->_infos['inherit']);
-                $this->_parent->_child=$this;
+                $this->_parent->_child = $this;
             }
             return $this->_parent;
         }
@@ -352,7 +376,8 @@ namespace CRUDsader {
         public function getAttribute($name) {
             if (!isset($this->_fields[$name])) {
                 $type = $this->_map->classGetFieldAttributeType($this->_class, $name);
-                $this->_fields[$name] = new Object\Attribute($name, $type['phpClass'] . $type['class'], $type['options']);
+                $class=$type['phpClass'].$type['class'];
+                $this->_fields[$name] = new $class($name, $type['options']);
                 $this->_fields[$name]->attach($this);
             }
             return $this->_fields[$name];

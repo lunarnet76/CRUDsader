@@ -1,5 +1,15 @@
 <?php
-namespace CRUDsader\MVC\Controller {
+/**
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
+ * @copyright   2011 Jean-Baptiste Verrey
+ * @license     see license.txt
+ * @since       0.1
+ */
+namespace CRUDsader\Mvc\Controller {
+    /**
+     * MVC Front controller
+     * @package CRUDsader\Mvc\Controller
+     */
     class Front extends \CRUDsader\Singleton implements \CRUDsader\Interfaces\Adaptable {
         /*
          * @var Art_Block

@@ -19,12 +19,12 @@ class Session_Test extends PHPUnit_Framework_TestCase {
     /**
      * @depends test_start
      */
-    function test_setGeneralNameSpace(){
+    function test_setGlobalNamespace(){
         $ns='NewGeneralNameSpace';
         $this->assertEquals(isset($_SESSION[$ns]),false);
-        \CRUDsader\Session::setGeneralNamespace($ns);
+        \CRUDsader\Session::setGlobalNamespace($ns);
         $this->assertEquals(isset($_SESSION[$ns]),true);
-        \CRUDsader\Session::setGeneralNamespace(false);
+        \CRUDsader\Session::setGlobalNamespace(false);
     }
 
     /**
@@ -37,5 +37,4 @@ class Session_Test extends PHPUnit_Framework_TestCase {
         \CRUDsader\Session::destroy();
         $this->assertEquals(isset($_SESSION['CRUDsader']['test']),false);
     }
-
 }

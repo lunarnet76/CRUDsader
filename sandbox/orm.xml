@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CRUDsader SYSTEM "../CRUDsader/Adapter/Map/Loader/Xml.dtd" >
+<CRUDsader>
+    <attributeTypes>
+        <attributeType alias="default" length="32"/>
+        <attributeType alias="date1" class="date" databaseType="DATE" />
+        <attributeType alias="date2" class="date" databaseType="DATE" phpClass="Attribute" />
+    </attributeTypes>
+    
+    <classes>
+        <!-- e.g. 1 base-->
+        <class name="address">
+            <attribute name="street" />
+            <attribute name="streetNumber" />
+            <attribute name="city"/>
+            <attribute name="country"/>
+        </class>
+        <!-- e.g. 2 association-->
+        <class name="contact">
+            <attribute name="name" />
+            <associated to="address"/>
+        </class>
+        <!-- e.g. 3 database-->
+        <class name="vehicle" databaseTable="Table_Vehicle" databaseIdField="Vehicle_UniqueId">
+            <attribute name="model" databaseField="Field_Model" />
+        </class>
+        <!-- e.g. 4 inherit-->
+        <class name="person" inherit="contact">
+            <attribute name="firstName"/>
+            <attribute name="lastName"/>
+        </class>
+        <!-- e.g. 5 identity-->
+        <class name="book" identity="isbn">
+            <attribute name="isbn"/>
+            <attribute name="title"/>
+        </class>
+        <!-- e.g. 6 phpclass-->
+        <class name="product" phpClass="ModelProduct">
+            <attribute name="name" />
+            <attribute name="price"/>
+            <attribute name="vat" />
+        </class>
+        <!-- e.g. 7 default-->
+        <class name="turtle">
+            <attribute name="age" default="1"/>
+        </class>
+        <!-- e.g. 8 required-->
+        <class name="horse">
+            <attribute name="name" required="true"/>
+        </class>
+        <!-- e.g. 9 calculated-->
+        <class name="log" phpClass="ModelLog">
+            <attribute name="date" calculated="true"/>
+            <attribute name="text" />
+        </class>
+         <!-- e.g. 13 input -->
+        <class name="log2">
+            <attribute name="date" input="false"/>
+            <attribute name="text" />
+        </class>
+        <!-- e.g. 14 type -->
+        <class name="booking">
+            <attribute name="from" type="date1"/>
+            <attribute name="to" type="date1" />
+        </class>
+        <!-- e.g. 15 custom phpclass type -->
+        <class name="holiday">
+            <attribute name="from" type="date2"/>
+            <attribute name="to" type="date2" />
+        </class>
+        <!-- e.g. 16 QUERIES -->
+        <class name="userGroup">
+            <attribute name="name"/>
+        </class>
+        <class name="userSubGroup" inherit="userGroup">
+            <attribute name="subname"/>
+        </class>
+        <class name="userEmail">
+            <attribute name="name"/>
+        </class>
+        <class name="userVehicle">
+            <attribute name="name"/>
+        </class>
+        <class name="user">
+            <attribute name="name"/>
+            <associated to="userSubGroup" reference="internal"/>
+            <associated to="userEmail" name="hasEmail" reference="external" composition="true"/>
+            <associated to="userVehicle" reference="table" composition="true"/>
+        </class>
+    </classes>
+</CRUDsader>

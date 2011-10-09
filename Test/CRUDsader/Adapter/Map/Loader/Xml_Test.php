@@ -10,16 +10,16 @@ class AdapterMapLoaderXmlInstancer extends CRUDsader\Adapter\Map\Loader\Xml {
 }
 class AdapterMapLoaderXml_Test extends PHPUnit_Framework_TestCase {
 
-    function setUp(){
-        
+    function setUp() {
+
         \CRUDsader\Configuration::getInstance()->adapter->map->loader->xml->file = 'Parts/orm.xml';
     }
-    
-    function tearDown(){
-        
+
+    function tearDown() {
+
         \CRUDsader\Configuration::getInstance()->adapter->map->loader->xml->file = 'orm.xml';
     }
-    
+
     function test_() {
         $instance = AdapterMapLoaderXmlInstancer::getInstance(\CRUDsader\Configuration::getInstance()->adapter->map->loader->xml);
         $this->assertEquals($instance->getSchema(\CRUDsader\Configuration::getInstance()->map->defaults), array(
@@ -28,25 +28,33 @@ class AdapterMapLoaderXml_Test extends PHPUnit_Framework_TestCase {
                 'default' =>
                 array(
                     'length' => 32,
-                    'class' => "\CRUDsader\Object\Attribute\Wrapper\String",
+                    'class' => 'String',
+                    'phpClass' => '\\CRUDsader\\Object\\Attribute\\Wrapper\\',
                     'databaseType' => "VARCHAR",
-                    'options' => array(),
+                    'options' => array(
+                        'length' => 32
+                    ),
                 ),
                 'email' =>
                 array(
                     'length' => 255,
-                    'class' => "\CRUDsader\Object\Attribute\Wrapper\Email",
+                    'class' => "Email",
+                    'phpClass' => "\CRUDsader\Object\Attribute\Wrapper\\",
                     'databaseType' => "VARCHAR",
-                    'options' =>
-                    NULL
+                    'options' => array(
+                        'length' => 255
+                    )
                 ),
                 'date' =>
                 array(
                     'length' => 0,
-                    'class' => "\CRUDsader\Object\Attribute\Wrapper\Date",
+                    'class' => 'Date',
+                    'phpClass' => "\CRUDsader\Object\Attribute\Wrapper\\",
                     'databaseType' => "DATE",
                     'options' =>
-                    NULL
+                    array(
+                        'length' => 0
+                    )
                 )
             ),
             'classes' =>

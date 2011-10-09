@@ -1,10 +1,9 @@
 <?php
-class CRUDsaderBlockInstancer extends \CRUDsader\Block {
-    public static function getInstance() {
+class CRUDsaderBlockInstancer extends \CRUDsader\Block{
+    public static function getInstance(){
         return new parent();
     }
 }
-
 class Block_Test extends PHPUnit_Framework_TestCase {
 
     // test __get,__isset,__unset,__set
@@ -16,13 +15,20 @@ class Block_Test extends PHPUnit_Framework_TestCase {
         unset($instance->p1);
         $this->assertEquals(isset($instance->p1), false);
     }
+    
+    function test_count_() {
+        $instance = CRUDsaderBlockInstancer::getInstance();;
+        $this->assertEquals($instance->count(),0);
+        $instance->p1 = 'v1';
+        $this->assertEquals($instance->count(),1);
+    }
 
     /**
      * @depends test_accessors
      * @expectedException \CRUDsader\BlockException
      */
-    function test_lock_set() {
-        $instance = CRUDsaderBlockInstancer::getInstance();
+    function test_lock_() {
+        $instance = CRUDsaderBlockInstancer::getInstance();;
         $instance->p1 = 'v1';
         $instance->lock();
         $instance->p1 = 'v2';
@@ -51,8 +57,8 @@ class Block_Test extends PHPUnit_Framework_TestCase {
      * @depends test_accessors
      * @expectedException \CRUDsader\BlockException
      */
-    function test_lock_get() {
-        $instance = CRUDsaderBlockInstancer::getInstance();
+    function test_lock_ExceptionLocked() {
+        $instance = CRUDsaderBlockInstancer::getInstance();;
         $instance->lock();
         $instance->loadArray(array());
     }
@@ -62,7 +68,7 @@ class Block_Test extends PHPUnit_Framework_TestCase {
      * @expectedException \CRUDsader\BlockException
      */
     function test_lock_unset() {
-        $instance = CRUDsaderBlockInstancer::getInstance();
+        $instance = CRUDsaderBlockInstancer::getInstance();;
         $instance->p1 = 'v1';
         $instance->lock();
         unset($instance->p1);
@@ -73,7 +79,7 @@ class Block_Test extends PHPUnit_Framework_TestCase {
      * @expectedException \CRUDsader\BlockException
      */
     function test_lock_reset() {
-        $instance = CRUDsaderBlockInstancer::getInstance();
+        $instance = CRUDsaderBlockInstancer::getInstance();;
         $instance->lock();
         $instance->reset();
     }
@@ -82,7 +88,7 @@ class Block_Test extends PHPUnit_Framework_TestCase {
      * @depends test_accessors
      */
     function test_reset() {
-        $instance = CRUDsaderBlockInstancer::getInstance();
+        $instance = CRUDsaderBlockInstancer::getInstance();;
         $instance->p1 = 'v1';
         $instance->p2 = 'v2';
         $this->assertEquals($instance->count(), 2);
@@ -94,7 +100,7 @@ class Block_Test extends PHPUnit_Framework_TestCase {
      * @depends test_accessors
      */
     function test_loadArray() {
-        $instance = CRUDsaderBlockInstancer::getInstance();
+        $instance = CRUDsaderBlockInstancer::getInstance();;
         $instance->loadArray(array('p1' => 'v1', 'p2' => 'v2'));
         $this->assertEquals($instance->p1, 'v1');
         $this->assertEquals($instance->p2, 'v2');
@@ -112,7 +118,7 @@ class Block_Test extends PHPUnit_Framework_TestCase {
      * @depends test_accessors
      */
     function test_toArray() {
-        $instance = CRUDsaderBlockInstancer::getInstance();
+        $instance = CRUDsaderBlockInstancer::getInstance();;
         $values = array('p1' => 'v1', 'p2' => 'v2', 'p3' => array('p4' => 'v4', 'p5' => 'v5'));
         $instance->loadArray($values);
         $this->assertEquals($instance->toArray(), $values);

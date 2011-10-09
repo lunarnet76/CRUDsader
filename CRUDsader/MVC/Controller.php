@@ -1,5 +1,15 @@
 <?php
-namespace CRUDsader\MVC {
+/**
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
+ * @copyright   2011 Jean-Baptiste Verrey
+ * @license     see license.txt
+ * @since       0.1
+ */
+namespace CRUDsader\Mvc {
+    /**
+     * MVC controller must inherit from this
+     * @package CRUDsader\Mvc
+     */
     abstract class Controller extends \CRUDsader\Singleton implements \CRUDsader\Interfaces\Configurable {
         protected $_frontController = NULL;
         protected $_views = array();
@@ -53,13 +63,6 @@ namespace CRUDsader\MVC {
             return call_user_func_array(array($this->_frontController, $name), $arguments);
         }
 
-        public function image($options=array()) {
-            if (!is_array($options))
-                $options = array('file' => $options);
-            $options['module'] = $this->_router->getModule();
-            $options['baseRef'] = $this->getURL();
-            return new \CRUDsader\MVC\Image($options);
-        }
 
         /** INFOS * */
         public function getControllerURL() {

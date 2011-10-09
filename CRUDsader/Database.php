@@ -1,35 +1,32 @@
 <?php
 /**
- * LICENSE:     see CRUDsader/license.txt
- *
- * @author      Jean-Baptiste Verrey <jeanbaptiste.verrey@gmail.com>
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.CRUDsader.com/license/1.txt
- * @version     $Id$
- * @link        http://www.CRUDsader.com/manual/
- * @since       1.0
+ * @license     see license.txt
+ * @since       0.1
  */
 namespace CRUDsader {
     /**
+     * DBAL
      * @package     CRUDsader
      */
-    class Database extends Singleton implements Interfaces\Adaptable{
+    class Database extends Singleton implements Interfaces\Adaptable {
         /**
          * list of all adapters
          * @var array 
          */
-        protected $_adapters=array();
-        
+        protected $_adapters = array();
+
         /**
          * @var string
          */
-        protected $_sql=false;
-        
+        protected $_sql = false;
+
         /**
          * @param string $name
          * @return bool
          */
-        public function hasAdapter($name=false){
+        public function hasAdapter($name=false) {
             return isset($this->_adapters[$name]);
         }
 
@@ -37,25 +34,24 @@ namespace CRUDsader {
          * @param string $name
          * @return \CRUDsader\Adapter
          */
-        public function getAdapter($name=false){
+        public function getAdapter($name=false) {
             return $this->_adapters[$name];
         }
-        
+
         /**
          * @return array
          */
-        public function getAdapters(){
+        public function getAdapters() {
             return $this->_adapters;
         }
-        
+
         /**
          * get last SQL query
          * @return string 
          */
-        public function getSql(){
+        public function getSql() {
             return $this->_sql;
         }
-
 
         /**
          * singletoned constructor
@@ -71,21 +67,21 @@ namespace CRUDsader {
             if ($configuration->debug->database->profiler)
                 $this->_adapters['profiler'] = Adapter::factory(array('database' => 'profiler'));
         }
-        
-         /**
+
+        /**
          * execute a SQL query, return is dependant of the $type
          * @param string $sql
          * @param string $type
          * @return \CRUDsader\Adapter\Database\Rows
          */
         public function query($sql, $type='') {
-            $this->_sql=$sql;
+            $this->_sql = $sql;
             if (!$this->hasAdapter('profiler'))
                 return $this->_adapters['connector']->query($sql, $type);
             $this->_adapters['profiler']->startQuery($sql, $type);
             try {
                 $results = $this->_adapters['connector']->query($sql, $type);
-                if ($results instanceof \CRUDsader\Adapter\Database\Rows){
+                if ($results instanceof \CRUDsader\Adapter\Database\Rows) {
                     $this->_adapters['profiler']->stopQuery($results->count(), $results->toArray());
                     $results->rewind();
                 }else
@@ -96,7 +92,7 @@ namespace CRUDsader {
                 throw $e;
             }
         }
-        
+
         /**
          * prepare a SQL statment
          * @param string $sql
@@ -104,7 +100,7 @@ namespace CRUDsader {
          * @return \CRUDsader\Adapter\Database\Rows
          */
         public function prepareQueryStatement($sql, $type='') {
-            $this->_sql=$sql;
+            $this->_sql = $sql;
             if (!$this->hasAdapter('profiler'))
                 return $this->_adapters['connector']->prepareQueryStatement($sql, $type);;
             $this->_adapters['profiler']->startQueryStatement($sql, $type);
@@ -136,9 +132,9 @@ namespace CRUDsader {
                 throw $e;
             }
         }
-        
+
         public function __call($name, $arguments) {
-            switch($name){
+            switch ($name) {
                 case 'setForeignKeyCheck':
                 case 'beginTransaction':
                 case 'commit':
@@ -146,11 +142,11 @@ namespace CRUDsader {
                 case 'isConnected':
                 case 'isInTransaction':
                 case 'escape':
-                    return call_user_func_array(array($this->_adapters['connector'],$name), $arguments);
+                    return call_user_func_array(array($this->_adapters['connector'], $name), $arguments);
                     break;
                 case 'quote':
                 case 'quoteIdentifier':
-                    return call_user_func_array(array($this->_adapters['descriptor'],$name), $arguments);
+                    return call_user_func_array(array($this->_adapters['descriptor'], $name), $arguments);
                     break;
                 case 'select':
                 case 'countSelect':
@@ -160,15 +156,17 @@ namespace CRUDsader {
                 case 'delete':
                 case 'createTable':
                 case 'createTableReference':
-                    return $this->query(call_user_func_array(array($this->_adapters['descriptor'],$name), $arguments),$name);
+                    return $this->query(call_user_func_array(array($this->_adapters['descriptor'], $name), $arguments), $name);
                     break;
                 case 'highLight':
-                    return call_user_func_array(array($this->_adapters['descriptor'],$name), $arguments);
+                    return call_user_func_array(array($this->_adapters['descriptor'], $name), $arguments);
                     break;
                 default:
-                    throw new DatabaseException('call to undefined function "'.$name.'"');
+                    throw new DatabaseException('call to undefined function "' . $name . '"');
             }
         }
     }
-    class DatabaseException extends \CRUDsader\Exception{}
+    class DatabaseException extends \CRUDsader\Exception {
+        
+    }
 }

@@ -1,14 +1,21 @@
 <?php
 /**
- * last in last out
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
+ * @copyright   2011 Jean-Baptiste Verrey
+ * @license     see license.txt
+ * @since       0.1
  */
-namespace CRUDsader\Adapter\MVC\RouterHistoric {
+namespace CRUDsader\Adapter\Mvc\RouterHistoric {
+    /**
+     * Last In Last Out 
+     * @package CRUDsader\Adapter\Mvc\RouterHistoric
+     */
     class Lilo extends \CRUDsader\Adapter{
         protected $_session;
         protected $_controllerToSkip = array();
       
         public function init() {
-            $this->_session = \CRUDsader\Session::useNamespace('CRUDsader\\MVC\\Navigation\\Historic');
+            $this->_session = \CRUDsader\Session::useNamespace('CRUDsader\\Mvc\\Navigation\\Historic');
             if (!isset($this->_session->iterator))
                 $this->_session->iterator = 10;
         }

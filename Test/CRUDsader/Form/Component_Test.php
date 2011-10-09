@@ -60,13 +60,13 @@ class FormComponent_Test extends PHPUnit_Framework_TestCase {
     function test_form_(){
         $component=new  \CRUDsader\Form\Component();
         $this->assertEquals($component->inputReceived(),false);
-        $component->receiveInput('test');
+        $component->inputReceive('test');
         $this->assertEquals($component->inputReceived(),true);
         $this->assertEquals($component->getInputValue(),'test');
         $this->assertEquals($component->inputEmpty(),false);
-        $component->receiveInput('');
+        $component->inputReceive('');
         $this->assertEquals($component->inputEmpty(),true);
-        $component->receiveInput('test');
+        $component->inputReceive('test');
         $this->assertEquals($component->inputValid(),true);
         
         $component->setInputError('error');

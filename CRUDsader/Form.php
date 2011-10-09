@@ -1,20 +1,15 @@
 <?php
 /**
- * LICENSE: see CRUDsader/license.txt
- *
- * @author      Jean-Baptiste Verrey <jeanbaptiste.verrey@gmail.com>
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
  * @copyright   2011 Jean-Baptiste Verrey
- * @license     http://www.CRUDsader.com/license/1.txt
- * @version     $Id$
- * @link        http://www.CRUDsader.com/manual/
- * @since       1.0
+ * @license     see license.txt
+ * @since       0.1
  */
 namespace CRUDsader {
     /**
      *  HTML Form wrapper
      * @category    Form
      * @package     CRUDsader
-     * @todo add handler for checkboxes, as PHP will not create an entry in the $data array in receive($data=false)
      */
     Class Form extends Form\Component implements Interfaces\Helpable, Interfaces\Sessionisable, \IteratorAggregate, \ArrayAccess, \CRUDsader\Interfaces\Configurable {
         protected $_url;

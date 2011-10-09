@@ -1,5 +1,14 @@
 <?php
-namespace CRUDsader\Adapter\MVC {
+/**
+ * @author      Jean-Baptiste Verrey<jeanbaptiste.verrey@gmail.com>
+ * @copyright   2011 Jean-Baptiste Verrey
+ * @license     see license.txt
+ * @since       0.1
+ */
+namespace CRUDsader\Adapter\Mvc {
+    /**
+     * Controller router
+     */
     abstract class Router extends \CRUDsader\Adapter{
         /*
          * @var string
@@ -74,6 +83,9 @@ namespace CRUDsader\Adapter\MVC {
          */
         abstract public function route($uri);
         
-        abstract public function url($options=array());
+        /**
+         * useful for redirect, convert to full uri
+         */
+        abstract public function url($url);
     }
 }
