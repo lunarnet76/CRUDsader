@@ -6,7 +6,7 @@
  * @since       0.1
  */
 namespace CRUDsader\Object\Attribute {
-    class Int extends \CRUDsader\Object\Attribute {
+    class Bool extends \CRUDsader\Object\Attribute {
 
         public function formatForDatabase($value) {
             return filter_var($value, FILTER_SANITIZE_NUMBER_INT);
