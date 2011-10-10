@@ -39,7 +39,7 @@ namespace CRUDsader {
                 if (!isset($configuration->$type))
                     throw new AdapterException('adapter "' . $type . '" does not exist');
                 $parameter = $configuration->{$type};
-                $class = $configuration->classNameSpace . '\\' . $type . '\\' . ucfirst($parameter instanceof Block ? $parameter->key() : $parameter);
+                $class = $configuration->classNameSpace . '\\' . ucfirst($type) . '\\' . ucfirst($parameter instanceof Block ? $parameter->key() : $parameter);
             }
             $instance = new $class($parameter instanceof Block ? $parameter->current() : null);
             if (!$instance instanceof self)
