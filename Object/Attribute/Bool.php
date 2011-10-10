@@ -7,16 +7,32 @@
  */
 namespace CRUDsader\Object\Attribute {
     class Bool extends \CRUDsader\Object\Attribute {
+        protected $_parameters=array('isCheckbox'=>true);
 
         public function formatForDatabase($value) {
-            return filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+            return $value?'1':'0';
         }
 
         protected function _inputValid() {
-            if ($this->_inputValue instanceof \CRUDsader\Expression)
-                return true;
-            else
-                return filter_var($this->_inputValue, FILTER_VALIDATE_INT);
+            return true;
+        }
+        
+        public function inputEmpty(){
+            return false;
+        }
+        
+        public function toHTML(){
+            $this->_htmlAttributes['value']='yes';
+            $this->_htmlAttributes['type']='checkbox';
+            if($this->_inputValue=='1')
+                $this->_htmlAttributes['checked']='checked';
+            return '<input ' . $this->getHtmlAttributesToHtml() . '/>';
+        }
+        
+        public function inputReceive($data=null) {
+            $this->_inputValue = $data=='yes'?true:false;
+            $this->_inputReceived = true;
+            $this->notify();
         }
         
     }
