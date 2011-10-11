@@ -12,5 +12,13 @@ namespace CRUDsader\Object\Attribute {
                 unset($this->_htmlAttributes['value']);
             return '<textarea ' . $this->getHtmlAttributesToHtml() . '>' . (!\CRUDsader\Expression::isEmpty($this->_inputValue) ? $this->_inputValue : '') . '</textarea>';
         }
+        
+        protected function _inputValid() {
+            return true;
+        }
+        
+        public function setValueFromDatabase($value) {
+            parent::setValueFromDatabase(filter_var($value,FILTER_SANITIZE_STRING));
+        }
     }
 }
