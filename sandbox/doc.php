@@ -423,4 +423,4 @@ print_r($user->toArray());
 echo '</pre>';
 
 
-echo $db->getAdapter('profiler')->display();
+//echo $db->getAdapter('profiler')->display();
