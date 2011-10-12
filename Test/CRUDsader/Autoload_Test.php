@@ -31,42 +31,12 @@ class Autoload_Test extends PHPUnit_Framework_TestCase {
         $this->assertEquals(\CRUDsader\Autoload::hasClass($class), false);
     }
 
+    /**
+     * @expectedException \CRUDsader\AutoloadException
+     */
     public function test_isloadable() {
         $class = 'TestNamespace\A';
-        // the autoloader does not know where is it yet
-        $this->assertEquals(\CRUDsader\Autoload::isLoadable($class), false);
-        \CRUDsader\Autoload::registerNameSpace('TestNamespace',self::FOLDER_NAMESPACE);
-        // file is in Parts/1/ClassNamespace/A.php
-        $this->assertEquals(\CRUDsader\Autoload::isLoadable($class), true);
-    }
-
-    /**
-     * @expectedException CRUDsader\AutoloadException
-     */
-    public function test_loadClass_FailNamespaceDoesNotExist() {
-        $className = 'Unexistant\B';
-        \CRUDsader\Autoload::load($className);
-    }
-
-    /**
-     * @expectedException CRUDsader\AutoloadException
-     */
-    public function test_loadClass_FailFileDoesNotExist() {
-        \CRUDsader\Autoload::registerNameSpace('TestNamespace',self::FOLDER_NAMESPACE);
-        $className = 'TestNamespace\unexistant';
-        \CRUDsader\Autoload::load($className);
-        $instance = new $class;
-    }
-
-    public function test_loadClass() {
-        \CRUDsader\Autoload::registerNameSpace('TestNamespace', self::FOLDER_NAMESPACE);
-        $class = 'TestNamespace\A';
-        \CRUDsader\Autoload::load($class);
-        $instance = new $class;
-        
-        $class = '\TestNamespace\F';
-        \CRUDsader\Autoload::load($class);
-        $instance = new $class;
+        new $class;
     }
 
     public function test_autoLoad() {

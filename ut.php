@@ -8,7 +8,7 @@ function rd($dir) {
         die('cant read');
     while (false !== ($file = readdir($handle))) {
         if ($file != '.' && $file != '..') {
-            $dirname=str_replace(dirname(__FILE__).'/Test/Art/','',$dir);
+            $dirname=str_replace(dirname(__FILE__).'/Test/CRUDsader/','',$dir);
             if (is_dir($dir . $file)) {
                 rd($dir .  $file.'/');
             }

@@ -141,11 +141,10 @@ namespace CRUDsader {
         
         /**
          *
-         * @param type $adapter
          * @param type $options 
          * @test test_load_
          */
-        public function load($adapter,$options){
+        public function load($options){
             $loader=\CRUDsader\Adapter::factory('arrayLoader');
             $this->loadArray($loader->load($options));
         }
