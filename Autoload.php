@@ -110,31 +110,6 @@ namespace CRUDsader {
         }
 
         /**
-         * return if the autoloader can load a class
-         * @param string $className
-         * @return bool|string path to the file to be included to include this class
-         */
-        public static function isLoadable($className) {
-            $filePath = self::_findIncludePathFor($className);
-            if ($filePath && file_exists($filePath))
-                return $filePath;
-            return false;
-        }
-
-        /**
-         * load a class, checking if the namespace and file exists first
-         * @param string $className
-         */
-        public static function load($className) {
-            $filePath = self::isLoadable($className);
-            if ($filePath){
-                 self::$_includedClasses[$className]=$filePath;
-                require($filePath);
-            }else
-                throw new AutoloadException('class "' . $className . '" cannot be loaded');
-        }
-
-        /**
          * load a class, for performance reason it does not check wether if the file exists
          * @param string $className
          */
