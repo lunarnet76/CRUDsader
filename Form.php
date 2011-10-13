@@ -147,6 +147,10 @@ namespace CRUDsader {
         public function getIterator() {
             return new \ArrayIterator($this->_components);
         }
+        
+        public function ok($data=null){
+            return $this->inputReceive($data=null) && $this->inputValid();
+        }
 
         /**
          * wether or not the form has received the data, meaning that at least one of its elements has been received
