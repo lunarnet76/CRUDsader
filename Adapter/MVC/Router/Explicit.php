@@ -41,7 +41,7 @@ namespace CRUDsader\Adapter\Mvc\Router {
                 $action = false;
             }
             if (!$route) {
-                $this->_module = $this->_configuration->default->module;
+                $this->_module = !empty($this->_configuration->default->module)?$this->_configuration->default->module:false;
                 $this->_controller = $this->_configuration->default->controller;
             } else {
                 if (isset($route->module))

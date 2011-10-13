@@ -101,6 +101,9 @@ namespace CRUDsader {
                 'route' => array(
                     'suffix' => '.html',
                     'separator' => '/'
+                ),
+                'plugins'=>array(
+                    
                 )
             ),
             'map' => array(
