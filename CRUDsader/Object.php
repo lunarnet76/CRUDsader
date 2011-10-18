@@ -62,6 +62,7 @@ namespace CRUDsader {
             if (!$this->hasParent() && $displayTitle)
                 $html.='<div class="title">' . \CRUDsader\I18n::getInstance()->translate($prefix . $base) . '</div>';
             foreach ($this->_fields as $name => $attribute) {
+                if($this->_infos['attributes'][$name]['html'])
                 $html.='<div class="row"><div class="label">' . \CRUDsader\I18n::getInstance()->translate($prefix . $this->_class . '_' . $name) . '</div><div class="value">' . (\CRUDsader\Expression::isEmpty($attribute->getInputValue())?'&nbsp;':$attribute->getInputValue()) . '</div></div>';
             }
             if ($this->hasParent())
@@ -283,6 +284,7 @@ namespace CRUDsader {
                 $alias = $this->_class;
             if ($form === null) {
                 $form = new \CRUDsader\Form();
+                $form->setInputRequired(true);
                 $form->setHtmlLabel(\CRUDsader\I18n::getInstance()->translate($alias));
             }
             $this->_getFormAttributes($form, $oql, $alias);

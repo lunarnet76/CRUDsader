@@ -247,7 +247,7 @@ namespace CRUDsader {
         /* OUPUTS ************************ */
 
         public function toHTML() {
-            $html = $this->htmlTag() . $this->wrapHtml($this->_htmlLabel, 'title') . $this->htmlError();
+            $html = $this->htmlTag() . ($this->_htmlLabel?$this->wrapHtml($this->_htmlLabel, 'title'):'') . $this->htmlError();
             foreach ($this->_components as $index => $component) {
                 if ($index === 'submit')
                     continue;
@@ -260,8 +260,8 @@ namespace CRUDsader {
             if (!$this->wrapHtmlTagIsOpened) {
                 $this->wrapHtmlTagIsOpened = true;
                 $htmlAttributes = $this->getHtmlAttributesToHtml();
-                $tag = $this->hasInputParent() ? '<fieldset' : '<form enctype="multiparts/form-data" ';
-                return $tag . ' required="' . ($this->inputRequired() ? 'true' : 'false') . '" ' . $htmlAttributes . '>';
+                $tag = $this->hasInputParent() ? '<fieldset' : '<form enctype="multiparts/form-data" '. $htmlAttributes ;
+                return $tag . ' required="' . ($this->inputRequired() ? 'true' : 'false') . '" >';
             } else {
                 $this->wrapHtmlTagIsOpened = false;
                 return $this->hasInputParent() ? '</fieldset>' : '<div class="row"><div class="component"><input type="hidden" name="' . $this->_htmlAttributes['name'] . '[token]" value="' . $this->_session->token . '"/></div></div></form>';
