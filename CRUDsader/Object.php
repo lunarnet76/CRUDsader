@@ -54,12 +54,12 @@ namespace CRUDsader {
             return $this->isPersisted();
         }
 
-        public function toHTML($base=false, $prefix=false, $allowedClasses=false) {
+        public function toHTML($base=false, $prefix=false, $allowedClasses=false,$displayTitle=true) {
             $html = '';
             if (!$base)
                 $html.='<div class="object">';
             $base.= ( $base ? '_' : '') . $this->_class;
-            if (!$this->hasParent())
+            if (!$this->hasParent() && $displayTitle)
                 $html.='<div class="title">' . \CRUDsader\I18n::getInstance()->translate($prefix . $base) . '</div>';
             foreach ($this->_fields as $name => $attribute) {
                 $html.='<div class="row"><div class="label">' . \CRUDsader\I18n::getInstance()->translate($prefix . $this->_class . '_' . $name) . '</div><div class="value">' . (\CRUDsader\Expression::isEmpty($attribute->getInputValue())?'&nbsp;':$attribute->getInputValue()) . '</div></div>';
@@ -78,7 +78,7 @@ namespace CRUDsader {
                         $first = false;
                     else
                         $html.='<div class="row">&nbsp;</div>';
-                    $html.=$object->toHTML($base, $prefix, $allowedClasses);
+                    $html.='<div class="associated">'.$object->toHTML($base, $prefix, $allowedClasses,false).'</div>';
                 }
             }
             if (!$base)$html.='</div>';

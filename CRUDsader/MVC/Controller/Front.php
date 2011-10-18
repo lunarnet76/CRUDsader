@@ -82,10 +82,6 @@ namespace CRUDsader\Mvc\Controller {
             return $protocole . $this->_configuration->server . $this->_configuration->baseRewrite;
         }
 
-        public function getLastURL() {
-            return $this->_adapters['routerHistoric']->getLast()->uri;
-        }
-
         /**
          * specify a route or route following the URI
          * @param string|bool $route
