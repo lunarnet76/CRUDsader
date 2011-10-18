@@ -195,6 +195,9 @@ namespace CRUDsader {
          */
         public function inputValid() {
             $ret = true;
+            if($this->inputEmpty() && !$this->inputRequired()){
+                return $ret && $this->_inputError === false;
+            }
             foreach ($this->_components as $name => $component) {
                 if ($component->inputEmpty()) {
                     if ($component->inputRequired()) {
@@ -225,8 +228,8 @@ namespace CRUDsader {
          * @return <type>
          */
         public function inputEmpty() {
-            foreach ($this->_components as $component)
-                if (!$component->inputEmpty())
+            foreach ($this->_components as $name=>$component)
+                if (!$component->inputEmpty() && !$component instanceof \CRUDsader\Form\Component\Submit)
                     return false;
             return true;
         }
@@ -257,7 +260,7 @@ namespace CRUDsader {
             if (!$this->wrapHtmlTagIsOpened) {
                 $this->wrapHtmlTagIsOpened = true;
                 $htmlAttributes = $this->getHtmlAttributesToHtml();
-                $tag = $this->hasInputParent() ? '<fieldset' : '<form enctype="multiparts/form-data" ' . $htmlAttributes;
+                $tag = $this->hasInputParent() ? '<fieldset' : '<form enctype="multiparts/form-data" ';
                 return $tag . ' required="' . ($this->inputRequired() ? 'true' : 'false') . '" ' . $htmlAttributes . '>';
             } else {
                 $this->wrapHtmlTagIsOpened = false;

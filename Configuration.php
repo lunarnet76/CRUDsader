@@ -122,6 +122,11 @@ namespace CRUDsader {
                         'min' => 0,
                         'max' => '*',
                         'databaseIdField' => 'id'
+                    ),
+                    'attribute'=>array(
+                        'searchable'=>true,
+                        'input'=>true,
+                        'required'=>false
                     )
                 )
             ),

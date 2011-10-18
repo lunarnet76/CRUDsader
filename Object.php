@@ -62,7 +62,7 @@ namespace CRUDsader {
             if (!$this->hasParent())
                 $html.='<div class="title">' . \CRUDsader\I18n::getInstance()->translate($prefix . $base) . '</div>';
             foreach ($this->_fields as $name => $attribute) {
-                $html.='<div class="row"><div class="label">' . \CRUDsader\I18n::getInstance()->translate($prefix . $this->_class . '_' . $name) . '</div><div class="value">' . $attribute->getInputValue() . '</div></div>';
+                $html.='<div class="row"><div class="label">' . \CRUDsader\I18n::getInstance()->translate($prefix . $this->_class . '_' . $name) . '</div><div class="value">' . (\CRUDsader\Expression::isEmpty($attribute->getInputValue())?'&nbsp;':$attribute->getInputValue()) . '</div></div>';
             }
             if ($this->hasParent())
                 $html.=$this->getParent()->toHTML(false, $prefix, $allowedClasses);
@@ -81,7 +81,7 @@ namespace CRUDsader {
                     $html.=$object->toHTML($base, $prefix, $allowedClasses);
                 }
             }
-            $html.='</div>';
+            if (!$base)$html.='</div>';
             return $html;
         }
 
@@ -180,6 +180,14 @@ namespace CRUDsader {
                 }
             }
             return true;
+        }
+        
+        public function isEmpty(){
+            foreach($this->_fields as $field){
+                if(!$field->inputEmpty())
+                    return false;
+            }
+            return $this->hasParent()?$this->getParent()->isEmpty():true;
         }
 
         public function saveAssociations(\CRUDsader\Object\UnitOfWork $unitOfWork) {
