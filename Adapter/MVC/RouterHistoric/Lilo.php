@@ -16,8 +16,8 @@ namespace CRUDsader\Adapter\Mvc\RouterHistoric {
       
         public function init() {
             $this->_session = \CRUDsader\Session::useNamespace('CRUDsader\\Mvc\\Navigation\\Historic');
-            if (!isset($this->_session->iterator))
-                $this->_session->iterator = 10;
+            /*if (!isset($this->_session->iterator))
+                $this->_session->iterator = 10;*/
         }
 
         public function skipRoute($controller) {
@@ -25,11 +25,8 @@ namespace CRUDsader\Adapter\Mvc\RouterHistoric {
         }
 
         public function registerRoute(\CRUDsader\Adapter\MVC\Router $router) {
-            if ((!isset($this->_session->{$this->_session->iterator}) || $this->_session->{$this->_session->iterator}->route != $router->getRoute()) && !isset($this->_controllerToSkip[$router->getController()])) {
-                $index = ++$this->_session->iterator;
-                if ($index == 10)
-                    $this->_session->iterator = 0;
-                $this->_session->{$index} = array(
+            if (!isset($this->_controllerToSkip[$router->getRoute()])) {
+                $this->_session->last = array(
                     'route' => $router->getRoute(),
                     'module' => $router->getModule(),
                     'controller' => $router->getController(),
@@ -40,7 +37,7 @@ namespace CRUDsader\Adapter\Mvc\RouterHistoric {
         }
 
         public function getLast() {
-            return isset($this->_session->{$this->_session->iterator}) ? $this->_session->{$this->_session->iterator} : false;
+            return isset($this->_session->last) ? $this->_session->last : false;
         }
 
         public function toArray() {

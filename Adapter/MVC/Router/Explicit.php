@@ -26,6 +26,7 @@ namespace CRUDsader\Adapter\Mvc\Router {
             $this->_route = $real;
             $routes = $this->_configuration->routes;
             $ex = explode($this->_configuration->route->separator, $real);
+            $this->_params=!empty($_REQUEST)?$_REQUEST:array();
             // find controller
             if (isset($routes->{$ex[0]})) {
                 $language = false;
