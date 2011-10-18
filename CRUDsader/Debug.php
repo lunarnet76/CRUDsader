@@ -201,11 +201,11 @@ namespace CRUDsader {
                     break;
             }
             if (self::$_configuration->php && $show)
-                self::pre(array('Message' => $errstr, 'File' => $errfile, 'Line' => $errline, 'Context' => $context), $output);
+                self::pre(array('Message' => $errstr, 'File' => $errfile, 'Line' => $errline/*, 'Context' => $context*/), $output);
             if ($exit) {
                 if (self::$_configuration->php) {
                     echo 'exit';
-                    self::pre(debug_backtrace());
+                    //self::pre(debug_backtrace());
                 }
                 exit;
             }

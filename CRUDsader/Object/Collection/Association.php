@@ -73,43 +73,47 @@ namespace CRUDsader\Object\Collection {
                         }
                         continue;
                     }
-                    switch ($this->_definition['reference']) {
-                        case 'internal':
-                            $object->save($unitOfWork);
-                            $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => $object->isPersisted()), 'id=' . $this->_linkedObject->isPersisted());
-                            break;
-                        case 'external':
-                            $infos = $object->getInfos();
-                            $object->save($unitOfWork);
-                            if ($object->isPersisted())
-                                $unitOfWork->update($object->getDatabaseTable(), array($this->_definition['externalField'] => $this->_linkedObject->isPersisted()), $db->quoteIdentifier($infos['definition']['databaseIdField']) . '=' . $object->isPersisted());
-                            break;
-                        default:
-                            $object->save($unitOfWork);
-                            if ($this->_linkedObject->isPersisted() && $object->isPersisted()) {
-                                if ($object instanceof \CRUDsader\Object\Proxy) {
-                                    $unitOfWork->delete($this->_definition['databaseTable'], $db->quoteIdentifier($this->_definition['externalField']) . '=' . $db->quote($object->isPersisted()) . ' AND ' . $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
-                                    $unitOfWork->insert($this->_definition['databaseTable'], array(
-                                        'id' => \CRUDsader\Adapter::factory('identifier')->getOID(array('class' => $this->_class)),
-                                        $this->_definition['internalField'] => $this->_linkedObject->isPersisted(),
-                                        $this->_definition['externalField'] => $object->isPersisted()
-                                    ));
-                                } else {
-                                    $d = array(
-                                        $this->_definition['internalField'] => $this->_linkedObject->isPersisted(),
-                                        $this->_definition['externalField'] => $object->isPersisted()
-                                    );
-                                    if ($object->isPersisted() && $object->getLinkedAssociationId()) {
-                                        // update   
-                                        $unitOfWork->update($this->_definition['databaseTable'], $d, $db->quoteIdentifier($this->_definition['databaseIdField']) . '=' . $db->quote($object->getLinkedAssociationId()));
-                                    } else {
-                                        $d['id'] = \CRUDsader\Adapter::factory('identifier')->getOID(array('class' => $this->_class));
+                    if ($object->isPersisted() && $object->isEmpty()) {
+                        $object->delete($unitOfWork);
+                    } else {
+                        switch ($this->_definition['reference']) {
+                            case 'internal':
+                                $object->save($unitOfWork);
+                                $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => $object->isPersisted()), 'id=' . $this->_linkedObject->isPersisted());
+                                break;
+                            case 'external':
+                                $infos = $object->getInfos();
+                                $object->save($unitOfWork);
+                                if ($object->isPersisted())
+                                    $unitOfWork->update($object->getDatabaseTable(), array($this->_definition['externalField'] => $this->_linkedObject->isPersisted()), $db->quoteIdentifier($infos['definition']['databaseIdField']) . '=' . $object->isPersisted());
+                                break;
+                            default:
+                                $object->save($unitOfWork);
+                                if ($this->_linkedObject->isPersisted() && $object->isPersisted()) {
+                                    if ($object instanceof \CRUDsader\Object\Proxy) {
                                         $unitOfWork->delete($this->_definition['databaseTable'], $db->quoteIdentifier($this->_definition['externalField']) . '=' . $db->quote($object->isPersisted()) . ' AND ' . $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
-                                        $unitOfWork->insert($this->_definition['databaseTable'], $d);
-                                        \CRUDsader\Object\Writer::setLinkedAssociationId($object, $d['id']);
+                                        $unitOfWork->insert($this->_definition['databaseTable'], array(
+                                            'id' => \CRUDsader\Adapter::factory('identifier')->getOID(array('class' => $this->_class)),
+                                            $this->_definition['internalField'] => $this->_linkedObject->isPersisted(),
+                                            $this->_definition['externalField'] => $object->isPersisted()
+                                        ));
+                                    } else {
+                                        $d = array(
+                                            $this->_definition['internalField'] => $this->_linkedObject->isPersisted(),
+                                            $this->_definition['externalField'] => $object->isPersisted()
+                                        );
+                                        if ($object->isPersisted() && $object->getLinkedAssociationId()) {
+                                            // update   
+                                            $unitOfWork->update($this->_definition['databaseTable'], $d, $db->quoteIdentifier($this->_definition['databaseIdField']) . '=' . $db->quote($object->getLinkedAssociationId()));
+                                        } else {
+                                            $d['id'] = \CRUDsader\Adapter::factory('identifier')->getOID(array('class' => $this->_class));
+                                            $unitOfWork->delete($this->_definition['databaseTable'], $db->quoteIdentifier($this->_definition['externalField']) . '=' . $db->quote($object->isPersisted()) . ' AND ' . $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
+                                            $unitOfWork->insert($this->_definition['databaseTable'], $d);
+                                            \CRUDsader\Object\Writer::setLinkedAssociationId($object, $d['id']);
+                                        }
                                     }
                                 }
-                            }
+                        }
                     }
                 }
             }

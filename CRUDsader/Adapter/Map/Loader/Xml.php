@@ -94,13 +94,13 @@ namespace CRUDsader\Adapter\Map\Loader {
                 foreach ($attributes as $attribute) {
                     $attributeName = (string) $attribute['name'];
                     $ret['classes'][$name]['attributes'][$attributeName] = array(
-                        'required' => isset($attribute['required']) ? ((string) $attribute['required']) == 'true' : false,
+                        'required' => isset($attribute['required']) ? ((string) $attribute['required']) == 'true' : $defaults->attribute->required,
                         'default' => isset($attribute['default']) ? (string) $attribute['default'] : null,
                         'databaseField' => isset($attribute['databaseField']) ? (string) $attribute['databaseField'] : $attributeName,
                         'type' => isset($attribute['type']) ? (string) $attribute['type'] : 'default',
-                        'searchable' => isset($attribute['searchable']) ? (string) $attribute['searchable'] : false,
+                        'searchable' => isset($attribute['searchable']) ? (string) $attribute['searchable'] : $defaults->attribute->searchable,
                         'calculated' => isset($attribute['calculated']) ? (string) $attribute['calculated'] : false,
-                        'input' => isset($attribute['input']) ? ((string) $attribute['input']) == 'true' : true
+                        'input' => isset($attribute['input']) ? ((string) $attribute['input']) == 'true' : $defaults->attribute->input
                     );
                     $ret['classes'][$name]['definition']['attributeCount'][$attributeName] = false;
                     $ret['classes'][$name]['attributesReversed'][$ret['classes'][$name]['attributes'][$attributeName]['databaseField']] = $attributeName;
