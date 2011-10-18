@@ -28,6 +28,7 @@
                 <!ATTLIST attribute searchable          (true|false)        #IMPLIED>
                 <!ATTLIST attribute calculated          (true|false)        #IMPLIED>
                 <!ATTLIST attribute input             (true|false)        #IMPLIED>
+                <!ATTLIST attribute html             (true|false)        #IMPLIED>
 
            <!ELEMENT associated EMPTY>
                 <!ATTLIST associated to             CDATA                                   #REQUIRED>

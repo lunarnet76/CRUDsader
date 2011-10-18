@@ -126,7 +126,8 @@ namespace CRUDsader {
                     'attribute'=>array(
                         'searchable'=>true,
                         'input'=>true,
-                        'required'=>false
+                        'required'=>false,
+                        'html'=>true
                     )
                 )
             ),

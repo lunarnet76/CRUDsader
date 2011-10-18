@@ -100,7 +100,8 @@ namespace CRUDsader\Adapter\Map\Loader {
                         'type' => isset($attribute['type']) ? (string) $attribute['type'] : 'default',
                         'searchable' => isset($attribute['searchable']) ? (string) $attribute['searchable'] : $defaults->attribute->searchable,
                         'calculated' => isset($attribute['calculated']) ? (string) $attribute['calculated'] : false,
-                        'input' => isset($attribute['input']) ? ((string) $attribute['input']) == 'true' : $defaults->attribute->input
+                        'input' => isset($attribute['input']) ? ((string) $attribute['input']) == 'true' : $defaults->attribute->input,
+                        'html' => isset($attribute['html']) ? ((string) $attribute['html']) == 'true' : $defaults->attribute->html
                     );
                     $ret['classes'][$name]['definition']['attributeCount'][$attributeName] = false;
                     $ret['classes'][$name]['attributesReversed'][$ret['classes'][$name]['attributes'][$attributeName]['databaseField']] = $attributeName;
