@@ -177,8 +177,9 @@ namespace CRUDsader\Object\Collection {
                     $form2->setHtmlLabel(false);
                     $object->getForm($oql, $alias, $form2);
                 } else {
-                    $component = $formAssociation->add(new \CRUDsader\Form\Component\Composition(array('class' => $this->_class)), $i, false);
-                    $component->setHtmlLabel($i == 0 ? $alias : ' ');
+                    $class=  \CRUDsader\Configuration::getInstance()->map->defaults->associations->compositionComponentClass;
+                    $component = $formAssociation->add(new $class(array('class' => $this->_class)), $i, false);
+                    $component->setHtmlLabel($i == 0 ? \CRUDsader\I18n::getInstance()->translate($alias) : ' ');
                     $component->setParameter('compositionIndex', $this->_iterator);
                     if ($object->isPersisted())
                         $component->inputReceive($object->isPersisted());

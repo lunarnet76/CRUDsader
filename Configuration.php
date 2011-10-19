@@ -118,6 +118,7 @@ namespace CRUDsader {
                         'phpClass' => '\\CRUDsader\\Object\\Attribute\\'
                     ),
                     'associations' => array(
+                        'compositionComponentClass'=>'\\CRUDsader\\Form\\Component\\Composition',
                         'reference' => 'internal',
                         'min' => 0,
                         'max' => '*',
