@@ -174,26 +174,10 @@ namespace CRUDsader {
         }
 
         public function paginate(array $options, $args=NULL) {
-            if(!isset($options['index']))
+            if (!isset($options['index']))
                 throw new QueryException('you must specify the index option');
             $session = \CRUDsader\Session::useNamespace('\\CRUDsader\\Query\\' . $options['index']);
-            if (!isset($session->paginate)) {
-                $this->_fetch($args, true);
-                $session->paginate = array(
-                    'class' => $this->_class,
-                    'sql' => $this->_sql,
-                    'oql' => $this->_oql,
-                    'mapFields' => $this->_mapFields,
-                    'alias2class' => $this->_alias2class,
-                );
-            } else {
-                $infos = $session->paginate->toArray();
-                $this->_alias2class = $infos['alias2class'];
-                $this->_mapFields = $infos['mapFields'];
-                $this->_sql = $infos['sql'];
-                $this->_oql = $infos['oql'];
-                $this->_class = $infos['class'];
-            }
+            $this->_fetch($args, true);
             return new \CRUDsader\Query\Pagination($this, $options, $args);
         }
 

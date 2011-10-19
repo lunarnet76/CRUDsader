@@ -104,7 +104,7 @@ namespace CRUDsader {
                 $component->_setId($this->_htmlAttributes['name'] . '[' . $index . ']');
             else
                 $component->setHtmlAttribute('name', $this->_htmlAttributes['name'] . '[' . $index . ']');
-            $component->setHtmlAttribute('id', $this->_htmlAttributes['name'] . '[' . $index . ']');
+            $component->setHtmlAttribute('id', preg_replace('/[^a-zA-Z0-9_]/', '_', $this->_htmlAttributes['name'] . '[' . $index . ']'));
             $component->setHtmlLabel($label);
             $component->setInputRequired($required);
             $this->_components[$index] = $component;
@@ -269,7 +269,7 @@ namespace CRUDsader {
         }
 
         public function htmlError() {
-            return $this->wrapHtml(is_bool($this->_inputError) && $this->_inputError ? \CRUDsader\I18n::getInstance()->translate('form_error_general') : $this->_inputError, 'error');
+            return $this->wrapHtml(is_bool($this->_inputError) && $this->_inputError ? \CRUDsader\I18n::getInstance()->translate('form.error.general') : $this->_inputError, 'error');
         }
 
         /**
