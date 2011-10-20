@@ -145,7 +145,7 @@ namespace CRUDsader {
 
         public function save(\CRUDsader\Object\UnitOfWork $unitOfWork=null) {
             if (!$this->_checkRequiredFields())
-                throw new ObjectException($this->_class . '_fields_required');
+                throw new ObjectException($this->_class . '.error.fields-required');
             if ($this->_isModified || $this->_infos['definition']['abstract']) {
                 if ($unitOfWork === null) {
                     $unitOfWork = new \CRUDsader\Object\UnitOfWork();
@@ -154,7 +154,7 @@ namespace CRUDsader {
                 // identity check
                 $this->validateForSave();
                 if (!$this->_checkIdentity())
-                    throw new ObjectException($this->_class . '_already_exists');
+                    throw new ObjectException($this->_class . '.error.already-exists');
                 $db = \CRUDsader\Database::getInstance();
                 // update
                 if ($this->hasParent())

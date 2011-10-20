@@ -16,7 +16,7 @@ namespace CRUDsader\Object\Attribute {
             if (parent::_inputValid())
                 return true;
             if (!preg_match('|[0-9]{2}/[0-9]{2}/[0-9]{4}|', $this->_inputValue))
-                return 'invalid';
+                return 'error.invalid';
             return true;
         }
 

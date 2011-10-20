@@ -113,7 +113,7 @@ namespace CRUDsader {
          * load a class, for performance reason it does not check wether if the file exists
          * @param string $className
          */
-        public static function autoload($className) {
+        public static function autoloader($className) {
             $filePath = self::_findIncludePathFor($className);
             if ($filePath){
                  self::$_includedClasses[$className]=$filePath;
