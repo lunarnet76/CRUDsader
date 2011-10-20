@@ -20,7 +20,7 @@ namespace CRUDsader\Object\Attribute {
             if ($this->_inputValue instanceof \CRUDsader\Expression)
                 return true;
             else if (strlen(filter_var($this->_inputValue, FILTER_SANITIZE_STRING)) > $this->_options['length'])
-                return 'string_error_too_long_' . $this->_options['length'];
+                return 'error.string.too-long-' . $this->_options['length'];
             return true;
         }
     }

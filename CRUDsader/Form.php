@@ -269,7 +269,7 @@ namespace CRUDsader {
         }
 
         public function htmlError() {
-            return $this->wrapHtml(is_bool($this->_inputError) && $this->_inputError ? \CRUDsader\I18n::getInstance()->translate('form.error.general') : $this->_inputError, 'error');
+            return $this->wrapHtml(is_bool($this->_inputError) && $this->_inputError ? \CRUDsader\I18n::getInstance()->translate('error.form.general') : $this->_inputError, 'error');
         }
 
         /**
@@ -280,7 +280,8 @@ namespace CRUDsader {
         public function htmlRow(\CRUDsader\Form\Component $component) {
             if ($component instanceof self)
                 return $component->toHTML();
-            return $this->wrapHtml($component->labeltoHtml() . $this->wrapHtml($component->toHTML(), 'component') . $this->wrapHtml($component->getInputError(), 'error'), 'row');
+            $error=$component->getInputError();
+            return $this->wrapHtml($component->labeltoHtml() . $this->wrapHtml($component->toHTML(), 'component') . $this->wrapHtml(empty($error)?'':\CRUDsader\I18n::getInstance()->translate($error), 'error'), 'row');
         }
 
         /** ACCESSORS ************************* */
