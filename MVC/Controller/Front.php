@@ -90,17 +90,19 @@ namespace CRUDsader\Mvc\Controller {
         public function route($route=false) {
             $this->_adapters['router'] = \CRUDsader\Adapter::factory(array('mvc' => 'router'));
             $this->_adapters['router']->setConfiguration($this->_configuration);
-            $sp = strpos($_SERVER['REQUEST_URI'], '?');
-            $su = $sp !== false ? substr($_SERVER['REQUEST_URI'], 0, $sp) : $_SERVER['REQUEST_URI'];
-            $route = $this->_adapters['router']->route($route ? $route : $su);
+            if ($route === false) {
+                $sp = strpos($_SERVER['REQUEST_URI'], '?');
+                $route = $sp !== false ? substr($_SERVER['REQUEST_URI'], 0, $sp) : $_SERVER['REQUEST_URI'];
+            }
+            $route = $this->_adapters['router']->route($route);
             if (!$route)
                 throw new FrontException('cannot find the route');
             $module = $this->_adapters['router']->getModule();
             if ($module && !isset($this->_configuration->modules->$module))
                 throw new FrontException('module "' . $module . '" does not exist or is not in the configuration');
             // init plugins
-            $module=$this->_adapters['router']->getModule()?$this->_adapters['router']->getModule():false;
-            $plugins = $module?(isset($this->_configuration->plugin->$module)?$this->_configuration->plugin->$module:array()):$this->_configuration->plugin;
+            $module = $this->_adapters['router']->getModule() ? $this->_adapters['router']->getModule() : false;
+            $plugins = $module ? (isset($this->_configuration->plugin->$module) ? $this->_configuration->plugin->$module : array()) : $this->_configuration->plugin;
             foreach ($plugins as $pluginName => $pluginOptions) {
                 $class = 'Plugin\\' . $pluginName;
                 $plugin = $this->_modulePlugins[$pluginName] = call_user_func_array(array($class, 'getInstance'), array());
