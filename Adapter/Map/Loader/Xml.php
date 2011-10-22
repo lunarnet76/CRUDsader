@@ -34,14 +34,6 @@ namespace CRUDsader\Adapter\Map\Loader {
          * @return true|array array of errors
          */
         public function validate(\CRUDsader\Block $defaults=null) {
-            $attributeTypes = $this->_dom->attributeTypes->attributeType;
-            $passed = false;
-            foreach ($attributeTypes as $attributeType) {
-                if ((string) $attributeType['alias'] == 'default')
-                    $passed = true;
-            }
-            if (!$passed)
-                throw new LoaderException('you must specify a default attribute type');
             return true;
         }
 
