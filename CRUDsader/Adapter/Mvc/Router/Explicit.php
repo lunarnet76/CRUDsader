@@ -21,11 +21,15 @@ namespace CRUDsader\Adapter\Mvc\Router {
          * @return bool wether it was found or not 
          */
         function route($uri) {
-            $st = strlen($this->_configuration->route->suffix);
-            $real = $st ? substr($uri, strlen($this->_configuration->baseRewrite), -$st) : substr($uri, strlen($this->_configuration->baseRewrite));
-            $this->_route = $real;
+            if(PHP_SAPI=='cli'){
+                $this->_route = $uri;
+            }else{
+                $st = strlen($this->_configuration->route->suffix);
+                $real = $st ? substr($uri, strlen($this->_configuration->baseRewrite), -$st) : substr($uri, strlen($this->_configuration->baseRewrite));
+                $this->_route = $real;
+            }
             $routes = $this->_configuration->routes;
-            $ex = explode($this->_configuration->route->separator, $real);
+            $ex = explode($this->_configuration->route->separator, $this->_route );
             $this->_params=!empty($_REQUEST)?$_REQUEST:array();
             // find controller
             if (isset($routes->{$ex[0]})) {

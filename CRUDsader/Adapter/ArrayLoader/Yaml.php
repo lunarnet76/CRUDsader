@@ -18,7 +18,7 @@ namespace CRUDsader\Adapter\ArrayLoader {
             $section=isset($options['section'])?$options['section']:false;
             $lines = file($filePath);
             if ($lines === false)
-                throw new ConfigurationException('file "' . $filePath . '" could not be read properly');
+                throw new YamlException('file "' . $filePath . '" could not be read properly');
             $configuration = array();
             $depths = array();
             $lastDepth = $depth = 0;
@@ -28,7 +28,7 @@ namespace CRUDsader\Adapter\ArrayLoader {
                     case '#':break; // comments
                     case '[':// namespace
                         if (!preg_match('|^\[([^\:\]\s]*)(\:([^\]\s\:]*)){0,1}\]\s*$|', $line, $match))
-                            throw new ConfigurationException('file "' . $filePath . '":' . $lineNumber . ' error :"' . $line . '" is not a proper namespace');
+                            throw new YamlException('file "' . $filePath . '":' . $lineNumber . ' error :"' . $line . '" is not a proper namespace');
 
                         if ($section && $namespace == $section) {
                             break 2;
@@ -37,7 +37,7 @@ namespace CRUDsader\Adapter\ArrayLoader {
                         $configuration[$namespace] = array();
                         if (isset($match[3])) {
                             if (!isset($configuration[$match[3]]))
-                                throw new ConfigurationException('section "' . $namespace . '" cannot inherit from unexistant section "' . $match[3] . '"');
+                                throw new YamlException('section "' . $namespace . '" cannot inherit from unexistant section "' . $match[3] . '"');
                             $configuration[$namespace] = $configuration[$match[3]];
                         }
                         break;
@@ -75,7 +75,7 @@ namespace CRUDsader\Adapter\ArrayLoader {
                 }
             }
             if ($section && !isset($configuration[$section]))
-                throw new ConfigurationException('section "' . $section . '" does not exist');
+                throw new YamlException('section "' . $section . '" does not exist');
             return ($section ? $configuration[$section] : $configuration);
         }
     }

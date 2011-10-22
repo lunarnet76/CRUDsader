@@ -136,7 +136,7 @@ namespace CRUDsader {
          */
         public static function register(){
             self::registerNameSpace('CRUDsader', __DIR__.'/');
-            spl_autoload_register(array('CRUDsader\Autoload', 'autoload'));
+            spl_autoload_register(array('CRUDsader\Autoload', 'autoloader'));
         }
         
         /**
