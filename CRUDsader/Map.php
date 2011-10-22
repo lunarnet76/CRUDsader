@@ -33,6 +33,18 @@ namespace CRUDsader {
             $this->setConfiguration(\CRUDsader\Configuration::getInstance()->map);
         }
         
+        public function generateRandom($max=100){
+            $collection=array();
+            foreach($this->_map['classes'] as $className=>$definition){
+                for($i=0;$i<$max;$i++){
+                    $o=\CRUDsader\Object::instance($className);
+                    $o->generateRandom();
+                    $collection[]=$o;
+                }
+            }
+            return $collection;
+        }
+        
         /**
          * @param Block $configuration
          */

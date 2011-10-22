@@ -35,5 +35,9 @@ namespace CRUDsader\Object\Attribute {
             $this->notify();
         }
         
+        public function generateRandom() {
+            return rand(0,1);
+        }
+        
     }
 }

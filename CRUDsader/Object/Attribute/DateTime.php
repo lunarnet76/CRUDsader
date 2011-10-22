@@ -25,6 +25,10 @@ namespace CRUDsader\Object\Attribute {
                 }
             }
         }
+        
+        public function generateRandom() {
+            return date("Y-m-d H:i:s" , strtotime('- '.rand(0,1000).' days'));
+        }
 
     }
 }

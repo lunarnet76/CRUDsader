@@ -19,5 +19,10 @@ namespace CRUDsader\Object\Attribute {
                  $ret=filter_var($this->_inputValue, FILTER_VALIDATE_INT)!==false;
             return $ret;
         }
+        
+        
+        public function generateRandom() {
+            return rand(0,1000);
+        }
     }
 }

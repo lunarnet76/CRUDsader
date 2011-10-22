@@ -60,5 +60,10 @@ namespace CRUDsader\Object\Attribute {
             }
             return new \CRUDsader\Expression\Nil;
         }
+        
+        
+        public function generateRandom() {
+            return date("Y-m-d H:i:s" , strtotime('- '.rand(0,1000).' days'));
+        }
     }
 }

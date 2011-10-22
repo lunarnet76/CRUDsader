@@ -51,7 +51,7 @@ function table($var) {
 echo '<a href="ut.php">back</a><br>';
 // autoload
 require_once('../CRUDsader/Autoload.php');
-spl_autoload_register(array('\CRUDsader\Autoload', 'autoLoad'));
+spl_autoload_register(array('\CRUDsader\Autoload', 'autoloader'));
 \CRUDsader\Autoload::registerNameSpace('CRUDsader', '../CRUDsader/');
 
 // error handling

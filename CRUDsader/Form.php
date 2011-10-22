@@ -158,14 +158,16 @@ namespace CRUDsader {
          * @return <type>
          */
         public function inputReceive($data=null) {
-            if ($data === null && !$this->hasInputParent())
-                $data = $_REQUEST;
+            $ret=true;
+            if ($data === null && !$this->hasInputParent()){
+                $ret=isset($_REQUEST[$this->_htmlAttributes['name']]);
+                if(!$ret)return false;
+                $data =$ret?$_REQUEST[$this->_htmlAttributes['name']]:array();
+            }
             $this->_isReceived = false;
-            if ($data === null || (!$this->hasInputParent() && !isset($data[$this->_htmlAttributes['name']]))) {
+            if ($data === null) {
                 return false;
             }
-            if (!$this->hasInputParent())
-                $data = $data[$this->_htmlAttributes['name']];
             foreach ($this->_components as $index => $component) {
                 if (isset($data[$index])) {
                     if ($this->_useSession) {
@@ -186,7 +188,7 @@ namespace CRUDsader {
                 $this->_tokenInputReceived = $data['token'];
             }
             $this->_inputReceived = true;
-            return true;
+            return $ret;
         }
 
         /**

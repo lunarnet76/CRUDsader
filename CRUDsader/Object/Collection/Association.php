@@ -31,11 +31,17 @@ namespace CRUDsader\Object\Collection {
             return $value;
         }
 
+        public function generateRandom() {
+            for ($i = 0; $i < rand((int)$this->_definition['min'], (int)$this->_definition['max']); $i++) {
+                $this->newObject()->generateRandom();
+            }
+        }
+
         /**
          * @return type 
          */
         public function newObject() {
-            if ($this->_iterator == $this->_definition['max'])
+            if ($this->_definition['max'] != '*' && $this->_iterator == $this->_definition['max'])
                 throw new AssociationException('association cannot have more than "' . $this->_definition['max'] . '" objects');
             $object = parent::newObject();
             \CRUDsader\Object\Writer::linkToAssociation($object, $this);
@@ -177,7 +183,7 @@ namespace CRUDsader\Object\Collection {
                     $form2->setHtmlLabel(false);
                     $object->getForm($oql, $alias, $form2);
                 } else {
-                    $class=  \CRUDsader\Configuration::getInstance()->map->defaults->associations->compositionComponentClass;
+                    $class = \CRUDsader\Configuration::getInstance()->map->defaults->associations->compositionComponentClass;
                     $component = $formAssociation->add(new $class(array('class' => $this->_class)), $i, false);
                     $component->setHtmlLabel($i == 0 ? \CRUDsader\I18n::getInstance()->translate($alias) : ' ');
                     $component->setParameter('compositionIndex', $this->_iterator);
