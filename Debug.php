@@ -200,8 +200,10 @@ namespace CRUDsader {
                     $output = 'UNKNOWN ERROR';
                     break;
             }
-            if (self::$_configuration->php && $show)
-                self::pre(array('Message' => $errstr, 'File' => $errfile, 'Line' => $errline/*, 'Context' => $context*/), $output);
+            if (self::$_configuration->php && $show){
+                self::pre(array('Message' => $errstr, 'File' => $errfile, 'Line' => $errline/*, 'Context' => $context*/));
+                self::pre($output);
+            }
             if ($exit) {
                 if (self::$_configuration->php) {
                     echo 'exit';

@@ -22,11 +22,11 @@ namespace CRUDsader\Adapter\Map\Loader {
             $this->_file = $this->_configuration->file;
             if (!file_exists($this->_file))
                 throw new LoaderException('XML Map File "' . $this->_file . '" does not exist');
+            
             $this->_dom = simplexml_load_file($this->_file);
             if (!$this->_dom)
                 throw new LoaderException('XML Map File "' . $this->_file . '" could not be loaded');
         }
-
         /**
          * return true if resource is validated or array of error otherwise
          * @abstract
@@ -122,7 +122,7 @@ namespace CRUDsader\Adapter\Map\Loader {
                         'composition' => isset($association['composition']) ? ((string) $association['composition']) == 'true' : false,
                         'databaseTable' => isset($association['databaseTable']) ? (string) $association['databaseTable'] : \CRUDsader\Map::getDatabaseAssociationTable(isset($association['name']) ? (string) $association['name'] : false, $to, $name),
                         'databaseIdField' => isset($association['databaseIdField']) ? (string) $association['databaseIdField'] : $defaults->associations->databaseIdField,
-                            'internalField' => isset($association['internalField']) ? (string) $association['internalField'] : ($ref=='table'?$name:$to),
+                        'internalField' => isset($association['internalField']) ? (string) $association['internalField'] : ($ref=='table'?$name:$to),
                         'externalField' => isset($association['externalField']) ? (string) $association['externalField'] : ($ref=='table'?$to:$name)
                     );
                     if ($ret['classes'][$name]['associations'][$associationName]['internalField'] == $ret['classes'][$name]['associations'][$associationName]['externalField'])
@@ -141,6 +141,8 @@ namespace CRUDsader\Adapter\Map\Loader {
                     }
                 }
             }
+            // to avoid cache problems
+            unset($this->_dom);
             return $ret;
         }
     }

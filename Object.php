@@ -51,6 +51,17 @@ namespace CRUDsader {
             return \CRUDsader\Expression::isEmpty($attr)?'':$attr;
         }
         
+        public function generateRandom(){
+            foreach($this->_infos['attributes'] as $name=>$v){
+                $this->getAttribute($name)->inputReceive($this->getAttribute($name)->generateRandom());
+            }
+            if($this->hasParent())
+                $this->getParent()->generateRandom();
+            foreach($this->_infos['associations'] as $name=>$v){
+                $this->getAssociation($name)->generateRandom();
+            }
+        }
+        
         public function getPolymorphismClass(){
             return isset($this->_child)?$this->_child->getPolymorphismClass():$this->_class;
         }
@@ -289,7 +300,7 @@ namespace CRUDsader {
             if (empty($alias))
                 $alias = $this->_class;
             if ($form === null) {
-                $form = new \CRUDsader\Form();
+                $form = new \CRUDsader\Form($alias);
                 $form->setInputRequired(true);
                 $form->setHtmlLabel(\CRUDsader\I18n::getInstance()->translate($alias));
             }
