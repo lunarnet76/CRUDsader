@@ -32,8 +32,18 @@ namespace CRUDsader\Object\Collection {
         }
 
         public function generateRandom() {
-            for ($i = 0; $i < rand((int)$this->_definition['min'], (int)$this->_definition['max']); $i++) {
-                $this->newObject()->generateRandom();
+            for ($i = 0; $i < rand((int) $this->_definition['min'], (int) $this->_definition['max']); $i++) {
+                if ($this->_definition['composition']) {
+                    $this->newObject()->generateRandom();
+                    $this->_isModified = true;
+                } else {
+                    $query = new \CRUDsader\Query('FROM ' . $this->_definition['to'] . ' ORDER BY tools.rand LIMIT 1');
+                    $found = $query->fetch();
+                    if ($found) {
+                        $this->_objects[$i] = $found;
+                        $this->_isModified = true;
+                    }
+                }
             }
         }
 
@@ -183,7 +193,7 @@ namespace CRUDsader\Object\Collection {
                     $form2->setHtmlLabel(false);
                     $object->getForm($oql, $alias, $form2);
                 } else {
-                    $class = \CRUDsader\Configuration::getInstance()->map->defaults->associations->compositionComponentClass;
+                    $class = \CRUDsader\Configuration::getInstance()->map->defaults->associations->associationComponentSelectClass;
                     $component = $formAssociation->add(new $class(array('class' => $this->_class)), $i, false);
                     $component->setHtmlLabel($i == 0 ? \CRUDsader\I18n::getInstance()->translate($alias) : ' ');
                     $component->setParameter('compositionIndex', $this->_iterator);
