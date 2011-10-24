@@ -42,35 +42,28 @@ namespace CRUDsader\Adapter\ArrayLoader {
                         }
                         break;
                     default:// config line
-                        if (preg_match('|^(\s*)([^:]*)\:\s*$|', $line, $match)) {// key:
+                        if (preg_match('|^(\s*)([^:]*)([:=])(.*)\s*$|', $line, $match)) {// key:
                             $depth = strlen($match[1]) / 4;
                             $name = $match[2];
-                            if ($depth == 0) {
+                            if ($depth == 0) {// depth 0
                                 if (!isset($configuration[$namespace][$match[2]]))
                                     $configuration[$namespace][$match[2]] = array();
                                 $depths[$depth] = &$configuration[$namespace][$match[2]];
-                            } else if ($depth == $lastDepth) {
+                            } else if ($depth == $lastDepth) {// same depth
                                 if (!isset($depths[$depth - 1][$match[2]]))
                                     $depths[$depth - 1][$match[2]] = array();
                                 $depths[$depth] = &$depths[$depth - 1][$match[2]];
-                            } else if ($depth > $lastDepth) {
+                            } else if ($depth > $lastDepth) {// >
                                 if (!isset($depths[$lastDepth][$match[2]]))
                                     $depths[$lastDepth][$match[2]] = array();
                                 $depths[$depth] = &$depths[$lastDepth][$match[2]];
                             } else {
-                                if(!isset($depths[$lastDepth - $depth - 1][$match[2]]))
-                                    $depths[$lastDepth - $depth - 1][$match[2]] = array();
-                                $depths[$depth] = &$depths[$lastDepth - $depth - 1][$match[2]];
+                                $depths[$depth] = &$depths[$depth - 1][$match[2]];
                             }
                             $lastDepth = $depth;
-                        } else if (preg_match('|^(\s*)([^:]*)\=\s*(.*)$|', $line, $match)) {// key: value
-                            if (strlen($match[1]) / 4 == 0) {
-                                $configuration[$namespace][$match[2]] = rtrim($match[3]);
+                            if ($match[3]=='=') {
+                                $depths[$depth] = rtrim($match[4]);
                             }
-                            else
-                                $depths[$depth][$match[2]] = rtrim($match[3]);
-                        }else {// is a value
-                            $depths[$depth][] = $line;
                         }
                 }
             }

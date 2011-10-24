@@ -12,20 +12,15 @@ namespace CRUDsader {
      */
     class Configuration extends Block {
         /**
-         * @access protected
-         * @static
-         * @var self
-         */
-        protected static $_instance;
-
-        /**
-         * singleton instance
-         * @return self
+         * return singletoned instances
+         * @return static
          */
         public static function getInstance() {
-            if (!isset(self::$_instance))
-                self::$_instance = new self();
-            return self::$_instance;
+            static $instance = NULL;
+            if (NULL === $instance) {
+                $instance = new static();
+            }
+            return $instance;
         }
         /**
          * this will be loaded in the configuration at the very begining
@@ -118,7 +113,7 @@ namespace CRUDsader {
                         'phpClass' => '\\CRUDsader\\Object\\Attribute\\'
                     ),
                     'associations' => array(
-                        'compositionComponentClass'=>'\\CRUDsader\\Form\\Component\\Composition',
+                        'associationComponentSelectClass'=>'\\CRUDsader\\Form\\Component\\Association',
                         'reference' => 'internal',
                         'min' => 0,
                         'max' => '*',

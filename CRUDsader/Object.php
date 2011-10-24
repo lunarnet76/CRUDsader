@@ -53,7 +53,8 @@ namespace CRUDsader {
         
         public function generateRandom(){
             foreach($this->_infos['attributes'] as $name=>$v){
-                $this->getAttribute($name)->inputReceive($this->getAttribute($name)->generateRandom());
+                if(!$v['calculated'])
+                    $this->getAttribute($name)->inputReceive($this->getAttribute($name)->generateRandom());
             }
             if($this->hasParent())
                 $this->getParent()->generateRandom();

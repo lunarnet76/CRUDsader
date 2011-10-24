@@ -33,14 +33,25 @@ namespace CRUDsader {
             $this->setConfiguration(\CRUDsader\Configuration::getInstance()->map);
         }
         
-        public function generateRandom($max=100){
+        public function generateRandom($max=100,$progress=false,$save=true){
             $collection=array();
+            if($save)
+                $wu=new Object\UnitOfWork();
             foreach($this->_map['classes'] as $className=>$definition){
                 for($i=0;$i<$max;$i++){
                     $o=\CRUDsader\Object::instance($className);
                     $o->generateRandom();
                     $collection[]=$o;
+                    if($save)$o->save($wu);
                 }
+                if($progress){
+                echo $className.'.';
+                flush();}
+            }
+            if($save){
+                echo ': '.\CRUDsader\Debug::getMemoryUsage().' : ... saving';flush();
+                $wu->execute ();
+                echo ' : DONE '.PHP_EOL;flush();
             }
             return $collection;
         }

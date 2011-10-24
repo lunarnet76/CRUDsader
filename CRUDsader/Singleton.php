@@ -14,7 +14,6 @@ namespace CRUDsader {
     abstract class Singleton {
         /**
          * return singletoned instances
-         * @staticvar string $instance
          * @return static
          */
         public static function getInstance() {

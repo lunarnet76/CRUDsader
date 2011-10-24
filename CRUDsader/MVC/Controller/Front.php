@@ -102,7 +102,7 @@ namespace CRUDsader\Mvc\Controller {
                 throw new FrontException('module "' . $module . '" does not exist or is not in the configuration');
             // init plugins
             $module = $this->_adapters['router']->getModule() ? $this->_adapters['router']->getModule() : false;
-            $plugins = $module ? (isset($this->_configuration->plugin->$module) ? $this->_configuration->plugin->$module : array()) : $this->_configuration->plugin;
+            $plugins = $module ? (isset($this->_configuration->plugins->$module) ? $this->_configuration->plugins->$module : array()) : $this->_configuration->plugins;
             foreach ($plugins as $pluginName => $pluginOptions) {
                 $class = 'Plugin\\' . $pluginName;
                 $plugin = $this->_modulePlugins[$pluginName] = call_user_func_array(array($class, 'getInstance'), array());

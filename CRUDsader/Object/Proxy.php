@@ -21,6 +21,10 @@ namespace CRUDsader\Object {
         protected function _checkIdentity() {
             return true;
         }
+        
+        public function isEmpty(){
+            return false;
+        }
 
         public function toArray($full=false) {
             $parent = parent::toArray($full);

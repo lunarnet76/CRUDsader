@@ -198,6 +198,13 @@ namespace CRUDsader {
                             }, $this->_sql['where']);
                 if (!empty($this->_sql['order']))
                     $this->_sql['order'] = preg_replace_callback('|(\w*)\.(\w*)\s*(\w*)?|', function($p) use($alias2class, $db, $map) {
+                        if($p[1]=='tools'){
+                            switch($p[2]){
+                                case 'rand':
+                                    return 'rand()';
+                                    break;
+                            }
+                        }
                                 return $db->quoteIdentifier($p[1]) . '.' . $db->quoteIdentifier($map->classGetDatabaseTableField($alias2class[$p[1]], $p[2])) . (isset($p[3]) && $p[3] == 'DESC' ? 'DESC' : 'ASC');
                             }, $this->_sql['order']);
             }
