@@ -17,6 +17,8 @@ namespace CRUDsader\Object\Attribute {
                 $ret=true;
             else
                  $ret=filter_var($this->_inputValue, FILTER_VALIDATE_INT)!==false;
+            pre($ret);
+            pre($this->_inputValue);
             return $ret;
         }
         

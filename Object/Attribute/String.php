@@ -15,6 +15,11 @@ namespace CRUDsader\Object\Attribute {
         public function formatFromDatabase($value) {
             return $value;
         }
+        
+        public function toHTML(){
+            $this->_htmlAttributes['maxlength']=$this->_options['length'];
+            return parent::toHTML();
+        }
 
         protected function _inputValid() {
             if ($this->_inputValue instanceof \CRUDsader\Expression)
