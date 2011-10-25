@@ -220,8 +220,9 @@ namespace CRUDsader {
                 $attribute = $this->getAttribute($name);
                 if ($attribute->inputEmpty() && $attributeInfos['required'])
                     throw new ObjectException('class needs attribute "' . $name . '" to be filled');
-                if (!$attribute->inputValid())
+                if (!$attribute->inputEmpty() && !$attribute->inputValid()){
                     throw new ObjectException('class needs attribute "' . $name . '" to be valid');
+                }
             }
         }
 
