@@ -6,23 +6,23 @@
  * @since       0.1
  */
 namespace CRUDsader\Object\Attribute {
-    class Int extends \CRUDsader\Object\Attribute {
+    class Float extends \CRUDsader\Object\Attribute {
 
         public function formatForDatabase($value) {
-            return filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+            return filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT);
         }
 
         protected function _inputValid() {
             if ($this->_inputValue instanceof \CRUDsader\Expression)
                 $ret=true;
             else
-                 $ret=filter_var($this->_inputValue, FILTER_VALIDATE_INT)!==false;
+                 $ret=filter_var($this->_inputValue, FILTER_VALIDATE_FLOAT)!==false;
             return $ret;
         }
         
         
         public function generateRandom() {
-            return rand(0,1000);
+            return rand(0,1000).'.'.rand(0,100);
         }
     }
 }

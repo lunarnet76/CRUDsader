@@ -207,7 +207,7 @@ namespace CRUDsader {
             if ($exit) {
                 if (self::$_configuration->php) {
                     echo 'exit';
-                    //self::pre(debug_backtrace());
+                    self::pre(debug_backtrace());
                 }
                 exit;
             }

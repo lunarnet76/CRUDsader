@@ -9,6 +9,7 @@ namespace CRUDsader\Form\Component {
         }
         public function toHTML(){
             $this->_htmlAttributes['type']='submit';
+            $this->_htmlAttributes['class']='submit';
             return '<input  '.$this->getHtmlAttributesToHtml().' value="'.$this->_text.'"/>';
         }
     }

@@ -69,14 +69,10 @@ namespace CRUDsader\Object\Collection {
                     if (isset($this->_objectsToBeDeleted[$index])) {
                         switch ($this->_definition['reference']) {
                             case 'internal':
-                                if ($this->_definition['composition'])
-                                    $object->delete($unitOfWork);
-                                $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => new \CRUDsader\Expression\Nil));
+                                $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => new \CRUDsader\Expression\Nil), $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
                                 break;
                             case 'external':
-                                if ($this->_definition['composition'])
-                                    $object->delete($unitOfWork);
-                                $unitOfWork->update($object->getDatabaseTable(), array($this->_definition['externalField'] => new \CRUDsader\Expression\Nil));
+                                // in the $object, so it's going to get erased anyway
                                 break;
                             default:
                                 $d = array(
@@ -84,9 +80,8 @@ namespace CRUDsader\Object\Collection {
                                     $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted())
                                 );
                                 $unitOfWork->delete($this->_definition['databaseTable'], implode(' AND ', $d));
-                                if ($this->_definition['composition'])
-                                    $object->delete($unitOfWork);
                         }
+                        $object->delete($unitOfWork);
                         continue;
                     }
                     if ($object->isPersisted() && $object->isEmpty()) {
@@ -136,18 +131,18 @@ namespace CRUDsader\Object\Collection {
         }
 
         public function delete(\CRUDsader\Object\UnitOfWork $unitOfWork=null) {
+            if ($unitOfWork === null)
+                throw new AssociationException('no UnitOfWork');
             $db = \CRUDsader\Database::getInstance();
             foreach ($this->_objects as $object) {
+                if (!$object->isPersisted())
+                    continue;
                 switch ($this->_definition['reference']) {
                     case 'internal':
-                        if ($this->_definition['composition'])
-                            $object->delete($unitOfWork);
-                        $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['externalField'] => new \CRUDsader\Expression\Nil));
+                        $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => new \CRUDsader\Expression\Nil), $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
                         break;
                     case 'external':
-                        if ($this->_definition['composition'])
-                            $object->delete($unitOfWork);
-                        $unitOfWork->update($object->getDatabaseTable(), array($this->_definition['internalField'] => new \CRUDsader\Expression\Nil));
+                        // in the $object, so it's going to get erased anyway
                         break;
                     default:
                         $d = array(
@@ -155,11 +150,12 @@ namespace CRUDsader\Object\Collection {
                             $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted())
                         );
                         $unitOfWork->delete($this->_definition['databaseTable'], implode(' AND ', $d));
-                        if ($this->_definition['composition'])
-                            $object->delete($unitOfWork);
                 }
+                if ($this->_definition['composition'])
+                    $object->delete($unitOfWork);
             }
             $this->_objects = array();
+            $this->_objectIndexes = array();
         }
 
         public function isModified() {

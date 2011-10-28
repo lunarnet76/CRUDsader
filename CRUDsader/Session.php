@@ -79,6 +79,21 @@ namespace CRUDsader {
             unset($_SESSION[self::$_globalNamespace]);
             $_SESSION[self::$_globalNamespace] = array();
         }
+        
+        /**
+         * ovveride parent has setting MUST reset the array
+         * @param string $var
+         * @param mix $value 
+         * @test test_accessors
+         */
+        public function __set($var, $value) {
+            if ($this->_locked)
+                throw new BlockException('Parameter <b>' . $var . '</b> is locked');
+            if (is_array($value)) {
+                $this->_properties[$var] = new self($value);
+            }else
+                $this->_properties[$var] = $value;
+        }
 
         /**
          * receive a reference to a $_SESSION var

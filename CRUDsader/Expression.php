@@ -51,7 +51,7 @@ namespace CRUDsader {
          * @return bool 
          */
         public static function isEmpty($var){
-            return empty($var) || (string)$var=='NULL';
+            return empty($var) || $var instanceof Expression\Nil;
         }
     }
 }

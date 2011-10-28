@@ -35,6 +35,10 @@ namespace CRUDsader {
             $this->_db = \CRUDsader\Database::getInstance();
             $this->_configuration = \CRUDsader\Configuration::getInstance()->query;
         }
+        
+        public function getOQL(){
+            return $this->_oql;
+        }
 
         public function getInfos() {
             if ($this->_infos)
@@ -235,6 +239,10 @@ namespace CRUDsader {
         public function __construct($query, $error) {
             $this->message = $error;
             $this->query = $query;
+        }
+        
+        public function getQuery(){
+            return $this->query;
         }
     }
 }

@@ -42,7 +42,7 @@ namespace CRUDsader\Adapter\ArrayLoader {
                         }
                         break;
                     default:// config line
-                        if (preg_match('|^(\s*)([^:]*)([:=])(.*)\s*$|', $line, $match)) {// key:
+                        if (preg_match('|^(\s*)([^:=]*)([:=])(.*)\s*$|', $line, $match)) {// key:
                             $depth = strlen($match[1]) / 4;
                             $name = $match[2];
                             if ($depth == 0) {// depth 0
