@@ -203,7 +203,7 @@ namespace CRUDsader {
             foreach ($this->_components as $name => $component) {
                 if ($component->inputEmpty()) {
                     if ($component->inputRequired()) {
-                        $component->setInputError('required');
+                        $component->setInputError('error.form.required');
                         $ret = false;
                     }
                 } else if (true !== $error = $component->inputValid()) {

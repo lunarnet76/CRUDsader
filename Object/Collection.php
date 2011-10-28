@@ -106,7 +106,7 @@ namespace CRUDsader\Object {
          * @return string
          */
         public function key() {
-            return $this->_objects[$this->_iterator]->hasId() ? $this->_objects[$this->_iterator]->getId() : false;
+            return $this->_objects[$this->_iterator]->isPersisted() ? $this->_objects[$this->_iterator]->getId() : false;
         }
 
         /**

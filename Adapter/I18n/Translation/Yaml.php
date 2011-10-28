@@ -20,6 +20,10 @@ namespace CRUDsader\Adapter\I18n\Translation {
             \CRUDsader\Configuration::getInstance()->adapter->arrayLoader = $adapterActual;
             $this->_translations=$this->_translations['default'];
         }
+        
+        public function getTranslations(){
+            return  $this->_translations;
+        }
 
         public function translate($index, $glue=',') {
             if(is_array($index))throw new Exception();

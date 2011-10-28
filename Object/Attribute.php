@@ -9,7 +9,7 @@ namespace CRUDsader\Object {
     class Attribute extends \CRUDsader\Form\Component {
         protected $_name;
 
-        public function __construct($name, $options=array()) {
+        public function __construct($name=false, $options=array()) {
             parent::__construct($options);
             $this->_name = $name;
         }

@@ -283,7 +283,7 @@ namespace CRUDsader {
                 $where = array();
             foreach ($this->_infos['definition']['identity'] as $fieldName) {
                 if ($this->getAttribute($fieldName)->inputEmpty())
-                    throw new ObjectException('cannot save as attribute "' . $fieldName . '" is empty');
+                    throw new ObjectException('cannot save as attribute "' .$this->_class.'.'. $fieldName . '" is empty');
                 $where[] = $db->quoteIdentifier($this->_infos['attributes'][$fieldName]['databaseField']) . '=' . $db->quote($this->getAttribute($fieldName)->getValueForDatabase());
             }
             $ret=0 == $db->countSelect(array('from' => array('table' => $this->_infos['definition']['databaseTable'], 'alias' => 't', 'id' => $this->_infos['definition']['databaseIdField']), 'where' => implode(' AND ', $where), 'limit' => array('count' => 1))); 
