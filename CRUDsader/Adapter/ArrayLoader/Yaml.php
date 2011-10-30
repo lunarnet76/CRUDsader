@@ -11,11 +11,15 @@ namespace CRUDsader\Adapter\ArrayLoader {
      * @package CRUDsader\Adapter\ArrayLoader
      */
     class Yaml extends \CRUDsader\Adapter\ArrayLoader {
-        public function load($options=null){
+        
+        protected $_arrayLoaded;
+        protected $_sectionLoaded=false;
+        
+        public function __construct($options=null){
             if(!is_array($options) || !isset($options['file']))
                 throw new YamlException('you must specify a file');
             $filePath=$options['file'];
-            $section=isset($options['section'])?$options['section']:false;
+            $this->_sectionLoaded=$section=isset($options['section'])?$options['section']:false;
             $lines = file($filePath);
             if ($lines === false)
                 throw new YamlException('file "' . $filePath . '" could not be read properly');
@@ -69,7 +73,11 @@ namespace CRUDsader\Adapter\ArrayLoader {
             }
             if ($section && !isset($configuration[$section]))
                 throw new YamlException('section "' . $section . '" does not exist');
-            return ($section ? $configuration[$section] : $configuration);
+            $this->_arrayLoaded=$configuration;
+        }
+        
+        public function get(){
+            return $this->_sectionLoaded ? $this->_arrayLoaded[$this->_sectionLoaded] : $this->_arrayLoaded;
         }
     }
     class YamlException extends \CRUDsader\Exception{

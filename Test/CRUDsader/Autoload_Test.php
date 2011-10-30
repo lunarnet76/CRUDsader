@@ -39,17 +39,17 @@ class Autoload_Test extends PHPUnit_Framework_TestCase {
         new $class;
     }
 
-    public function test_autoLoad() {
+    public function test_autoLoader() {
         $class = 'TestNamespace\C';
         \CRUDsader\Autoload::registerNameSpace('TestNamespace',self::FOLDER_NAMESPACE);
-        \CRUDsader\Autoload::autoload($class);
+        \CRUDsader\Autoload::autoloader($class);
         $instance = new $class;
          
         
         $class2 = 'TestNamespace\E';
         \CRUDsader\Autoload::unregisterNameSpace('TestNamespace');
         \CRUDsader\Autoload::includeClass($class2, self::FOLDER_NAMESPACE.'E.php');
-        \CRUDsader\Autoload::autoload($class2);
+        \CRUDsader\Autoload::autoloader($class2);
         $instance = new $class2;
     }
 
@@ -58,7 +58,7 @@ class Autoload_Test extends PHPUnit_Framework_TestCase {
      */
     public function test_autoLoad_ExceptionNamespaceDoesNotExist() {
         $class = 'UnexistingNamespace\C';
-        \CRUDsader\Autoload::autoload($class);
+        \CRUDsader\Autoload::autoloader($class);
         $instance = new $class;
     }
     

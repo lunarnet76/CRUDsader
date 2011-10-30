@@ -1,12 +1,19 @@
 <?php
+use CRUDsader as c;
 class Database_Test extends PHPUnit_Framework_TestCase {
+    public $di;
     
     function setUp(){
         Bootstrap::setUpORMDatabase();
-        \CRUDsader\Configuration::getInstance()->database->host=DATABASE_HOST;
-        \CRUDsader\Configuration::getInstance()->database->user=DATABASE_USER;
-        \CRUDsader\Configuration::getInstance()->database->password=DATABASE_PASSWORD;
-        \CRUDsader\Configuration::getInstance()->database->name=DATABASE_NAME;
+        $this->di=c\Instancer::getInstance();
+        $instance = $this->di->database;
+        $block=new \CRUDsader\Block(array(
+            'host'=>DATABASE_HOST,
+            'user'=>DATABASE_USER,
+            'password'=>DATABASE_PASSWORD,
+            'name'=>DATABASE_NAME,
+        ));
+        $instance->setConfiguration($block);
     }
     
     function tearDown(){
@@ -14,7 +21,7 @@ class Database_Test extends PHPUnit_Framework_TestCase {
     }
 
     function test_constructor_() {
-        $instance = \CRUDsader\Database::getInstance();
+        $instance = $this->di->database;
         $this->assertEquals($instance->hasAdapter('connector'), true);
         $this->assertEquals($instance->hasAdapter('descriptor'), true);
         $this->assertEquals($instance->getAdapter('connector') instanceof \CRUDsader\Adapter\Database\Connector, true);
@@ -22,13 +29,13 @@ class Database_Test extends PHPUnit_Framework_TestCase {
     }
     
     function test_query_(){
-        $instance = \CRUDsader\Database::getInstance();
+        $instance = $this->di->database;
         $q=$instance->query('SELECT * FROM Tperson','select');
         $this->assertEquals($q instanceof \CRUDsader\Adapter\Database\Rows,true);
     }
     
     function test_queryStatment_(){
-        $instance = \CRUDsader\Database::getInstance();
+        $instance = $this->di->database;
         $instance->prepareQueryStatement('SELECT * FROM Tperson WHERE PKpersonid>?','select');
         $q=$instance->executeQueryStatement(array(0));
         $this->assertEquals(is_array($q),true);
@@ -39,17 +46,17 @@ class Database_Test extends PHPUnit_Framework_TestCase {
      * @expectedException \CRUDsader\DatabaseException
      */
     function test_call_ExceptionDoesNotExist(){
-        $instance = \CRUDsader\Database::getInstance();
+        $instance = $this->di->database;
         $instance->unexistant();
     }
     
     function test_callDescriptor_(){
-        $instance = \CRUDsader\Database::getInstance();
+        $instance = $this->di->database;
         $this->assertEquals($instance->quote('test'),'"test"');
     }
     
     function test_callConnector_(){
-        $instance = \CRUDsader\Database::getInstance();
+        $instance = $this->di->database;
         $this->assertEquals($instance->isConnected(),true);
     }
 }

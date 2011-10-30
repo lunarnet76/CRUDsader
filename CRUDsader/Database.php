@@ -10,7 +10,8 @@ namespace CRUDsader {
      * DBAL
      * @package     CRUDsader
      */
-    class Database extends Singleton implements Interfaces\Adaptable {
+    class Database implements Interfaces\Adaptable, Interfaces\Configurable {
+        
         /**
          * list of all adapters
          * @var array 
@@ -22,6 +23,34 @@ namespace CRUDsader {
          */
         protected $_sql = false;
 
+        /**
+         * @access protected
+         */
+        public function __construct() {
+            $di=Instancer::getInstance();
+            $this->setConfiguration($di->configuration->database);
+            $this->_adapters['descriptor'] = $di->{'database.descriptor'};
+        }
+        
+        /**
+         * @param \CRUDsader\Block $block 
+         */
+        public function setConfiguration(\CRUDsader\Block $block=null){
+            $di=Instancer::getInstance();
+            $this->_configuration=$block;
+            if ($di->configuration->debug->database->profiler)
+                $this->_adapters['profiler'] = $di->{'database.profiler'};
+            $this->_adapters['connector'] = $di->{'database.connector'};
+            $this->_adapters['connector']->setConfiguration($this->_configuration);
+        }
+        
+        /**
+         * @return  \CRUDsader\Block $block 
+         */
+        public function getConfiguration(){
+            return $this->_configuration;
+        }
+        
         /**
          * @param string $name
          * @return bool
@@ -53,20 +82,8 @@ namespace CRUDsader {
             return $this->_sql;
         }
 
-        /**
-         * singletoned constructor
-         * @access protected
-         */
-        public function init() {
-            $configuration = Configuration::getInstance();
-            $this->_configuration = $configuration->database;
-            $this->_adapters['connector'] = Adapter::factory(array('database' => 'connector'));
-            $this->_adapters['connector']->setConfiguration($this->_configuration);
-            $this->_adapters['descriptor'] = Adapter::factory(array('database' => 'descriptor'));
-            $this->_adapters['descriptor']->setConnector($this->_adapters['connector']);
-            if ($configuration->debug->database->profiler)
-                $this->_adapters['profiler'] = Adapter::factory(array('database' => 'profiler'));
-        }
+        
+        
 
         /**
          * execute a SQL query, return is dependant of the $type
@@ -133,6 +150,12 @@ namespace CRUDsader {
             }
         }
 
+        /**
+         * shortcuts
+         * @param string $name
+         * @param mix $arguments
+         * @return mix
+         */
         public function __call($name, $arguments) {
             switch ($name) {
                 case 'setForeignKeyCheck':

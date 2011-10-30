@@ -59,6 +59,7 @@ function eh() {
     if (!error_reporting())
         return;
     pre(func_get_args());
+    pre(xdebug_get_function_stack());
     pre(get_included_files());
     die('ERROR');
     return false;

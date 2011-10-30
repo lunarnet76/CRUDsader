@@ -22,12 +22,8 @@ namespace CRUDsader\Adapter\Database {
          */
         protected $_connector;
         
-        /**
-         * set the connector
-         * @param \CRUDsader\Adapter\Database\Connector $connector 
-         */
-        public function setConnector(\CRUDsader\Adapter\Database\Connector $connector){
-            $this->_connector=$connector;
+        public function __construct(){
+            $this->_connector=\CRUDsader\Instancer::getInstance()->{'database.connector'};
         }
         
         /**

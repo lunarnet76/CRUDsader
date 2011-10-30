@@ -24,7 +24,7 @@ namespace CRUDsader\Query {
             $this->_args = $args;
             $this->_session = \CRUDsader\Session::useNamespace('\\CRUDsader\\Query\\Pagination\\' . $this->_index);
             if (!isset($session->numRows)) {
-                $this->_session->numRows = \CRUDsader\Database::getInstance()->countSelect($query->_sql);
+                $this->_session->numRows = \CRUDsader\Instancer::getInstance()->database->countSelect($query->_sql);
                 $this->_session->start = 0;
             }
             if (isset($_REQUEST[$this->_index]))
@@ -37,7 +37,7 @@ namespace CRUDsader\Query {
 
         public function getObjects() {
             $this->_query->_sql['limit'] = array('from' => isset($this->_session->start) ? $this->_session->start : 0, 'count' => $this->_options['count']);
-            $results = \CRUDsader\Database::getInstance()->select($this->_query->_sql, $this->_args);
+            $results = \CRUDsader\Instancer::getInstance()->database->select($this->_query->_sql, $this->_args);
             return new \CRUDsader\Object\Collection\Initialised($this->_query->_class, $results, $this->_query->_mapFields);
         }
 

@@ -24,7 +24,7 @@ namespace CRUDsader {
 
         public static function databaseProfiler() {
             if (self::$_configuration->database) {
-                $db = CRUDsader_Database::getInstance();
+                $db = \CRUDsader\Instancer::getInstance()->database;
                 // display DB profiler
                 if ($db->hasProfiler())
                     $db->getProfiler()->display();
@@ -89,7 +89,7 @@ namespace CRUDsader {
             echo '<div class="debug" style="background-color:' . $color . ';border-top:1px solid black;margin-bottom:5px">' . ($title != '' ? '<h3>' . $title . '</h3>' : ''); //(isset($d['File'])?$d['File'] . ':' . $d['Line']:'')
             if (!is_array($v) && !is_object($v)) {
                 if (strpos($v, 'SELECT') === 0) {
-                    echo \CRUDsader\Database::getInstance()->highLight($v);
+                    echo \CRUDsader\Instancer::getInstance()->database->highLight($v);
                 } else {
                     echo gettype($v) . ' : ';
                     print_r($v);

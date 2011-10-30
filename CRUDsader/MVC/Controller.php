@@ -10,7 +10,7 @@ namespace CRUDsader\Mvc {
      * MVC controller must inherit from this
      * @package CRUDsader\Mvc
      */
-    abstract class Controller extends \CRUDsader\Singleton implements \CRUDsader\Interfaces\Configurable {
+    abstract class Controller implements \CRUDsader\Interfaces\Configurable {
         protected $_frontController = NULL;
         protected $_views = array();
         protected $_metas = array();
@@ -21,8 +21,8 @@ namespace CRUDsader\Mvc {
         protected $_template;
 
         // ** CONSTRUCTOR **/
-        public function init() {
-            $this->_frontController = \CRUDsader\MVC\Controller\Front::getInstance();
+        public function __construct() {
+            $this->_frontController = \CRUDsader\Instancer::getInstance()->{'mvc.frontController'};
         }
 
         public function setRouter(\CRUDsader\Adapter\MVC\Router $router) {

@@ -10,7 +10,7 @@ namespace CRUDsader {
      * Internalization and Localization
      * @package     CRUDsader
      */
-    class I18n extends Singleton implements Interfaces\Adaptable,  Interfaces\Configurable {
+    class I18n implements Interfaces\Adaptable,  Interfaces\Configurable {
         /**
          * @var \CRUDsader\Block
          */
@@ -23,10 +23,25 @@ namespace CRUDsader {
         /**
          * constructor
          */
-        public function init() {
-            $this->_adapters['translation'] = Adapter::factory(array('i18n' => 'translation'));
-            $this->_configuration=\CRUDsader\Configuration::getInstance()->i18n;
-            date_default_timezone_set($this->_configuration->timezone);
+        public function __construct() {
+            $this->setConfiguration(\CRUDsader\Instancer::getInstance()->configuration->i18n);
+        }
+        
+        /**
+         * @param Block $configuration
+         */
+         public function setConfiguration(Block $configuration=null) {
+            $this->_configuration = $configuration;
+            date_default_timezone_set($configuration->timezone);
+            $this->_adapters['translation'] = \CRUDsader\Instancer::getInstance()->{'i18n.translation'};
+            $this->_adapters['translation']->setConfiguration($configuration->translation);
+        }
+
+        /**
+         * @return Block
+         */
+        public function getConfiguration() {
+            return $this->_configuration;
         }
 
         /**
@@ -51,20 +66,7 @@ namespace CRUDsader {
         public function getAdapters(){
             return $this->_adapters;
         }
-        
-        /**
-         * @param Block $configuration
-         */
-         public function setConfiguration(Block $configuration=null) {
-            $this->_configuration = $configuration;
-        }
-
-        /**
-         * @return Block
-         */
-        public function getConfiguration() {
-            return $this->_configuration;
-        }
+      
 
         public function __call($name, $arguments) {
             switch($name){

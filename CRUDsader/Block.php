@@ -27,7 +27,7 @@ namespace CRUDsader {
         /**
          * @param array $array of parameters
          */
-        protected function __construct(array $array=null) {
+        public function __construct(array $array=null) {
             if (isset($array))
                 $this->loadArray($array);
         }

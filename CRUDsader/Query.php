@@ -9,7 +9,7 @@ namespace CRUDsader {
     /**
      * @package CRUDsader
      */
-    class Query {
+    class Query implements Interfaces\Configurable{
         protected $_oql;
         protected $_db;
         protected $_fetched = false;
@@ -32,8 +32,22 @@ namespace CRUDsader {
 
         public function __construct($oql) {
             $this->_oql = $oql;
-            $this->_db = \CRUDsader\Database::getInstance();
-            $this->_configuration = \CRUDsader\Configuration::getInstance()->query;
+            $this->_db = \CRUDsader\Instancer::getInstance()->database;
+            $this->setConfiguration(\CRUDsader\Instancer::getInstance()->configuration->query);
+        }
+        
+        /**
+         * @param \CRUDsader\Block $block 
+         */
+        public function setConfiguration(\CRUDsader\Block $block=null){
+            $this->_configuration=$block;
+        }
+        
+        /**
+         * @return  \CRUDsader\Block $block 
+         */
+        public function getConfiguration(){
+            return $this->_configuration;
         }
         
         public function getOQL(){
@@ -46,7 +60,7 @@ namespace CRUDsader {
             if (!$this->_syntaxValidated)
                 if (!$this->validateSyntax())
                     throw new QueryException($this, 'bad syntax');
-            $this->_map = Map::getInstance();
+            $this->_map = \CRUDsader\Instancer::getInstance()->map;
             // FROM
             $this->_class = $className = $this->_matches[4];
             if (!$this->_map->classExists($this->_class))
@@ -190,7 +204,7 @@ namespace CRUDsader {
             if (!is_array($args))
                 $args = array($args);
             $alias2class = $this->_alias2class;
-            $map = Map::getInstance();
+            $map = \CRUDsader\Instancer::getInstance()->map;
             $argsIndex = -1;
             if (!$this->_fetched) {
                 $db = $this->_db;

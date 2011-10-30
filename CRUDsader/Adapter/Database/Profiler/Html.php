@@ -148,7 +148,7 @@ namespace CRUDsader\Adapter\Database\Profiler {
                 }
             </style>
             <?php
-            $highlighter = \CRUDsader\Database::getInstance()->getAdapter('descriptor');
+            $highlighter = \CRUDsader\Instancer::getInstance()->database->getAdapter('descriptor');
             echo '<div class="profiler">';
             $this->_log = array_reverse($this->_log);
             echo '<div class="timeTotal">Time used :' . $this->_totalTime . '</div>';

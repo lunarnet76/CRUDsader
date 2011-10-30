@@ -9,7 +9,7 @@ namespace CRUDsader\Object {
     class Writer extends \CRUDsader\Object {
 
         public static function write(parent $object, $id, $alias, &$rows, &$fields, &$mapFields) {
-            $map = \CRUDsader\Map::getInstance();
+            $map = \CRUDsader\Instancer::getInstance()->map;
             if (!$object->_initialised) {
                 $object->_isPersisted = $id;
                 \CRUDsader\Object\IdentityMap::add($object);

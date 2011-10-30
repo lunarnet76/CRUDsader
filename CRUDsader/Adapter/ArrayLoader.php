@@ -14,6 +14,6 @@ namespace CRUDsader\Adapter {
         /**
          * @return array
          */
-        abstract public function load($options=null);
+        abstract public function __construct($options=null);
     }
 }

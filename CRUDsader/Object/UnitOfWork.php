@@ -24,7 +24,7 @@ namespace CRUDsader\Object {
         public function execute() {
             if (empty($this->_transactions))
                 return;
-            $database = \CRUDsader\Database::getInstance();
+            $database = \CRUDsader\Instancer::getInstance()->database;
             //$database->setForeignKeyCheck(false);
             $database->beginTransaction();
             $lastExecuted = false;

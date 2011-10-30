@@ -14,7 +14,7 @@ namespace CRUDsader\Adapter\Map\Extractor {
     class Database extends \CRUDsader\Adapter\Map\Extractor {
 
         public function create(array $map) {
-            $mapObject = \CRUDsader\Map::getInstance();
+            $mapObject = \CRUDsader\Instancer::getInstance()->map;
             $tables = array();
             foreach ($map['classes'] as $className => $classInfos) {
                 $tables[$className] = array(
@@ -101,7 +101,7 @@ namespace CRUDsader\Adapter\Map\Extractor {
                     }
                 }
             }
-            $database = \CRUDsader\Database::getInstance();
+            $database = \CRUDsader\Instancer::getInstance()->database;
             $q = $database->setForeignKeyCheck(false);
             $q = $database->listTables();
             foreach ($q as $d) {

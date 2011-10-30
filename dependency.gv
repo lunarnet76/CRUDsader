@@ -3,9 +3,11 @@ digraph G {
 Autoload
 Block -> "\\Iterator"
 Block -> "Interfaces\\Arrayable"
+
 Configuration -> Block
-Configuration -> Adapter
 Configuration -> "Adapter\\ArrayLoader"
+Configuration -> "Adapter\\ArrayLoader\\Yaml"
+
 Adapter -> "Interfaces\\Configurable"
 "Adapter\\ArrayLoader" -> Adapter
 "Interfaces\\Configurable" -> jb

@@ -40,8 +40,8 @@ class FormComponent_Test extends PHPUnit_Framework_TestCase {
         $this->assertEquals($component->hasHtmlAttribute('class'),false);
         $component->setHtmlAttribute('class','test');
         $component->setHtmlAttribute('id','test2');
-        $this->assertEquals($component->getHtmlAttributes(),array('class'=>'test','id'=>'test2'));
-        $this->assertEquals($component->getHtmlAttributesToHtml(),' class="test" id="test2"');
+        $this->assertEquals($component->getHtmlAttributes(),array('class'=>'test','id'=>'test2','type'=>'text'));
+        $this->assertEquals($component->getHtmlAttributesToHtml(),' type="text" class="test" id="test2"');
     }
     
     function test_htmlLabel_(){
@@ -54,7 +54,7 @@ class FormComponent_Test extends PHPUnit_Framework_TestCase {
         $component=new  \CRUDsader\Form\Component();
         $component->setHtmlAttribute('class','test');
         $component->setHtmlAttribute('id','test2');
-        $this->assertEquals($component->toHtml(),'<input type="text" class="test" id="test2" value=""/>');
+        $this->assertEquals($component->toHtml(),'<input  type="text" class="test" id="test2" value=""/>');
     }
     
     function test_form_(){

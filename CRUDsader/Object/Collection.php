@@ -16,7 +16,7 @@ namespace CRUDsader\Object {
 
         public function __construct($className) {
             $this->_class = $className;
-            $this->_classInfos = \CRUDsader\Map::getInstance()->classGetInfos($this->_class);
+            $this->_classInfos = \CRUDsader\Instancer::getInstance()->map->classGetInfos($this->_class);
         }
 
         public function toArray($full=false) {
