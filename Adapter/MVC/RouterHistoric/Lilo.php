@@ -14,7 +14,7 @@ namespace CRUDsader\Adapter\Mvc\RouterHistoric {
         protected $_session;
         protected $_controllerToSkip = array();
       
-        public function init() {
+        public function __construct() {
             $this->_session = \CRUDsader\Session::useNamespace('CRUDsader\\Mvc\\Navigation\\Historic');
             /*if (!isset($this->_session->iterator))
                 $this->_session->iterator = 10;*/

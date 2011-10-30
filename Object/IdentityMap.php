@@ -6,7 +6,7 @@
  * @since       0.1
  */
 namespace CRUDsader\Object {
-    abstract class IdentityMap extends \CRUDsader\Singleton{
+    abstract class IdentityMap{
         protected static $_objects=array();
 
         public static function exists($class, $id) {

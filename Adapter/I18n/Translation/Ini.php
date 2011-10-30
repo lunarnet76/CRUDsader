@@ -15,7 +15,7 @@ namespace CRUDsader\Adapter\I18n\Translation {
         /**
          * constructor
          */
-        public function init() {
+        public function __construct() {
             $lines = @file($this->_configuration->file);
             $configuration = array();
             $section = false;

@@ -11,14 +11,11 @@ namespace CRUDsader\Adapter\I18n\Translation {
      * @package CRUDsader\Adapter\I18n\Translation
      */
     class Yaml extends \CRUDsader\Adapter {
+        protected $_translations;
 
-        public function init() {
-            $adapterActual = \CRUDsader\Configuration::getInstance()->adapter->arrayLoader;
-            \CRUDsader\Configuration::getInstance()->adapter->arrayLoader = 'yaml';
-            $al = \CRUDsader\Adapter::factory('arrayLoader');
-            $this->_translations= $al->load(array('file' => $this->_configuration->file));
-            \CRUDsader\Configuration::getInstance()->adapter->arrayLoader = $adapterActual;
-            $this->_translations=$this->_translations['default'];
+        public function setConfiguration(\CRUDsader\Block $configuration = null) {
+            $al = \CRUDsader\Instancer::getInstance()->{'i18n.translation.yaml.arrayLoader'}(array('file' => $configuration->file,'section'=>'default'));
+            $this->_translations= $al->get();
         }
         
         public function getTranslations(){

@@ -11,7 +11,7 @@ namespace CRUDsader {
      * Map the ORM schema to classes
      * @package     CRUDsader
      */
-    class Map extends Singleton implements Interfaces\Configurable{
+    class Map implements Interfaces\Configurable{
         const BASE_ASSOCIATION_CLASS='__ASSOC__';
         /**
          * @var \CRUDsader\Block 
@@ -29,8 +29,25 @@ namespace CRUDsader {
         /**
          * constructor, load the map schema
          */
-        public function init() {
-            $this->setConfiguration(\CRUDsader\Configuration::getInstance()->map);
+        public function __construct() {
+            $this->setConfiguration(\CRUDsader\Instancer::getInstance()->configuration->map);
+        }
+        
+        /**
+         * @param Block $configuration
+         */
+        public function setConfiguration(\CRUDsader\Block $configuration=null) {
+            $this->_configuration = $configuration;
+            $this->_adapter['loader'] = \CRUDsader\Instancer::getInstance()->{'map.loader'};
+             $this->_adapter['loader']->setConfiguration($configuration->loader);
+            $this->_map = $this->_adapter['loader']->getSchema($this->_configuration->defaults);
+        }
+
+        /**
+         * @return Block
+         */
+        public function getConfiguration() {
+            return $this->_configuration;
         }
         
         public function generateRandom($max=100,$progress=false,$save=true){
@@ -56,21 +73,6 @@ namespace CRUDsader {
             return $collection;
         }
         
-        /**
-         * @param Block $configuration
-         */
-        public function setConfiguration(\CRUDsader\Block $configuration=null) {
-            $this->_configuration = $configuration;
-            $this->_adapter['loader'] = \CRUDsader\Adapter::factory(array('map' => 'loader'));
-            $this->_map = $this->_adapter['loader']->getSchema($this->_configuration->defaults);
-        }
-
-        /**
-         * @return Block
-         */
-        public function getConfiguration() {
-            return $this->_configuration;
-        }
         
         
         
@@ -91,7 +93,7 @@ namespace CRUDsader {
         }
 
         public function extract() {
-            $this->_adapter['extractor'] = \CRUDsader\Adapter::factory(array('map' => 'extractor'));
+            $this->_adapter['extractor'] = \CRUDsader\Instancer::getInstance()->{'map.extractor'};
             $this->_adapter['extractor']->setConfiguration($this->_configuration->defaults);
             return $this->_adapter['extractor']->create($this->_map);
         }

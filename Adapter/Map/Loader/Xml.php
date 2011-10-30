@@ -15,18 +15,17 @@ namespace CRUDsader\Adapter\Map\Loader {
         protected $_file;
         protected $_dom;
 
-        /**
-         * @param Block $configuration
-         */
-        public function init() {
-            $this->_file = $this->_configuration->file;
+        
+        public function setConfiguration(\CRUDsader\Block $block=null){
+            parent::setConfiguration($block);
+             $this->_file = $this->_configuration->file;
             if (!file_exists($this->_file))
                 throw new LoaderException('XML Map File "' . $this->_file . '" does not exist');
-            
             $this->_dom = simplexml_load_file($this->_file);
             if (!$this->_dom)
                 throw new LoaderException('XML Map File "' . $this->_file . '" could not be loaded');
         }
+        
         /**
          * return true if resource is validated or array of error otherwise
          * @abstract

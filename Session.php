@@ -32,7 +32,7 @@ namespace CRUDsader {
          */
         public static function start() {
             if (!self::$_init) {
-                $configuration = Configuration::getInstance();
+                $configuration = Instancer::getInstance()->configuration;
                 if (!empty($configuration->session->path))
                     session_save_path($configuration->session->path);
                 if (!isset($_SESSION))
@@ -100,7 +100,7 @@ namespace CRUDsader {
          * @access protected
          * @param &$_SESSION $index 
          */
-        protected function __construct(&$index=NULL) {
+        public function __construct(&$index=NULL) {
             if (!self::$_init)
                 self::start();
             if (!isset($index))

@@ -63,7 +63,7 @@ namespace CRUDsader\Object\Collection {
         }
 
         public function save(\CRUDsader\Object\UnitOfWork $unitOfWork=null) {
-            $db = \CRUDsader\Database::getInstance();
+            $db = \CRUDsader\Instancer::getInstance()->database;
             if ($this->_isModified) {
                 foreach ($this->_objects as $index => $object) {
                     if (isset($this->_objectsToBeDeleted[$index])) {
@@ -104,7 +104,7 @@ namespace CRUDsader\Object\Collection {
                                     if ($object instanceof \CRUDsader\Object\Proxy) {
                                         $unitOfWork->delete($this->_definition['databaseTable'], $db->quoteIdentifier($this->_definition['externalField']) . '=' . $db->quote($object->isPersisted()) . ' AND ' . $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
                                         $unitOfWork->insert($this->_definition['databaseTable'], array(
-                                            'id' => \CRUDsader\Adapter::factory('identifier')->getOID(array('class' => $this->_class)),
+                                            'id' => \CRUDsader\Instancer::getInstance()->{'object.identifier'}->getOID(array('class' => $this->_class)),
                                             $this->_definition['internalField'] => $this->_linkedObject->isPersisted(),
                                             $this->_definition['externalField'] => $object->isPersisted()
                                         ));
@@ -117,7 +117,7 @@ namespace CRUDsader\Object\Collection {
                                             // update   
                                             $unitOfWork->update($this->_definition['databaseTable'], $d, $db->quoteIdentifier($this->_definition['databaseIdField']) . '=' . $db->quote($object->getLinkedAssociationId()));
                                         } else {
-                                            $d['id'] = \CRUDsader\Adapter::factory('identifier')->getOID(array('class' => $this->_class));
+                                            $d['id'] = \CRUDsader\Instancer::getInstance()->{'object.identifier'}->getOID(array('class' => $this->_class));
                                             $unitOfWork->delete($this->_definition['databaseTable'], $db->quoteIdentifier($this->_definition['externalField']) . '=' . $db->quote($object->isPersisted()) . ' AND ' . $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
                                             $unitOfWork->insert($this->_definition['databaseTable'], $d);
                                             \CRUDsader\Object\Writer::setLinkedAssociationId($object, $d['id']);
@@ -133,7 +133,7 @@ namespace CRUDsader\Object\Collection {
         public function delete(\CRUDsader\Object\UnitOfWork $unitOfWork=null) {
             if ($unitOfWork === null)
                 throw new AssociationException('no UnitOfWork');
-            $db = \CRUDsader\Database::getInstance();
+            $db = \CRUDsader\Instancer::getInstance()->database;
             foreach ($this->_objects as $object) {
                 if (!$object->isPersisted())
                     continue;
@@ -171,7 +171,7 @@ namespace CRUDsader\Object\Collection {
                 $alias = $this->_class;
             $this->_initialised = true;
             $formAssociation = $form->add(new \CRUDsader\Form($alias), $this->_definition['name'] ? $this->_definition['name'] : $this->_definition['to']);
-            $formAssociation->setHtmlLabel(\CRUDsader\I18n::getInstance()->translate($alias));
+            $formAssociation->setHtmlLabel(\CRUDsader\Instancer::getInstance()->i18n->translate($alias));
             $max = $this->_definition['max'] == '*' ? 3 : $this->_definition['max'];
             if ($this->_definition['min'] > $max)
                 $max = $this->_definition['min'];
@@ -189,9 +189,9 @@ namespace CRUDsader\Object\Collection {
                     $form2->setHtmlLabel(false);
                     $object->getForm($oql, $alias, $form2);
                 } else {
-                    $class = \CRUDsader\Configuration::getInstance()->map->defaults->associations->associationComponentSelectClass;
+                    $class = \CRUDsader\Instancer::getInstance()->configuration->map->defaults->associations->associationComponentSelectClass;
                     $component = $formAssociation->add(new $class(array('class' => $this->_class)), $i, false);
-                    $component->setHtmlLabel($i == 0 ? \CRUDsader\I18n::getInstance()->translate($alias) : ' ');
+                    $component->setHtmlLabel($i == 0 ? \CRUDsader\Instancer::getInstance()->i18n->translate($alias) : ' ');
                     $component->setParameter('compositionIndex', $this->_iterator);
                     if ($object->isPersisted())
                         $component->inputReceive($object->isPersisted());

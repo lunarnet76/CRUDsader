@@ -10,9 +10,9 @@ namespace CRUDsader\Mvc\Controller {
      * MVC Front controller
      * @package CRUDsader\Mvc\Controller
      */
-    class Front extends \CRUDsader\Singleton implements \CRUDsader\Interfaces\Adaptable {
+    class Front implements \CRUDsader\Interfaces\Adaptable,  \CRUDsader\Interfaces\Configurable {
         /*
-         * @var Art_Block
+         * @var Block
          */
         protected $_configuration = NULL;
 
@@ -26,16 +26,31 @@ namespace CRUDsader\Mvc\Controller {
         protected $_skipRouterHistoric = false;
 
         /**
-         * @var Art_Mvc_Controller_Abstract instance
+         * @var Mvc\Controller instance
          */
         protected $_instanceController;
 
         /**
          * constructor
          */
-        public function init() {
-            $this->_configuration = \CRUDsader\Configuration::getInstance()->mvc;
-            $this->_adapters['routerHistoric'] = \CRUDsader\Adapter::factory(array('mvc' => 'routerHistoric'));
+        public function __construct() {
+            $di=\CRUDsader\Instancer::getInstance();
+            $this->_configuration = $di->configuration->mvc;
+            $this->_adapters['routerHistoric'] = $di->{'mvc.routerHistoric'};
+        }
+        
+        /**
+         * @param \CRUDsader\Block $block 
+         */
+        public function setConfiguration(\CRUDsader\Block $block=null){
+            $this->_configuration=$block;
+        }
+        
+        /**
+         * @return  \CRUDsader\Block $block 
+         */
+        public function getConfiguration(){
+            return $this->_configuration;
         }
         /**
          * list of all adapters
@@ -88,7 +103,7 @@ namespace CRUDsader\Mvc\Controller {
          * @return string modulename 
          */
         public function route($route=false) {
-            $this->_adapters['router'] = \CRUDsader\Adapter::factory(array('mvc' => 'router'));
+            $this->_adapters['router'] = \CRUDsader\Instancer::getInstance()->{'mvc.router'};
             $this->_adapters['router']->setConfiguration($this->_configuration);
             if ($route === false) {
                 $sp = strpos($_SERVER['REQUEST_URI'], '?');
@@ -103,9 +118,12 @@ namespace CRUDsader\Mvc\Controller {
             // init plugins
             $module = $this->_adapters['router']->getModule() ? $this->_adapters['router']->getModule() : false;
             $plugins = $module ? (isset($this->_configuration->plugins->$module) ? $this->_configuration->plugins->$module : array()) : $this->_configuration->plugins;
+            $di=\CRUDsader\Instancer::getInstance();
             foreach ($plugins as $pluginName => $pluginOptions) {
-                $class = 'Plugin\\' . $pluginName;
-                $plugin = $this->_modulePlugins[$pluginName] = call_user_func_array(array($class, 'getInstance'), array());
+                $cfg=$di->getConfiguration();
+                $cfg->{'mvc.plugin.'.$pluginName} = array('class'=>'Plugin\\' . $pluginName,'singleton'=>true);
+                $di->setConfiguration($cfg);
+                $plugin = $this->_modulePlugins[$pluginName] = $di->{'mvc.plugin.'.$pluginName};
                 if ($pluginOptions instanceof \CRUDsader\Block)
                     $plugin->setConfiguration($pluginOptions);
                 $plugin->postRoute($this->_adapters['router']);
@@ -121,7 +139,8 @@ namespace CRUDsader\Mvc\Controller {
             // plugins
             foreach ($this->_modulePlugins as $plugin)
                 $plugin->preDispatch();
-            $this->_instanceController = call_user_func_array(array('Controller\\' . ucFirst($this->_adapters['router']->getController()), 'getInstance'), array($this, $this->_adapters['router']->toArray()));
+            $class='Controller\\' . ucFirst($this->_adapters['router']->getController());
+            $this->_instanceController = new $class($this, $this->_adapters['router']->toArray());
             $this->_instanceController->setConfiguration($this->_configuration);
             $this->_instanceController->setRouter($this->_adapters['router']);
             if (method_exists($this->_instanceController, $this->_adapters['router']->getAction() . 'Action'))

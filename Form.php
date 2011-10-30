@@ -40,7 +40,7 @@ namespace CRUDsader {
                 $this->_session->token = md5(uniqid(rand(), true));
             }else
                 $this->_session->oldToken = $this->_session->token = md5(uniqid(rand(), true));
-            $this->_configuration = \CRUDsader\Configuration::getInstance()->form;
+            $this->setConfiguration(\CRUDsader\Instancer::getInstance()->configuration->form);
             $this->add(new \CRUDsader\Form\Component\Submit(), 'submit')->setHtmlLabel(false);
         }
 
@@ -271,7 +271,7 @@ namespace CRUDsader {
         }
 
         public function htmlError() {
-            return $this->wrapHtml(is_bool($this->_inputError) && $this->_inputError ? \CRUDsader\I18n::getInstance()->translate('error.form.general') : $this->_inputError, 'error');
+            return $this->wrapHtml(is_bool($this->_inputError) && $this->_inputError ? \CRUDsader\Instancer::getInstance()->i18n->translate('error.form.general') : $this->_inputError, 'error');
         }
 
         /**
@@ -283,7 +283,7 @@ namespace CRUDsader {
             if ($component instanceof self)
                 return $component->toHTML();
             $error=$component->getInputError();
-            return $this->wrapHtml($component->labeltoHtml() . $this->wrapHtml($component->toHTML(), 'component') . $this->wrapHtml(empty($error)?'':\CRUDsader\I18n::getInstance()->translate($error), 'error'), 'row');
+            return $this->wrapHtml($component->labeltoHtml() . $this->wrapHtml($component->toHTML(), 'component') . $this->wrapHtml(empty($error)?'':\CRUDsader\Instancer::getInstance()->i18n->translate($error), 'error'), 'row');
         }
 
         /** ACCESSORS ************************* */

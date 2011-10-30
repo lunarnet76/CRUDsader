@@ -7,10 +7,11 @@
  */
 namespace CRUDsader {
     /**
-     * singleton containing all the configuration of the application and framework, can be loaded with file or array
+     *  contain all the configuration of the application and framework, can be loaded with file or array
      * @package CRUDsader
      */
     class Configuration extends Block {
+
         /**
          * return singletoned instances
          * @return static
@@ -29,35 +30,6 @@ namespace CRUDsader {
          * @var <type>
          */
         protected static $_defaults = array(
-            'adapter' => array(
-                'classNameSpace' => 'CRUDsader\Adapter',
-                'database' => array(
-                    'connector' => 'mysqli',
-                    'descriptor' => 'mysqli',
-                    'rows' => 'mysqli',
-                    'profiler' => 'html'
-                ),
-                'i18n' => array(
-                    'translation' => 'none'
-                ),
-                'identifier' => 'hilo',
-                'map' => array(
-                    'loader' => array(
-                        'xml' => array(
-                            'file' => 'orm.xml'
-                        )
-                    ),
-                    'extractor' => array(
-                        'database' => array(
-                        )
-                    )
-                ),
-                'mvc' => array(
-                    'router' => 'explicit',
-                    'routerHistoric' => 'lilo'
-                ),
-                'arrayLoader'=>'yaml'
-            ),
             'database' => array(
                 'host' => 'localhost',
                 'user' => 'root',
@@ -97,8 +69,7 @@ namespace CRUDsader {
                     'suffix' => '.html',
                     'separator' => '/'
                 ),
-                'plugins'=>array(
-                    
+                'plugins' => array(
                 )
             ),
             'map' => array(
@@ -113,18 +84,21 @@ namespace CRUDsader {
                         'phpClass' => '\\CRUDsader\\Object\\Attribute\\'
                     ),
                     'associations' => array(
-                        'associationComponentSelectClass'=>'\\CRUDsader\\Form\\Component\\Association',
+                        'associationComponentSelectClass' => '\\CRUDsader\\Form\\Component\\Association',
                         'reference' => 'internal',
                         'min' => 0,
                         'max' => '*',
                         'databaseIdField' => 'id'
                     ),
-                    'attribute'=>array(
-                        'searchable'=>true,
-                        'input'=>true,
-                        'required'=>false,
-                        'html'=>true
+                    'attribute' => array(
+                        'searchable' => true,
+                        'input' => true,
+                        'required' => false,
+                        'html' => true
                     )
+                ),
+                'loader' => array(
+                    'file' => 'orm.xml'
                 )
             ),
             'query' => array(
@@ -132,26 +106,49 @@ namespace CRUDsader {
             ),
             'session' => array(
                 'path' => false
+            ),
+            'instances' => array(
+                'configuration' => array(
+                    'class' => '\\CRUDsader\\Configuration', 'singleton' => true
+                ),
+                'configuration.arrayLoader' => array(
+                    'class' => '\\CRUDsader\\Adapter\\ArrayLoader\\Yaml', 
+                    'singleton' => false
+                ),
+                'arrayLoader' => array('class' => '\\CRUDsader\\Adapter\\ArrayLoader\\Yaml', 'singleton' => false),
+                'database' => array('class' => '\\CRUDsader\\Database', 'singleton' => true),
+                'database.connector' => array('class' => '\\CRUDsader\\Adapter\\Database\\Connector\\Mysqli', 'singleton' => true),
+                'database.descriptor' => array('class' => '\\CRUDsader\\Adapter\\Database\\Descriptor\\Mysqli', 'singleton' => true),
+                'database.profiler' => array('class' => '\\CRUDsader\\Adapter\\Database\\Profiler\\Html', 'singleton' => true),
+                'database.rows' => array('class' => '\\CRUDsader\\Adapter\\Database\\Rows\\Mysqli', 'singleton' => false),
+                'i18n' => array('class' => '\\CRUDsader\\I18n', 'singleton' => true),
+                'i18n.translation' => array('class' => '\\CRUDsader\\Adapter\\I18n\\Translation\\None', 'singleton' => true),
+                'i18n.translation.yaml.arrayLoader' => array('class' => '\\CRUDsader\\Adapter\\ArrayLoader\\Yaml', 'singleton' => false),
+                'object.identifier' => array('class' => '\\CRUDsader\\Adapter\\Identifier\\Hilo', 'singleton' => true),
+                'map' => array('class' => '\\CRUDsader\\Map', 'singleton' => true),
+                'map.extractor' => array('class' => '\\CRUDsader\\Adapter\\Map\\Extractor\\Database', 'singleton' => true),
+                'map.loader' => array('class' => '\\CRUDsader\\Adapter\\Map\\Loader\\Xml', 'singleton' => true),
+                'mvc.frontController' => array('class' => '\\CRUDsader\\MVC\\Controller\\Front', 'singleton' => true),
+                'mvc.routerHistoric' => array('class' => '\\CRUDsader\\Adapter\\Mvc\\RouterHistoric\\Lilo', 'singleton' => true),
+                'mvc.router' => array('class' => '\\CRUDsader\\Adapter\\Mvc\\Router\\Explicit', 'singleton' => true),
             )
         );
 
         /**
-         * singletoned constructor
-         * @access protected
          * @test test_instance_defaults
          */
-        protected function __construct() {
+        public function __construct() {
             parent::__construct(self::$_defaults);
         }
-        
+
         /**
          *
          * @param type $options 
          * @test test_load_
          */
-        public function load($options){
-            $loader=\CRUDsader\Adapter::factory('arrayLoader');
-            $this->loadArray($loader->load($options));
+        public function load($options) {
+            $arrayLoader = Instancer::getInstance()->{'configuration.arrayLoader'}($options);
+            $this->loadArray($arrayLoader->get());
         }
     }
     class ConfigurationException extends \CRUDsader\Exception {

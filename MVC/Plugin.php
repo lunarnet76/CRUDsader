@@ -10,7 +10,7 @@ namespace CRUDsader\Mvc {
      * @abstract
      * @package CRUDsader\Mvc
      */
-    abstract class Plugin extends \CRUDsader\Singleton implements \CRUDsader\Interfaces\Configurable{
+    abstract class Plugin implements \CRUDsader\Interfaces\Configurable{
         protected $_configuration;
         /**
          * @param Block $configuration
@@ -26,9 +26,6 @@ namespace CRUDsader\Mvc {
             return $this->_configuration;
         }
 
-        public function init() {
-            
-        }
 
         public function postRoute(\CRUDsader\Adapter\MVC\Router $router) {
             
