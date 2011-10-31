@@ -63,6 +63,8 @@ namespace CRUDsader\Object\Collection {
         }
 
         public function save(\CRUDsader\Object\UnitOfWork $unitOfWork=null) {
+            // check
+            $cnt = 0;
             $db = \CRUDsader\Instancer::getInstance()->database;
             if ($this->_isModified) {
                 foreach ($this->_objects as $index => $object) {
@@ -84,9 +86,10 @@ namespace CRUDsader\Object\Collection {
                         $object->delete($unitOfWork);
                         continue;
                     }
-                    if ($object->isPersisted() && $object->isEmpty()) {
+                    if ($object->isEmpty()) {
                         $object->delete($unitOfWork);
                     } else {
+                        $cnt++;
                         switch ($this->_definition['reference']) {
                             case 'internal':
                                 $object->save($unitOfWork);
@@ -127,6 +130,10 @@ namespace CRUDsader\Object\Collection {
                         }
                     }
                 }
+                if ($this->_definition['max'] != '*' && $cnt > $this->_definition['max'])
+                    throw new AssociationException('error.association.save.max');
+                if ($cnt < $this->_definition['min'])
+                    throw new AssociationException('error.association.save.min');
             }
         }
 
