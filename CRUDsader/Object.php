@@ -197,8 +197,9 @@ namespace CRUDsader {
         protected function _checkRequiredFields() {
             foreach ($this->_infos['attributes'] as $attributeName => $attributeInfos) {
                 if ($attributeInfos['required']) {
-                    if (!isset($this->_fields[$attributeName]) || $this->_fields[$attributeName]->inputEmpty())
+                    if (!isset($this->_fields[$attributeName]) || $this->_fields[$attributeName]->inputEmpty()){
                         return false;
+                    }
                 }
             }
             return true;
