@@ -36,7 +36,6 @@ namespace CRUDsader\Adapter\Map\Extractor {
             $fks = array();
             foreach ($map['classes'] as $className => $classInfos) {
                 foreach ($classInfos['definition']['identity'] as $fieldName) {
-                    $tables[$className]['fields'][$classInfos['attributes'][$fieldName]['databaseField']]['null'] = false;
                     $tables[$className]['identity'][] = $classInfos['attributes'][$fieldName]['databaseField'];
                 }
                 foreach ($classInfos['associations'] as $associationName => $associationInfos) {

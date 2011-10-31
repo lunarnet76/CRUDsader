@@ -20,6 +20,9 @@ namespace CRUDsader\Object\Attribute {
             return $ret;
         }
         
+        public function inputEmpty(){
+            return empty($this->_inputValue) && $this->_inputValue!=0;
+        }
         
         public function generateRandom() {
             return rand(0,1000);

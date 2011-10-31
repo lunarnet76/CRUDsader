@@ -25,7 +25,7 @@ namespace CRUDsader {
         protected $_associations = array();
         protected $_observers = array();
 
-        protected function __construct($className) {
+        public function __construct($className) {
             $this->_class = $className;
             $this->_map = \CRUDsader\Instancer::getInstance()->map;
             $this->_infos = $this->_map->classGetInfos($this->_class);
@@ -168,25 +168,28 @@ namespace CRUDsader {
                     $unitOfWork = new \CRUDsader\Object\UnitOfWork();
                     $unitOfWorkToBeExecuted = true;
                 }
+
+                // update
+                if ($this->hasParent())
+                    $this->getParent()->save($unitOfWork);
+
+                $oid = $this->_isPersisted ? $this->_isPersisted : ($this->hasParent() ? $this->getParent()->_isPersisted : \CRUDsader\Instancer::getInstance()->{'object.identifier'}->getOID(array('class' => $this->_class)));
+                $paramsToSave = $this->_getParamsForSave($oid);
                 // identity check
                 $this->validateForSave();
                 if (!$this->_checkIdentity())
                     throw new ObjectException($this->_class . '.error.already-exists');
                 $db = \CRUDsader\Instancer::getInstance()->database;
-                // update
-                if ($this->hasParent())
-                    $this->getParent()->save($unitOfWork);
-                $paramsToSave = $this->_getParamsForSave();
+
                 if ($this->_isPersisted) {
                     \CRUDsader\Object\IdentityMap::add($this);
                     if (!$this->_infos['definition']['abstract'])
                         $unitOfWork->update($this->_infos['definition']['databaseTable'], $paramsToSave, $db->quoteIdentifier($this->_infos['definition']['databaseIdField']) . '=' . $this->_isPersisted);
                 } else {
-                    $this->_isPersisted = $oid = $this->hasParent() ? $this->getParent()->_isPersisted : \CRUDsader\Instancer::getInstance()->{'object.identifier'}->getOID(array('class' => $this->_class));
+                    $this->_isPersisted = $oid;
                     $paramsToSave[$this->_infos['definition']['databaseIdField']] = $oid;
                     $unitOfWork->insert($this->_infos['definition']['databaseTable'], $paramsToSave, $db->quoteIdentifier($this->_infos['definition']['databaseIdField']) . '=' . $oid);
                 }
-
                 $this->saveAssociations($unitOfWork);
                 if (isset($unitOfWorkToBeExecuted)) {
                     $unitOfWork->execute();
@@ -197,7 +200,7 @@ namespace CRUDsader {
         protected function _checkRequiredFields() {
             foreach ($this->_infos['attributes'] as $attributeName => $attributeInfos) {
                 if ($attributeInfos['required']) {
-                    if (!isset($this->_fields[$attributeName]) || $this->_fields[$attributeName]->inputEmpty()){
+                    if (!isset($this->_fields[$attributeName]) || $this->_fields[$attributeName]->inputEmpty()) {
                         return false;
                     }
                 }
@@ -259,18 +262,19 @@ namespace CRUDsader {
             return $this->_infos['definition']['databaseIdField'];
         }
 
-        public function _getParamsForSave() {
+        public function _getParamsForSave($oid) {
             $ret = array();
-            foreach ($this->_fields as $k => $attribute) {
-                if ($this->_infos['attributes'][$k]['calculated']) {
-                    $this->getAttribute($k)->inputReceiveDefault($ret[$this->_infos['attributes'][$k]['databaseField']] = $this->calculateAttribute($k));
-                }else
-                    $ret[$this->_infos['attributes'][$k]['databaseField']] = $attribute->getValueForDatabase();
+            foreach ($this->_infos['attributes'] as $k => $attributeInfos) {
+                if ($attributeInfos['calculated']) {
+                    $this->getAttribute($k)->inputReceiveDefault($ret[$attributeInfos['databaseField']] = $this->calculateAttribute($k, $oid));
+                } else if (isset($this->_fields[$k])) {
+                    $ret[$this->_infos['attributes'][$k]['databaseField']] = $this->_fields[$k]->getValueForDatabase();
+                }
             }
             return $ret;
         }
 
-        public function calculateAttribute($attributeName) {
+        public function calculateAttribute($attributeName, $oid) {
             return $this->_fields[$attributeName]->getValueForDatabase();
         }
 
@@ -287,11 +291,16 @@ namespace CRUDsader {
             else
                 $where = array();
             foreach ($this->_infos['definition']['identity'] as $fieldName) {
-                if ($this->getAttribute($fieldName)->inputEmpty())
+                $empty = $this->getAttribute($fieldName)->inputEmpty();
+                if (!$this->_infos['attributes'][$fieldName]['calculated'] && $empty)
                     throw new ObjectException('cannot save as attribute "' . $this->_class . '.' . $fieldName . '" is empty');
-                $where[] = $db->quoteIdentifier($this->_infos['attributes'][$fieldName]['databaseField']) . '=' . $db->quote($this->getAttribute($fieldName)->getValueForDatabase());
+                if ($empty)
+                    $where[] = $db->quoteIdentifier($this->_infos['attributes'][$fieldName]['databaseField']) . ' IS NULL';
+                else
+                    $where[] = $db->quoteIdentifier($this->_infos['attributes'][$fieldName]['databaseField']) . '=' . $db->quote($this->getAttribute($fieldName)->getValueForDatabase());
             }
             $ret = 0 == $db->countSelect(array('from' => array('table' => $this->_infos['definition']['databaseTable'], 'alias' => 't', 'id' => $this->_infos['definition']['databaseIdField']), 'where' => implode(' AND ', $where), 'limit' => array('count' => 1)));
+
             return $ret;
         }
 
