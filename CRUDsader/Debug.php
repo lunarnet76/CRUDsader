@@ -127,8 +127,8 @@ namespace CRUDsader {
                 return;
                 // $content=ob_get_clean();
 
-                if (strlen($content) > 100000)
-                    return substr($content, 0, 100000);
+                if (strlen($content) > 10000)
+                    return substr($content, 0, 10000);
                 $content = preg_replace_callback('/\[([^\]]*)\]/', array('CRUDsader_Debug', 'preCallback'), $content);
 
                 echo preg_replace('|<font color="#ae1414"><b>Array</b></font>(\s+)|', '<font color="#ae1414"><b>Array</b></font>', str_replace(

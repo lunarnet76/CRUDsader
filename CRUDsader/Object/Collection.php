@@ -20,6 +20,8 @@ namespace CRUDsader\Object {
         }
 
         public function toArray($full=false) {
+            if(!$this->_initialised)
+                return array('initialised'=>'false');
             $ret = array('class' => $this->_class, 'initialised' => $this->_initialised ? 'yes' : 'no', 'objects' => array(), 'indexMap' => $this->_objectIndexes);
             $ret['objects'] = array('modified' => $this instanceof \CRUDsader\Object\Collection\Association && $this->_isModified ? 'yes' : 'no');
             foreach ($this->_objects as $k => $object) {
@@ -27,7 +29,6 @@ namespace CRUDsader\Object {
             }
             return $full ? $ret : $ret['objects'];
         }
-        
         
         public function getLast(){
             $count=count($this->_objects);
