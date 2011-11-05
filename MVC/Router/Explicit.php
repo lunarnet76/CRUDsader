@@ -11,9 +11,9 @@ namespace CRUDsader\MVC\Router {
      * ${server.baseRewrite}/$language/$moduleControllerName/$function$suffix?$params
      * ${server.baseRewrite}/$language/$function$suffix?$params
      * ${server.baseRewrite}/$function$suffix?$params
-     * @package CRUDsader\Mvc\Router
+     * @package CRUDsader\MVC\Router
      */
-    class Explicit extends \CRUDsader\Mvc\Router {
+    class Explicit extends \CRUDsader\MVC\Router {
 
         /**
          * calculate a route
