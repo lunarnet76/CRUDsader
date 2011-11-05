@@ -1,45 +1,58 @@
 digraph G {
 
-Autoload
-Block -> "\\Iterator"
-Block -> "Interfaces\\Arrayable"
+#interfaces
+"Interfaces\\Configurable" [shape=rectangle]
+"Interfaces\\Dependent" [shape=rectangle]
 
-Configuration -> Block
-Configuration -> "Adapter\\ArrayLoader"
-Configuration -> "Adapter\\ArrayLoader\\Yaml"
+#useless
+#Autoload 
+#Exception
+#Expression
+#Expression\\Nil->Expression [style=dotted]
+#Expression\\Now->Expression [style=dotted]
 
-Adapter -> "Interfaces\\Configurable"
-"Adapter\\ArrayLoader" -> Adapter
-"Interfaces\\Configurable" -> jb
+Instancer
+Instancer->Configuration
 
-"Adapter\\ArrayLoader\\Yaml" -> "Adapter\\ArrayLoader"
-"Database" -> "Interfaces\\Adaptable"
-"Database" -> "Singleton"
-"Database" -> Adapter
-"Database" -> "Adapter\\Database\\Connector"
-"Database" -> "Adapter\\Database\\Descriptor"
-"Database" -> "Adapter\\Database\\Profiler"
-"Database" -> "Adapter\\Database\\Rows"
-"Form" -> "Form\\Component"
-"Form" -> "Interfaces\\Helpable"
-"Form" ->  "Interfaces\\Sessionisable"
-"Form" ->  "\\IteratorAggregate"
-"Form" ->  "\\ArrayAccess"
-"Form" ->  "\\CRUDsader\\Interfaces\\Configurable"
-"Form\\Component" ->  "\\Interfaces\\Arrayable"
-"Form\\Component" ->  "\\Interfaces\\Parametrable"
-"Form\\Component" ->   "\\SplSubject"
+Configuration->Instancer 
+Configuration->ArrayLoader
+Configuration->Block [style=dotted]
 
-#Configuration -> "Adapter\\ArrayLoader\\Yaml"
+MetaClass
+MetaClass->"Interfaces\\Configurable" [style=dotted]
+MetaClass->Instancer
+MetaClass->"Interfaces\\Dependent" [style=dotted]
 
+Debug->MetaClass [style=dotted]
 
-#	start [shape=Mdiamond];
-#	end [shape=Msquare];
-#subgraph cluster_0 {
-#		style=filled;
-#		color=lightgrey;
-#		node [style=filled,color=white];
-#		a0 -> a1 -> a2 -> a3;
-#		label = "process #1";
-#	}
+ArrayLoader->MetaClass [style=dotted]
+"ArrayLoader\\Yaml"->ArrayLoader
+
+"Database\\Profiler\\Html"->"Database\\Profiler" [style=dotted]
+
+Database->"Database\\Profiler"
+Database->"Database\\Descriptor"
+Database->"Database\\Connector"
+
+"Database\\Connector\\Mysqli"->"Database\\Connector" [style=dotted]
+"Database\\Descriptor\\Mysqli"->"Database\\Descriptor" [style=dotted]
+"Database\\Descriptor"->"Database\\Connector"
+"Database\\Connector\\Mysqli"->"Database\\Descriptor\\Mysqli"
+
+"MVC\\Controller\\Front"->"MVC\\Router"
+"MVC\\Controller\\Front"->"MVC\\RouterHistoric"
+"MVC\\Controller\\Front"->ActionController
+"MVC\\Controller\\Front"->"MVC\\Plugin"
+"MVC\\Controller"->"MVC\\Router"
+"MVC\\Controller"->"MVC\\RouterHistoric"
+
+"MVC\\Router\\Explicit"->"MVC\\Router" [style=dotted]
+"MVC\\RouterHistoric\\Lilo"->"MVC\\RouterHistoric" [style=dotted]
+
+Map->"Map\\Loader"
+Map->"Map\\Extractor"
+
+"Map\\Extractor\\Database"->"Map\\Extractor" [style=dotted]
+"Map\\Extractor\\Loader\\Xml"->"Map\\Loader" [style=dotted]
+
 }

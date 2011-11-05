@@ -1,5 +1,5 @@
 <?php
-namespace Fakelib\Adapter\Database\Rows {
+namespace Fakelib\Database\Rows {
     class Mysqli extends \CRUDsader\Adapter\Database\Rows {
 
         public function getRessource() {

@@ -10,16 +10,16 @@ namespace CRUDsader\Mvc\Controller {
      * MVC Front controller
      * @package CRUDsader\Mvc\Controller
      */
-    class Front implements \CRUDsader\Interfaces\Adaptable,  \CRUDsader\Interfaces\Configurable {
+    class Front extends \CRUDsader\MetaClass{
         /*
-         * @var Block
+         * @var string
          */
-        protected $_configuration = NULL;
+        protected $_configurationIndex = 'mvc';
 
         /*
          * @var array
          */
-        protected $_modulePlugins = array();
+        protected $_plugins = array();
         /*
          * @var bool
          */
@@ -29,64 +29,31 @@ namespace CRUDsader\Mvc\Controller {
          * @var Mvc\Controller instance
          */
         protected $_instanceController;
-
+        
         /**
          * constructor
          */
         public function __construct() {
-            $di=\CRUDsader\Instancer::getInstance();
-            $this->_configuration = $di->configuration->mvc;
-            $this->_adapters['routerHistoric'] = $di->{'mvc.routerHistoric'};
+            parent::__construct();
+            $this->setDependency('routerHistoric','mvc.routerHistoric');
+            $this->setDependency('router','mvc.router');
+            $this->setConfiguration(\CRUDsader\Instancer::getInstance()->configuration->mvc);
         }
         
         /**
          * @param \CRUDsader\Block $block 
          */
-        public function setConfiguration(\CRUDsader\Block $block=null){
-            $this->_configuration=$block;
-        }
-        
-        /**
-         * @return  \CRUDsader\Block $block 
-         */
-        public function getConfiguration(){
-            return $this->_configuration;
-        }
-        /**
-         * list of all adapters
-         * @var array 
-         */
-        protected $_adapters = array();
-
-        /**
-         * @param string $name
-         * @return bool
-         */
-        public function hasAdapter($name=false) {
-            return isset($this->_adapters[$name]);
+        public function setConfiguration(\CRUDsader\Block $block=null) {
+            $this->_configuration = $block;
+            $this->_dependencies['router']->setConfiguration($block);
         }
 
-        /**
-         * @param string $name
-         * @return \CRUDsader\Adapter
-         */
-        public function getAdapter($name=false) {
-            return $this->_adapters[$name];
+        public function hasPlugin($pluginName) {
+            return isset($this->_dependencies['plugin'.$pluginName]);
         }
 
-        /**
-         * @return array
-         */
-        public function getAdapters() {
-            return $this->_adapters;
-        }
-
-        public function moduleHasPlugin($pluginName) {
-            return isset($this->_modulePlugins[$pluginName]);
-        }
-
-        public function moduleGetPlugin($pluginName) {
-            return $this->_modulePlugins[$pluginName];
+        public function getPlugin($pluginName) {
+            return $this->_dependencies['plugin'.$pluginName];
         }
 
         public function getApplicationPath() {
@@ -103,32 +70,29 @@ namespace CRUDsader\Mvc\Controller {
          * @return string modulename 
          */
         public function route($route=false) {
-            $this->_adapters['router'] = \CRUDsader\Instancer::getInstance()->{'mvc.router'};
-            $this->_adapters['router']->setConfiguration($this->_configuration);
             if ($route === false) {
                 $sp = strpos($_SERVER['REQUEST_URI'], '?');
                 $route = $sp !== false ? substr($_SERVER['REQUEST_URI'], 0, $sp) : $_SERVER['REQUEST_URI'];
             }
-            $route = $this->_adapters['router']->route($route);
+            $route = $this->_dependencies['router']->route($route);
             if (!$route)
                 throw new FrontException('cannot find the route');
-            $module = $this->_adapters['router']->getModule();
+            $module = $this->_dependencies['router']->getModule();
             if ($module && !isset($this->_configuration->modules->$module))
                 throw new FrontException('module "' . $module . '" does not exist or is not in the configuration');
             // init plugins
-            $module = $this->_adapters['router']->getModule() ? $this->_adapters['router']->getModule() : false;
+            $module = $this->_dependencies['router']->getModule() ? $this->_dependencies['router']->getModule() : false;
             $plugins = $module ? (isset($this->_configuration->plugins->$module) ? $this->_configuration->plugins->$module : array()) : $this->_configuration->plugins;
-            $di=\CRUDsader\Instancer::getInstance();
             foreach ($plugins as $pluginName => $pluginOptions) {
-                $cfg=$di->getConfiguration();
-                $cfg->{'mvc.plugin.'.$pluginName} = array('class'=>'Plugin\\' . $pluginName,'singleton'=>true);
-                $di->setConfiguration($cfg);
-                $plugin = $this->_modulePlugins[$pluginName] = $di->{'mvc.plugin.'.$pluginName};
+                $cfg=$this->_instancer->getConfiguration();
+                $cfg->{'mvc.plugin.'.$pluginName} = array('class'=>'Plugin\\' . $pluginName,'singleton'=>false);
+                $this->_instancer->setConfiguration($cfg);
+                $this->_dependencies['plugin'.$pluginName] = $this->_instancer->{'mvc.plugin.'.$pluginName};
                 if ($pluginOptions instanceof \CRUDsader\Block)
-                    $plugin->setConfiguration($pluginOptions);
-                $plugin->postRoute($this->_adapters['router']);
+                    $this->_dependencies['plugin'.$pluginName]->setConfiguration($pluginOptions);
+                $this->_dependencies['plugin'.$pluginName]->postRoute($this->_dependencies['router']);
             }
-            return $this->_adapters['router']->getModule();
+            return $this->_dependencies['router']->getModule();
         }
 
         public function skipRouterHistoric($bool=true) {
@@ -137,31 +101,29 @@ namespace CRUDsader\Mvc\Controller {
 
         public function dispatch() {
             // plugins
-            foreach ($this->_modulePlugins as $plugin)
+            foreach ($this->_plugins as $plugin)
                 $plugin->preDispatch();
-            $class='Controller\\' . ucFirst($this->_adapters['router']->getController());
-            $this->_instanceController = new $class($this, $this->_adapters['router']->toArray());
-            $this->_instanceController->setConfiguration($this->_configuration);
-            $this->_instanceController->setRouter($this->_adapters['router']);
-            if (method_exists($this->_instanceController, $this->_adapters['router']->getAction() . 'Action'))
-                $this->_instanceController->{$this->_adapters['router']->getAction() . 'Action'}();
-            else if (method_exists($this->_instanceController, '__callAction'))
-                $this->_instanceController->__callAction($this->_adapters['router']->getAction());
+            $class='Controller\\' . ucFirst($this->_dependencies['router']->getController());
+            $this->_dependencies['actionController'] = new $class($this, $this->_dependencies['router']->toArray());
+            if (method_exists($this->_dependencies['actionController'], $this->_dependencies['router']->getAction() . 'Action'))
+                $this->_dependencies['actionController']->{$this->_dependencies['router']->getAction() . 'Action'}();
+            else if (method_exists($this->_dependencies['actionController'], '__callAction'))
+                $this->_dependencies['actionController']->__callAction($this->_dependencies['router']->getAction());
             else
-                throw new FrontException('URL not found, no function ' . $this->_adapters['router']->getAction());
-            $this->_instanceController->renderTemplate();
+                throw new FrontException('URL not found, no function ' . $this->_dependencies['router']->getAction());
+            $this->_dependencies['actionController']->renderTemplate();
             if (!$this->_skipRouterHistoric)
-                $this->_adapters['routerHistoric']->registerRoute($this->_adapters['router']);
-            foreach ($this->_modulePlugins as $plugin)
+                $this->_dependencies['routerHistoric']->registerRoute($this->_dependencies['router']);
+            foreach ($this->_plugins as $plugin)
                 $plugin->postDispatch();
         }
 
         public function url($options=array()) {
-            return $this->_adapters['router']->url($options);
+            return $this->_dependencies['router']->url($options);
         }
 
-        public function getInstanceController() {
-            return $this->_instanceController;
+        public function getActionController() {
+            return $this->_dependencies['actionController'];
         }
     }
     class FrontException extends \CRUDsader\Exception {

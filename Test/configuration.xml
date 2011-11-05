@@ -32,7 +32,7 @@
             <file>CRUDsader/Database_Test.php</file>
             <file>CRUDsader/Adapter/Identifier_Test.php</file><!-- empty -->
             <file>CRUDsader/Adapter/Identifier/Hilo_Test.php</file>
-            <file>CRUDsader/Adapter/I18n/Translation/None_Test.php</file>
+            <file>CRUDsader/I18n/Translation/None_Test.php</file>
             <file>CRUDsader/I18n_Test.php</file>
             <file>CRUDsader/Form/Component_Test.php</file>
             <file>CRUDsader/Form/Component/Hidden_Test.php</file>

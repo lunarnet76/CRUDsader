@@ -10,8 +10,7 @@ namespace CRUDsader\Mvc {
      * MVC controller must inherit from this
      * @package CRUDsader\Mvc
      */
-    abstract class Controller implements \CRUDsader\Interfaces\Configurable {
-        protected $_frontController = NULL;
+    abstract class Controller extends \CRUDsader\MetaClass {
         protected $_views = array();
         protected $_metas = array();
         protected $_headers = array();
@@ -19,31 +18,30 @@ namespace CRUDsader\Mvc {
         protected $_preLoads = array();
         protected $_noRender = false;
         protected $_template;
+        
+          /**
+         * the instanced dependencies
+         * @var array
+         */
+        protected $_hasDependencies = array('router','frontController');
+        
+        /**
+         * identify the class
+         * @var string
+         */
+        protected $_classIndex = 'mvc';
 
         // ** CONSTRUCTOR **/
         public function __construct() {
-            $this->_frontController = \CRUDsader\Instancer::getInstance()->{'mvc.frontController'};
+            parent::__construct();
+            $this->init();
+            $this->_views['base'] = array('controller' => $this->_dependencies['router']->getController(), 'action' => $this->_dependencies['router']->getAction());
+        }
+        
+        public function init(){
+            
         }
 
-        public function setRouter(\CRUDsader\Adapter\MVC\Router $router) {
-            $this->_router = $router;
-            $this->_views['base'] = array('controller' => $router->getController(), 'action' => $router->getAction());
-        }
-        /** CONFIGURATION * */
-
-        /**
-         * @param \CRUDsader\Block $configuration
-         */
-        public function setConfiguration(\CRUDsader\Block $configuration=null) {
-            $this->_configuration = $configuration;
-        }
-
-        /**
-         * @return \CRUDsader\Block
-         */
-        public function getConfiguration() {
-            return $this->_configuration;
-        }
 
         /** ACTIONS * */
         public function defaultAction() {
@@ -53,25 +51,25 @@ namespace CRUDsader\Mvc {
         /** HELPERS * */
         public function __get($var) {
             switch (true) {
-                case $this->_frontController->moduleHasPlugin($var) === true:
-                    return $this->_frontController->moduleGetPlugin($var);
+                case $this->_dependencies['frontController']->hasPlugin($var) === true:
+                    return $this->_dependencies['frontController']->getPlugin($var);
                     break;
             }
         }
 
         public function __call($name,$arguments) {
-            return call_user_func_array(array($this->_frontController, $name), $arguments);
+            return call_user_func_array(array($this->_dependencies['frontController'], $name), $arguments);
         }
 
 
         /** INFOS * */
         public function getControllerURL() {
-            return $this->_frontController->getURL() . $this->_router->getModule() . '/' . $this->_router->getController() . '/' . $this->_router->getAction() . $this->_router->getParams();
+            return $this->_dependencies['frontController']->getURL() . $this->_dependencies['router']->getModule() . '/' . $this->_dependencies['router']->getController() . '/' . $this->_dependencies['router']->getAction() . $this->_dependencies['router']->getParams();
         }
 
         // helpers
         public function redirect($options=array()) {
-            if (\CRUDsader\Debug::isActivated())
+            if ($this->_instancer->debug->getConfiguration()->redirection)
                 echo '<a href="' . $this->url($options) . '">' . $this->url($options) . '</a>';
             else
                 header('Location: ' . $this->link($options));
@@ -127,16 +125,16 @@ namespace CRUDsader\Mvc {
                 return;
             if (!$this->_isRendered)
                 $this->_isRendered = true;
-            $router = $this->_router;
+            $router = $this->_dependencies['router'];
             $suffix = $this->_configuration->view->suffix;
-            $applicationPath = $this->_frontController->getApplicationPath();
+            $applicationPath = $this->_dependencies['frontController']->getApplicationPath();
             foreach ($this->_views as $infos) {
                 switch (true) {
-                    case file_exists($applicationPath . 'view/'.$this->_router->getModule().'/' . ($infos['controller'] ?$infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix):
-                        $path = $applicationPath . 'view/'.$this->_router->getModule().'/' . ($infos['controller'] ? $infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix;
+                    case file_exists($applicationPath . 'view/'.$this->_dependencies['router']->getModule().'/' . ($infos['controller'] ?$infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix):
+                        $path = $applicationPath . 'view/'.$this->_dependencies['router']->getModule().'/' . ($infos['controller'] ? $infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix;
                         break;
                     default:
-                        $path = $this->_frontController->getApplicationPath() .'view/default.' . $suffix;
+                        $path = $this->_dependencies['frontController']->getApplicationPath() .'view/default.' . $suffix;
                 }
                 require($path);
             }
@@ -151,8 +149,8 @@ namespace CRUDsader\Mvc {
                 $this->_template = $this->_configuration->view->template;
             $this->preRender();
             if ($this->_template) {
-                $file = $this->_frontController->getApplicationPath()  . 'view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
-                $path = file_exists($file) ? $file : $this->_frontController->getApplicationPath() .  'view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
+                $file = $this->_dependencies['frontController']->getApplicationPath()  . 'view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
+                $path = file_exists($file) ? $file : $this->_dependencies['frontController']->getApplicationPath() .  'view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
                 require($path);
             }else
                 $this->render();
@@ -172,7 +170,7 @@ namespace CRUDsader\Mvc {
 
        /* public function renderPart($action, $controller=false) {
             $infos = array('action' => $action, 'controller' => $controller);
-            $path = file_exists($this->_frontController->getModuleDirectory() . $this->_frontController->getModule() . '/view/' . ($infos['controller'] ? str_replace('_', '/', $infos['controller']) . '/' : '') . $infos['action'] . $suffix) ? $this->_frontController->getModuleDirectory() . $this->_frontController->getModule() . '/view/' . ($infos['controller'] ? str_replace('_', '/', $infos['controller']) . '/' : '') . $infos['action'] . $suffix : 'module/' . $this->_frontController->getModule() . '/view/default' . $suffix;
+            $path = file_exists($this->_dependencies['frontController']->getModuleDirectory() . $this->_dependencies['frontController']->getModule() . '/view/' . ($infos['controller'] ? str_replace('_', '/', $infos['controller']) . '/' : '') . $infos['action'] . $suffix) ? $this->_dependencies['frontController']->getModuleDirectory() . $this->_dependencies['frontController']->getModule() . '/view/' . ($infos['controller'] ? str_replace('_', '/', $infos['controller']) . '/' : '') . $infos['action'] . $suffix : 'module/' . $this->_dependencies['frontController']->getModule() . '/view/default' . $suffix;
             ob_start();
             require($path);
             return ob_get_clean();

@@ -11,18 +11,6 @@ namespace CRUDsader {
      * @package CRUDsader
      */
     class Configuration extends Block {
-
-        /**
-         * return singletoned instances
-         * @return static
-         */
-        public static function getInstance() {
-            static $instance = NULL;
-            if (NULL === $instance) {
-                $instance = new static();
-            }
-            return $instance;
-        }
         /**
          * this will be loaded in the configuration at the very begining
          * @access protected
@@ -30,22 +18,23 @@ namespace CRUDsader {
          * @var <type>
          */
         protected static $_defaults = array(
-            'database' => array(
+            'database' => array(),
+            'database.connector' => array(
                 'host' => 'localhost',
                 'user' => 'root',
                 'password' => '',
                 'name' => 'CRUDsaderdb'
             ),
             'debug' => array(
-                'php' => array(
-                    'error' => true
-                ),
-                'database' => array(
-                    'profiler' => false
-                )
+                'error' => false,
+                'database' => false,
+                'redirection' => false
             ),
             'i18n' => array(
-                'timezone' => 'Europe/London', //http://php.net/manual/en/function.date-default-timezone-set.php
+                'timezone' => 'Europe/London'
+            ),
+            'i18n.translation' => array(
+                'file'=>''
             ),
             'form' => array(
                 'view' => array(
@@ -109,28 +98,43 @@ namespace CRUDsader {
             ),
             'instances' => array(
                 'configuration' => array(
-                    'class' => '\\CRUDsader\\Configuration', 'singleton' => true
-                ),
+                    'class' => '\\CRUDsader\\Configuration', 'singleton' => true),
                 'configuration.arrayLoader' => array(
-                    'class' => '\\CRUDsader\\Adapter\\ArrayLoader\\Yaml', 
-                    'singleton' => false
-                ),
-                'arrayLoader' => array('class' => '\\CRUDsader\\Adapter\\ArrayLoader\\Yaml', 'singleton' => false),
-                'database' => array('class' => '\\CRUDsader\\Database', 'singleton' => true),
-                'database.connector' => array('class' => '\\CRUDsader\\Adapter\\Database\\Connector\\Mysqli', 'singleton' => true),
-                'database.descriptor' => array('class' => '\\CRUDsader\\Adapter\\Database\\Descriptor\\Mysqli', 'singleton' => true),
-                'database.profiler' => array('class' => '\\CRUDsader\\Adapter\\Database\\Profiler\\Html', 'singleton' => true),
-                'database.rows' => array('class' => '\\CRUDsader\\Adapter\\Database\\Rows\\Mysqli', 'singleton' => false),
-                'i18n' => array('class' => '\\CRUDsader\\I18n', 'singleton' => true),
-                'i18n.translation' => array('class' => '\\CRUDsader\\Adapter\\I18n\\Translation\\None', 'singleton' => true),
-                'i18n.translation.yaml.arrayLoader' => array('class' => '\\CRUDsader\\Adapter\\ArrayLoader\\Yaml', 'singleton' => false),
-                'object.identifier' => array('class' => '\\CRUDsader\\Adapter\\Identifier\\Hilo', 'singleton' => true),
-                'map' => array('class' => '\\CRUDsader\\Map', 'singleton' => true),
-                'map.extractor' => array('class' => '\\CRUDsader\\Adapter\\Map\\Extractor\\Database', 'singleton' => true),
-                'map.loader' => array('class' => '\\CRUDsader\\Adapter\\Map\\Loader\\Xml', 'singleton' => true),
-                'mvc.frontController' => array('class' => '\\CRUDsader\\MVC\\Controller\\Front', 'singleton' => true),
-                'mvc.routerHistoric' => array('class' => '\\CRUDsader\\Adapter\\Mvc\\RouterHistoric\\Lilo', 'singleton' => true),
-                'mvc.router' => array('class' => '\\CRUDsader\\Adapter\\Mvc\\Router\\Explicit', 'singleton' => true),
+                    'class' => '\\CRUDsader\\ArrayLoader\\Yaml', 'singleton' => false),
+                'arrayLoader' => array(
+                    'class' => '\\CRUDsader\\ArrayLoader\\Yaml', 'singleton' => false),
+                'database' => array(
+                    'class' => '\\CRUDsader\\Database', 'singleton' => true),
+                'debug' => array(
+                    'class' => '\\CRUDsader\\Debug', 'singleton' => true),
+                'database.connector' => array(
+                    'class' => '\\CRUDsader\\Database\\Connector\\Mysqli', 'singleton' => true),
+                'database.descriptor' => array(
+                    'class' => '\\CRUDsader\\Database\\Descriptor\\Mysqli', 'singleton' => true),
+                'database.profiler' => array(
+                    'class' => '\\CRUDsader\\Database\\Profiler\\Html', 'singleton' => true),
+                'database.rows' => array(
+                    'class' => '\\CRUDsader\\Database\\Rows\\Mysqli', 'singleton' => false),
+                'i18n' => array(
+                    'class' => '\\CRUDsader\\I18n', 'singleton' => true),
+                'i18n.translation' => array(
+                    'class' => '\\CRUDsader\\I18n\\Translation\\None', 'singleton' => true),
+                'i18n.translation.arrayLoader' => array(
+                    'class' => '\\CRUDsader\\ArrayLoader\\Yaml', 'singleton' => false),
+                'object.identifier' => array(
+                    'class' => '\\CRUDsader\\Object\\Identifier\\Hilo', 'singleton' => true),
+                'map' => array(
+                    'class' => '\\CRUDsader\\Map', 'singleton' => true),
+                'map.extractor' => array(
+                    'class' => '\\CRUDsader\\Map\\Extractor\\Database', 'singleton' => true),
+                'map.loader' => array(
+                    'class' => '\\CRUDsader\\Map\\Loader\\Xml', 'singleton' => true),
+                'mvc.frontController' => array(
+                    'class' => '\\CRUDsader\\MVC\\Controller\\Front', 'singleton' => true),
+                'mvc.routerHistoric' => array(
+                    'class' => '\\CRUDsader\\Mvc\\RouterHistoric\\Lilo', 'singleton' => true),
+                'mvc.router' => array(
+                    'class' => '\\CRUDsader\\Mvc\\Router\\Explicit', 'singleton' => true)
             )
         );
 
@@ -147,8 +151,8 @@ namespace CRUDsader {
          * @test test_load_
          */
         public function load($options) {
-            $arrayLoader = Instancer::getInstance()->{'configuration.arrayLoader'}($options);
-            $this->loadArray($arrayLoader->get());
+            $arrayLoader = Instancer::getInstance()->{'configuration.arrayLoader'};
+            $this->loadArray($arrayLoader->load($options));
         }
     }
     class ConfigurationException extends \CRUDsader\Exception {

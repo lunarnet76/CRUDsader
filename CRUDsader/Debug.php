@@ -10,44 +10,82 @@ namespace CRUDsader {
      * Debug tools
      * @package CRUDsader
      */
-    class Debug {
-        protected static $_configuration;
-        protected static $_chrono = array();
+    class Debug extends MetaClass{
+        /**
+         * identify the class
+         * @var string
+         */
+        protected $_classIndex = 'debug';
 
-        public static function isActivated() {
-            return self::$_configuration->php;
+        /**
+         * shortcut for database profiler
+         * return string
+         */
+        public function profileDatabase() {
+            if ($this->_instancer->database->hasDependency('profiler'))
+                return $this->_instancer->database->getDependency('profiler')->display();
         }
-
-        public static function setConfiguration(Block $configuration) {
-            self::$_configuration = $configuration;
-        }
-
-        public static function databaseProfiler() {
-            if (self::$_configuration->database) {
-                $db = \CRUDsader\Instancer::getInstance()->database;
-                // display DB profiler
-                if ($db->hasProfiler())
-                    $db->getProfiler()->display();
+        
+         public static function errorHandler($errno, $errstr, $errfile, $errline, $context) {
+            if (error_reporting() == 0) {// @ errors
+                return;
             }
-        }
-
-        public static function chrono_start($index='script', $microtime=true) {
-            if (!self::$_configuration->php)
-                return;
-            if ($microtime)
-                self::$_chrono[$index] = microtime(true);
-            else
-                self::$_chrono[$index] = time(true);
-        }
-
-        public static function chrono_time($index='script', $microtime=true) {
-            if (!self::$_configuration->php)
-                return;
-            if ($microtime)
-                $end = microtime(true);
-            else
-                $end=time(true);
-            return isset(self::$_chrono[$index]) ? round($end - self::$_chrono[$index], 4) : '';
+            $exit = false;
+            $show = true;
+            switch ($errno) {
+                case E_ERROR :$output = 'Fatal run-time error';
+                    $exit = true;
+                    break;
+                case E_WARNING :$output = 'Run-time warning';
+                    break;
+                case E_PARSE :$output = 'Compile-time parse errors';
+                    break;
+                case E_NOTICE :$output = 'Run-time notice';
+                    break;
+                case E_CORE_ERROR :$output = 'Fatal errors that occur during PHP\'s initial startup';
+                    $exit = true;
+                    break;
+                case E_CORE_WARNING :$output = 'Warning';
+                    break;
+                case E_COMPILE_ERROR :$output = 'Fatal compile-time errors';
+                    $exit = true;
+                    break;
+                case E_COMPILE_WARNING :$output = 'Compile-time warning';
+                    break;
+                case E_USER_ERROR :$output = 'User-generated error';
+                    $exit = true;
+                    break;
+                case E_USER_WARNING :$output = 'User-generated warning';
+                    break;
+                case E_USER_NOTICE :$output = 'User-generated notice';
+                    break;
+                case E_STRICT :$output = 'User-generated strict notice';
+                    $show = false;
+                    break;
+                case E_RECOVERABLE_ERROR :$output = 'Catchable fatal error';
+                    $exit = true;
+                    break;
+                case E_DEPRECATED :$output = 'will not work in future versions';
+                    break;
+                case E_USER_DEPRECATED :$output = 'User-generated code will not work in future versions';
+                    break;
+                case E_ALL :$output = 'FATAL ERROR';
+                    break;
+                default:
+                    $output = 'UNKNOWN ERROR';
+                    break;
+            }
+            if (\CRUDsader\Instancer::getInstance()->debug->getConfiguration()->error && $show){
+                self::pre(array('Message' => $errstr, 'File' => $errfile, 'Line' => $errline/*, 'Context' => $context*/),$output);
+            }
+            if ($exit) {
+                if (\CRUDsader\Instancer::getInstance()->debug->getConfiguration()->error) {
+                    echo 'exit';
+                    self::pre(debug_backtrace());
+                }
+                exit;
+            }
+            return true; // true disable PHP built-in error handler
         }
 
         protected static function preCallback($Parts) {
@@ -151,83 +189,7 @@ namespace CRUDsader {
             echo '</div>';
         }
 
-        public static function errorHandler($errno, $errstr, $errfile, $errline, $context) {
-            if (error_reporting() == 0) {// @ errors
-                return;
-            }
-            $exit = false;
-            $show = true;
-            switch ($errno) {
-                case E_ERROR :$output = 'Fatal run-time error';
-                    $exit = true;
-                    break;
-                case E_WARNING :$output = 'Run-time warning';
-                    break;
-                case E_PARSE :$output = 'Compile-time parse errors';
-                    break;
-                case E_NOTICE :$output = 'Run-time notice';
-                    break;
-                case E_CORE_ERROR :$output = 'Fatal errors that occur during PHP\'s initial startup';
-                    $exit = true;
-                    break;
-                case E_CORE_WARNING :$output = 'Warning';
-                    break;
-                case E_COMPILE_ERROR :$output = 'Fatal compile-time errors';
-                    $exit = true;
-                    break;
-                case E_COMPILE_WARNING :$output = 'Compile-time warning';
-                    break;
-                case E_USER_ERROR :$output = 'User-generated error';
-                    $exit = true;
-                    break;
-                case E_USER_WARNING :$output = 'User-generated warning';
-                    break;
-                case E_USER_NOTICE :$output = 'User-generated notice';
-                    break;
-                case E_STRICT :$output = 'User-generated strict notice';
-                    $show = false;
-                    break;
-                case E_RECOVERABLE_ERROR :$output = 'Catchable fatal error';
-                    $exit = true;
-                    break;
-                case E_DEPRECATED :$output = 'will not work in future versions';
-                    break;
-                case E_USER_DEPRECATED :$output = 'User-generated code will not work in future versions';
-                    break;
-                case E_ALL :$output = 'FATAL ERROR';
-                    break;
-                default:
-                    $output = 'UNKNOWN ERROR';
-                    break;
-            }
-            if (self::$_configuration->php && $show){
-                self::pre(array('Message' => $errstr, 'File' => $errfile, 'Line' => $errline/*, 'Context' => $context*/));
-                self::pre($output);
-            }
-            if ($exit) {
-                if (self::$_configuration->php) {
-                    echo 'exit';
-                    self::pre(debug_backtrace());
-                }
-                exit;
-            }
-            return true; // true disable PHP built-in error handler
-        }
-
-        public static function exitException($e) {
-            if (!self::$_configuration->php)
-                return;
-            ob_start();
-            pre($e, get_class($e), 'white');
-            $content = ob_get_clean();
-            return str_replace(array(
-                'message:',
-                '['
-                    ), array(
-                '<font color="#ae1414" style="font-weight:bold">message:',
-                '</font>['
-                    ), $content) . self::stop();
-        }
+       
 
         public static function getMemoryUsage() {
             $size = memory_get_usage(true);
