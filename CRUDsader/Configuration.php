@@ -132,10 +132,10 @@ namespace CRUDsader {
                 'mvc.frontController' => array(
                     'class' => '\\CRUDsader\\MVC\\Controller\\Front', 'singleton' => true),
                 'mvc.routerHistoric' => array(
-                    'class' => '\\CRUDsader\\Mvc\\RouterHistoric\\Lilo', 'singleton' => true),
+                    'class' => '\\CRUDsader\\MVC\\RouterHistoric\\Lilo', 'singleton' => true),
                 'mvc.router' => array(
-                    'class' => '\\CRUDsader\\Mvc\\Router\\Explicit', 'singleton' => true)
-            )
+                    'class' => '\\CRUDsader\\MVC\\Router\\Explicit', 'singleton' => true)
+            ) 
         );
 
         /**
