@@ -5,7 +5,7 @@
  * @license     see license.txt
  * @since       0.1
  */
-namespace CRUDsader\Mvc\RouterHistoric {
+namespace CRUDsader\MVC\RouterHistoric {
     /**
      * Last In Last Out 
      * @package CRUDsader\Mvc\RouterHistoric

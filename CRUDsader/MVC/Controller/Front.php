@@ -5,7 +5,7 @@
  * @license     see license.txt
  * @since       0.1
  */
-namespace CRUDsader\Mvc\Controller {
+namespace CRUDsader\MVC\Controller {
     /**
      * MVC Front controller
      * @package CRUDsader\Mvc\Controller
