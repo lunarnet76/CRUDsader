@@ -29,7 +29,7 @@ namespace CRUDsader\Interfaces {
 
         /**
          * @param string $name
-         * @return \CRUDsader\Adapter
+         * @return mix
          */
         public function getParameter($name=false);
         

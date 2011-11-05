@@ -72,7 +72,7 @@ namespace CRUDsader\MVC {
             if ($this->_instancer->debug->getConfiguration()->redirection)
                 echo '<a href="' . $this->url($options) . '">' . $this->url($options) . '</a>';
             else
-                header('Location: ' . $this->link($options));
+                header('Location: ' . $this->url($options));
             exit;
         }
 

@@ -20,7 +20,7 @@ namespace CRUDsader\Object\Identifier {
          * constructor
          */
         public function __construct() {
-            $this->_session = \CRUDsader\Session::useNamespace('CRUDsader\\Adapter\\Identifier\\Hilo');
+            $this->_session = \CRUDsader\Session::useNamespace('CRUDsader\\Object\\Identifier\\Hilo');
             $this->_session->highId = isset($this->_session->highId) ? $this->_session->highId : $this->_getNewHighId();
             if (!isset($this->_session->lowId))
                 $this->_session->lowId = array();

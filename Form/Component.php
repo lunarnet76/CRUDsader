@@ -52,7 +52,7 @@ namespace CRUDsader\Form {
 
         /**
          * @param string $name
-         * @return \CRUDsader\Adapter
+         * @return mix
          */
         public function getParameter($name=false) {
             return $this->_parameters[$name];

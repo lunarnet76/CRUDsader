@@ -8,7 +8,7 @@
 namespace CRUDsader\Database\Rows {
     /**
      * DB results adapter for MySQL
-     * @package    CRUDsader/Adapter/Database/Rows
+     * @package    CRUDsader/Database/Rows
      */
     class Mysqli extends \CRUDsader\Database\Rows {
         /**
