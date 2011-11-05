@@ -8,7 +8,7 @@
 namespace CRUDsader\MVC {
     /**
      * @abstract
-     * @package CRUDsader\Mvc
+     * @package CRUDsader\MVC
      */
     abstract class Plugin extends \CRUDsader\MetaClass{
        

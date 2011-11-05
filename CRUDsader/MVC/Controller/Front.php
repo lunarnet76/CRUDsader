@@ -8,7 +8,7 @@
 namespace CRUDsader\MVC\Controller {
     /**
      * MVC Front controller
-     * @package CRUDsader\Mvc\Controller
+     * @package CRUDsader\MVC\Controller
      */
     class Front extends \CRUDsader\MetaClass{
         /*
@@ -26,7 +26,7 @@ namespace CRUDsader\MVC\Controller {
         protected $_skipRouterHistoric = false;
 
         /**
-         * @var Mvc\Controller instance
+         * @var MVC\Controller instance
          */
         protected $_instanceController;
         

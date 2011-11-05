@@ -8,14 +8,14 @@
 namespace CRUDsader\MVC\RouterHistoric {
     /**
      * Last In Last Out 
-     * @package CRUDsader\Mvc\RouterHistoric
+     * @package CRUDsader\MVC\RouterHistoric
      */
     class Lilo extends \CRUDsader\MetaClass{
         protected $_session;
         protected $_controllerToSkip = array();
       
         public function __construct() {
-            $this->_session = \CRUDsader\Session::useNamespace('CRUDsader\\Mvc\\Navigation\\Historic');
+            $this->_session = \CRUDsader\Session::useNamespace('CRUDsader\\MVC\\Navigation\\Historic');
         }
 
         public function skipRoute($controller) {

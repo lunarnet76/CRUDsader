@@ -8,7 +8,7 @@
 namespace CRUDsader\MVC {
     /**
      * MVC controller must inherit from this
-     * @package CRUDsader\Mvc
+     * @package CRUDsader\MVC
      */
     abstract class Controller extends \CRUDsader\MetaClass {
         protected $_views = array();
