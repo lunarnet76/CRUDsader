@@ -9,7 +9,7 @@ namespace CRUDsader\Database\Descriptor {
     /**
      * @todo put engine in adapter configuration
      * descriptor for MySQL
-     * @package CRUDsader\Adapter\Database\Descriptor
+     * @package CRUDsader\Database\Descriptor
      */
     class Mysqli extends \CRUDsader\Database\Descriptor {
 
