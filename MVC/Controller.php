@@ -5,7 +5,7 @@
  * @license     see license.txt
  * @since       0.1
  */
-namespace CRUDsader\Mvc {
+namespace CRUDsader\MVC {
     /**
      * MVC controller must inherit from this
      * @package CRUDsader\Mvc
