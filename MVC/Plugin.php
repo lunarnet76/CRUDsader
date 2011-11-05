@@ -5,29 +5,15 @@
  * @license     see license.txt
  * @since       0.1
  */
-namespace CRUDsader\Mvc {
+namespace CRUDsader\MVC {
     /**
      * @abstract
      * @package CRUDsader\Mvc
      */
-    abstract class Plugin implements \CRUDsader\Interfaces\Configurable{
-        protected $_configuration;
-        /**
-         * @param Block $configuration
-         */
-         public function setConfiguration(\CRUDsader\Block $configuration=null) {
-            $this->_configuration = $configuration;
-        }
+    abstract class Plugin extends \CRUDsader\MetaClass{
+       
 
-        /**
-         * @return Block
-         */
-        public function getConfiguration() {
-            return $this->_configuration;
-        }
-
-
-        public function postRoute(\CRUDsader\Adapter\MVC\Router $router) {
+        public function postRoute(\CRUDsader\MVC\Router $router) {
             
         }
 

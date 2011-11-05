@@ -8,7 +8,7 @@
 namespace CRUDsader\Object\Collection {
     class Initialised extends \CRUDsader\Object\Collection {
 
-        public function __construct($className, \CRUDsader\Adapter\Database\Rows $rowSet, array $mapFields) {
+        public function __construct($className, \CRUDsader\Database\Rows $rowSet, array $mapFields) {
             $fields = $rowSet->getFields();
             parent::__construct($className);
             $this->_initialised = true;

@@ -116,7 +116,7 @@ namespace CRUDsader {
         public static function autoloader($className) {
             $filePath = self::_findIncludePathFor($className);
             if ($filePath){
-                 self::$_includedClasses[$className]=$filePath;
+                self::$_includedClasses[$className]=$filePath;
                 require($filePath);
             }else
                 throw new AutoloadException('class "' . $className . '" cannot be autoloaded');

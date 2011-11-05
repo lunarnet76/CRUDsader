@@ -52,10 +52,6 @@ namespace CRUDsader {
                         $this->_properties[$key] = $value;
                 }
         }
-        
-        public static function instance(array $array=null){
-            return new self($array);
-        }
 
         /**
          * 

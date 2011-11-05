@@ -8,15 +8,25 @@
 namespace CRUDsader {
     /**
      * DBAL
-     * @package     CRUDsader
+     * @package CRUDsader
      */
-    class Database implements Interfaces\Adaptable, Interfaces\Configurable {
+    class Database extends MetaClass{
+        /**
+         * identify the class
+         * @var string
+         */
+        protected $_classIndex='database';
         
         /**
-         * list of all adapters
-         * @var array 
+         * the list of dependencies
+         * @var array
          */
-        protected $_adapters = array();
+        protected $_hasDependencies = array('connector','descriptor','profiler');
+        
+        /**
+         * @var bool wether or not to profile
+         */
+        protected $_profile=false;
 
         /**
          * @var string
@@ -24,56 +34,14 @@ namespace CRUDsader {
         protected $_sql = false;
 
         /**
-         * @access protected
-         */
-        public function __construct() {
-            $di=Instancer::getInstance();
-            $this->setConfiguration($di->configuration->database);
-            $this->_adapters['descriptor'] = $di->{'database.descriptor'};
-        }
-        
-        /**
          * @param \CRUDsader\Block $block 
          */
         public function setConfiguration(\CRUDsader\Block $block=null){
-            $di=Instancer::getInstance();
-            $this->_configuration=$block;
-            if ($di->configuration->debug->database->profiler)
-                $this->_adapters['profiler'] = $di->{'database.profiler'};
-            $this->_adapters['connector'] = $di->{'database.connector'};
-            $this->_adapters['connector']->setConfiguration($this->_configuration);
+            parent::setConfiguration($block);
+            if ($this->_instancer->debug->getConfiguration()->databaseProfiler)
+                $this->_profile=true;
         }
         
-        /**
-         * @return  \CRUDsader\Block $block 
-         */
-        public function getConfiguration(){
-            return $this->_configuration;
-        }
-        
-        /**
-         * @param string $name
-         * @return bool
-         */
-        public function hasAdapter($name=false) {
-            return isset($this->_adapters[$name]);
-        }
-
-        /**
-         * @param string $name
-         * @return \CRUDsader\Adapter
-         */
-        public function getAdapter($name=false) {
-            return $this->_adapters[$name];
-        }
-
-        /**
-         * @return array
-         */
-        public function getAdapters() {
-            return $this->_adapters;
-        }
-
         /**
          * get last SQL query
          * @return string 
@@ -82,30 +50,27 @@ namespace CRUDsader {
             return $this->_sql;
         }
 
-        
-        
-
         /**
          * execute a SQL query, return is dependant of the $type
          * @param string $sql
          * @param string $type
-         * @return \CRUDsader\Adapter\Database\Rows
+         * @return \CRUDsader\Database\Rows
          */
         public function query($sql, $type='') {
             $this->_sql = $sql;
-            if (!$this->hasAdapter('profiler'))
-                return $this->_adapters['connector']->query($sql, $type);
-            $this->_adapters['profiler']->startQuery($sql, $type);
+            if (!$this->_profile)
+                return $this->_dependencies['connector']->query($sql, $type);
+            $this->_dependencies['profiler']->startQuery($sql, $type);
             try {
-                $results = $this->_adapters['connector']->query($sql, $type);
-                if ($results instanceof \CRUDsader\Adapter\Database\Rows) {
-                    $this->_adapters['profiler']->stopQuery($results->count(), $results->toArray());
+                $results = $this->_dependencies['connector']->query($sql, $type);
+                if ($results instanceof \CRUDsader\Database\Rows) {
+                    $this->_dependencies['profiler']->stopQuery($results->count(), $results->toArray());
                     $results->rewind();
                 }else
-                    $this->_adapters['profiler']->stopQuery($results);
+                    $this->_dependencies['profiler']->stopQuery($results);
                 return $results;
             } catch (Exception $e) {
-                $this->_adapters['profiler']->stopQueryWithException($e->getMessage());
+                $this->_dependencies['profiler']->stopQueryWithException($e->getMessage());
                 throw $e;
             }
         }
@@ -114,17 +79,17 @@ namespace CRUDsader {
          * prepare a SQL statment
          * @param string $sql
          * @param string $type
-         * @return \CRUDsader\Adapter\Database\Rows
+         * @return \CRUDsader\Database\Rows
          */
         public function prepareQueryStatement($sql, $type='') {
             $this->_sql = $sql;
-            if (!$this->hasAdapter('profiler'))
-                return $this->_adapters['connector']->prepareQueryStatement($sql, $type);;
-            $this->_adapters['profiler']->startQueryStatement($sql, $type);
+            if (!$this->_profile)
+                return $this->_dependencies['connector']->prepareQueryStatement($sql, $type);;
+            $this->_dependencies['profiler']->startQueryStatement($sql, $type);
             try {
-                return $this->_adapters['connector']->prepareQueryStatement($sql, $type);
+                return $this->_dependencies['connector']->prepareQueryStatement($sql, $type);
             } catch (Exception $e) {
-                $this->_adapters['profiler']->stopQueryWithException($e->getMessage());
+                $this->_dependencies['profiler']->stopQueryWithException($e->getMessage());
                 throw $e;
             }
         }
@@ -135,17 +100,17 @@ namespace CRUDsader {
          * @return array|int|bool 
          */
         public function executeQueryStatement(array $args) {
-            if (!$this->hasAdapter('profiler'))
-                return $this->_adapters['connector']->executeQueryStatement($args);
+            if (!$this->_profile)
+                return $this->_dependencies['connector']->executeQueryStatement($args);
             try {
-                $results = $this->_adapters['connector']->executeQueryStatement($args);
+                $results = $this->_dependencies['connector']->executeQueryStatement($args);
                 if (is_array($results))
-                    $this->_adapters['profiler']->stopQueryStatement(count($results), $results, $args);
+                    $this->_dependencies['profiler']->stopQueryStatement(count($results), $results, $args);
                 else
-                    $this->_adapters['profiler']->stopQueryStatement($results, null, $args);
+                    $this->_dependencies['profiler']->stopQueryStatement($results, null, $args);
                 return $results;
             } catch (Exception $e) {
-                $this->_adapters['profiler']->stopQueryStatementWithException($e->getMessage());
+                $this->_dependencies['profiler']->stopQueryStatementWithException($e->getMessage());
                 throw $e;
             }
         }
@@ -165,11 +130,11 @@ namespace CRUDsader {
                 case 'isConnected':
                 case 'isInTransaction':
                 case 'escape':
-                    return call_user_func_array(array($this->_adapters['connector'], $name), $arguments);
+                    return call_user_func_array(array($this->_dependencies['connector'], $name), $arguments);
                     break;
                 case 'quote':
                 case 'quoteIdentifier':
-                    return call_user_func_array(array($this->_adapters['descriptor'], $name), $arguments);
+                    return call_user_func_array(array($this->_dependencies['descriptor'], $name), $arguments);
                     break;
                 case 'select':
                 case 'countSelect':
@@ -179,10 +144,10 @@ namespace CRUDsader {
                 case 'delete':
                 case 'createTable':
                 case 'createTableReference':
-                    return $this->query(call_user_func_array(array($this->_adapters['descriptor'], $name), $arguments), $name);
+                    return $this->query(call_user_func_array(array($this->_dependencies['descriptor'], $name), $arguments), $name);
                     break;
                 case 'highLight':
-                    return call_user_func_array(array($this->_adapters['descriptor'], $name), $arguments);
+                    return call_user_func_array(array($this->_dependencies['descriptor'], $name), $arguments);
                     break;
                 default:
                     throw new DatabaseException('call to undefined function "' . $name . '"');

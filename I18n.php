@@ -8,70 +8,38 @@
 namespace CRUDsader {
     /**
      * Internalization and Localization
-     * @package     CRUDsader
+     * @package   CRUDsader
      */
-    class I18n implements Interfaces\Adaptable,  Interfaces\Configurable {
+    class I18n extends MetaClass{
         /**
-         * @var \CRUDsader\Block
+         * @var string
          */
-        protected $_configuration ;
+        protected $_classIndex='i18n' ;
+        
         /**
+         * the list of dependencies
          * @var array
          */
-        protected $_adapters = array();
-
-        /**
-         * constructor
-         */
-        public function __construct() {
-            $this->setConfiguration(\CRUDsader\Instancer::getInstance()->configuration->i18n);
-        }
+        protected $_hasDependencies = array('translation');
         
         /**
          * @param Block $configuration
          */
-         public function setConfiguration(Block $configuration=null) {
-            $this->_configuration = $configuration;
-            date_default_timezone_set($configuration->timezone);
-            $this->_adapters['translation'] = \CRUDsader\Instancer::getInstance()->{'i18n.translation'};
-            $this->_adapters['translation']->setConfiguration($configuration->translation);
+         public function __construct() {
+            parent::__construct();
+            date_default_timezone_set($this->_configuration->timezone);
         }
 
         /**
-         * @return Block
-         */
-        public function getConfiguration() {
-            return $this->_configuration;
-        }
-
-        /**
+         * shortcuts
          * @param string $name
-         * @return \CRUDsader\Adapter
+         * @param array $arguments
+         * @return mix 
          */
-        public function getAdapter($name=false) {
-            return $this->_adapters[$name];
-        }
-
-        /**
-         * @param string $name
-         * @return bool
-         */
-        public function hasAdapter($name=false) {
-            return isset($this->_adapters[$name]);
-        }
-        
-        /**
-         * @return array
-         */
-        public function getAdapters(){
-            return $this->_adapters;
-        }
-      
-
         public function __call($name, $arguments) {
             switch($name){
                 case 'translate':
-                    return call_user_func_array(array($this->_adapters['translation'],$name), $arguments);
+                    return call_user_func_array(array($this->_dependencies['translation'],$name), $arguments);
                     break;
                 default:
                     throw new I18nException('call to undefined function "'.$name.'"');

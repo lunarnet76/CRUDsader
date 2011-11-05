@@ -11,26 +11,21 @@ namespace CRUDsader {
      * Map the ORM schema to classes
      * @package     CRUDsader
      */
-    class Map implements Interfaces\Configurable{
+    class Map extends MetaClass{
         const BASE_ASSOCIATION_CLASS='__ASSOC__';
-        /**
-         * @var \CRUDsader\Block 
-         */
-        protected $_configuration = NULL;
-        /**
-         * @var array 
-         */
-        protected $_adapters = array();
+       
         /**
          * @var array
          */
         protected $_map = NULL;
 
         /**
-         * constructor, load the map schema
+         * automatically load related configuration
          */
         public function __construct() {
-            $this->setConfiguration(\CRUDsader\Instancer::getInstance()->configuration->map);
+            $this->_instancer=\CRUDsader\Instancer::getInstance();
+            $this->setDependency('loader','map.loader');
+            $this->setConfiguration($this->_instancer->configuration->map);
         }
         
         /**
@@ -38,16 +33,8 @@ namespace CRUDsader {
          */
         public function setConfiguration(\CRUDsader\Block $configuration=null) {
             $this->_configuration = $configuration;
-            $this->_adapter['loader'] = \CRUDsader\Instancer::getInstance()->{'map.loader'};
-             $this->_adapter['loader']->setConfiguration($configuration->loader);
-            $this->_map = $this->_adapter['loader']->getSchema($this->_configuration->defaults);
-        }
-
-        /**
-         * @return Block
-         */
-        public function getConfiguration() {
-            return $this->_configuration;
+            $this->_dependencies['loader']->setConfiguration($configuration->loader);
+            $this->_map = $this->_dependencies['loader']->getSchema($this->_configuration->defaults);
         }
         
         public function generateRandom($max=100,$progress=false,$save=true){
@@ -73,9 +60,6 @@ namespace CRUDsader {
             return $collection;
         }
         
-        
-        
-        
         public function classGetFieldAttributeType($className,$attributeName){
             return $this->_map['attributeTypes'][$this->_map['classes'][$className]['attributes'][$attributeName]['type']];
         }
@@ -89,13 +73,13 @@ namespace CRUDsader {
          * @return bool 
          */
         public function validate() {
-            return $this->_adapter['loader']->validate($this->_configuration->defaults);
+            return $this->_dependencies['loader']->validate($this->_configuration->defaults);
         }
 
         public function extract() {
-            $this->_adapter['extractor'] = \CRUDsader\Instancer::getInstance()->{'map.extractor'};
-            $this->_adapter['extractor']->setConfiguration($this->_configuration->defaults);
-            return $this->_adapter['extractor']->create($this->_map);
+            $this->setDependency('extractor','map.extractor');
+            $this->_dependencies['extractor']->setConfiguration($this->_configuration->defaults);
+            return $this->_dependencies['extractor']->extract($this->_map);
         }
 
         /**
