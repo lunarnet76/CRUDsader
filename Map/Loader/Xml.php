@@ -14,10 +14,16 @@ namespace CRUDsader\Map\Loader {
     class Xml extends \CRUDsader\Map\Loader {
         protected $_file;
         protected $_dom;
+        
+         /**
+         * identify the class
+         * @var string
+         */
+        protected $_classIndex = 'map.loader';
 
         
-        public function setConfiguration(\CRUDsader\Block $block=null){
-            parent::setConfiguration($block);
+        public function __construct(){
+            parent::__construct();
             $this->_file = $this->_configuration->file;
             if (!file_exists($this->_file))
                 throw new LoaderException('XML Map File "' . $this->_file . '" does not exist');
