@@ -18,14 +18,30 @@ namespace CRUDsader {
          * @var array
          */
         protected $_map = NULL;
+        
+        /**
+         * the list of dependencies
+         * @var array
+         */
+        protected $_hasDependencies = array('loader');
+        
+         /**
+         * identify the class
+         * @var string
+         */
+        protected $_classIndex = 'map';
+        
+         /**
+         * list fields to include in array
+         * @var string
+         */
+        protected $_toArray = array('_map');
 
         /**
          * automatically load related configuration
          */
         public function __construct() {
-            $this->_instancer=\CRUDsader\Instancer::getInstance();
-            $this->setDependency('loader','map.loader');
-            $this->setConfiguration($this->_instancer->configuration->map);
+            parent::__construct();
         }
         
         /**
@@ -33,7 +49,6 @@ namespace CRUDsader {
          */
         public function setConfiguration(\CRUDsader\Block $configuration=null) {
             $this->_configuration = $configuration;
-            $this->_dependencies['loader']->setConfiguration($configuration->loader);
             $this->_map = $this->_dependencies['loader']->getSchema($this->_configuration->defaults);
         }
         

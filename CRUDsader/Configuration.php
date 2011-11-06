@@ -85,10 +85,10 @@ namespace CRUDsader {
                         'required' => false,
                         'html' => true
                     )
-                ),
-                'loader' => array(
-                    'file' => 'orm.xml'
                 )
+            ),
+            'map.loader'=>array(
+                 'file' => 'orm.xml'
             ),
             'query' => array(
                 'limit' => 50// limit the number of object to that, all the time

@@ -25,6 +25,9 @@ namespace CRUDsader {
         protected $_associations = array();
         protected $_observers = array();
 
+        /**
+         * @param string $className 
+         */
         public function __construct($className) {
             $this->_class = $className;
             $this->_map = \CRUDsader\Instancer::getInstance()->map;
@@ -160,6 +163,10 @@ namespace CRUDsader {
             }
         }
 
+        /**
+         * save to db
+         * @param \CRUDsader\Object\UnitOfWork $unitOfWork 
+         */
         public function save(\CRUDsader\Object\UnitOfWork $unitOfWork=null) {
             if (!$this->_checkRequiredFields())
                 throw new ObjectException($this->_class . '.error.fields-required');
@@ -182,13 +189,15 @@ namespace CRUDsader {
                 $db = \CRUDsader\Instancer::getInstance()->database;
 
                 if ($this->_isPersisted) {
-                    \CRUDsader\Object\IdentityMap::add($this);
-                    if (!$this->_infos['definition']['abstract'])
-                        $unitOfWork->update($this->_infos['definition']['databaseTable'], $paramsToSave, $db->quoteIdentifier($this->_infos['definition']['databaseIdField']) . '=' . $this->_isPersisted);
+                    if (!\CRUDsader\Object\IdentityMap::exists($this->_class, $this->_isPersisted)) {
+                        if (!$this->_infos['definition']['abstract'])
+                            $unitOfWork->update($this->_infos['definition']['databaseTable'], $paramsToSave, $db->quoteIdentifier($this->_infos['definition']['databaseIdField']) . '=' . $this->_isPersisted);
+                    }
                 } else {
                     $this->_isPersisted = $oid;
                     $paramsToSave[$this->_infos['definition']['databaseIdField']] = $oid;
                     $unitOfWork->insert($this->_infos['definition']['databaseTable'], $paramsToSave, $db->quoteIdentifier($this->_infos['definition']['databaseIdField']) . '=' . $oid);
+                    \CRUDsader\Object\IdentityMap::add($this);
                 }
                 $this->saveAssociations($unitOfWork);
                 if (isset($unitOfWorkToBeExecuted)) {

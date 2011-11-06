@@ -85,7 +85,7 @@ namespace CRUDsader\MVC\Controller {
             $plugins = $module ? (isset($this->_configuration->plugins->$module) ? $this->_configuration->plugins->$module : array()) : $this->_configuration->plugins;
             foreach ($plugins as $pluginName => $pluginOptions) {
                 $cfg=$this->_instancer->getConfiguration();
-                $cfg->{'mvc.plugin.'.$pluginName} = array('class'=>'Plugin\\' . $pluginName,'singleton'=>false);
+                $cfg->{'mvc.plugin.'.$pluginName} = array('class'=>'Plugin\\' . $pluginName,'singleton'=>true);
                 $this->_instancer->setConfiguration($cfg);
                 $this->_dependencies['plugin'.$pluginName] = $this->_instancer->{'mvc.plugin.'.$pluginName};
                 if ($pluginOptions instanceof \CRUDsader\Block)
@@ -95,10 +95,17 @@ namespace CRUDsader\MVC\Controller {
             return $this->_dependencies['router']->getModule();
         }
 
+        /**
+         * dont register route in the historic
+         * @param type $bool 
+         */
         public function skipRouterHistoric($bool=true) {
             $this->_skipRouterHistoric = $bool;
         }
 
+        /**
+         * call the action controller
+         */
         public function dispatch() {
             // plugins
             foreach ($this->_plugins as $plugin)

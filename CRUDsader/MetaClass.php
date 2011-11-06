@@ -5,7 +5,7 @@
  * @license    see CRUDsader/license.txt
  */
 namespace CRUDsader {
-    abstract class MetaClass implements Interfaces\Configurable, Interfaces\Dependent {
+    abstract class MetaClass implements Interfaces\Configurable, Interfaces\Dependent, Interfaces\Arrayable {
         /**
          * @var Instancer
          */
@@ -27,6 +27,12 @@ namespace CRUDsader {
          * @var string
          */
         protected $_classIndex = false;
+        
+        /**
+         * list fields to include in array
+         * @var string
+         */
+        protected $_toArray = array();
 
         /**
          * the list of dependencies
@@ -36,11 +42,10 @@ namespace CRUDsader {
 
         public function __construct() {
             $this->_instancer = \CRUDsader\Instancer::getInstance();
-            if($this->_classIndex){
-                $this->setConfiguration($this->_instancer->configuration->{$this->_classIndex});
-            }
             foreach ($this->_hasDependencies as $dependencyName)
                 $this->setDependency($dependencyName, ($this->_classIndex ? $this->_classIndex . '.' : '') . $dependencyName);
+            if($this->_classIndex)
+                $this->setConfiguration($this->_instancer->configuration->{$this->_classIndex});
         }
 
         /**
@@ -79,6 +84,18 @@ namespace CRUDsader {
          */
         public function hasDependency($index) {
             return isset($this->_dependencies[$index]);
+        }
+        
+        /**
+         * return this as an array
+         * @param bool $full
+         */
+        public function toArray($full=false){
+            $ret=array();
+            foreach($this->_toArray as $field){
+                $ret[$field]=isset($this->$field)?$this->$field:null;
+            }
+            return $ret;
         }
     }
     class MetaClassException extends \CRUDsader\Exception {
