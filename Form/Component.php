@@ -17,6 +17,7 @@ namespace CRUDsader\Form {
         protected $_htmlLabel = false;
         protected $_inputParent;
         protected $_inputValue=null;
+        protected $_inputValueDefault=null;
         protected $_inputError = false;
         protected $_inputRequired = false;
         protected $_inputReceived = false;
@@ -25,6 +26,7 @@ namespace CRUDsader\Form {
         public function __construct(array $options=array()){
             $this->_options=$options;
             $this->_inputValue=new \CRUDsader\Expression\Nil;
+            $this->_inputValueDefault=new \CRUDsader\Expression\Nil;
         }
 
         // ** INTERFACE ** parametrable
@@ -187,7 +189,7 @@ namespace CRUDsader\Form {
         }
         
         public function inputReceiveDefault($data){
-            $this->_inputValue = $data;
+            $this->_inputValue=$this->_inputValueDefault=$data;
         }
 
         public function inputReceived() {
