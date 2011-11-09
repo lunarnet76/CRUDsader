@@ -7,8 +7,7 @@
  */
 namespace CRUDsader {
     /**
-     * basic block that handles array and add some functionalities
-     * @package CRUDsader
+     * basic block that add functionalities to array
      */
     class Block implements \Iterator, Interfaces\Arrayable {
         /**
@@ -25,7 +24,8 @@ namespace CRUDsader {
         protected $_iterator = 0;
 
         /**
-         * @param array $array of parameters
+         * load an array
+         * @param array $array
          */
         public function __construct(array $array=null) {
             if (isset($array))
@@ -33,9 +33,9 @@ namespace CRUDsader {
         }
 
         /**
-         * load an array of parameters, without emptying the existing ones
-         * @param array $array of parameters
-         * @param bool $replaceIfExists replace parameter if it exists
+         * load an array of parameters, without emptying the existing ones unless you use $replaceIfExists
+         * @param array $array
+         * @param bool $replaceIfExists
          * @test test_loadArray
          */
         public function loadArray(array $array, $replaceIfExists=true) {

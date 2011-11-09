@@ -189,15 +189,14 @@ namespace CRUDsader {
                 $db = \CRUDsader\Instancer::getInstance()->database;
 
                 if ($this->_isPersisted) {
-                    if (!\CRUDsader\Object\IdentityMap::exists($this->_class, $this->_isPersisted)) {
+                    if ($unitOfWork->register($this->_class, $this->_isPersisted))
                         if (!$this->_infos['definition']['abstract'])
                             $unitOfWork->update($this->_infos['definition']['databaseTable'], $paramsToSave, $db->quoteIdentifier($this->_infos['definition']['databaseIdField']) . '=' . $this->_isPersisted);
-                    }
                 } else {
                     $this->_isPersisted = $oid;
                     $paramsToSave[$this->_infos['definition']['databaseIdField']] = $oid;
                     $unitOfWork->insert($this->_infos['definition']['databaseTable'], $paramsToSave, $db->quoteIdentifier($this->_infos['definition']['databaseIdField']) . '=' . $oid);
-                    \CRUDsader\Object\IdentityMap::add($this);
+                    $unitOfWork->register($this->_class, $this->_isPersisted);
                 }
                 $this->saveAssociations($unitOfWork);
                 if (isset($unitOfWorkToBeExecuted)) {

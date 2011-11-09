@@ -130,18 +130,6 @@ class Bootstrap {
         mysql_close();
     }
 }
-class AdapterDatabaseDescriptorMysqliInstancer extends \CRUDsader\Adapter\Database\Descriptor\Mysqli {
-
-    public static function getInstance($params=null) {
-        return new parent($params);
-    }
-}
-class AdapterDatabaseConnectorMysqliInstancer extends \CRUDsader\Adapter\Database\Connector\Mysqli {
-
-    public static function getInstance($params=null) {
-        return new parent($params);
-    }
-}
 class Database_Config extends \CRUDsader\Block {
     public static $configuration = array(
         'host' => DATABASE_HOST,

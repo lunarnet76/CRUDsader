@@ -8,6 +8,14 @@
 namespace CRUDsader\Object {
     class UnitOfWork {
         protected $_transactions = array();
+        protected $_registered = array();
+        
+        public function register($class,$id){
+            if(isset($this->_registered[$class][$id]))
+                    return false;
+            $this->_registered[$class][$id]=true;
+            return true;
+        }
 
         public function insert($table, array $params) {
             $this->_transactions[] = array('insert' => array($table, $params));

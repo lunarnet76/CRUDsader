@@ -35,7 +35,7 @@ namespace CRUDsader\Object {
          */
         public function setValueFromDatabase($value) {
             if (\CRUDsader\Expression::isEmpty($value))
-                $this->_inputValue = new \CRUDsader\Expression\Nil();
+                $this->_inputValue = $this->_inputValueDefault;
             else
                 $this->_inputValue = $value;
         }
@@ -45,7 +45,7 @@ namespace CRUDsader\Object {
         }
 
         public function getValue() {
-            return $this->inputEmpty() ? new \CRUDsader\Expression\Nil : $this->_inputValue;
+            return $this->inputEmpty() ? $this->_inputValueDefault : $this->_inputValue;
         }
 
         public function toHTML() {
