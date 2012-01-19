@@ -59,7 +59,7 @@ namespace CRUDsader {
                 return $this->_infos;
             if (!$this->_syntaxValidated)
                 if (!$this->validateSyntax())
-                    throw new QueryException($this, 'bad syntax');
+                    throw new QueryException($this, 'bad syntax '.$this->_oql);
             $this->_map = \CRUDsader\Instancer::getInstance()->map;
             // FROM
             $this->_class = $className = $this->_matches[4];
