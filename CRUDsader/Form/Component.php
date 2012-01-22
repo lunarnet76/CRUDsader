@@ -255,13 +255,12 @@ namespace CRUDsader\Form {
         }
 
         public function __toString() {
-            try {
-                $r = $this->toHTML();
-                return $r;
-            } catch (Exception $e) {
-                trigger_error('form cannot be rendered ' . $e->getMessage());
+            try{
+            return $this->toHTML();
+            }catch(\Exception $e){
+                trigger_error('form cannot be rendered, cause:' . $e->getMessage());
+                return '';
             }
-            return '';
         }
     }
     class ComponentException extends \CRUDsader\Exception {

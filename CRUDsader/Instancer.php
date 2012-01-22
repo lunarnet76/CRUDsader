@@ -73,6 +73,8 @@ namespace CRUDsader {
         public function instance($serviceName,$args=null){
             if(!isset($this->_configuration->$serviceName))
                     throw new InstancerException('cannot instantiate "'.$serviceName.'"');
+            if(!empty($args) && !is_array($args))
+                        $args = array($args);
             // singleton
             if(isset($this->_configuration->$serviceName->singleton) && $this->_configuration->$serviceName->singleton){
                 if(!isset($this->_singletonInstances[$serviceName])){

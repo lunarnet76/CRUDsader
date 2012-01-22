@@ -121,8 +121,12 @@ namespace CRUDsader {
                     'class' => '\\CRUDsader\\I18n\\Translation\\None', 'singleton' => true),
                 'i18n.translation.arrayLoader' => array(
                     'class' => '\\CRUDsader\\ArrayLoader\\Yaml', 'singleton' => false),
+                'object' => array(
+                    'class' => '\\CRUDsader\\Object', 'singleton' => false),
                 'object.identifier' => array(
                     'class' => '\\CRUDsader\\Object\\Identifier\\Hilo', 'singleton' => true),
+                'object.proxy' => array(
+                    'class' => '\\CRUDsader\\Object\\Proxy', 'singleton' => false),
                 'map' => array(
                     'class' => '\\CRUDsader\\Map', 'singleton' => true),
                 'map.extractor' => array(
@@ -134,7 +138,13 @@ namespace CRUDsader {
                 'mvc.routerHistoric' => array(
                     'class' => '\\CRUDsader\\MVC\\RouterHistoric\\Lilo', 'singleton' => true),
                 'mvc.router' => array(
-                    'class' => '\\CRUDsader\\MVC\\Router\\Explicit', 'singleton' => true)
+                    'class' => '\\CRUDsader\\MVC\\Router\\Explicit', 'singleton' => true),
+                'expression' => array(
+                    'class' => '\\CRUDsader\\Expression', 'singleton' => false),
+                'expression.nil' => array(
+                    'class' => '\\CRUDsader\\Expression\\Nil', 'singleton' => false),
+                'expression.now' => array(
+                    'class' => '\\CRUDsader\\Expression\\Now', 'singleton' => false),
             ) 
         );
 

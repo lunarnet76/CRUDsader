@@ -153,7 +153,7 @@ namespace CRUDsader {
                     if (($this->getAttribute($var)->inputEmpty() && $this->_infos['attributes'][$var]['required']) || $this->getAttribute($var)->inputValid() !== true) {
                         // return to base value
                         $this->getAttribute($var)->inputReceive(null);
-                        throw new ObjectException('attribute "' . $var . '" cannot accept "' . $value . '" as a value');
+                        throw new ObjectException('attribute "' . $var . '"('.$this->_infos['attributes'][$var]['type'].') cannot accept "' . $value . '" as a value');
                     }else
                         $this->_initialised = true;
                     break;
