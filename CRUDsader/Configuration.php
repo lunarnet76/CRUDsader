@@ -125,8 +125,12 @@ namespace CRUDsader {
                     'class' => '\\CRUDsader\\Object', 'singleton' => false),
                 'object.identifier' => array(
                     'class' => '\\CRUDsader\\Object\\Identifier\\Hilo', 'singleton' => true),
+                'object.unitOfWork' => array(
+                    'class' => '\\CRUDsader\\Object\\UnitOfWork', 'singleton' => false),
                 'object.proxy' => array(
                     'class' => '\\CRUDsader\\Object\\Proxy', 'singleton' => false),
+                'query' => array(
+                    'class' => '\\CRUDsader\\Query', 'singleton' => false),
                 'map' => array(
                     'class' => '\\CRUDsader\\Map', 'singleton' => true),
                 'map.extractor' => array(

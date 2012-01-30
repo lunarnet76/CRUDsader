@@ -40,6 +40,11 @@ namespace CRUDsader {
                 }
             }
         }
+        
+        public function get($attributeName){
+            $value = $this->$attributeName;
+            return \CRUDsader\Expression::isEmpty($value) ? '' : $value;
+        }
 
         public static function instance($className) {
             $map = \CRUDsader\Instancer::getInstance()->map;

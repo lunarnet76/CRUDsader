@@ -149,7 +149,9 @@ namespace CRUDsader\Object\Collection {
                         $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => new \CRUDsader\Expression\Nil), $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
                         break;
                     case 'external':
-                        // in the $object, so it's going to get erased anyway
+                        // in the $object, so it's going to get erased anyway => WRONG, if explicitely call the deletion
+                        $object->delete($unitOfWork);
+                        $this->_isModified = true;
                         break;
                     default:
                         $d = array(
