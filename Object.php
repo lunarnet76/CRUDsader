@@ -414,7 +414,7 @@ namespace CRUDsader {
             }else {
                 $ret = array('id' => $this->_isPersisted . '[' . $this->_class . ']' . ($this->_isModified ? '(modified)' : ''));
                 foreach ($this->_fields as $name => $field)
-                    $ret[$name] = (string) $field->getValue();
+                    $ret[$name] = $field->getValue();
                 if (!empty($this->_associations))
                     foreach ($this->_associations as $name => $association)
                         $ret[$name] = $association->toArray($full);
