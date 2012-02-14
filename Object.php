@@ -46,7 +46,7 @@ namespace CRUDsader {
             if (!$map->classExists($className))
                 throw new ObjectException('class "' . $className . '" does not exist');
             $class = $map->classGetModelClass($className);
-            return new $class($className);
+            return $class ?  new $class($className) :\CRUDsader\Instancer::getInstance()->object($className);
         }
 
         protected function _($attributeName) {

@@ -80,7 +80,7 @@ namespace CRUDsader {
         }
         
         public function classGetModelClass($className){
-            return $this->_map['classes'][$className]['definition']['phpClass'];
+            return !empty($this->_map['classes'][$className]['definition']['phpClass'])? $this->_map['classes'][$className]['definition']['phpClass'] : false;
         }
 
         /**

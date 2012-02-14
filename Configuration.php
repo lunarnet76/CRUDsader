@@ -121,6 +121,8 @@ namespace CRUDsader {
                     'class' => '\\CRUDsader\\I18n\\Translation\\None', 'singleton' => true),
                 'i18n.translation.arrayLoader' => array(
                     'class' => '\\CRUDsader\\ArrayLoader\\Yaml', 'singleton' => false),
+                'object' => array(
+                    'class' => '\\CRUDsader\\Object', 'singleton' => false),
                 'object.identifier' => array(
                     'class' => '\\CRUDsader\\Object\\Identifier\\Hilo', 'singleton' => true),
                 'map' => array(
