@@ -423,6 +423,21 @@ namespace CRUDsader {
             }
             return $ret;
         }
+	
+	public function toJson(){
+		$ret = array();
+			$ret['id'] = $this->_isPersisted;
+                foreach ($this->_fields as $name => $field)
+			if($this->_infos['attributes'][$name]['json']){
+				$ret[$name] = ($field->getValue());
+			}
+                if (!empty($this->_associations))
+                    foreach ($this->_associations as $name => $association)
+                        $ret[$name] = $association->toJson();
+                if ($this->_parent)
+			$ret[$this->_parent->getClass()] = $this->_parent->toJson();
+		return $ret;
+	}
 
         public function hasAttribute($name) {
             return isset($this->_infos['attributes'][$name]);

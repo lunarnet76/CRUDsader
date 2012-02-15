@@ -83,7 +83,8 @@ namespace CRUDsader {
                         'searchable' => true,
                         'input' => true,
                         'required' => false,
-                        'html' => true
+                        'html' => true,
+			'json' => true
                     )
                 )
             ),
@@ -125,6 +126,8 @@ namespace CRUDsader {
                     'class' => '\\CRUDsader\\Object', 'singleton' => false),
                 'object.identifier' => array(
                     'class' => '\\CRUDsader\\Object\\Identifier\\Hilo', 'singleton' => true),
+                'object.collection' => array(
+                    'class' => '\\CRUDsader\\Object\\Collection', 'singleton' => false),
                 'map' => array(
                     'class' => '\\CRUDsader\\Map', 'singleton' => true),
                 'map.extractor' => array(

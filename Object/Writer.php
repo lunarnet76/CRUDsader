@@ -39,8 +39,9 @@ namespace CRUDsader\Object {
             }
             // associations
             foreach ($object->_infos['associations'] as $name => $associationInfos) {
-                if (isset($mapFields[$alias . '_' . $name]))
+                if (isset($mapFields[$alias . '_' . $name])){
                     \CRUDsader\Object\Collection\Association\Writer::write($object->getAssociation($name), $alias . '_' . $name, $rows, $fields, $mapFields);
+		}
             }
         }
 

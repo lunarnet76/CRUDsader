@@ -20,6 +20,18 @@ namespace CRUDsader\Object\Collection {
             $this->_definition = $definition;
             $this->_fromClass = $fromClass;
         }
+	
+	public function toJson(){
+		if(!$this->_initialised)
+			return array();
+	    $ret = array();
+            foreach ($this->_objects as $k => $object) {
+                $ret[$k] = $object->toJson();
+            }
+	    if($this->_definition['reference'] == 'internal' || $this->_definition['max'] == 1)
+		    return current($ret);
+            return $ret;
+	}
 
         public function offsetSet($index, $value) {
             if (!isset($this->_objects[$index]) && $this->_definition['max'] != '*' && $this->_iterator == $this->_definition['max'])

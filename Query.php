@@ -176,6 +176,10 @@ namespace CRUDsader {
             $this->_sql = $sql;
             return $this->_infos = array('sql' => $this->_sql, 'oql' => $this->_oql, 'mapFields' => $this->_mapFields, 'alias2class' => $this->_alias2class);
         }
+	
+	public function getSQL(){
+		return $this->_sql;
+	}
 
         public function fetchAll($args=NULL) {
             $this->_fetch($args);
