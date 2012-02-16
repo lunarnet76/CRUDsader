@@ -20,6 +20,18 @@ namespace CRUDsader\Object\Collection {
             $this->_definition = $definition;
             $this->_fromClass = $fromClass;
         }
+	
+	public function toJson(){
+		if(!$this->_initialised)
+			return array();
+	    $ret = array();
+            foreach ($this->_objects as $k => $object) {
+                $ret[$k] = $object->toJson();
+            }
+	    if($this->_definition['reference'] == 'internal' || $this->_definition['max'] == 1)
+		    return current($ret);
+            return $ret;
+	}
 
         public function offsetSet($index, $value) {
             if (!isset($this->_objects[$index]) && $this->_definition['max'] != '*' && $this->_iterator == $this->_definition['max'])
@@ -149,9 +161,7 @@ namespace CRUDsader\Object\Collection {
                         $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => new \CRUDsader\Expression\Nil), $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
                         break;
                     case 'external':
-                        // in the $object, so it's going to get erased anyway => WRONG, if explicitely call the deletion
-                        $object->delete($unitOfWork);
-                        $this->_isModified = true;
+                        // in the $object, so it's going to get erased anyway
                         break;
                     default:
                         $d = array(

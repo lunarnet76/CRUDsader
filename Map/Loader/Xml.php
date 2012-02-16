@@ -58,7 +58,7 @@ namespace CRUDsader\Map\Loader {
                     'class' => (isset($attributeType['class']) ? ucfirst((string) $attributeType['class']) : $defaults->attributeType->class),
                     'phpClass' => (isset($attributeType['phpClass']) ? ucfirst((string) $attributeType['phpClass']) : $defaults->attributeType->phpClass),
                     'databaseType' => isset($attributeType['databaseType']) ? (string) $attributeType['databaseType'] : $defaults->attributeType->databaseType,
-                    'options' => isset($attributeType['options']) ? json_decode(str_replace('\'', '"', (string) $attributeType['options'])) : $defaults->attributeType->options->toArray(),
+                    'options' => isset($attributeType['options']) ? json_decode(str_replace('\'', '"', (string) $attributeType['options']),true) : $defaults->attributeType->options->toArray(),
                 );
                 $ret['attributeTypes'][$alias]['options']['length'] = (int) $attributeType['length'];
             }
@@ -74,7 +74,7 @@ namespace CRUDsader\Map\Loader {
                         'identity' => isset($class['identity']) ? explode(',', (string) $class['identity']) : array(),
                         'databaseIdField' => isset($class['databaseIdField']) ? (string) $class['databaseIdField'] : $defaults->idField,
                         'attributeCount' => array('id' => false),
-                        'phpClass' => isset($class['phpClass']) ? (string) $class['phpClass'] : $defaults->phpClass,
+                        'phpClass' => isset($class['phpClass']) ? (string) $class['phpClass'] : false,
                     ),
                     'inherit' => false,
                     'attributes' => array(),
@@ -98,7 +98,8 @@ namespace CRUDsader\Map\Loader {
                         'searchable' => isset($attribute['searchable']) ? (string) $attribute['searchable'] : $defaults->attribute->searchable,
                         'calculated' => isset($attribute['calculated']) ? (string) $attribute['calculated'] : false,
                         'input' => isset($attribute['input']) ? ((string) $attribute['input']) == 'true' : $defaults->attribute->input,
-                        'html' => isset($attribute['html']) ? ((string) $attribute['html']) == 'true' : $defaults->attribute->html
+                        'html' => isset($attribute['html']) ? ((string) $attribute['html']) == 'true' : $defaults->attribute->html,
+                        'json' => isset($attribute['json']) ? ((string) $attribute['json']) == 'true' : $defaults->attribute->json
                     );
                     $ret['classes'][$name]['definition']['attributeCount'][$attributeName] = false;
                     $ret['classes'][$name]['attributesReversed'][$ret['classes'][$name]['attributes'][$attributeName]['databaseField']] = $attributeName;

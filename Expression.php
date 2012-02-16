@@ -25,7 +25,7 @@ namespace CRUDsader {
         /**
          * @param string $expression
          */
-        public function __construct($expression = false) {
+        public function __construct($expression) {
             $this->_expression = $expression;
         }
 

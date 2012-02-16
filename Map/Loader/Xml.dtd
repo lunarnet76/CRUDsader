@@ -29,6 +29,7 @@
                 <!ATTLIST attribute calculated          (true|false)        #IMPLIED>
                 <!ATTLIST attribute input             (true|false)        #IMPLIED>
                 <!ATTLIST attribute html             (true|false)        #IMPLIED>
+                <!ATTLIST attribute json             (true|false)        #IMPLIED>
 
            <!ELEMENT associated EMPTY>
                 <!ATTLIST associated to             CDATA                                   #REQUIRED>

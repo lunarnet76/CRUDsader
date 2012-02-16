@@ -83,7 +83,8 @@ namespace CRUDsader {
                         'searchable' => true,
                         'input' => true,
                         'required' => false,
-                        'html' => true
+                        'html' => true,
+			'json' => true
                     )
                 )
             ),
@@ -125,12 +126,8 @@ namespace CRUDsader {
                     'class' => '\\CRUDsader\\Object', 'singleton' => false),
                 'object.identifier' => array(
                     'class' => '\\CRUDsader\\Object\\Identifier\\Hilo', 'singleton' => true),
-                'object.unitOfWork' => array(
-                    'class' => '\\CRUDsader\\Object\\UnitOfWork', 'singleton' => false),
-                'object.proxy' => array(
-                    'class' => '\\CRUDsader\\Object\\Proxy', 'singleton' => false),
-                'query' => array(
-                    'class' => '\\CRUDsader\\Query', 'singleton' => false),
+                'object.collection' => array(
+                    'class' => '\\CRUDsader\\Object\\Collection', 'singleton' => false),
                 'map' => array(
                     'class' => '\\CRUDsader\\Map', 'singleton' => true),
                 'map.extractor' => array(
@@ -142,13 +139,7 @@ namespace CRUDsader {
                 'mvc.routerHistoric' => array(
                     'class' => '\\CRUDsader\\MVC\\RouterHistoric\\Lilo', 'singleton' => true),
                 'mvc.router' => array(
-                    'class' => '\\CRUDsader\\MVC\\Router\\Explicit', 'singleton' => true),
-                'expression' => array(
-                    'class' => '\\CRUDsader\\Expression', 'singleton' => false),
-                'expression.nil' => array(
-                    'class' => '\\CRUDsader\\Expression\\Nil', 'singleton' => false),
-                'expression.now' => array(
-                    'class' => '\\CRUDsader\\Expression\\Now', 'singleton' => false),
+                    'class' => '\\CRUDsader\\MVC\\Router\\Explicit', 'singleton' => true)
             ) 
         );
 

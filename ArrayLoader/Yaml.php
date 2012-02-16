@@ -31,7 +31,6 @@ namespace CRUDsader\ArrayLoader {
             foreach ($lines as $lineNumber => $line) {
                 switch ($line[0]) {
                     case '#':break; // comments
-                    case ';':break; // comments
                     case '[':// namespace
                         if (!preg_match('|^\[([^\:\]\s]*)(\:([^\]\s\:]*)){0,1}\]\s*$|', $line, $match))
                             throw new YamlException('file "' . $filePath . '":' . $lineNumber . ' error :"' . $line . '" is not a proper namespace');

@@ -29,6 +29,16 @@ namespace CRUDsader\Object {
             }
             return $full ? $ret : $ret['objects'];
         }
+	
+	public function toJson(){
+		if(!$this->_initialised)
+			return array();
+	    $ret = array();
+            foreach ($this->_objects as $k => $object) {
+                $ret[$k] = $object->toJson();
+            }
+            return $ret;
+	}
         
         public function getLast(){
             $count=count($this->_objects);

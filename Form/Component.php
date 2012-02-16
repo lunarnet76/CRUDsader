@@ -13,20 +13,20 @@ namespace CRUDsader\Form {
     class Component implements \CRUDsader\Interfaces\Arrayable, \CRUDsader\Interfaces\Parametrable, \SplSubject {
         protected $_parameters = array();
         protected $_observers = array();
-        protected $_htmlAttributes = array('type' => 'text');
+        protected $_htmlAttributes = array('type'=>'text');
         protected $_htmlLabel = false;
         protected $_inputParent;
-        protected $_inputValue = null;
-        protected $_inputValueDefault = null;
+        protected $_inputValue=null;
+        protected $_inputValueDefault=null;
         protected $_inputError = false;
         protected $_inputRequired = false;
         protected $_inputReceived = false;
         protected $_options = array();
-
-        public function __construct(array $options=array()) {
-            $this->_options = $options;
-            $this->_inputValue = new \CRUDsader\Expression\Nil;
-            $this->_inputValueDefault = new \CRUDsader\Expression\Nil;
+        
+        public function __construct(array $options=array()){
+            $this->_options=$options;
+            $this->_inputValue=new \CRUDsader\Expression\Nil;
+            $this->_inputValueDefault=new \CRUDsader\Expression\Nil;
         }
 
         // ** INTERFACE ** parametrable
@@ -171,13 +171,13 @@ namespace CRUDsader\Form {
         public function getHtmlLabel() {
             return $this->_htmlLabel;
         }
-
+        
         public function labeltoHtml() {
-            return $this->wrapHtml($this->_htmlLabel . ($this->inputRequired() ? '<span class="star">*</span>' : ''), 'label');
+            return $this->wrapHtml($this->_htmlLabel.($this->inputRequired()?'<span class="star">*</span>':''), 'label');
         }
 
         public function toHtml() {
-            $this->_htmlAttributes['value'] = (!\CRUDsader\Expression::isEmpty($this->_inputValue) ? $this->_inputValue : '');
+            $this->_htmlAttributes['value']=(!\CRUDsader\Expression::isEmpty($this->_inputValue)?$this->_inputValue:'');
             return '<input ' . $this->getHtmlAttributesToHtml() . '/>';
         }
 
@@ -187,9 +187,9 @@ namespace CRUDsader\Form {
             $this->_inputReceived = true;
             $this->notify();
         }
-
-        public function inputReceiveDefault($data) {
-            $this->_inputValue = $this->_inputValueDefault = $data;
+        
+        public function inputReceiveDefault($data){
+            $this->_inputValue=$this->_inputValueDefault=$data;
         }
 
         public function inputReceived() {
@@ -239,7 +239,7 @@ namespace CRUDsader\Form {
 
         public function inputReset() {
             $this->_inputError = false;
-            $this->_inputValue = new \CRUDsader\Expression\Nil;
+            $this->_inputValue=new \CRUDsader\Expression\Nil;
         }
 
         public function hasInputParent() {
@@ -251,16 +251,11 @@ namespace CRUDsader\Form {
         }
 
         public function toArray() {
-            return isset($this->_inputValue) && !$this->_inputValue instanceof \CRUDsader\Expression\Nil ? $this->_inputValue : 'EXPRESSION_NULL';
+            return isset($this->_inputValue) && !$this->_inputValue instanceof \CRUDsader\Expression\Nil?$this->_inputValue:'EXPRESSION_NULL';
         }
 
         public function __toString() {
-            try{
             return $this->toHTML();
-            }catch(\Exception $e){
-                trigger_error('form cannot be rendered, cause:' . $e->getMessage());
-                return '';
-            }
         }
     }
     class ComponentException extends \CRUDsader\Exception {
