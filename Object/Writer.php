@@ -19,6 +19,8 @@ namespace CRUDsader\Object {
                         $object->getAttribute($object->_infos['attributesReversed'][$fields[$i]])->setValueFromDatabase($rows[0][$i]);
                     }
                 }
+		if(isset($mapFields[\CRUDsader\Query::MAPFIELD_ALIAS_GROUPBY]))
+			$object->addExtraAttribute('count',$rows[0][$mapFields[\CRUDsader\Query::MAPFIELD_ALIAS_GROUPBY]]);
                 if ($object->_linkedAssociation) {
                     $definition = $object->_linkedAssociation->getDefinition();
                     if ($definition['reference'] == 'table') {

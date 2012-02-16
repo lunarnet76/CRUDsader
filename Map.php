@@ -78,10 +78,22 @@ namespace CRUDsader {
         public function classGetFieldAttributeType($className,$attributeName){
             return $this->_map['attributeTypes'][$this->_map['classes'][$className]['attributes'][$attributeName]['type']];
         }
+	
+	public function classGetFieldAttributeDefaultType(){
+            return $this->_map['attributeTypes']['default'];
+        }
         
         public function classGetModelClass($className){
             return !empty($this->_map['classes'][$className]['definition']['phpClass'])? $this->_map['classes'][$className]['definition']['phpClass'] : false;
         }
+	
+	/**
+	 * return the definition of all the classes
+	 * @return array
+	 */
+	public function getClasses(){
+		return $this->_map['classes'];
+	}
 
         /**
          * validate the schema
@@ -214,6 +226,46 @@ namespace CRUDsader {
             }
             return $joins;
         }
+	
+	/**
+	 * return an array of lines to create a class file containing datacontract to be used for serialization in .NET
+	 * @param string $appPackage
+	 * @return array 
+	 */
+	public function toMicrosoftDataContractClass($appPackage = 'crudsader.model.contract'){
+		$classes = $this->_map['classes'];
+		
+		$ret = array();
+
+		foreach ($classes as $name => $definition) {
+			$ret[$name] = array();
+			$ret[$name][] = 'string polymorphism';
+			$ret[$name][] = 'int id';
+			foreach ($definition['attributes'] as $attributeName => $attributeDefinition) {
+				$type = $this->_map['attributeTypes'][$attributeDefinition['type']];
+				$ret[$name][$attributeName] = (isset($type['options']['dotnetcast'])?$type['options']['dotnetcast']:'string') . ' ' . $attributeName;
+			}
+
+			foreach ($definition['associations'] as $associationName => $associationDefinition) {
+				if ($associationDefinition['reference'] == 'internal') {
+					$ret[$name][$associationDefinition['to']] = $associationDefinition['to'] . ' ' . $associationDefinition['to'];
+				} else {
+					$ret[$associationDefinition['to']][$name] = $name . ' ' . $name;
+				}
+			}
+		}
+		$lines = array('using System.Runtime.Serialization;' . PHP_EOL . 'namespace '.$appPackage.'{' . PHP_EOL);
+
+		foreach ($ret as $className => $classMembers) {
+			$lines[] = PHP_EOL.PHP_EOL.'	[DataContract]' . PHP_EOL . '	public class ' . $className . '{' . PHP_EOL;
+			foreach ($classMembers as $name)
+				$lines[] = '		[DataMember]' . PHP_EOL . '		public '.$name.';'.PHP_EOL;
+			$lines[] = '	}';
+		}
+		$lines[] = '}';
+
+		return $lines;
+	}
 
         public static function getDatabaseAssociationTable($associationName, $classTo, $classFrom) {
             return $associationName? : ($classFrom > $classTo ? $classTo . '2' . $classFrom : $classFrom . '2' . $classTo);
