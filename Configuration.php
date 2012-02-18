@@ -34,7 +34,7 @@ namespace CRUDsader {
                 'timezone' => 'Europe/London'
             ),
             'i18n.translation' => array(
-                'file'=>''
+                'file' => ''
             ),
             'form' => array(
                 'view' => array(
@@ -84,12 +84,12 @@ namespace CRUDsader {
                         'input' => true,
                         'required' => false,
                         'html' => true,
-			'json' => true
+                        'json' => true
                     )
                 )
             ),
-            'map.loader'=>array(
-                 'file' => 'orm.xml'
+            'map.loader' => array(
+                'file' => 'orm.xml'
             ),
             'query' => array(
                 'limit' => 50// limit the number of object to that, all the time
@@ -100,6 +100,8 @@ namespace CRUDsader {
             'instances' => array(
                 'configuration' => array(
                     'class' => '\\CRUDsader\\Configuration', 'singleton' => true),
+                'block' => array(
+                    'class' => '\\CRUDsader\\Block', 'singleton' => false),
                 'configuration.arrayLoader' => array(
                     'class' => '\\CRUDsader\\ArrayLoader\\Yaml', 'singleton' => false),
                 'arrayLoader' => array(
@@ -128,10 +130,26 @@ namespace CRUDsader {
                     'class' => '\\CRUDsader\\Object\\Identifier\\Hilo', 'singleton' => true),
                 'object.collection' => array(
                     'class' => '\\CRUDsader\\Object\\Collection', 'singleton' => false),
+                'object.unitOfWork' => array(
+                    'class' => '\\CRUDsader\\Object\\UnitOfWork', 'singleton' => false
+                ),
+                'form' => array(
+                    'class' => '\\CRUDsader\\Form', 'singleton' => false
+                ),
+                'object.collection.association' => array(
+                    'class' => '\\CRUDsader\\Object\\Collection\\Association', 'singleton' => false
+                ),
+                'object.collection.initialised' => array(
+                    'class' => '\\CRUDsader\\Object\\Collection\\Initialised', 'singleton' => false
+                ),
+                'query' => array(
+                    'class' => '\\CRUDsader\\Query', 'singleton' => false),
                 'map' => array(
                     'class' => '\\CRUDsader\\Map', 'singleton' => true),
                 'expression' => array(
                     'class' => '\\CRUDsader\\Expression', 'singleton' => false),
+                'expression.null' => array(
+                    'class' => '\\CRUDsader\\Expression\\Nil', 'singleton' => false),
                 'map.extractor' => array(
                     'class' => '\\CRUDsader\\Map\\Extractor\\Database', 'singleton' => true),
                 'map.loader' => array(
@@ -142,7 +160,7 @@ namespace CRUDsader {
                     'class' => '\\CRUDsader\\MVC\\RouterHistoric\\Lilo', 'singleton' => true),
                 'mvc.router' => array(
                     'class' => '\\CRUDsader\\MVC\\Router\\Explicit', 'singleton' => true)
-            ) 
+            )
         );
 
         /**

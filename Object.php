@@ -196,7 +196,7 @@ namespace CRUDsader {
 				throw new ObjectException($this->_class . '.error.fields-required');
 			if ($this->_isModified || $this->_infos['definition']['abstract']) {
 				if ($unitOfWork === null) {
-					$unitOfWork = new \CRUDsader\Object\UnitOfWork();
+					$unitOfWork = \CRUDsader\Instancer::getInstance()->{'object.unitOfWork'};
 					$unitOfWorkToBeExecuted = true;
 				}
 
@@ -273,7 +273,7 @@ namespace CRUDsader {
 		public function delete(\CRUDsader\Object\UnitOfWork $unitOfWork = null)
 		{
 			if ($unitOfWork === null) {
-				$unitOfWork = new \CRUDsader\Object\UnitOfWork();
+				$unitOfWork = \CRUDsader\Instancer::getInstance()->{'object.unitOfWork'};
 				$unitOfWorkToBeExecuted = true;
 			}
 			if ($this->hasParent())
@@ -361,7 +361,7 @@ namespace CRUDsader {
 			if (empty($alias))
 				$alias = $this->_class;
 			if ($form === null) {
-				$form = new \CRUDsader\Form($alias);
+				$form = \CRUDsader\Instancer::getInstance()->{'form'}($alias);
 				$form->setInputRequired(true);
 				$form->setHtmlLabel(\CRUDsader\Instancer::getInstance()->i18n->translate($alias));
 			}
@@ -374,7 +374,7 @@ namespace CRUDsader {
 		{
 			if ($oql) {
 				$l = strlen($alias) + 1;
-				$query = new \CRUDsader\Query($oql);
+				$query = \CRUDsader\Instancer::getInstance()->{'query'}($oql);
 				$infos = $query->getInfos();
 				foreach ($infos['mapFields'] as $oname => $useless) {
 					if ($oname == $this->_class)
@@ -442,7 +442,7 @@ namespace CRUDsader {
 		public function getAssociation($associationName)
 		{
 			if (!isset($this->_associations[$associationName]))
-				$this->_associations[$associationName] = new \CRUDsader\Object\Collection\Association($this, $this->_infos['associations'][$associationName], $this->_class);
+				$this->_associations[$associationName] = \CRUDsader\Instancer::getInstance()->{'object.collection.association'}($this, $this->_infos['associations'][$associationName], $this->_class);
 			return $this->_associations[$associationName];
 		}
 

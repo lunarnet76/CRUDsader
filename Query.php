@@ -210,14 +210,14 @@ namespace CRUDsader {
         public function fetchAll($args = NULL) {
             $this->_prefetch($args);
             $results = $this->_db->select($this->_sql);
-            $collection = new \CRUDsader\Object\Collection\Initialised($this->_class, $results, $this->_mapFields, $this->_extraColumns);
+            $collection = \CRUDsader\Instancer::getInstance()->{'object.collection.initialised'}($this->_class, $results, $this->_mapFields, $this->_extraColumns);
             return $collection;
         }
 
         public function fetch($args = NULL) {
             $this->_prefetch($args, false);
             $results = $this->_db->select($this->_sql);
-            $collection = new \CRUDsader\Object\Collection\Initialised($this->_class, $results, $this->_mapFields, $this->_extraColumns);
+            $collection = \CRUDsader\Instancer::getInstance()->{'object.collection.initialised'}($this->_class, $results, $this->_mapFields, $this->_extraColumns);
             return $collection->count() ? $collection[0] : false;
         }
 

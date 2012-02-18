@@ -18,7 +18,7 @@ namespace CRUDsader\Object\Attribute {
         
         public function setValueFromDatabase($value) {
             if (\CRUDsader\Expression::isEmpty($value))
-                $this->_inputValue = new \CRUDsader\Expression\Nil();
+                $this->_inputValue = \CRUDsader\Instancer::getInstance()->{'expression.null'};
             else {
                 if(preg_match('|([0-9]{4})-([0-9]{2})-([0-9]{2})\s([0-9]{1,2}):([0-9]{2}):[0-9]{2}|',$value,$m)){
                     $this->_inputValue=$m[3].'/'.$m[2].'/'.$m[1].' '.$m[4].':'.$m[5];

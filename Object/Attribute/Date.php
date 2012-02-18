@@ -26,7 +26,7 @@ namespace CRUDsader\Object\Attribute {
          */
         public function setValueFromDatabase($value) {
             if (\CRUDsader\Expression::isEmpty($value))
-                $this->_inputValue = new \CRUDsader\Expression\Nil();
+                $this->_inputValue = \CRUDsader\Instancer::getInstance()->{'expression.null'};
             else {
                 $ex = explode('-', $value);
                 switch (count($ex)) {

@@ -15,7 +15,6 @@ namespace CRUDsader\Object {
                 \CRUDsader\Object\IdentityMap::add($object);
                 $object->_initialised = true;
                 if(isset($mapFields[$alias])){
-                    pre($mapFields[$alias]['from'] + 1,$alias);
                     for ($i = $mapFields[$alias]['from'] + 1; $i < $mapFields[$alias]['to']; $i++) {
                         if(isset($extraColumns[$i])){
                             $object->addExtraAttribute($extraColumns[$i],$rows[0][$i]);

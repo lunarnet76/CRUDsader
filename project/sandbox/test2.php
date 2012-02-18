@@ -79,7 +79,7 @@ function shutDownFunction() {
 $sl = \CRUDsader\Instancer::getInstance();
 //\CRUDsader\Instancer::getInstance()->map->extract();
 try{
-$q = new \CRUDsader\Query('SELECT us.*,count(*) us.?count,u.id FROM userSubGroup us, user u GROUP BY us.id');
+$q = new \CRUDsader\Query('SELECT us.*,count(*) us.?count,MAX(`u___sq`.id) us.?cid,u.* FROM userSubGroup us, user u GROUP BY us.id ORDER BY u.id ASC');
 $rs = $q->fetchAll();
 pre($sl->database->getSQL());
 

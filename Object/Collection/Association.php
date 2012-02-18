@@ -49,7 +49,7 @@ namespace CRUDsader\Object\Collection {
                     $this->newObject()->generateRandom();
                     $this->_isModified = true;
                 } else {
-                    $query = new \CRUDsader\Query('FROM ' . $this->_definition['to'] . ' ORDER BY tools.rand LIMIT 1');
+                    $query = \CRUDsader\Instancer::getInstance()->query('FROM ' . $this->_definition['to'] . ' ORDER BY tools.rand LIMIT 1');
                     $found = $query->fetch();
                     if ($found) {
                         $this->_objects[$i] = $found;
@@ -242,7 +242,7 @@ namespace CRUDsader\Object\Collection {
                         unset($this->_objects[$index]);
                         if (isset($this->_objectIndexes[$target->isPersisted()]))
                             unset($this->_objectIndexes[$target->isPersisted()]);
-                        $this->_objects[$index] = new \CRUDsader\Object\Proxy($this->_class, $component->getInputValue());
+                        $this->_objects[$index] = \CRUDsader\Instancer::getInstance()->{'object.proxy'}($this->_class, $component->getInputValue());
                         $this->_isModified = true;
                     }
                 }else if ($empty) {// delete object
@@ -252,7 +252,7 @@ namespace CRUDsader\Object\Collection {
                     unset($this->_objects[$index]);
                     if (isset($this->_objectIndexes[$target->isPersisted()]))
                         unset($this->_objectIndexes[$target->isPersisted()]);
-                    $this->_objects[$index] = new \CRUDsader\Object\Proxy($this->_class, $component->getInputValue());
+                    $this->_objects[$index] = \CRUDsader\Instancer::getInstance()->{'object.proxy'}($this->_class, $component->getInputValue());
                     $this->_isModified = true;
                 }
             }
