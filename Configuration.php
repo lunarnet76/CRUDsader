@@ -131,17 +131,15 @@ namespace CRUDsader {
                 'object.collection' => array(
                     'class' => '\\CRUDsader\\Object\\Collection', 'singleton' => false),
                 'object.unitOfWork' => array(
-                    'class' => '\\CRUDsader\\Object\\UnitOfWork', 'singleton' => false
-                ),
+                    'class' => '\\CRUDsader\\Object\\UnitOfWork', 'singleton' => false),
+                'object.proxy' => array(
+                    'class' => '\\CRUDsader\\Object\\Proxy', 'singleton' => false),
                 'form' => array(
-                    'class' => '\\CRUDsader\\Form', 'singleton' => false
-                ),
+                    'class' => '\\CRUDsader\\Form', 'singleton' => false),
                 'object.collection.association' => array(
-                    'class' => '\\CRUDsader\\Object\\Collection\\Association', 'singleton' => false
-                ),
+                    'class' => '\\CRUDsader\\Object\\Collection\\Association', 'singleton' => false),
                 'object.collection.initialised' => array(
-                    'class' => '\\CRUDsader\\Object\\Collection\\Initialised', 'singleton' => false
-                ),
+                    'class' => '\\CRUDsader\\Object\\Collection\\Initialised', 'singleton' => false),
                 'query' => array(
                     'class' => '\\CRUDsader\\Query', 'singleton' => false),
                 'map' => array(
