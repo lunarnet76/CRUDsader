@@ -74,6 +74,7 @@
         </class>
         <class name="userSubGroup" inherit="userGroup">
             <attribute name="subname"/>
+            <associated to="user" reference="external"/>
         </class>
         <class name="userEmail">
             <attribute name="name"/>

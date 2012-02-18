@@ -1,7 +1,6 @@
 <?php
-require('../CRUDsader/Autoload.php');
-spl_autoload_register(array('\CRUDsader\Autoload', 'autoLoad'));
-\CRUDsader\Autoload::registerNameSpace('CRUDsader', '../CRUDsader/');
+require('../../Autoload.php');
+\CRUDsader\Autoload::register();
 
 function eh() {
     pre(func_get_args());
@@ -41,10 +40,5 @@ function table($var) {
     }
     echo '<table>';
 }
-\CRUDsader\Configuration::getInstance()->adapter->mvc->router->explicit=array(
-    'blog/'=>'Controller/Blog'
-);
-$fc=\CRUDsader\MVC\Controller\Front::getInstance();
-$fc->route();
 
-//$fc->dispatch();
+\CRUDsader\Instancer::call('object','instance',array('test'));

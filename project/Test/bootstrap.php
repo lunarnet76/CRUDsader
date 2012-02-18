@@ -50,9 +50,9 @@ function table($var) {
 // button
 echo '<a href="ut.php">back</a><br>';
 // autoload
-require_once('../CRUDsader/Autoload.php');
+require_once('../../Autoload.php');
 spl_autoload_register(array('\CRUDsader\Autoload', 'autoloader'));
-\CRUDsader\Autoload::registerNameSpace('CRUDsader', '../CRUDsader/');
+\CRUDsader\Autoload::registerNameSpace('CRUDsader', '../../');
 
 // error handling
 function eh() {

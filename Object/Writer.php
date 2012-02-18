@@ -8,19 +8,23 @@
 namespace CRUDsader\Object {
     class Writer extends \CRUDsader\Object {
 
-        public static function write(parent $object, $id, $alias, &$rows, &$fields, &$mapFields) {
+        public static function write(parent $object, $id, $alias, &$rows, &$fields, &$mapFields,&$extraColumns = false) {
             $map = \CRUDsader\Instancer::getInstance()->map;
             if (!$object->_initialised) {
                 $object->_isPersisted = $id;
                 \CRUDsader\Object\IdentityMap::add($object);
                 $object->_initialised = true;
-                for ($i = $mapFields[$alias]['from'] + 1; $i < $mapFields[$alias]['to']; $i++) {
-                    if (isset($object->_infos['attributesReversed'][$fields[$i]])) {
-                        $object->getAttribute($object->_infos['attributesReversed'][$fields[$i]])->setValueFromDatabase($rows[0][$i]);
+                if(isset($mapFields[$alias])){
+                    pre($mapFields[$alias]['from'] + 1,$alias);
+                    for ($i = $mapFields[$alias]['from'] + 1; $i < $mapFields[$alias]['to']; $i++) {
+                        if(isset($extraColumns[$i])){
+                            $object->addExtraAttribute($extraColumns[$i],$rows[0][$i]);
+                        }else if (isset($object->_infos['attributesReversed'][$fields[$i]])) {
+                            $object->getAttribute($object->_infos['attributesReversed'][$fields[$i]])->setValueFromDatabase($rows[0][$i]);
+                        }
                     }
                 }
-		if(isset($mapFields[\CRUDsader\Query::MAPFIELD_ALIAS_GROUPBY]))
-			$object->addExtraAttribute('count',$rows[0][$mapFields[\CRUDsader\Query::MAPFIELD_ALIAS_GROUPBY]]);
+		
                 if ($object->_linkedAssociation) {
                     $definition = $object->_linkedAssociation->getDefinition();
                     if ($definition['reference'] == 'table') {
@@ -37,12 +41,12 @@ namespace CRUDsader\Object {
                     $object->_parent->_isPersisted = $id;
                     $object->_parent->_child = $object;
                 }
-                self::write($object->_parent, $id, $parentClassAlias, $rows, $fields, $mapFields);
+                self::write($object->_parent, $id, $parentClassAlias, $rows, $fields, $mapFields,$extraColumns);
             }
             // associations
             foreach ($object->_infos['associations'] as $name => $associationInfos) {
                 if (isset($mapFields[$alias . '_' . $name])){
-                    \CRUDsader\Object\Collection\Association\Writer::write($object->getAssociation($name), $alias . '_' . $name, $rows, $fields, $mapFields);
+                    \CRUDsader\Object\Collection\Association\Writer::write($object->getAssociation($name), $alias . '_' . $name, $rows, $fields, $mapFields,$extraColumns);
 		}
             }
         }

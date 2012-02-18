@@ -8,7 +8,7 @@
 namespace CRUDsader\Object\Collection\Association {
     class Writer extends \CRUDsader\Object\Collection\Association {
 
-        public static function write(parent $collection, $alias, &$rows, &$fields, &$mapFields) {
+        public static function write(parent $collection, $alias, &$rows, &$fields, &$mapFields,&$extraColumns = false) {
             // simply create an object for each different id
             $collection->_initialised=true;
             $lastId = false;
@@ -26,7 +26,7 @@ namespace CRUDsader\Object\Collection\Association {
                 }
             }
             foreach ($aggregate as $id => $rows) {
-                \CRUDsader\Object\Writer::write($collection->_objects[$collection->_objectIndexes[$id]], $id, $alias, $rows, $fields, $mapFields);
+                \CRUDsader\Object\Writer::write($collection->_objects[$collection->_objectIndexes[$id]], $id, $alias, $rows, $fields, $mapFields,$extraColumns);
             }
         }
     }

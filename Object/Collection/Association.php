@@ -263,7 +263,6 @@ namespace CRUDsader\Object\Collection {
         }
 
         public function rewind() {
-
             if (!$this->_initialised)
                 throw new AssociationException('collection is not initialised');
             parent::rewind();

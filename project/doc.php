@@ -87,10 +87,10 @@ color:#ae1414;
        
 
         function readAction() {
-            require('CRUDsader/Autoload.php');
+            require('../Autoload.php');
             \CRUDsader\Autoload::register();
             echo '<h3>'.$_REQUEST['class'].'</h3>';
-            $reader = new \ReflectionClass('\\'.str_replace('/','\\',$_REQUEST['class']));
+            $reader = new \ReflectionClass('\\'.str_replace('..','CRUDsader',str_replace('/','\\',$_REQUEST['class'])));
 
             // namespace
             $namespace = $reader->inNamespace() ? $reader->getNamespaceName() : false;
@@ -215,6 +215,7 @@ color:#ae1414;
         
          function _readDir($dir) {
             $ret = array();
+            if(strpos($dir,'../project')!== false)return $ret;
             if ($handle = opendir($dir)) {
                 while (false !== ($file = readdir($handle))) {
                     if ($file == '.' || $file == '..')
@@ -237,7 +238,7 @@ color:#ae1414;
 
         function defaultAction() {
             echo '<div class="left">';
-            $dir = 'CRUDsader';
+            $dir = '..';
             $l = strlen($dir);
             $classes = _readDir($dir);
             sort($classes);

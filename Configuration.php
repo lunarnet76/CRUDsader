@@ -130,6 +130,8 @@ namespace CRUDsader {
                     'class' => '\\CRUDsader\\Object\\Collection', 'singleton' => false),
                 'map' => array(
                     'class' => '\\CRUDsader\\Map', 'singleton' => true),
+                'expression' => array(
+                    'class' => '\\CRUDsader\\Expression', 'singleton' => false),
                 'map.extractor' => array(
                     'class' => '\\CRUDsader\\Map\\Extractor\\Database', 'singleton' => true),
                 'map.loader' => array(

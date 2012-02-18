@@ -199,21 +199,10 @@ namespace CRUDsader\Database\Descriptor {
 					$fields[] = '`' . $field['tableAlias'] . self::$TABLE_ALIAS_SUBQUERY . '`.' . ($field['field'] == '*' ? '*' : '`' . $field['field'] . '`') . '' . (isset($field['alias']) ? ' AS `' . $field['alias'] . '`' : '');
 				}
 				$sql.=implode(',', $fields);
-			} else {
-				
-				$stars= array(self::$OBJECT_TMP_TABLE_ALIAS.'.'.self::$OBJECT_ID_FIELD_ALIAS,$select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY.'.*');
-				if (!empty($select['joins'])) {
-					foreach ($select['joins'] as $join) {
-						$stars[]='`' . $join['alias'] .self::$TABLE_ALIAS_SUBQUERY. '`.*';
-					}
-				}
-				if (!empty($select['group'])) {
-					foreach($select['group'] as $groupInfo){
-						$stars[] = 'count('.$groupInfo[0].self::$TABLE_ALIAS_SUBQUERY.'.id) AS `'.$groupInfo[0].'_'.$groupInfo[1].'_count`';
-					}
-				}
-				$sql.=implode(',',$stars);
-			}
+			} else if (!empty($select['select'])) {
+                            $sql.=self::$OBJECT_TMP_TABLE_ALIAS .'.'.self::$OBJECT_ID_FIELD_ALIAS.','.$select['select'];
+			}else
+                            $sql.='*';
 			$sql.=' FROM (SELECT `' . $select['from']['alias'] . '`.`' . $select['from']['id'] . '` AS `' . self::$OBJECT_ID_FIELD_ALIAS . '` FROM `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . '`';
 			$joins = '';
 			if (!empty($select['joins'])) {
@@ -231,13 +220,12 @@ namespace CRUDsader\Database\Descriptor {
 				$sql.=' LIMIT ' . (isset($select['limit']['from']) ? $select['limit']['from'] . ',' : '') . $select['limit']['count'];
 			$sql.=') AS `' . self::$OBJECT_TMP_TABLE_ALIAS . '` LEFT JOIN `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '` ON `' . self::$OBJECT_TMP_TABLE_ALIAS . '`.`' . self::$OBJECT_ID_FIELD_ALIAS . '`=' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '.`' . $select['from']['id'] . '`';
 			$sql.=$joins;
-			if (!empty($select['group'])) {
-				$sql.=' GROUP BY ';
-				$impl = array();
-				foreach($select['group'] as $groupInfo){
-					$impl[] = '`'.$groupInfo[0].self::$TABLE_ALIAS_SUBQUERY.'`.`'.$groupInfo[1].'`';
-				}
-				$sql.=implode(',',$impl);
+			if (!empty($select['group'])) {// array(1=>array('u'),2=>array('id'));
+                            $sql.=' GROUP BY ';
+                            $groups = array();
+                            foreach($select['group'][1] as $k=>$v)
+                                $groups[] = $v.self::$TABLE_ALIAS_SUBQUERY.'.'.$select['group'][2][$k];
+                            $sql.=implode(',',$groups);
 			}
 			return $sql;
 		}

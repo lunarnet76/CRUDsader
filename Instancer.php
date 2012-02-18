@@ -102,6 +102,19 @@ namespace CRUDsader {
              return $this->instance($serviceName,$args);
         }
         
+        
+        /**
+         * 
+         * @param string $serviceName
+         * @param string $function
+         * @param array $arguments
+         * @return mix 
+         */
+        public static function call($serviceName,$function,$arguments)
+        {
+            return call_user_func_array(array(self::getInstance()->_configuration->$serviceName->class,$function),$arguments);
+        }
+        
 
         public function __set($serviceName, $instance) { 
             if (!is_object($instance))
