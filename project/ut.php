@@ -1,5 +1,5 @@
 <?php
-$dir = dirname(__FILE__) . '/Test';
+$dir = __DIR__ . '/unitTest';
 chdir($dir);
 
 function rd($dir) {
@@ -8,12 +8,12 @@ function rd($dir) {
         die('cant read');
     while (false !== ($file = readdir($handle))) {
         if ($file != '.' && $file != '..') {
-            $dirname=str_replace(dirname(__FILE__).'/Test/CRUDsader/','',$dir);
+            $dirname=str_replace(__DIR__.'/unitTest/CRUDsader/','',$dir);
             if (is_dir($dir . $file)) {
                 rd($dir .  $file.'/');
             }
             else
-                echo '<a style="text-decoration:none" href="' . $_SERVER['PHP_SELF'] . '?file=' .$dirname.$file . '">' . $dirname.$file . '</a><br>';
+                echo '<a style="text-decoration:none" href="' . $_SERVER['PHP_SELF'] . '?file=' .$dir.$file . '">' . $dirname.$file . '</a><br>';
         }
     }
 }
@@ -31,7 +31,7 @@ if (isset($_REQUEST['all'])) {
     echo '<a style="text-decoration:none" target="_blank" href="Test/coverage/CRUDsader.html">coverage</a>';
 }
 if (isset($_REQUEST['file'])) {
-    $cmd = 'php phpunit.php --bootstrap bootstrap.php CRUDsader/' . (empty($_REQUEST['file']) ? './' : $_REQUEST['file']) . ' 2>&1'; //
+    $cmd = 'php phpunit.php --bootstrap bootstrap.php ' . (empty($_REQUEST['file']) ? './' : $_REQUEST['file']) . ' 2>&1'; //
     echo $cmd . '<br>';
     ob_start();
     print_r(shell_exec($cmd));

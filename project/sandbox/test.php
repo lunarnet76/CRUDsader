@@ -2,10 +2,6 @@
 // debug
 error_reporting(-1);
 
-function preCallback() {
-    print_r(func_get_args());
-}
-
 function pre($v, $title=false) {
     echo '<b style="color:#ae1414">' . ($title ? strtoupper($title) : '') . '</b>     ****************************************************************************************************************************************************************************************************************************************<br/>';
     if ($v instanceof \CRUDsader\Adapter\Database\Rows) {
@@ -46,12 +42,7 @@ function table($var) {
     }
     echo '<table>';
 }
-// autoload
-require_once('../../Autoload.php');
-spl_autoload_register(array('\CRUDsader\Autoload', 'autoloader'));
-\CRUDsader\Autoload::registerNameSpace('CRUDsader', '../../');
 
-// error handling
 function eh() {
     if (!error_reporting())
         return;
@@ -61,8 +52,6 @@ function eh() {
     die('ERROR');
     return false;
 }
-set_error_handler('eh');
-register_shutdown_function('shutdownFunction');
 
 function shutDownFunction() {
     $error = error_get_last();
@@ -75,20 +64,19 @@ function shutDownFunction() {
     exit(1);
 }
 
+set_error_handler('eh');
+register_shutdown_function('shutdownFunction');
 
-$sl = \CRUDsader\Instancer::getInstance();
-//\CRUDsader\Instancer::getInstance()->map->extract();
-try{
-$q = new \CRUDsader\Query('SELECT us.*,count(u.#id) us.?count,MAX(`u___sq`.id) us.?cid,u.* FROM userSubGroup us, user u WHERE u.id=? OR ? GROUP BY us.id ORDER BY u.id ASC');
-$rs = $q->fetchAll(array(1,'true'));
-pre($sl->database->getSQL());
+// autoload
+require_once('../../Autoload.php');
+\CRUDsader\Autoload::register();
 
-pre(count($rs));
-foreach($rs as $r){
-    pre($r->toArray());
+function sl(){
+    static $instance = null;
+    if(!isset($instance))
+        $instance = \CRUDsader\Instancer::getInstance();
+    return $instance;
 }
 
-}catch(Exception $e){
-    pre($e);
-}
+
 

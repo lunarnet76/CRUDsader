@@ -103,15 +103,22 @@ color:#ae1414;
             // implements
             $interfaces = ($reader->getInterfaceNames());
             $doc = $reader->getDocComment();
+            
             $comment = trim(substr($doc, 6,strpos($doc, '@')-6));
             $methods = $reader->getMethods();
             //
             $properties=($reader->getProperties());
             
+        
+            $tested= (preg_match('$\@(test)\s*([^\@\*]*)$', $doc, $match));
+            
             $t = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
             echo '<code><span class="php-tag">&lt;?php</span><br/>';
+             
             if ($namespace)
                 echo '<div class="php-namespace"><span class="php-class-keyword">namespace</span> ' . $namespace . '{<br/>';
+            if(!$tested)
+                    echo '<span class="php-test php-test-red">UNTESTED</span> ';
             echo '<div class="php-class"><span class="php-doc">' . $comment . '</span><br/>';
             if ($interface) {
                 echo '<span class="php-class-keyword">interface</span> ';
@@ -168,12 +175,17 @@ color:#ae1414;
                 $paramsHtml = array();
                 echo '<div class="php-function">';
                 $doc = $method->getDocComment();
+                
                 $test = false;
-                if (preg_match_all('$\@(param|test|access)\s*([^\@\*]*)$', $doc, $matches)) {
+                $throws = false;
+                if (preg_match_all('$\@(param|test|access|throws)\s*([^\@\*]*)$', $doc, $matches)) {
                     foreach ($matches[1] as $index => $type) {
                         switch ($type) {
                             case 'test':
                                 $test = trim($matches[2][$index]);
+                                break;
+                            case 'throws':
+                                 preg_match('|\s*(\w*)\s*(.*)|',$matches[2][$index],$throws);
                                 break;
                             case 'param':
                                 $ex = explode(' ', $matches[2][$index]);
@@ -203,8 +215,10 @@ color:#ae1414;
                 }
                 echo implode(',', $params), ')';
                  if ($test)
-                    echo '<span class="php-test php-test-green">@tested</span> ' . $test . '<br/>';
-                
+                    echo '<span class="php-test php-test-green">@tested</span> ' . $test;
+                if(($throws)){
+                    echo '<br>'.$t.'<span class="php-class-keyword">throws</span> <span class="php-test php-test-throws">'.$throws[1].'</span> <span class="php-doc">'.$throws[2].'</span></br>';
+                }
                 echo '</div>';
             }
             echo '}</div>';
