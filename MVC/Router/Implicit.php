@@ -13,7 +13,7 @@ namespace CRUDsader\MVC\Router {
      * ${server.baseRewrite}/$function$suffix?$params
      * @package CRUDsader\MVC\Router
      */
-    class Explicit extends \CRUDsader\MVC\Router {
+    class Implicit extends \CRUDsader\MVC\Router {
 
         /**
          * calculate a route
@@ -21,6 +21,7 @@ namespace CRUDsader\MVC\Router {
          * @return bool wether it was found or not 
          */
         function route($uri) {
+		
             if(PHP_SAPI=='cli'){
                 $this->_route = $uri;
             }else{
@@ -33,20 +34,12 @@ namespace CRUDsader\MVC\Router {
             $ex = explode($this->_configuration->route->separator, $this->_route );
 	    
             $this->_params=!empty($_REQUEST)?$_REQUEST:array();
-            // find controller
-            if (isset($routes->{$ex[0]})) { 
-                $language = false;
-                $route = $routes->{$ex[0]};
-                $action = isset($ex[1]) ? $ex[1] : false;
-            } else if (isset($ex[1]) && isset($routes->{$ex[1]})) {
-                $language = $ex[0];
-                $route = $routes->{$ex[1]};
-                $action = isset($ex[2]) ? $ex[2] : false;
-            } else {
-                $language = false;
-                $route = false;
-                $action = false;
-            }
+            $route = new \stdClass();
+	    if(isset($ex[0]))
+		    $route->controller = $ex[0];
+	    if(isset($ex[1]))
+		    $route->action = $ex[1];
+	    
             if (!$route) {
                 $this->_module = !empty($this->_configuration->default->module)?$this->_configuration->default->module:false;
                 $this->_controller = $this->_configuration->default->controller;
@@ -63,7 +56,7 @@ namespace CRUDsader\MVC\Router {
             if (isset($route->action))
                 $this->_action = $route->action;
             else
-                $this->_action = $action ? $action : $this->_configuration->default->action;
+                $this->_action = $this->_configuration->default->action;
             return true;
         }
 

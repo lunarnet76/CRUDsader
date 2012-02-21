@@ -47,7 +47,7 @@ namespace CRUDsader {
                 'controllerDir' => '',
                 'default' => array(
                     'module' => '',
-                    'controller' => 'default',
+                    'controller' => 'core',
                     'action' => 'default'
                 ),
                 'view' => array(

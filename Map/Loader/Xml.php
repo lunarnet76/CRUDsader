@@ -62,7 +62,6 @@ namespace CRUDsader\Map\Loader {
                 );
                 $ret['attributeTypes'][$alias]['options']['length'] = (int) $attributeType['length'];
             }
-            $ret['attributeTypes']['default'] = $ret['attributeTypes']['default'];
             // classes
             $classes = $this->_dom->classes->class;
             foreach ($classes as $class) {
