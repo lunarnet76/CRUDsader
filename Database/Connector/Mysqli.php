@@ -79,13 +79,13 @@ namespace CRUDsader\Database\Connector {
                 case 'select':
                 case 'listTables':
                     $rows = array();
-                    $rowSet = $this->_instancer->{'database.rows'};
+                    $rowSet = \CRUDsader\Instancer::getInstance()->{'database.rows'};
                     $rowSet->setResource($resource, $resource->num_rows);
                     $ret = $rowSet;
                     break;
                 case 'countSelect':
                     $rows = array();
-                    $rowSet = $this->_instancer->{'database.rows'};
+                    $rowSet = \CRUDsader\Instancer::getInstance()->{'database.rows'};
                     $rowSet->setResource($resource, $resource->num_rows);
                     $r = $rowSet->current();
                     $ret=$r[0];

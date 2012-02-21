@@ -20,6 +20,11 @@ namespace CRUDsader\Object\Attribute {
         public function inputEmpty(){
             return false;
         }
+	
+	public function getValue(){
+		$v = parent::getValue();
+            return \CRUDsader\Expression::isEmpty($v)? null : ($v? true : false);
+        }
         
         public function toHTML(){
             $this->_htmlAttributes['value']='yes';

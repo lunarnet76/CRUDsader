@@ -22,8 +22,8 @@ namespace CRUDsader {
          * return string
          */
         public function profileDatabase() {
-            if ($this->_instancer->database->hasDependency('profiler'))
-                return $this->_instancer->database->getDependency('profiler')->display();
+            if (\CRUDsader\Instancer::getInstance()->database->hasDependency('profiler'))
+                return \CRUDsader\Instancer::getInstance()->database->getDependency('profiler')->display();
         }
         
          public static function errorHandler($errno, $errstr, $errfile, $errline, $context) {

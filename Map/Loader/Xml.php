@@ -89,6 +89,7 @@ namespace CRUDsader\Map\Loader {
                 $attributes = $class->attribute;
                 foreach ($attributes as $attribute) {
                     $attributeName = (string) $attribute['name'];
+		    $json = isset($attribute['json']) ? ((string) $attribute['json']) : $defaults->attribute->json;
                     $ret['classes'][$name]['attributes'][$attributeName] = array(
                         'required' => isset($attribute['required']) ? ((string) $attribute['required']) == 'true' : $defaults->attribute->required,
                         'default' => isset($attribute['default']) ? (string) $attribute['default'] : null,
@@ -98,7 +99,7 @@ namespace CRUDsader\Map\Loader {
                         'calculated' => isset($attribute['calculated']) ? (string) $attribute['calculated'] : false,
                         'input' => isset($attribute['input']) ? ((string) $attribute['input']) == 'true' : $defaults->attribute->input,
                         'html' => isset($attribute['html']) ? ((string) $attribute['html']) == 'true' : $defaults->attribute->html,
-                        'json' => isset($attribute['json']) ? ((string) $attribute['json']) == 'true' : $defaults->attribute->json
+                        'json' => $json == 'true'?true:($json == 'false'?false:'optional')
                     );
                     $ret['classes'][$name]['definition']['attributeCount'][$attributeName] = false;
                     $ret['classes'][$name]['attributesReversed'][$ret['classes'][$name]['attributes'][$attributeName]['databaseField']] = $attributeName;
@@ -131,9 +132,11 @@ namespace CRUDsader\Map\Loader {
                     switch ($association['reference']) {
                         case 'internal':
                             $ret['classes'][$name]['definition']['attributeCount'][$association['internalField']] = true;
+			    $ret['classes'][$name]['attributesReversed'][$association['internalField']] = $association['internalField'];
                             break;
                         case 'external':
                             $ret['classes'][$association['to']]['definition']['attributeCount'][$association['externalField']] = true;
+			    $ret['classes'][$association['to']]['attributesReversed'][$association['externalField']] = $association['externalField'];
                             break;
                     }
                 }

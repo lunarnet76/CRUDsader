@@ -52,6 +52,17 @@ namespace CRUDsader\MVC {
         public function getAction() {
             return isset($this->_action)?$this->_action:$this->_configuration->default->action;
         }
+	
+	public function getArrayParams(){
+		return $this->_params;
+	}
+	
+	public function __get($name){
+		return $this->_params[$name];
+	}
+	public function __isset($name){
+		return isset($this->_params[$name]);
+	}
 
         public function getParams() {
             return http_build_query($this->_params);

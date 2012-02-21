@@ -65,7 +65,6 @@ namespace CRUDsader {
                 'defaults' => array(
                     'idField' => 'id',
                     'inheritance' => 'table',
-                    'phpClass' => '\\CRUDsader\\Object',
                     'attributeType' => array(
                         'databaseType' => 'VARCHAR',
                         'options' => array(),

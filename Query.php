@@ -241,7 +241,6 @@ namespace CRUDsader {
                 $db = $this->_db;
                 if (!empty($this->_sql['where']))
                     $this->_sql['where'] = preg_replace_callback('/(\?)|([\w]+)\.([\w]+)=\?/', function($p) use($alias2class, $map, $db, $args, $unlexicalThis) {
-                                pre($p);
                                 if ($p[0] == '?')
                                     return $args[++$unlexicalThis->_argsIndex];
                                 $calculation = (is_array($args[++$unlexicalThis->_argsIndex]) ? key($args[$unlexicalThis->_argsIndex]) . ' ' . $db->quote(current($args[$unlexicalThis->_argsIndex])) : '=' . $db->quote($args[$unlexicalThis->_argsIndex]));

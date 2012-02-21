@@ -11,6 +11,11 @@ namespace CRUDsader\Object\Attribute {
         public function formatForDatabase($value) {
             return filter_var($value, FILTER_SANITIZE_NUMBER_INT);
         }
+	
+	public function getValue(){
+		$v = parent::getValue();
+		return \CRUDsader\Expression::isEmpty($v) ? null : (int)$v;
+	}
 
         protected function _inputValid() {
             if ($this->_inputValue instanceof \CRUDsader\Expression)

@@ -111,11 +111,11 @@ namespace CRUDsader\MVC\Controller {
             foreach ($this->_plugins as $plugin)
                 $plugin->preDispatch();
             $class='Controller\\' . ucFirst($this->_dependencies['router']->getController());
-            $this->_dependencies['actionController'] = new $class($this, $this->_dependencies['router']->toArray());
+            $this->_dependencies['actionController'] = new $class();
             if (method_exists($this->_dependencies['actionController'], $this->_dependencies['router']->getAction() . 'Action'))
-                $this->_dependencies['actionController']->{$this->_dependencies['router']->getAction() . 'Action'}();
+		    call_user_func_array (array($this->_dependencies['actionController'],$this->_dependencies['router']->getAction() . 'Action'),$this->_dependencies['router']->getArrayParams());
             else if (method_exists($this->_dependencies['actionController'], '__callAction'))
-                $this->_dependencies['actionController']->__callAction($this->_dependencies['router']->getAction());
+                $this->_dependencies['actionController']->__callAction($this->_dependencies['router']->getAction(),$this->_dependencies['router']->getArrayParams());
             else
                 throw new FrontException('URL not found, no function ' . $this->_dependencies['router']->getAction());
             $this->_dependencies['actionController']->renderTemplate();

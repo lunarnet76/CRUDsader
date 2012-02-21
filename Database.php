@@ -38,7 +38,7 @@ namespace CRUDsader {
          */
         public function setConfiguration(\CRUDsader\Block $block=null){
             parent::setConfiguration($block);
-            if ($this->_instancer->debug->getConfiguration()->databaseProfiler)
+            if (\CRUDsader\instancer::getInstance()->debug->getConfiguration()->databaseProfiler)
                 $this->_profile=true;
         }
         
