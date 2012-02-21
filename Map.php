@@ -205,13 +205,15 @@ namespace CRUDsader {
                     break;
                 case 'table':
                     $associationAlias=$associationAliasTmp++;
+			
                     $joins['association'] = array(
                         'table' => $association['databaseTable'],// file2post
                         'alias' =>$associationAlias, // 
                         'field' => $association['internalField'],// post
                         'joinAlias' => $fromAlias, // j
                         'joinField' => $this->_map['classes'][$className]['definition']['databaseIdField'],// id
-                        'type' => 'left'
+                        'type' => 'left',
+			'class' => $association['tableClass']
                     );
                     $joins['table'] = array(
                         'table' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],

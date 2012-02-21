@@ -105,7 +105,7 @@ namespace CRUDsader {
                                 // join
                                 $sql['joins'][] = ($join['association']);
                                 // map fields
-                                $countFieldsFrom+=$countFields = 3;
+                                $countFieldsFrom+=$countFields =  2; // table with only the 2 FKs
                                 $mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '_' . $associationName . '_association';
                                 $mapFields[$mapFieldsAlias[$joinedAlias]] = array('from' => $countFieldsFrom - $countFields, 'to' => $countFieldsFrom);
                             }
@@ -138,7 +138,7 @@ namespace CRUDsader {
                                     if (isset($join['association'])) {
                                         $sql['joins'][] = ($join['association']);
                                         // map fields
-                                        $countFieldsFrom+=$countFields = 3;
+                                        $countFieldsFrom+=$countFields = 2; // table with only the 2 FKs
                                         $mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '_' . $associationName . '_association';
                                         $mapFields[$mapFieldsAlias[$joinedAlias]] = array('from' => $countFieldsFrom - $countFields, 'to' => $countFieldsFrom);
                                     }
@@ -268,7 +268,7 @@ namespace CRUDsader {
                             if (!empty($p[2])) {
                                 switch ($p[2]) {
                                     case '?': // calculated field
-                                        $extraColumns[$index - 1] = $p[3];
+                                        $extraColumns[$index] = $p[3];
                                         $ret = 'extra_' . $p[1] . '_' . $p[3]; // don't return yet, need the value for the mapfield
                                         break;
                                     case '#': // field used only for calculation
@@ -291,7 +291,7 @@ namespace CRUDsader {
                     $this->_extraColumns = $extraColumns;
                     $this->_mapFields = $newMapFields;
                     $this->_countFields = $index;
-                    //pre($newMapFields);
+                   // pre($newMapFields);
                 }
             }
 

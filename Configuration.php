@@ -69,7 +69,7 @@ namespace CRUDsader {
                         'databaseType' => 'VARCHAR',
                         'options' => array(),
                         'class' => 'String',
-                        'phpClass' => '\\CRUDsader\\Object\\Attribute\\'
+                        'phpNamespace' => '\\CRUDsader\\Object\\Attribute\\'
                     ),
                     'associations' => array(
                         'associationComponentSelectClass' => '\\CRUDsader\\Form\\Component\\Association',
@@ -135,6 +135,10 @@ namespace CRUDsader {
                     'class' => '\\CRUDsader\\Object\\Proxy', 'singleton' => false),
                 'form' => array(
                     'class' => '\\CRUDsader\\Form', 'singleton' => false),
+                'form.component' => array(
+                    'class' => '\\CRUDsader\\Form\\Component', 'singleton' => false),
+                'form.component.text' => array(
+                    'class' => '\\CRUDsader\\Form\\Component\\Text', 'singleton' => false),
                 'object.collection.association' => array(
                     'class' => '\\CRUDsader\\Object\\Collection\\Association', 'singleton' => false),
                 'object.collection.initialised' => array(

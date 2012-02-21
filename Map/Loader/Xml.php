@@ -56,7 +56,7 @@ namespace CRUDsader\Map\Loader {
                 $ret['attributeTypes'][$alias] = array(
                     'length' => (int) $attributeType['length'],
                     'class' => (isset($attributeType['class']) ? ucfirst((string) $attributeType['class']) : $defaults->attributeType->class),
-                    'phpClass' => (isset($attributeType['phpClass']) ? ucfirst((string) $attributeType['phpClass']) : $defaults->attributeType->phpClass),
+                    'phpNamespace' => (isset($attributeType['phpNamespace']) ? ucfirst((string) $attributeType['phpNamespace']) : $defaults->attributeType->phpNamespace),
                     'databaseType' => isset($attributeType['databaseType']) ? (string) $attributeType['databaseType'] : $defaults->attributeType->databaseType,
                     'options' => isset($attributeType['options']) ? json_decode(str_replace('\'', '"', (string) $attributeType['options']),true) : $defaults->attributeType->options->toArray(),
                 );
@@ -121,7 +121,8 @@ namespace CRUDsader\Map\Loader {
                         'databaseTable' => isset($association['databaseTable']) ? (string) $association['databaseTable'] : \CRUDsader\Map::getDatabaseAssociationTable(isset($association['name']) ? (string) $association['name'] : false, $to, $name),
                         'databaseIdField' => isset($association['databaseIdField']) ? (string) $association['databaseIdField'] : $defaults->associations->databaseIdField,
                         'internalField' => isset($association['internalField']) ? (string) $association['internalField'] : ($ref=='table'?$name:$to),
-                        'externalField' => isset($association['externalField']) ? (string) $association['externalField'] : ($ref=='table'?$to:$name)
+                        'externalField' => isset($association['externalField']) ? (string) $association['externalField'] : ($ref=='table'?$to:$name),
+                        'tableClass' => isset($association['tableClass']) ? (string) $association['tableClass'] : false
                     );
                     if ($ret['classes'][$name]['associations'][$associationName]['internalField'] == $ret['classes'][$name]['associations'][$associationName]['externalField'])
                         $ret['classes'][$name]['associations'][$associationName]['externalField'] .='2';

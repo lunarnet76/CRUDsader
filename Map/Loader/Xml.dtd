@@ -8,7 +8,7 @@
             <!ATTLIST attributeType databaseType CDATA #IMPLIED>
             <!ATTLIST attributeType class CDATA #IMPLIED>
             <!ATTLIST attributeType options CDATA #IMPLIED>
-            <!ATTLIST attributeType phpClass CDATA #IMPLIED>
+            <!ATTLIST attributeType phpNamespace CDATA #IMPLIED>
 
     <!ELEMENT classes (class+)>
         <!ELEMENT class (attribute*,associated*)>

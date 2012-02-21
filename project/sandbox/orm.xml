@@ -4,7 +4,7 @@
     <attributeTypes>
         <attributeType alias="default" length="32"/>
         <attributeType alias="date1" class="date" databaseType="DATE" />
-        <attributeType alias="date2" class="date" databaseType="DATE" phpClass="Attribute" />
+        <attributeType alias="date2" class="date" databaseType="DATE" phpNamespace="Attribute" />
     </attributeTypes>
     
     <classes>
