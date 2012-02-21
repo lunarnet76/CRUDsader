@@ -212,8 +212,7 @@ namespace CRUDsader {
                         'field' => $association['internalField'],// post
                         'joinAlias' => $fromAlias, // j
                         'joinField' => $this->_map['classes'][$className]['definition']['databaseIdField'],// id
-                        'type' => 'left',
-			'class' => $association['tableClass']
+                        'type' => 'left'
                     );
                     $joins['table'] = array(
                         'table' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],

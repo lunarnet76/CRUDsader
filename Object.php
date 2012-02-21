@@ -160,7 +160,7 @@ namespace CRUDsader {
 					return $this->getParent()->__get($var);
 					break;
 			}
-			throw new ObjectException('Object hass no attribute or association named "' . $var . '"');
+			throw new ObjectException('Object has no attribute nor association named "' . $var . '"');
 		}
 
 		public function isModified()

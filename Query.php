@@ -291,7 +291,6 @@ namespace CRUDsader {
                     $this->_extraColumns = $extraColumns;
                     $this->_mapFields = $newMapFields;
                     $this->_countFields = $index;
-                   // pre($newMapFields);
                 }
             }
 
