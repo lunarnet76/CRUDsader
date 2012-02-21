@@ -1,0 +1,91 @@
+<?php
+class Autoload_Test extends PHPUnit_Framework_TestCase {
+    const FOLDER_NAMESPACE='Parts/FakeLib/ClassNamespace/';
+    const FOLDER_NO_NAMESPACE='Parts/FakeLib/NoNamespace/';
+
+    // test for getNamespaces,registerNameSpace,hasNameSpace,getNamespace,unregisterNameSpace
+    public function test_Namespaces() {
+        $namespace = 'arandomnamespace';
+        $randomFolder = 'anotherrandomfolder';
+        $arandomFolder = 'arandomfolder';
+        
+        $this->assertEquals(\CRUDsader\Autoload::getNamespaces(), array('CRUDsader'=>'../../'));// because of the bootstrap
+        \CRUDsader\Autoload::registerNameSpace($namespace, $arandomFolder);
+        $this->assertEquals(\CRUDsader\Autoload::getNamespaces(), array('CRUDsader'=>'../../',$namespace => $arandomFolder));
+        $this->assertEquals(\CRUDsader\Autoload::hasNameSpace($namespace), true);
+        \CRUDsader\Autoload::registerNameSpace($namespace, $randomFolder);
+        $this->assertEquals(\CRUDsader\Autoload::getNamespace($namespace), $randomFolder);
+        \CRUDsader\Autoload::unregisterNameSpace($namespace);
+        $this->assertEquals(\CRUDsader\Autoload::hasNamespace($namespace), false);
+        $this->assertEquals(\CRUDsader\Autoload::getNamespaces(), array('CRUDsader'=>'../../'));
+    }
+
+    // test for hasClass,includeClass,unincludeClass
+    public function test_includeClass() {
+        $class = 'Test\1';
+        $path = 'Test\1';
+        $this->assertEquals(\CRUDsader\Autoload::hasClass($class), false);
+        \CRUDsader\Autoload::includeClass($class, $path);
+        $this->assertEquals(\CRUDsader\Autoload::hasClass($class), true);
+        \CRUDsader\Autoload::unincludeClass($class, $path);
+        $this->assertEquals(\CRUDsader\Autoload::hasClass($class), false);
+    }
+
+    /**
+     * @expectedException \CRUDsader\AutoloadException
+     */
+    public function test_isloadable() {
+        $class = 'TestNamespace\A';
+        new $class;
+    }
+
+    public function test_autoLoader() {
+        $class = 'TestNamespace\C';
+        \CRUDsader\Autoload::registerNameSpace('TestNamespace',self::FOLDER_NAMESPACE);
+        \CRUDsader\Autoload::autoloader($class);
+        $instance = new $class;
+         
+        
+        $class2 = 'TestNamespace\E';
+        \CRUDsader\Autoload::unregisterNameSpace('TestNamespace');
+        \CRUDsader\Autoload::includeClass($class2, self::FOLDER_NAMESPACE.'E.php');
+        \CRUDsader\Autoload::autoloader($class2);
+        $instance = new $class2;
+    }
+
+    /**
+     * @expectedException  CRUDsader\AutoloadException
+     */
+    public function test_autoLoad_ExceptionNamespaceDoesNotExist() {
+        $class = 'UnexistingNamespace\C';
+        \CRUDsader\Autoload::autoloader($class);
+        $instance = new $class;
+    }
+    
+    public function test_simpleAutoload_(){
+        $class='Parts_Fakelib_NoNamespace_I';
+        \CRUDsader\Autoload::simpleAutoload($class);
+        $instance = new $class;
+    }
+    
+    public function test_findIncludePathFor(){
+        // already incluced
+        $class='Parts_Fakelib_NoNamespace_J';
+        $this->assertEquals(\CRUDsader\Autoload::findIncludePathFor($class),'Parts/Fakelib/NoNamespace/J.php');
+        // namespace
+        \CRUDsader\Autoload::registerNameSpace('TestNamespace',self::FOLDER_NAMESPACE);
+        $class='TestNamespace\\K';
+        $this->assertEquals(\CRUDsader\Autoload::findIncludePathFor($class),'Parts/FakeLib/ClassNamespace/K.php');
+    }
+    
+    
+    public function test_register(){
+        $count = count(spl_autoload_functions());
+        \CRUDsader\Autoload::register();
+        $found = spl_autoload_functions();
+        $this->assertEquals(count($found),$count+1);
+        $this->assertEquals($found[$count][0],'CRUDsader\\Autoload');
+        $this->assertEquals($found[$count][1],'autoloader');
+    }
+
+}

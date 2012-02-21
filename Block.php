@@ -8,6 +8,7 @@
 namespace CRUDsader {
     /**
      * basic block that add functionalities to array
+     * @test Block_Test
      */
     class Block implements \Iterator, Interfaces\Arrayable {
         /**

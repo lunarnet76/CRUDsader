@@ -10,6 +10,7 @@ namespace CRUDsader {
      * utility to include classes depending on their namespace or that follows the PEAR naming convention : My_Class mapped to My/Class.php
      * @abstract
      * @package CRUDsader
+     * @test Autoload_Test
      */
     abstract class Autoload {
         /**
@@ -83,7 +84,7 @@ namespace CRUDsader {
          * return if a class has been included by the autoloader
          * @param string $className
          * @return bool
-         * @est test_includeClass
+         * @test test_includeClass
          */
         public static function hasClass($className) {
             return isset(self::$_includedClasses[$className]);
@@ -103,7 +104,7 @@ namespace CRUDsader {
          * manually remove an included class to the autoloader
          * @param string $className
          * @param string $filePath
-         * @test_includeClass
+         * @test test_includeClass
          */
         public static function unincludeClass($className) {
             unset(self::$_includedClasses[$className]);
@@ -112,9 +113,10 @@ namespace CRUDsader {
         /**
          * load a class, for performance reason it does not check wether if the file exists
          * @param string $className
+         * @test test_autoLoader
          */
         public static function autoloader($className) {
-            $filePath = self::_findIncludePathFor($className);
+            $filePath = self::findIncludePathFor($className);
             if ($filePath){
                 self::$_includedClasses[$className]=$filePath;
                 require($filePath);
@@ -125,6 +127,7 @@ namespace CRUDsader {
         /**
          * load a class simply following the PEAR naming convention
          * @param string $className
+         * @test test_simpleAutoload
          */
         public static function simpleAutoload($className) {
             include(self::$simpleAutoloadPath.str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php');
@@ -144,8 +147,9 @@ namespace CRUDsader {
          * @static
          * @param string $className
          * @return string
+         * @test test_findIncludePathFor
          */
-        protected static function _findIncludePathFor($className) {
+        public static function findIncludePathFor($className) {
             if (isset(self::$_includedClasses[$className]))
                 return self::$_includedClasses[$className];
             $pos = strpos($className, '\\');

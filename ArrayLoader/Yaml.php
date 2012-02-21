@@ -9,12 +9,14 @@ namespace CRUDsader\ArrayLoader {
     /**
      * load a pseudo YAML file, not really the official standard
      * @package CRUDsader\ArrayLoader
+     * @test ArrayLoader\Yaml_Test
      */
     class Yaml extends \CRUDsader\ArrayLoader {
         /**
          *
          * @param array $options
          * @return array 
+         * @test test_load
          */
         public function load(array $options){
             if(!isset($options['file']))

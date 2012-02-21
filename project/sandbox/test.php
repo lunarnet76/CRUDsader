@@ -1,24 +1,25 @@
 <?php
-require('../CRUDsader/Autoload.php');
-spl_autoload_register(array('\CRUDsader\Autoload', 'autoLoad'));
-\CRUDsader\Autoload::registerNameSpace('CRUDsader', '../CRUDsader/');
-
-function eh() {
-    pre(func_get_args());
-    pre(debug_backtrace());
-    die('ERROR');
-    return true;
-}
-set_error_handler('eh');
-
-function preCallback() {
-    print_r(func_get_args());
-}
+// debug
+error_reporting(-1);
 
 function pre($v, $title=false) {
-    if ($v instanceof \CRUDsader\Interfaces\Arrayable)
-        $v = $v->toArray();
-    \CRUDsader\Debug::pre($v, $title);
+    echo '<b style="color:#ae1414">' . ($title ? strtoupper($title) : '') . '</b>     ****************************************************************************************************************************************************************************************************************************************<br/>';
+    if ($v instanceof \CRUDsader\Adapter\Database\Rows) {
+        table($v);
+        return;
+    }
+    ob_start();
+    if (is_string($v) && strpos(rtrim($v), 'SELECT') !== false) {
+        echo \CRUDsader\Instancer::getInstance()->database->getDependency('descriptor')->highLight($v);
+        return;
+    }
+    $out = var_dump($v);
+    $out = ob_get_clean();
+
+    $out = str_replace(array('":protected', ']=>', '["', '"]', 'array(', "   ", 'string', 'bool', 'NULL', 'object', '"\''), array('<i>(protected)</i>', '\'</font>]=>', '[<font color="ae1414">\'', '\'</font>]', '<font color="green">ARRAY</font>(', "       ", '<font color="green">STRING</font>', '<font color="green">BOOL</font>', '<font color="green">NULL</font>', '<font color="RED"><b>OBJECT</b></font>', '\''), $out);
+
+    echo '<pre>';
+    print_r($out);
 }
 
 function table($var) {
@@ -41,74 +42,41 @@ function table($var) {
     }
     echo '<table>';
 }
-\CRUDsader\Configuration::getInstance()->database->name = 'CRUDsader_test';
-\CRUDsader\Configuration::getInstance()->debug->database->profiler=true ;
-\CRUDsader\Configuration::getInstance()->adapter->map->loader->xml->file = '../Test/Parts/orm.xml';
 
-try {
-    $m = \CRUDsader\Map::getInstance();
-    $m->extract();
-} catch (Exception $e) {
-    pre($e);
-    exit;
+function eh() {
+    if (!error_reporting())
+        return;
+    pre(func_get_args());
+    pre(xdebug_get_function_stack());
+    pre(get_included_files());
+    die('ERROR');
+    return false;
 }
-mysql_connect('localhost', 'root', '');
-mysql_select_db('CRUDsader_test');
-mysql_query('SET FOREIGN_KEY_CHECKS = 0');
-$sqlFile = explode(';', file_get_contents('../Test/Parts/databaseOrmRows.sql'));
-foreach ($sqlFile as $sql) {
-    $sql = trim($sql);
-    if (!empty($sql)) {
-        mysql_query($sql) or die($sql . mysql_error());
+
+function shutDownFunction() {
+    $error = error_get_last();
+ 
+    if ($error !== null) {
+        echo 'eRRORRR';
+        pre($error);
+        pre(xdebug_get_function_stack());
     }
-}
-mysql_query('SET FOREIGN_KEY_CHECKS = 1');
-mysql_close();
-
-class Model extends \CRUDsader\Object{
-    
+    exit(1);
 }
 
-$oql = 'SELECT p.*,c.*
-            FROM 
-                person p,
-                parent c,
-                 
-                 hasWebSite w2 ON p,hasEmail e, webSite w ON e,
-                 hasGroup g, 
-                 hasAddress a,
-                 parent wp ON w2
-                 WHERE
-                    p.id=?
-                    ORDER BY p.id ASC LIMIT 3';
-/**/
-$q = new \CRUDsader\Query($oql);
+set_error_handler('eh');
+register_shutdown_function('shutdownFunction');
 
-$r = $q->fetchAll(array(array('>' => new \CRUDsader\Expression('0'))));
-$o = $r->findById(1);
+// autoload
+require_once('../../Autoload.php');
+\CRUDsader\Autoload::register();
 
-
-// FORM
-$form = $o->getForm();
-try {
-    if ($form->receiveInput() && $form->inputValid()) {
-        $o->save();
-        pre($o,'saved');
-    }
-} catch (Exception $e) {
-    if ($e instanceof CRUDsader\Adapter\Database\Connector\MysqliException)
-        pre($e->getSQL());
-    $form->setInputError($e->getMessage());
+function sl(){
+    static $instance = null;
+    if(!isset($instance))
+        $instance = \CRUDsader\Instancer::getInstance();
+    return $instance;
 }
 
 
-echo $form;
-
-$r = $q->fetchAll(array(array('>' => new \CRUDsader\Expression('0'))));
-$o = $r->findById(1);
-
-pre($o);
-
-echo \CRUDsader\Database::getInstance()->getAdapter('profiler')->display(true);
-//pre($o);
 

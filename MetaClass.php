@@ -5,12 +5,12 @@
  * @license    see CRUDsader/license.txt
  */
 namespace CRUDsader {
+    /**
+     * by inheriting this class the class has the possibility to automatically load a configuration and its dependencies, and display only wanted fields when using toArray
+     * @abstract 
+     * @test MetaClass_Test
+     */
     abstract class MetaClass implements Interfaces\Configurable, Interfaces\Dependent, Interfaces\Arrayable {
-        /**
-         * @var Instancer
-         */
-        protected $_instancer;
-
         /**
          * @var Block
          */
@@ -21,13 +21,13 @@ namespace CRUDsader {
          * @var array
          */
         protected $_dependencies = array();
-        
+
         /**
          * identify the class
          * @var string
          */
         protected $_classIndex = false;
-        
+
         /**
          * list fields to include in array
          * @var string
@@ -40,23 +40,27 @@ namespace CRUDsader {
          */
         protected $_hasDependencies = array();
 
+        /**
+         *@test test_autoconfiguration 
+         */
         public function __construct() {
-            $this->_instancer = \CRUDsader\Instancer::getInstance();
             foreach ($this->_hasDependencies as $dependencyName)
                 $this->setDependency($dependencyName, ($this->_classIndex ? $this->_classIndex . '.' : '') . $dependencyName);
-            if($this->_classIndex)
-                $this->setConfiguration($this->_instancer->configuration->{$this->_classIndex});
+            if ($this->_classIndex)
+                $this->setConfiguration(\CRUDsader\Instancer::getInstance()->configuration->{$this->_classIndex});
         }
 
         /**
          * @param \CRUDsader\Block $block 
+         * @test test_configuration
          */
-        public function setConfiguration(\CRUDsader\Block $block=null) {
+        public function setConfiguration(\CRUDsader\Block $block = null) {
             $this->_configuration = $block;
         }
 
         /**
          * @return \CRUDsader\Block 
+         * @test test_configuration
          */
         public function getConfiguration() {
             return $this->_configuration;
@@ -65,6 +69,7 @@ namespace CRUDsader {
         /**
          * @param string $index
          * @param string $instancerIndex 
+         * @test_dependencies
          */
         public function setDependency($index, $instancerIndex) {
             $this->_dependencies[$index] = \CRUDsader\Instancer::getInstance()->$instancerIndex;
@@ -73,6 +78,7 @@ namespace CRUDsader {
         /**
          * @param string $index
          * @return object 
+         * @test_dependencies
          */
         public function getDependency($index) {
             return $this->_dependencies[$index];
@@ -81,19 +87,21 @@ namespace CRUDsader {
         /**
          * @param string $index
          * @return boolean 
+         * @test_dependencies
          */
         public function hasDependency($index) {
             return isset($this->_dependencies[$index]);
         }
-        
+
         /**
-         * return this as an array
-         * @param bool $full
+         * return object as an array
+         * @param bool $maxInfo wether to show a quick view or the whole object
+         * @test test_toArray
          */
-        public function toArray($full=false){
-            $ret=array();
-            foreach($this->_toArray as $field){
-                $ret[$field]=isset($this->$field)?$this->$field:null;
+        public function toArray($maxInfo = false) {
+            $ret = array();
+            foreach ($this->_toArray as $field) {
+                $ret[$field] = isset($this->$field) ? $this->$field : null;
             }
             return $ret;
         }
