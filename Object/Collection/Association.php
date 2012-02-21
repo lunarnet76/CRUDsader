@@ -29,7 +29,7 @@ namespace CRUDsader\Object\Collection {
                 $ret[$k] = $object->toJson();
             }
 	    if($this->_definition['reference'] == 'internal' || $this->_definition['max'] == 1)
-		    return current($ret);
+		    return count($ret)? current($ret) : null;
             return $ret;
 	}
 
