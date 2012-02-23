@@ -193,28 +193,6 @@ namespace CRUDsader\Database\Descriptor {
 		{
 			$sql = 'SELECT ';
 
-			// classic query, no need for objects
-			if (empty($select['joins']) && empty($select['group'])) {
-
-				if (!empty($select['fields'])) {
-					foreach ($select['fields'] as $field) {
-						$fields[] = '`' . $field['tableAlias'] . self::$TABLE_ALIAS_SUBQUERY . '`.' . ($field['field'] == '*' ? '*' : '`' . $field['field'] . '`') . '' . (isset($field['alias']) ? ' AS `' . $field['alias'] . '`' : '');
-					}
-					$sql.=implode(',', $fields);
-				} else if (!empty($select['select'])) {
-					$sql.=self::$OBJECT_TMP_TABLE_ALIAS . '.' . self::$OBJECT_ID_FIELD_ALIAS . ',' . $select['select'];
-				}else
-					$sql.='*';
-
-				$sql.=' FROM `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . '`';
-				if (!empty($select['where']))
-					$sql.=' WHERE ' . $select['where'];
-				if (!empty($select['order']))
-					$sql.=' ORDER BY ' . $select['order'];
-				if (!empty($select['limit']))
-					$sql.=' LIMIT ' . (isset($select['limit']['from']) ? $select['limit']['from'] . ',' : '') . $select['limit']['count'];
-				return $sql;
-			}
 			// object
 			$unLexicalThis = $this;
 			$fields = array();

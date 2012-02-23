@@ -30,7 +30,7 @@ namespace CRUDsader {
         const REGEXP_WHERE_INSIDE = '((?:\(*?(?:\?|(?:\w+\.\w+=\?)\)*?(?:\s+(?:AND|OR)\s+)?))*)\s*';
         const REGEXP_GROUPBY = '(?:\s+(GROUP BY)\s+((?:\s*(?:\w+\.\w+)\s*\,?)*))?';
         const REGEXP_GROUPBY_INSIDE = '\s*(\w+)\.(\w+)\s*\,?';
-        const REGEXP_ORDERBY = '(?:\s+(ORDER BY)\s+((?:\s*(?:\w+\.\w+|\?)\s*(DESC|ASC)?\,?)*))?';
+        const REGEXP_ORDERBY = '(?:\s+(ORDER BY)\s+((?:\s*(?:[\w]+\.)\w+|\?|[a-z_]*\s*(DESC|ASC)?\,?)*))?';
         const REGEXP_LIMIT = '(?:\s+(LIMIT)\s+([0-9]*)(?:\s*\,\s*([0-9]*))?)?';
         const REGEXP_FROM_JOINS = '\,\s*(\w+)(?:\s+(\w+))?(?:\s+ON\s+(\w+))?';
 
@@ -61,7 +61,8 @@ namespace CRUDsader {
         public function getInfos() {
             if ($this->_infos)
                 return $this->_infos;
-            $this->_splitOql();
+            if(!$this->_splitOql())
+		    throw new QueryException($this->_oql,'bad query');
             $this->_map = \CRUDsader\Instancer::getInstance()->map;
             // FROM
             $this->_class = $className = $this->_matches[2];
@@ -253,7 +254,6 @@ namespace CRUDsader {
             }
             if (!$all)
                 $this->_sql['limit'] = array('count' => 1);
-
 
             if ($this->_oqlSelect) {
                 $newMapFields = array();
