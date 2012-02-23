@@ -26,6 +26,7 @@ namespace CRUDsader\Object\Attribute {
 
 		public function setValueFromDatabase($val)
 		{
+			$val = parent::setValueFromDatabase($val);
 			$this->_inputValue = $val == 1 ? true : false;
 		}
 

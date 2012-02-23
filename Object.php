@@ -509,6 +509,8 @@ namespace CRUDsader {
 				$class = $type['phpNamespace'] . $type['class'];
 				$this->_fields[$name] = new $class($name, $type['options']);
 				$this->_fields[$name]->attach($this);
+				if(isset($this->_infos['attributes'][$name]['default']))
+					$this->_fields[$name]->inputReceiveDefault($this->_infos['attributes'][$name]['default']);
 			}
 			return $this->_fields[$name];
 		}

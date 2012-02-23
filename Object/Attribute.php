@@ -34,9 +34,9 @@ namespace CRUDsader\Object {
          * @param type $value
          */
         public function setValueFromDatabase($value) {
-            if (\CRUDsader\Expression::isEmpty($value))
+            if (\CRUDsader\Expression::isEmpty($value)){
                 $this->_inputValue = $this->_inputValueDefault;
-            else
+	    }else
                 $this->_inputValue = $value;
         }
 
