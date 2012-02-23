@@ -46,6 +46,7 @@ namespace CRUDsader\Object {
                     else
                         $database->update($params[0], $params[1], $params[2]);
                     $lastExecuted = $id;
+		    
                 }
                 $database->commit();
                 //$database->setForeignKeyCheck(true);

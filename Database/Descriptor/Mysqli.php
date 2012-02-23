@@ -192,6 +192,30 @@ namespace CRUDsader\Database\Descriptor {
 		public function select($select)
 		{
 			$sql = 'SELECT ';
+
+			// classic query, no need for objects
+			if (empty($select['joins']) && empty($select['group'])) {
+
+				if (!empty($select['fields'])) {
+					foreach ($select['fields'] as $field) {
+						$fields[] = '`' . $field['tableAlias'] . self::$TABLE_ALIAS_SUBQUERY . '`.' . ($field['field'] == '*' ? '*' : '`' . $field['field'] . '`') . '' . (isset($field['alias']) ? ' AS `' . $field['alias'] . '`' : '');
+					}
+					$sql.=implode(',', $fields);
+				} else if (!empty($select['select'])) {
+					$sql.=self::$OBJECT_TMP_TABLE_ALIAS . '.' . self::$OBJECT_ID_FIELD_ALIAS . ',' . $select['select'];
+				}else
+					$sql.='*';
+
+				$sql.=' FROM `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . '`';
+				if (!empty($select['where']))
+					$sql.=' WHERE ' . $select['where'];
+				if (!empty($select['order']))
+					$sql.=' ORDER BY ' . $select['order'];
+				if (!empty($select['limit']))
+					$sql.=' LIMIT ' . (isset($select['limit']['from']) ? $select['limit']['from'] . ',' : '') . $select['limit']['count'];
+				return $sql;
+			}
+			// object
 			$unLexicalThis = $this;
 			$fields = array();
 			if (!empty($select['fields'])) {
@@ -200,9 +224,9 @@ namespace CRUDsader\Database\Descriptor {
 				}
 				$sql.=implode(',', $fields);
 			} else if (!empty($select['select'])) {
-                            $sql.=self::$OBJECT_TMP_TABLE_ALIAS .'.'.self::$OBJECT_ID_FIELD_ALIAS.','.$select['select'];
+				$sql.=self::$OBJECT_TMP_TABLE_ALIAS . '.' . self::$OBJECT_ID_FIELD_ALIAS . ',' . $select['select'];
 			}else
-                            $sql.='*';
+				$sql.='*';
 			$sql.=' FROM (SELECT `' . $select['from']['alias'] . '`.`' . $select['from']['id'] . '` AS `' . self::$OBJECT_ID_FIELD_ALIAS . '` FROM `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . '`';
 			$joins = '';
 			if (!empty($select['joins'])) {
@@ -221,11 +245,11 @@ namespace CRUDsader\Database\Descriptor {
 			$sql.=') AS `' . self::$OBJECT_TMP_TABLE_ALIAS . '` LEFT JOIN `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '` ON `' . self::$OBJECT_TMP_TABLE_ALIAS . '`.`' . self::$OBJECT_ID_FIELD_ALIAS . '`=' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '.`' . $select['from']['id'] . '`';
 			$sql.=$joins;
 			if (!empty($select['group'])) {// array(1=>array('u'),2=>array('id'));
-                            $sql.=' GROUP BY ';
-                            $groups = array();
-                            foreach($select['group'][1] as $k=>$v)
-                                $groups[] = $v.self::$TABLE_ALIAS_SUBQUERY.'.'.$select['group'][2][$k];
-                            $sql.=implode(',',$groups);
+				$sql.=' GROUP BY ';
+				$groups = array();
+				foreach ($select['group'][1] as $k => $v)
+					$groups[] = $v . self::$TABLE_ALIAS_SUBQUERY . '.' . $select['group'][2][$k];
+				$sql.=implode(',', $groups);
 			}
 			return $sql;
 		}

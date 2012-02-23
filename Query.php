@@ -244,7 +244,7 @@ namespace CRUDsader {
                                 if ($p[0] == '?')
                                     return $args[++$unlexicalThis->_argsIndex];
                                 $calculation = (is_array($args[++$unlexicalThis->_argsIndex]) ? key($args[$unlexicalThis->_argsIndex]) . ' ' . $db->quote(current($args[$unlexicalThis->_argsIndex])) : '=' . $db->quote($args[$unlexicalThis->_argsIndex]));
-                                return $db->quoteIdentifier($p[2]) . '.' . $db->quoteIdentifier($map->classGetDatabaseTableField($alias2class[$p[2]], $p[3])) . $calculation;
+				return $db->quoteIdentifier($p[2]) . '.' . $db->quoteIdentifier($map->classGetDatabaseTableField($alias2class[$p[2]], $p[3])) . $calculation;
                             }, $this->_sql['where']);
                 if (!empty($this->_sql['order']))
                     $this->_sql['order'] = preg_replace_callback('|\?|', function($p) use($alias2class, $db, $map, $args, $unlexicalThis) {

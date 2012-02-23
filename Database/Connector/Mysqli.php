@@ -75,6 +75,7 @@ namespace CRUDsader\Database\Connector {
             $resource = $this->_connection->query($sql);
             if (false === $resource)
                 throw new MysqliException($this->_connection->error, $sql, $this->_connection->errno);
+	    
             switch ($type) {
                 case 'select':
                 case 'listTables':
@@ -94,6 +95,7 @@ namespace CRUDsader\Database\Connector {
                 case 'update':
                     $ret = $this->_connection->affected_rows;
                     break;
+		    
                 default:
                     $ret = true;
             }

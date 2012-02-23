@@ -42,12 +42,18 @@ namespace CRUDsader {
 			}
 		}
 
+		public static function findByid($class, $id)
+		{
+			$query = \CRUDsader\Instancer::getInstance()->query('FROM ' . $class . ' o WHERE o.id=?');
+			return $query->fetch($id);
+		}
+
 		public function addExtraAttribute($name, $value = null)
 		{
 			$this->_infos['attributes'][$name] = array(
 			    'json' => true,
 			    'extra' => true,
-			    'required'=>false
+			    'required' => false
 			);
 			$this->getAttribute($name)->setValueFromDatabase($value);
 		}
@@ -503,13 +509,12 @@ namespace CRUDsader {
 				$class = $type['phpNamespace'] . $type['class'];
 				$this->_fields[$name] = new $class('default');
 				$this->_fields[$name]->attach($this);
-			}
-			else if (!isset($this->_fields[$name])) {
+			} else if (!isset($this->_fields[$name])) {
 				$type = $this->_map->classGetFieldAttributeType($this->_class, $name);
 				$class = $type['phpNamespace'] . $type['class'];
 				$this->_fields[$name] = new $class($name, $type['options']);
 				$this->_fields[$name]->attach($this);
-				if(isset($this->_infos['attributes'][$name]['default']))
+				if (isset($this->_infos['attributes'][$name]['default']))
 					$this->_fields[$name]->inputReceiveDefault($this->_infos['attributes'][$name]['default']);
 			}
 			return $this->_fields[$name];

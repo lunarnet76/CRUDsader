@@ -19,6 +19,11 @@ namespace CRUDsader\Object\Attribute {
                  $ret=filter_var($this->_inputValue, FILTER_VALIDATE_FLOAT)!==false;
             return $ret;
         }
+	
+	public function getValue(){
+		$v = parent::getValue();
+		return (float)$v;
+	}
         
         
         public function generateRandom() {
