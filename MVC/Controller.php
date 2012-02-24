@@ -17,6 +17,7 @@ namespace CRUDsader\MVC {
 		protected $_title = '';
 		protected $_preLoads = array();
 		protected $_noRender = false;
+		protected $_isRendered = false;
 		protected $_template;
 
 		/**
@@ -81,7 +82,7 @@ namespace CRUDsader\MVC {
 		// helpers
 		public function redirect($options = array())
 		{
-			if ($this->_instancer->debug->getConfiguration()->redirection)
+			if (\CRUDsader\Instancer::getInstance()->debug->getConfiguration()->redirection)
 				echo '<a href="' . $this->url($options) . '">' . $this->url($options) . '</a>';
 			else
 				header('Location: ' . $this->url($options));

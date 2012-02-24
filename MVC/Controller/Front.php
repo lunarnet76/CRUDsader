@@ -83,11 +83,12 @@ namespace CRUDsader\MVC\Controller {
             // init plugins
             $module = $this->_dependencies['router']->getModule() ? $this->_dependencies['router']->getModule() : false;
             $plugins = $module ? (isset($this->_configuration->plugins->$module) ? $this->_configuration->plugins->$module : array()) : $this->_configuration->plugins;
+            $instancer = \CRUDsader\Instancer::getInstance();
             foreach ($plugins as $pluginName => $pluginOptions) {
-                $cfg=$this->_instancer->getConfiguration();
+                $cfg=$instancer->getConfiguration();
                 $cfg->{'mvc.plugin.'.$pluginName} = array('class'=>'Plugin\\' . $pluginName,'singleton'=>true);
-                $this->_instancer->setConfiguration($cfg);
-                $this->_dependencies['plugin'.$pluginName] = $this->_instancer->{'mvc.plugin.'.$pluginName};
+                $instancer->setConfiguration($cfg);
+                $this->_dependencies['plugin'.$pluginName] = $instancer->{'mvc.plugin.'.$pluginName};
                 if ($pluginOptions instanceof \CRUDsader\Block)
                     $this->_dependencies['plugin'.$pluginName]->setConfiguration($pluginOptions);
                 $this->_dependencies['plugin'.$pluginName]->postRoute($this->_dependencies['router']);
