@@ -23,7 +23,7 @@ namespace CRUDsader\Expression {
         protected $_quote = true;
 
         public function __construct() {
-            $this->_expression=date('Y-m-d h:i:s');
+            $this->_expression=date('Y-m-d H:i:s');
         }
     }
 }

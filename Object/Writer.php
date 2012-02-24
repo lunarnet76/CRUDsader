@@ -20,7 +20,6 @@ namespace CRUDsader\Object {
 						if (isset($extraColumns[$i])) {
 							$object->addExtraAttribute($extraColumns[$i], $rows[0][$i]);
 						} else if (isset($fields[$i]) && isset($object->_infos['attributesReversed'][$fields[$i]]) && $object->hasAttribute($object->_infos['attributesReversed'][$fields[$i]])) {
-							
 							$object->getAttribute($object->_infos['attributesReversed'][$fields[$i]])->setValueFromDatabase($rows[0][$i]);
 						} else if (isset($fields[$i]) && isset($object->_infos['attributesReversed'][$fields[$i]])) {
 							// FKs

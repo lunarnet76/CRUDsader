@@ -16,9 +16,9 @@ namespace CRUDsader\Object\Attribute {
         protected function _inputValid() {
             return true;
         }
-        
-        public function setValueFromDatabase($value) {
-            parent::setValueFromDatabase(filter_var($value,FILTER_SANITIZE_STRING));
+	
+	public function formatForDatabase($value) {
+            return filter_var($value, FILTER_SANITIZE_STRING);
         }
     }
 }
