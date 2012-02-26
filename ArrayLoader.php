@@ -9,12 +9,9 @@ namespace CRUDsader{
     /**
      * create an array from a source
      * @package CRUDsader
+     * @test ArrayLoader_Test
      */
     abstract class ArrayLoader extends MetaClass{
-        /**
-         * @var string
-         */
-        protected $_configurationIndex = 'arrayLoader';
         /**
          * @abstract
          * @param array $options

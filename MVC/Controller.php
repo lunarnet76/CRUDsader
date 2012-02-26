@@ -63,10 +63,16 @@ namespace CRUDsader\MVC {
 				case $this->_dependencies['frontController']->hasPlugin($var) === true:
 					return $this->_dependencies['frontController']->getPlugin($var);
 					break;
-				default:
+				case isset($this->_dependencies['router']->$var):
 					return $this->_dependencies['router']->$var;
+                                    default:
+                                        return $this->$var;
 			}
 		}
+                
+               /* public function __set($var,$value){
+                    $this->$var = $value;
+                }*/
 
 		public function __call($name, $arguments)
 		{

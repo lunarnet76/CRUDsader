@@ -10,7 +10,7 @@ namespace CRUDsader {
      * Debug tools
      * @package CRUDsader
      */
-    class Debug extends MetaClass{
+    class Debug extends MetaClass {
         /**
          * identify the class
          * @var string
@@ -25,8 +25,8 @@ namespace CRUDsader {
             if (\CRUDsader\Instancer::getInstance()->database->hasDependency('profiler'))
                 return \CRUDsader\Instancer::getInstance()->database->getDependency('profiler')->display();
         }
-        
-         public static function errorHandler($errno, $errstr, $errfile, $errline, $context) {
+
+        public static function errorHandler($errno, $errstr, $errfile, $errline, $context) {
             if (error_reporting() == 0) {// @ errors
                 return;
             }
@@ -75,16 +75,12 @@ namespace CRUDsader {
                     $output = 'UNKNOWN ERROR';
                     break;
             }
-            if (\CRUDsader\Instancer::getInstance()->debug->getConfiguration()->error && $show){
-                self::pre(array('Message' => $errstr, 'File' => $errfile, 'Line' => $errline/*, 'Context' => $context*/),$output);
+            if (\CRUDsader\Instancer::getInstance()->debug->getConfiguration()->error && $show) {
+                self::showError(debug_backtrace(), $output, $errstr);
+                //  self::pre(array('Message' => $errstr, 'File' => $errfile, 'Line' => $errline/*, 'Context' => $context*/),$output);
             }
-            if ($exit) {
-                if (\CRUDsader\Instancer::getInstance()->debug->getConfiguration()->error) {
-                    echo 'exit';
-                    self::pre(debug_backtrace());
-                }
+            if ($exit)
                 exit;
-            }
             return true; // true disable PHP built-in error handler
         }
 
@@ -119,8 +115,8 @@ namespace CRUDsader {
             }
         }
 
-        public static function pre($v, $title='', $color='#E9E9E9') {
-            
+        public static function pre($v, $title = '', $color = '#E9E9E9') {
+
             $debug_backtrace = debug_backtrace();
             $d = $debug_backtrace[0]['args'][0];
 
@@ -189,12 +185,156 @@ namespace CRUDsader {
             echo '</div>';
         }
 
-       
-
         public static function getMemoryUsage() {
             $size = memory_get_usage(true);
             $unit = array('b', 'kb', 'mb', 'gb', 'tb', 'pb');
             return @round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . ' ' . $unit[$i];
+        }
+
+        public static function showError($trace, $type = false, $message = false) {
+            echo '<style type="text/css">
+                body{
+                margin:0px;}
+                div.php-error{
+                    background-color:white;
+                    width:100%;
+                    margin:0px;
+                    font-family: "Courier New",Courier,monospace;
+                    font-size: 8pt;
+                }
+               
+                .php-error-block{
+                    border-bottom:1px dashed grey;
+                    margin: 15px 15px 15px 10px;
+                }
+                .php-error-part-class{
+                    background-color: #D3E0EB;
+                    color: #7B8D9A;
+                    font-weight: bold;
+                    width:100%;
+                    height:23px;
+                }
+                .php-error-class{
+                    padding:5px;
+                    background-color: #10759C;
+                    border-left: 1px solid #D3E0EB;
+                    border-top: 1px solid #D3E0EB;
+                    color: #FFFFFF;
+                    float: left;
+                    font-size: 8pt;
+                }
+                .php-error-function{
+                    float: left;
+                    padding:5px;
+                    background-color: #D3E0EB;
+                    color: #334C60;
+                }
+                .php-error-file{
+                     background-color: #D3E0EB;
+                    color: #334C60;
+                    padding: 2pt 0;
+                }
+                .php-error-line{
+                    color: #ae1414;
+                    font-weight:bold;
+                    margin-left:5px;
+                }
+                .php-error-arg{
+                   
+                }
+                .php-error-arg-string{
+                    color:red;
+                }
+                .php-error-arg-null{
+                    color:green;
+                }
+                .php-error-arg-object{
+                    color:green
+                }
+                .php-error-arg-array{
+                    color:green
+                }
+                 .php-error-top{
+                     background-color: #10759C;
+                        border-bottom: 1px solid #0E698B;
+                        height: 38pt;
+                        overflow: hidden;
+                        text-align: right;
+                }
+                .php-error-title{
+                    color: #FFFFFF;
+                    font-size: 20pt;
+                    left: 10pt;
+                    position: absolute;
+                    top: 5pt;
+                }
+                .php-error-type{
+                    color: #0E698B;
+                    display: block;
+                    font-size: 60pt;
+                    font-weight: bold;
+                    margin: -20pt -8pt 0 0;
+                    padding: 0;
+                }
+                .php-error-separator{
+                    background-color: #334C60;
+                    border-bottom: 1px solid #617789;
+                    border-top: 2px solid #2E4456;
+                    color: #C8EFFA;
+                    font-size: 9px;
+                    padding: 1px 5px 3px 10px;
+                }
+                .php-error-head{
+                    border-bottom: 1px dotted #ADBAC6;
+                    color: #0088B5;
+                    font-size: 16pt;
+                    margin: 15px 15px 15px 10px;
+                }
+                </style>';
+            echo '<div class="php-error-separator"></div>
+                    <div class="php-error">
+                        <div class="php-error-top">
+                            <span class="php-error-type">' . $type . '</span><span class="php-error-title">' . $message . '</span>
+                        </div>
+                        <div class="php-error-separator"></div>';
+            foreach ($trace as $i => $t) {
+                if ($i == 0)
+                    continue;
+                if($i == 1){
+                    echo '<div class="php-error-head">Main</div>';
+                }
+                echo '<div class="php-error-block">';
+                if (isset($t['class'])) {
+                    echo '<div class="php-error-part-class"><span class="php-error-class">' . $t['class'] . '</span> ' . ($t['type'] == '::' ? 'static' : '') . ' <span class="php-error-function">' . $t['function'] . '</span></div>';
+                }
+                if (isset($t['file']))
+                    echo '<div class="php-error-part-file"><span class="php-error-line">' . $t['line'] . '</span> <span class="php-error-file">' . (strpos($t['file'], __DIR__) !== false ? substr($t['file'], strlen(__DIR__ . '/')) : $t['file']) . '</span></div>';
+                if (!empty($t['args'])) {
+                    echo '<ul class="php-error-args">';
+                    foreach ($t['args'] as $arg) {
+                        echo '<li class="php-error-arg">';
+                        if (is_object($arg)) {
+                            echo '<span class="php-error-arg-object">' . get_class($arg) . '</span>';
+                        } elseif (is_null($arg)) {
+                            echo '<span class="php-error-arg-null">NULL</span>';
+                        } elseif (is_array($arg)) {
+                            echo '<span class="php-error-arg-array">Array(' . count($arg) . ')</span>';
+                        } elseif (is_string($arg)) {
+                            echo '<span class="php-error-arg-string">"' . ($arg) . '"</span>';
+                        } else {
+                            echo (string) $arg;
+                        }
+                        echo '</li>';
+                    }
+                    echo '</ul>';
+                }
+                echo '</div>';
+                if($i == 1){
+                    echo '<div class="php-error-head">Stack Trace</div>';
+                }
+                
+            }
+            echo '</div><div class="php-error-separator"></div></div>';
         }
     }
 }

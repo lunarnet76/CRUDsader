@@ -53,7 +53,8 @@ namespace CRUDsader {
 			$this->_infos['attributes'][$name] = array(
 			    'json' => true,
 			    'extra' => true,
-			    'required' => false
+			    'required' => false,
+                            'html'=>false
 			);
 			$this->getAttribute($name)->setValueFromDatabase($value);
 		}
@@ -109,7 +110,7 @@ namespace CRUDsader {
 			if ($displayTitle)
 				$html.='<div class="title">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . $base) . '</div>';
 			foreach ($this->_fields as $name => $attribute) {
-				if ($this->_infos['attributes'][$name]['html'])
+				if (($this->_infos['attributes'][$name]['html']))
 					$html.='<div class="row"><div class="label">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . $this->_class . '.attributes.' . $name) . '</div><div class="value">' . (\CRUDsader\Expression::isEmpty($attribute->getInputValue()) ? '&nbsp;' : $attribute->getInputValue()) . '</div></div>';
 			}
 			if ($this->hasParent())
@@ -154,12 +155,13 @@ namespace CRUDsader {
 			if (!$this->_initialised && $this->_isPersisted)
 				throw new ObjectException('Object is not initialised');
 			switch (true) {
+                            case $this->hasAssociation($var):
+					return $this->getAssociation($var);
+					break;
 				case isset($this->_infos['attributes'][$var]):
 					return $this->getAttribute($var)->getValue();
 					break;
-				case $this->hasAssociation($var):
-					return $this->getAssociation($var);
-					break;
+				
 				case $this->hasParent():
 					if ($var == 'parent')
 						return $this->getParent();
@@ -501,6 +503,11 @@ namespace CRUDsader {
 		{
 			return isset($this->_infos['attributes'][$name]);
 		}
+                
+                public function get($attributeName,$valueIsEmpty = false){
+                    $v = $this->$attributeName;
+                    return \CRUDsader\Expression::isEmpty($v) ? $valueIsEmpty: $v;
+                }
 
 		public function getAttribute($name)
 		{

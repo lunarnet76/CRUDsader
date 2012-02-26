@@ -9,13 +9,15 @@ namespace CRUDsader {
     /**
      *  contain all the configuration of the application and framework, can be loaded with file or array
      * @package CRUDsader
+     * @dependency arrayLoader
+     * @test Configuration_Test
      */
     class Configuration extends Block {
         /**
          * this will be loaded in the configuration at the very begining
          * @access protected
          * @static
-         * @var <type>
+         * @var array
          */
         protected static $_defaults = array(
             'database' => array(),
@@ -176,7 +178,7 @@ namespace CRUDsader {
         /**
          *
          * @param type $options 
-         * @test test_load_
+         * @test test_load
          */
         public function load($options) {
             $arrayLoader = Instancer::getInstance()->{'configuration.arrayLoader'};

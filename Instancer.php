@@ -118,7 +118,7 @@ namespace CRUDsader {
          * @test test_callStatic
          */
         public static function call($serviceName, $function, $arguments) {
-            return call_user_func_array(array(self::getInstance()->_configuration->$serviceName->class, $function), $arguments);
+            return call_user_func_array(array(self::getInstance()->_configuration->$serviceName->class, $function),$arguments);
         }
 
         /**

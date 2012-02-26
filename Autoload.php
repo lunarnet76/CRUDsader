@@ -136,6 +136,7 @@ namespace CRUDsader {
         /**
          * register the autoload and the default namespace
          * @static
+         * @test test_register
          */
         public static function register(){
             self::registerNameSpace('CRUDsader', __DIR__.'/');
