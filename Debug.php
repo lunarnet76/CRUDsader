@@ -212,7 +212,7 @@ namespace CRUDsader {
                     color: #7B8D9A;
                     font-weight: bold;
                     width:100%;
-                    height:23px;
+                    height:24px;
                 }
                 .php-error-class{
                     padding:5px;
@@ -257,16 +257,14 @@ namespace CRUDsader {
                  .php-error-top{
                      background-color: #10759C;
                         border-bottom: 1px solid #0E698B;
-                        height: 38pt;
                         overflow: hidden;
-                        text-align: right;
+                        text-align: left;
+			color: white;
+			font-size:30px;
+			padding:5px;
                 }
                 .php-error-title{
-                    color: #FFFFFF;
-                    font-size: 20pt;
-                    left: 10pt;
-                    position: absolute;
-                    top: 5pt;
+			color:black !important;
                 }
                 .php-error-type{
                     color: #0E698B;
@@ -294,13 +292,18 @@ namespace CRUDsader {
             echo '<div class="php-error-separator"></div>
                     <div class="php-error">
                         <div class="php-error-top">
-                            <span class="php-error-type">' . $type . '</span><span class="php-error-title">' . $message . '</span>
+                            ' . $message . '
                         </div>
                         <div class="php-error-separator"></div>';
             foreach ($trace as $i => $t) {
-                if ($i == 0)
+                if ($i == 0){
+			$file = $trace[1]['file'] = $t['file']; 
+			$line = $trace[1]['line'] = $t['line'];
                     continue;
+		}
                 if($i == 1){
+			$t['file'] = $file;
+			$t['line'] = $line;
                     echo '<div class="php-error-head">Main</div>';
                 }
                 echo '<div class="php-error-block">';

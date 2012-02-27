@@ -22,7 +22,7 @@ namespace CRUDsader\Object\Attribute {
 	
 	public function getValue(){
 		$v = parent::getValue();
-		return (float)$v;
+		return (float)($v);
 	}
         
         

@@ -149,6 +149,9 @@ namespace CRUDsader {
 
 		public function classGetDatabaseTableField($className, $attributeName)
 		{
+			if(!isset($this->_map['classes'][$className]['attributes'][$attributeName]) && isset($this->_map['classes'][$className]['attributesReversed'][$attributeName])){// fks
+				return $this->_map['classes'][$className]['attributesReversed'][$attributeName];
+			}
 			return $attributeName == 'id' ? $this->_map['classes'][$className]['definition']['databaseIdField'] : $this->_map['classes'][$className]['attributes'][$attributeName]['databaseField'];
 		}
 
