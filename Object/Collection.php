@@ -32,7 +32,7 @@ namespace CRUDsader\Object {
 			return $full ? $ret : $ret['objects'];
 		}
 
-		public function toJson()
+		public function toJson($base = true)
 		{
 			if (!$this->_initialised)
 				return array();
@@ -40,6 +40,7 @@ namespace CRUDsader\Object {
 			foreach ($this->_objects as $k => $object) {
 				$ret[$k] = $object->toJson();
 			}
+			$ret = $base ? array(($base === true ? $this->_class : $base)=>$ret): $ret;
 			return $ret;
 		}
 

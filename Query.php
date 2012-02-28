@@ -106,7 +106,7 @@ namespace CRUDsader {
                                 // join
                                 $sql['joins'][] = ($join['association']);
                                 // map fields
-                                $countFieldsFrom+=$countFields =  2; // table with only the 2 FKs
+                                $countFieldsFrom+=$countFields =  3; 
                                 $mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '_' . $associationName . '_association';
                                 $mapFields[$mapFieldsAlias[$joinedAlias]] = array('from' => $countFieldsFrom - $countFields, 'to' => $countFieldsFrom);
                             }
@@ -139,7 +139,7 @@ namespace CRUDsader {
                                     if (isset($join['association'])) {
                                         $sql['joins'][] = ($join['association']);
                                         // map fields
-                                        $countFieldsFrom+=$countFields = 2; // table with only the 2 FKs
+                                        $countFieldsFrom+=$countFields = 3; 
                                         $mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '_' . $associationName . '_association';
                                         $mapFields[$mapFieldsAlias[$joinedAlias]] = array('from' => $countFieldsFrom - $countFields, 'to' => $countFieldsFrom);
                                     }
@@ -278,7 +278,7 @@ namespace CRUDsader {
                             }
 
                             $indexPlus = ($p[3] == '*' ? $map->classGetAttributeCount($alias2class[$p[1]]) : 1);
-
+			    
                             if (!isset($newMapFields[$aliases[$p[1]]]))
                                 $newMapFields[$aliases[$p[1]]] = array('from' => $index, 'to' => $index + $indexPlus);
                             else {

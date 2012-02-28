@@ -21,13 +21,13 @@ namespace CRUDsader\Object {
 							$object->addExtraAttribute($extraColumns[$i], $rows[0][$i]);
 						} else if (isset($fields[$i]) && isset($object->_infos['attributesReversed'][$fields[$i]]) && $object->hasAttribute($object->_infos['attributesReversed'][$fields[$i]])) {
 							$object->getAttribute($object->_infos['attributesReversed'][$fields[$i]])->setValueFromDatabase($rows[0][$i]);
+							
 						} else if (isset($fields[$i]) && isset($object->_infos['attributesReversed'][$fields[$i]])) {
 							// FKs
 							$object->addExtraAttribute($object->_infos['attributesReversed'][$fields[$i]], (int) $rows[0][$i]);
 						}
 					}
 				}
-
 				if ($object->_linkedAssociation) {
 					$definition = $object->_linkedAssociation->getDefinition();
 					if ($definition['reference'] == 'table') {
@@ -47,6 +47,7 @@ namespace CRUDsader\Object {
 				}
 				self::write($object->_parent, $id, $parentClassAlias, $rows, $fields, $mapFields, $extraColumns);
 			}
+			
 			// associations
 			foreach ($object->_infos['associations'] as $name => $associationInfos) {
 				if (isset($mapFields[$alias . '_' . $name])) {

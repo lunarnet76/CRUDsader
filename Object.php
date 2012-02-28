@@ -54,7 +54,8 @@ namespace CRUDsader {
 			    'json' => true,
 			    'extra' => true,
 			    'required' => false,
-                            'html'=>false
+                            'html'=>false,
+			    'calculated'=>false
 			);
 			$this->getAttribute($name)->setValueFromDatabase($value);
 		}
@@ -155,11 +156,13 @@ namespace CRUDsader {
 			if (!$this->_initialised && $this->_isPersisted)
 				throw new ObjectException('Object is not initialised');
 			switch (true) {
-                            case $this->hasAssociation($var):
-					return $this->getAssociation($var);
-					break;
+                           
 				case isset($this->_infos['attributes'][$var]):
 					return $this->getAttribute($var)->getValue();
+					break;
+				
+				 case $this->hasAssociation($var):
+					return $this->getAssociation($var);
 					break;
 				
 				case $this->hasParent():
@@ -269,6 +272,7 @@ namespace CRUDsader {
 			foreach ($this->_infos['attributes'] as $name => $attributeInfos) {
 				if (!isset($this->_fields[$name]) && $attributeInfos['required'])
 					throw new ObjectException('class needs attribute "' . $name . '" initialised');
+				if(isset($attributeInfos['extra']))continue;
 				$attribute = $this->getAttribute($name);
 				if ($attribute->inputEmpty() && $attributeInfos['required'])
 					throw new ObjectException('class needs attribute "' . $name . '" to be filled');
@@ -315,7 +319,7 @@ namespace CRUDsader {
 			foreach ($this->_infos['attributes'] as $k => $attributeInfos) {
 				if ($attributeInfos['calculated']) {
 					$this->getAttribute($k)->inputReceiveDefault($ret[$attributeInfos['databaseField']] = $this->calculateAttribute($k, $oid));
-				} else if (isset($this->_fields[$k])) {
+				} else if (isset($this->_fields[$k]) && !isset($this->_infos['attributes'][$k]['extra'])) {
 					$ret[$this->_infos['attributes'][$k]['databaseField']] = $this->_fields[$k]->getValueForDatabase();
 				}
 			}

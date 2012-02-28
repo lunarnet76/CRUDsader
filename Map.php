@@ -36,13 +36,7 @@ namespace CRUDsader {
 		 */
 		protected $_toArray = array('_map');
 
-		/**
-		 * automatically load related configuration
-		 */
-		public function __construct()
-		{
-			parent::__construct();
-		}
+	
 
 		/**
 		 * @param Block $configuration
