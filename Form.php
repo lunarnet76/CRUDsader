@@ -162,7 +162,9 @@ namespace CRUDsader {
             $ret=true;
             if ($data === null && !$this->hasInputParent()){
                 $ret=isset($_REQUEST[$this->_htmlAttributes['name']]);
-                if(!$ret && !$this->_useSession){
+                if(!$ret){
+                    $session = $this->_useSession;
+                    if(!$session)
 			return false;
 		}
                 $data =$ret?$_REQUEST[$this->_htmlAttributes['name']]:array();
@@ -193,7 +195,7 @@ namespace CRUDsader {
                 $this->_tokenInputReceived = $data['token'];
             }
             $this->_inputReceived = true;
-            return $ret;
+            return isset($session) ? false : $ret;
         }
 
         /**
