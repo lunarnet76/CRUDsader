@@ -6,55 +6,65 @@
  * @since       0.1
  */
 namespace CRUDsader\Object\Identifier {
-    /**
-     * use the HiLo concept to return unique object identifier
-     * @package    CRUDsader\Identifier
-     */
-    class Hilo extends \CRUDsader\Object\Identifier {
-        /**
-         * @var \CRUDsader\Session
-         */
-        protected $_session = NULL;
+	/**
+	 * use the HiLo concept to return unique object identifier
+	 * @package    CRUDsader\Identifier
+	 */
+	class Hilo extends \CRUDsader\Object\Identifier {
+		/**
+		 * identify the class
+		 * @var string
+		 */
+		protected $_classIndex = 'object.identifier';
 
-        /**
-         * constructor
-         */
-        public function __construct() {
-            $this->_session = \CRUDsader\Session::useNamespace('CRUDsader\\Object\\Identifier\\Hilo');
-            $this->_session->highId = isset($this->_session->highId) ? $this->_session->highId : $this->_getNewHighId();
-            if (!isset($this->_session->lowId))
-                $this->_session->lowId = array();
-        }
+		/**
+		 * @var \CRUDsader\Session
+		 */
+		protected $_session = NULL;
 
-        /**
-         * return a unique Object Identifier
-         * @access public
-         * @return string
-         */
-        public function getOID($classInfos) {
-            if (!isset($this->_session->lowId->{$classInfos['class']}))
-                $this->_session->lowId->{$classInfos['class']} = 0;
-            $this->_session->lowId->{$classInfos['class']}++;
-            $oid = $this->_session->lowId->{$classInfos['class']} . $this->_session->highId;
-            return $oid;
-        }
+		/**
+		 * constructor
+		 */
+		public function __construct()
+		{
+			parent::__construct();
+			$this->_session = \CRUDsader\Session::useNamespace('CRUDsader\\Object\\Identifier\\Hilo');
+			$this->_session->highId = isset($this->_session->highId) ? $this->_session->highId : $this->_getNewHighId();
+			if (!isset($this->_session->lowId))
+				$this->_session->lowId = array();
+		}
 
-        /**
-         * return a new high id
-         * @access private
-         * @return string
-         */
-        protected function _getNewHighId() {
-            $highId = date('ysdmhi');
-            $highIdLength = 12;
-            $length = strlen($highId);
-            if ($length > $highIdLength)
-                $highId = substr($highId, 0, $highIdLength);
-            else {
-                for ($i = 0; $i < $highIdLength - $length; $i++)
-                    $highId = '0' . $highId;
-            }
-            return $highId;
-        }
-    }
+		/**
+		 * return a unique Object Identifier
+		 * @access public
+		 * @return string
+		 */
+		public function getOID($classInfos)
+		{
+			if (!isset($this->_session->lowId->{$classInfos['class']}))
+				$this->_session->lowId->{$classInfos['class']} = 0;
+			$this->_session->lowId->{$classInfos['class']}++;
+			$oid = $this->_session->lowId->{$classInfos['class']} . $this->_session->highId;
+			return $oid;
+		}
+
+		/**
+		 * return a new high id
+		 * @access private
+		 * @return string
+		 */
+		protected function _getNewHighId()
+		{
+			$highId = date('sihdmy');
+			$highIdLength = $this->_configuration->highIdLength;
+			$length = strlen($highId);
+			if ($length > $highIdLength)
+				$highId = substr($highId, 0, $highIdLength);
+			else {
+				for ($i = 0; $i < $highIdLength - $length; $i++)
+					$highId = '0' . $highId;
+			}
+			return $highId;
+		}
+	}
 }

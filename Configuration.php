@@ -63,6 +63,9 @@ namespace CRUDsader {
                 'plugins' => array(
                 )
             ),
+	    'object.identifier'=>array(
+		'highIdLength'=>12
+	    ),
             'map' => array(
                 'defaults' => array(
                     'idField' => 'id',

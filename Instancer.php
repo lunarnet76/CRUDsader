@@ -70,8 +70,9 @@ namespace CRUDsader {
          * @test test_instance
          */
         public function instance($serviceName, $args = null) {
-            if (!isset($this->_configuration->$serviceName))
+            if (!isset($this->_configuration->$serviceName)){
                 throw new InstancerException('cannot instantiate "' . $serviceName . '"');
+	    }
             // singleton
             if (isset($this->_configuration->$serviceName->singleton) && $this->_configuration->$serviceName->singleton) {
                 if (!isset($this->_singletonInstances[$serviceName])) {

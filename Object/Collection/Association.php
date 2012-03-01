@@ -22,12 +22,7 @@ namespace CRUDsader\Object\Collection {
         }
 	
 	public function toJson(){
-		if(!$this->_initialised)
-			return array();
-	    $ret = array();
-            foreach ($this->_objects as $k => $object) {
-                $ret[$k] = $object->toJson();
-            }
+	    $ret = parent::toJson();
 	    if($this->_definition['reference'] == 'internal' || $this->_definition['max'] == 1)
 		    return count($ret)? current($ret) : null;
             return $ret;

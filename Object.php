@@ -24,7 +24,7 @@ namespace CRUDsader {
 		protected $_fields = array();
 		protected $_associations = array();
 		protected $_observers = array();
-
+		
 		/**
 		 * @param string $className 
 		 */
