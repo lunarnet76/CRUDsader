@@ -1,6 +1,6 @@
 <?php
 namespace CRUDsader\Form\Component {
-    class Composition extends \CRUDsader\Form\Component {
+    class Association extends \CRUDsader\Form\Component {
 
         public function toHTML(){
             $query=new \CRUDsader\Query('FROM '.$this->_options['class'].(\CRUDsader\Instancer::getInstance()->map->classHasParent($this->_options['class'])?',parent':''));

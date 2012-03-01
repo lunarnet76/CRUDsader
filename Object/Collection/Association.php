@@ -23,8 +23,10 @@ namespace CRUDsader\Object\Collection {
 	
 	public function toJson(){
 	    $ret = parent::toJson();
-	    if($this->_definition['reference'] == 'internal' || $this->_definition['max'] == 1)
-		    return count($ret)? current($ret) : null;
+	    if($this->_definition['reference'] == 'internal' || $this->_definition['max'] == 1){
+		    return count($ret[$this->_class])? current($ret[$this->_class]) : null;
+		    
+	    }
             return $ret;
 	}
 

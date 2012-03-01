@@ -22,11 +22,11 @@ namespace CRUDsader\Object\Attribute {
                 $ret=true;
             else
                  $ret=filter_var($this->_inputValue, FILTER_VALIDATE_INT)!==false;
-            return $ret;
+            return $ret ? $ret : 'invalid';
         }
         
         public function inputEmpty(){
-            return empty($this->_inputValue) && $this->_inputValue!=0;
+            return empty($this->_inputValue) && $this->_inputValue!==0  && $this->_inputValue!=='0';
         }
         
         public function generateRandom() {

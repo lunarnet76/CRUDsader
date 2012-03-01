@@ -22,7 +22,7 @@ namespace CRUDsader\Object\Attribute {
 	
 	public function getValue(){
 		$v = parent::getValue();
-		return (float)($v);
+		return \CRUDsader\Expression::isEmpty($v)?0:(float)($v);
 	}
         
         

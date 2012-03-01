@@ -35,6 +35,7 @@ namespace CRUDsader {
             if (!isset($sessionNamespace->$index))
                 $sessionNamespace->$index = array();
             $this->_session = $sessionNamespace->$index;
+	    
             if (isset($this->_session->token)) {
                 $this->_session->oldToken = $this->_session->token;
                 $this->_session->token = md5(uniqid(rand(), true));
@@ -161,11 +162,15 @@ namespace CRUDsader {
             $ret=true;
             if ($data === null && !$this->hasInputParent()){
                 $ret=isset($_REQUEST[$this->_htmlAttributes['name']]);
-                if(!$ret)return false;
+                if(!$ret && !$this->_useSession){
+			return false;
+		}
                 $data =$ret?$_REQUEST[$this->_htmlAttributes['name']]:array();
+		if($this->_session->count())
+			$ret = true;
             }
             $this->_isReceived = false;
-            if ($data === null) {
+            if ($data === null ) {
                 return false;
             }
             foreach ($this->_components as $index => $component) {

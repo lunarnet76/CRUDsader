@@ -24,7 +24,7 @@ namespace CRUDsader\Object {
 							
 						} else if (isset($fields[$i]) && isset($object->_infos['attributesReversed'][$fields[$i]])) {
 							// FKs
-							$object->addExtraAttribute($object->_infos['attributesReversed'][$fields[$i]], (int) $rows[0][$i]);
+							$object->addExtraAttribute($object->_infos['attributesReversed'][$fields[$i]], $rows[0][$i]);
 						}
 					}
 				}

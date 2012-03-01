@@ -15,6 +15,22 @@ namespace CRUDsader\Object\Attribute {
                  $ret=in_array($this->_inputValue,$this->_options['choices']);
             return $ret;
         }
+	
+	public function toHTML(){
+		$html = '<select '.$this->getHtmlAttributesToHtml().'><option value="-1">choose</option>';
+		
+		foreach($this->_options['choices'] as $k=>$v){
+			$html.= '<option id="'.$k.'">'.$v.'</option>';
+		}
+		
+		$html.='</select>';
+		
+		return $html;
+	}
+	
+	public function inputEmpty() {
+            return $this->_inputValue == -1;
+        }
         
     }
 }
