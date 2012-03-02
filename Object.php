@@ -47,6 +47,10 @@ namespace CRUDsader {
 			$query = \CRUDsader\Instancer::getInstance()->query('FROM ' . $class . ' o WHERE o.id=?');
 			return $query->fetch($id);
 		}
+		
+		public static function instance($className){
+			return Instancer::getInstance()->object($className);
+		}
 
 		public function addExtraAttribute($name, $value = null)
 		{
@@ -55,18 +59,12 @@ namespace CRUDsader {
 			    'extra' => true,
 			    'required' => false,
                             'html'=>false,
-			    'calculated'=>false
+			    'calculated'=>false,
+			    'listing'=>true,
+			    'extra'=>true,
+			    'input'=>false
 			);
 			$this->getAttribute($name)->setValueFromDatabase($value);
-		}
-
-		public static function instance($className)
-		{
-			$map = \CRUDsader\Instancer::getInstance()->map;
-			if (!$map->classExists($className))
-				throw new ObjectException('class "' . $className . '" does not exist');
-			$class = $map->classGetModelClass($className);
-			return $class ? new $class($className) : \CRUDsader\Instancer::getInstance()->object($className);
 		}
 
 		protected function _($attributeName)
@@ -112,7 +110,7 @@ namespace CRUDsader {
 				$html.='<div class="title">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . $base) . '</div>';
 			foreach ($this->_fields as $name => $attribute) {
 				if (($this->_infos['attributes'][$name]['html']))
-					$html.='<div class="row"><div class="label">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . $this->_class . '.attributes.' . $name) . '</div><div class="value">' . (\CRUDsader\Expression::isEmpty($attribute->getInputValue()) ? '&nbsp;' : $attribute->getInputValue()) . '</div></div>';
+					$html.='<div class="row"><div class="label">' . $this->_getFormAttributeLabel($name) . '</div><div class="value">' . (\CRUDsader\Expression::isEmpty($attribute->getInputValue()) ? '&nbsp;' : $attribute->toHumanReadable()) . '</div></div>';
 			}
 			if ($this->hasParent())
 				$html.=$this->getParent()->toHTML(false, $prefix, $allowedClasses, false);
@@ -120,7 +118,7 @@ namespace CRUDsader {
 			foreach ($this->_associations as $name => $association) {
 				if (isset($allowedClasses[$name]) && !$allowedClasses[$name])
 					continue;
-				$html.='<div class="title">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . $this->_class . '.' . $name) . '</div>';
+				$html.='<div class="title">' . $this->_getFormAttributeLabel($name) . '</div>';
 				$collection = $this->getAssociation($name);
 				$first = true;
 				foreach ($collection as $object) {
@@ -373,7 +371,7 @@ namespace CRUDsader {
 			if (empty($alias))
 				$alias = $this->_class;
 			if ($form === null) {
-				$form = \CRUDsader\Instancer::getInstance()->{'form'}($alias);
+				$form = \CRUDsader\Instancer::getInstance()->{'form'}($alias.$this->_isPersisted);
 				$form->setInputRequired(true);
 				$form->setHtmlLabel(\CRUDsader\Instancer::getInstance()->i18n->translate($alias));
 			}
@@ -393,16 +391,16 @@ namespace CRUDsader {
 						continue;
 					$name = substr($oname, $l);
 					if ($name && $this->hasAssociation($name)) {
-						$this->getAssociation($name)->getForm($oql, $alias . '.' . $name, $form);
+						$this->getAssociation($name)->getForm($oql, $this->_getFormAssociationAlias($alias,$name), $form);
 					}
 				}
 				if ($this->hasParent())
-					$this->getParent(true)->_getFormAssociations($form, $oql, $alias . '.parent');
+					$this->getParent(true)->_getFormAssociations($form, $oql, $this->_getFormAssociationAlias($alias ,$this->getParent()->getClass()));
 			}else {
 				foreach ($this->_associations as $name => $association)
-					$this->getAssociation($name)->getForm($oql, $alias . '.' . $name, $form);
+					$this->getAssociation($name)->getForm($oql, $this->_getFormAssociationAlias($alias,$name), $form);
 				if ($this->hasParent())
-					$this->getParent(true)->_getFormAssociations($form, $oql, $alias . '.parent');
+					$this->getParent(true)->_getFormAssociations($form, $oql, $this->_getFormAssociationAlias($alias , $this->getParent()->getClass()));
 			}
 		}
 
@@ -411,11 +409,19 @@ namespace CRUDsader {
 			foreach ($this->_infos['attributes'] as $name => $infoAttribute) {
 				if ($infoAttribute['input']) {
 					$form->add($this->getAttribute($name), $name, $infoAttribute['required']);
-					$this->getAttribute($name)->setHtmlLabel(\CRUDsader\Instancer::getInstance()->i18n->translate($this->_class . '.attributes.' . $name));
+					$this->getAttribute($name)->setHtmlLabel($this->_getFormAttributeLabel($name));
 				}
 			}
 			if ($this->hasParent())
 				$this->getParent()->_getFormAttributes($form, $alias);
+		}
+		
+		protected function _getFormAttributeLabel($attributeName){
+			return \CRUDsader\Instancer::getInstance()->i18n->translate($this->_class . '.attributes.' . $attributeName);
+		}
+		
+		protected function _getFormAssociationAlias($alias,$associationName){
+			return \CRUDsader\Instancer::getInstance()->i18n->translate($alias . '.' . $associationName);
 		}
 
 		public function __toString()

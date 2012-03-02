@@ -19,8 +19,8 @@ namespace CRUDsader\Query {
         public function __construct(parent $query, array $options, $args=null) {
             $this->_index = $options['index'];
             $this->_options = $options;
-            $this->_options['count'] = isset($this->_options['count']) ? $this->_options['count'] : $this->_query->_configuration->limit;
             $this->_query = $query;
+            $this->_options['count'] = isset($this->_options['count']) ? $this->_options['count'] : $this->_query->_configuration->limit;
             $this->_args = $args;
             $this->_session = \CRUDsader\Session::useNamespace('\\CRUDsader\\Query\\Pagination\\' . $this->_index);
             if (!isset($session->numRows)) {

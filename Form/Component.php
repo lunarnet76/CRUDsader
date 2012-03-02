@@ -10,7 +10,7 @@ namespace CRUDsader\Form {
      * @package    CRUDsader\Form
      * @abstract
      */
-    class Component implements \CRUDsader\Interfaces\Arrayable, \CRUDsader\Interfaces\Parametrable, \SplSubject {
+    class Component extends \CRUDsader\MetaClass implements \CRUDsader\Interfaces\Arrayable, \CRUDsader\Interfaces\Parametrable, \SplSubject {
         protected $_parameters = array();
         protected $_observers = array();
         protected $_htmlAttributes = array('type'=>'text');
@@ -250,9 +250,6 @@ namespace CRUDsader\Form {
             return $this->_inputParent;
         }
 
-        public function toArray() {
-            return isset($this->_inputValue) && !$this->_inputValue instanceof \CRUDsader\Expression\Nil?$this->_inputValue:'EXPRESSION_NULL';
-        }
 
         public function __toString() {
             return $this->toHTML();

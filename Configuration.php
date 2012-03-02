@@ -88,7 +88,8 @@ namespace CRUDsader {
                         'input' => true,
                         'required' => false,
                         'html' => true,
-                        'json' => true
+                        'json' => true,
+			'listing'=>true
                     )
                 )
             ),

@@ -31,5 +31,12 @@ namespace CRUDsader\Object\Attribute {
                 $this->_inputValue = strtotime($value);
             }
         }
+	
+	public function toHumanReadable(){
+		$v = $this->getValue();
+		if(\CRUDsader\Expression::isEmpty($v))
+			return '';
+		return date('d/m/Y h:i',$v);
+	}
     }
 }

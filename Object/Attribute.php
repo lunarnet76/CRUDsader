@@ -8,6 +8,14 @@
 namespace CRUDsader\Object {
     class Attribute extends \CRUDsader\Form\Component {
         protected $_name;
+	
+	/**
+         * list fields to include in array
+         * @var string
+         */
+        protected $_toArray = array(
+	    '_name','_parameters','_htmlAttributes','_htmlLabel','_inputValue','_inputValueDefault','_options'
+	);
 
         public function __construct($name=false, $options=array()) {
             parent::__construct($options);
@@ -47,6 +55,13 @@ namespace CRUDsader\Object {
         public function getValue() {
             return $this->inputEmpty() ? $this->_inputValueDefault : $this->_inputValue;
         }
+		
+	public function toHumanReadable(){
+		$v = $this->getValue();
+			if ($v instanceof \CRUDsader\Expression\Nil)
+				return '';
+		return $v;
+	}
 
         public function toHTML() {
             $this->_htmlAttributes['validator'] = $this->javascriptValidator();
@@ -59,6 +74,12 @@ namespace CRUDsader\Object {
 
         public function generateRandom() {
             return base_convert(rand(10e16, 10e20), 10, 36);
+        }
+	
+	public function inputReceive($data=null) {
+            if($data !== null)$this->_inputValue =  $data;
+            $this->_inputReceived = true;
+            $this->notify();
         }
     }
 }

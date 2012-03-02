@@ -160,11 +160,11 @@ namespace CRUDsader\MVC {
 			$applicationPath = $this->_dependencies['frontController']->getApplicationPath();
 			foreach ($this->_views as $infos) {
 				switch (true) {
-					case file_exists($applicationPath . 'view/' . $this->_dependencies['router']->getModule() . '/' . ($infos['controller'] ? $infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix):
-						$path = $applicationPath . 'view/' . $this->_dependencies['router']->getModule() . '/' . ($infos['controller'] ? $infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix;
+					case file_exists($applicationPath . $this->_dependencies['router']->getModule() . '/view/'  . ($infos['controller'] ? $infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix):
+						$path = $applicationPath . $this->_dependencies['router']->getModule() . '/view/' .  ($infos['controller'] ? $infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix;
 						break;
 					default:
-						$path = $this->_dependencies['frontController']->getApplicationPath() . 'view/default.' . $suffix;
+						$path = $this->_dependencies['frontController']->getApplicationPath() .$this->_dependencies['router']->getModule() . '/view/default.' . $suffix;
 				}
 				require($path);
 			}
@@ -180,7 +180,8 @@ namespace CRUDsader\MVC {
 				$this->_template = $this->_configuration->view->template;
 			$this->preRender();
 			if ($this->_template) {
-				$file = $this->_dependencies['frontController']->getApplicationPath() . 'view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
+				$file = $this->_dependencies['frontController']->getApplicationPath() . $this->_dependencies['router']->getModule() . '/view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
+				
 				$path = file_exists($file) ? $file : $this->_dependencies['frontController']->getApplicationPath() . 'view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
 				require($path);
 			}else

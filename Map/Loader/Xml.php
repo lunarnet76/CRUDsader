@@ -99,7 +99,8 @@ namespace CRUDsader\Map\Loader {
                         'calculated' => isset($attribute['calculated']) ? (string) $attribute['calculated'] : false,
                         'input' => isset($attribute['input']) ? ((string) $attribute['input']) == 'true' : $defaults->attribute->input,
                         'html' => isset($attribute['html']) ? ((string) $attribute['html']) == 'true' : $defaults->attribute->html,
-                        'json' => $json == 'true'?true:($json == 'false'?false:'optional')
+                        'json' => $json == 'true'?true:($json == 'false'?false:'optional'),
+                        'listing' => isset($attribute['listing']) ? (string) $attribute['listing'] == 'true':  $defaults->attribute->listing
                     );
                     $ret['classes'][$name]['definition']['attributeCount'][$attributeName] = false;
                     $ret['classes'][$name]['attributesReversed'][$ret['classes'][$name]['attributes'][$attributeName]['databaseField']] = $attributeName;

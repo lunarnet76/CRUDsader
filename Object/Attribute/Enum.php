@@ -20,7 +20,7 @@ namespace CRUDsader\Object\Attribute {
 		$html = '<select '.$this->getHtmlAttributesToHtml().'><option value="-1">choose</option>';
 		
 		foreach($this->_options['choices'] as $k=>$v){
-			$html.= '<option id="'.$k.'">'.$v.'</option>';
+			$html.= '<option id="'.$k.'" '.($this->_inputValue == $k ? 'selected="selected"':'').'>'.$v.'</option>';
 		}
 		
 		$html.='</select>';

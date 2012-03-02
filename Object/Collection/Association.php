@@ -188,7 +188,7 @@ namespace CRUDsader\Object\Collection {
             $this->_initialised = true;
             $formAssociation = $form->add(new \CRUDsader\Form($alias), $this->_definition['name'] ? $this->_definition['name'] : $this->_definition['to']);
             $formAssociation->setHtmlLabel(\CRUDsader\Instancer::getInstance()->i18n->translate($alias));
-            $max = $this->_definition['max'] == '*' ? 3 : $this->_definition['max'];
+            $max = $this->_definition['reference']=='internal'?1:($this->_definition['max'] == '*' ? 3 : $this->_definition['max']);
             if ($this->_definition['min'] > $max)
                 $max = $this->_definition['min'];
             $this->rewind();

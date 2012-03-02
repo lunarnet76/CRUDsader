@@ -26,7 +26,7 @@ namespace CRUDsader\Object\Attribute {
 
 		public function setValueFromDatabase($val)
 		{
-			if(\CRUDsader\Expression::isEmpty($val))
+			if (\CRUDsader\Expression::isEmpty($val))
 				$val = 0;
 			$this->_inputValue = $val == 1 ? true : false;
 		}
@@ -34,10 +34,15 @@ namespace CRUDsader\Object\Attribute {
 		public function getValue()
 		{
 			$v = parent::getValue();
-			if($v instanceof \CRUDsader\Expression\Nil)
+			if ($v instanceof \CRUDsader\Expression\Nil)
 				return null;
-			
+
 			return $v ? true : false;
+		}
+
+		public function toHumanReadable()
+		{
+			return $this->getValue() ? 'yes':'no';
 		}
 
 		public function toHTML()
