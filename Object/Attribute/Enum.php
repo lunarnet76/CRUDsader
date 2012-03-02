@@ -20,7 +20,7 @@ namespace CRUDsader\Object\Attribute {
 		$html = '<select '.$this->getHtmlAttributesToHtml().'><option value="-1">choose</option>';
 		
 		foreach($this->_options['choices'] as $k=>$v){
-			$html.= '<option id="'.$k.'" '.($this->_inputValue == $k ? 'selected="selected"':'').'>'.$v.'</option>';
+			$html.= '<option id="'.$k.'" '.(!$this->inputEmpty() && $this->_inputValue == $k ? 'selected="selected"':'').'>'.$v.'</option>';
 		}
 		
 		$html.='</select>';
@@ -29,7 +29,7 @@ namespace CRUDsader\Object\Attribute {
 	}
 	
 	public function inputEmpty() {
-            return $this->_inputValue == -1;
+            return $this->_inputValue instanceof \CRUDsader\Expression\Nil || $this->_inputValue == -1;
         }
         
     }

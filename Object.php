@@ -105,12 +105,12 @@ namespace CRUDsader {
 				$html.='<div class="object">';
 				$nobase = true;
 			}
-			$base.= ( $base ? '.' : '') . $this->_class . '.object';
+			$base.= ( $base ? '.' : '') .'object';
 			if ($displayTitle)
-				$html.='<div class="title">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . $base) . '</div>';
+				$html.='<div class="title">' . $this->_getFormAttributeLabel($base,$prefix) . '</div>';
 			foreach ($this->_fields as $name => $attribute) {
 				if (($this->_infos['attributes'][$name]['html']))
-					$html.='<div class="row"><div class="label">' . $this->_getFormAttributeLabel($name) . '</div><div class="value">' . (\CRUDsader\Expression::isEmpty($attribute->getInputValue()) ? '&nbsp;' : $attribute->toHumanReadable()) . '</div></div>';
+					$html.='<div class="row"><div class="label">' . $this->_getFormAttributeLabel($name,$prefix) . '</div><div class="value">' . (\CRUDsader\Expression::isEmpty($attribute->getInputValue()) ? '&nbsp;' : $attribute->toHumanReadable()) . '</div></div>';
 			}
 			if ($this->hasParent())
 				$html.=$this->getParent()->toHTML(false, $prefix, $allowedClasses, false);
@@ -118,7 +118,7 @@ namespace CRUDsader {
 			foreach ($this->_associations as $name => $association) {
 				if (isset($allowedClasses[$name]) && !$allowedClasses[$name])
 					continue;
-				$html.='<div class="title">' . $this->_getFormAttributeLabel($name) . '</div>';
+				$html.='<div class="title">' . $this->_getFormAttributeLabel($name,$prefix) . '</div>';
 				$collection = $this->getAssociation($name);
 				$first = true;
 				foreach ($collection as $object) {
@@ -416,7 +416,7 @@ namespace CRUDsader {
 				$this->getParent()->_getFormAttributes($form, $alias);
 		}
 		
-		protected function _getFormAttributeLabel($attributeName){
+		protected function _getFormAttributeLabel($attributeName,$prefix = false){
 			return \CRUDsader\Instancer::getInstance()->i18n->translate($this->_class . '.attributes.' . $attributeName);
 		}
 		
