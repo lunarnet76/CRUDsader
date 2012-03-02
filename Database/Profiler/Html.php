@@ -108,6 +108,7 @@ namespace CRUDsader\Database\Profiler {
          * display the logs
          */
         public function display() {
+		if(empty($this->_log))return '';
             ?>
             <style type="text/css">
                 .profiler{
@@ -150,6 +151,7 @@ namespace CRUDsader\Database\Profiler {
             <?php
             $highlighter = \CRUDsader\Instancer::getInstance()->database->getDependency('descriptor');
             echo '<div class="profiler">';
+	    
             $this->_log = array_reverse($this->_log);
             echo '<div class="timeTotal">Time used :' . $this->_totalTime . '</div>';
             foreach ($this->_log as $key => $log) {

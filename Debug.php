@@ -23,6 +23,7 @@ namespace CRUDsader {
 		 */
 		public function profileDatabase()
 		{
+			
 			if (\CRUDsader\Instancer::getInstance()->database->hasDependency('profiler'))
 				return \CRUDsader\Instancer::getInstance()->database->getDependency('profiler')->display();
 		}

@@ -29,7 +29,7 @@ namespace CRUDsader {
             ),
             'debug' => array(
                 'error' => false,
-                'database' => false,
+                'databaseProfiler' => false,
                 'redirection' => false
             ),
             'i18n' => array(
