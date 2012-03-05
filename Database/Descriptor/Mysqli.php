@@ -223,7 +223,10 @@ namespace CRUDsader\Database\Descriptor {
 			$sql.=') AS `' . self::$OBJECT_TMP_TABLE_ALIAS . '` LEFT JOIN `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '` ON `' . self::$OBJECT_TMP_TABLE_ALIAS . '`.`' . self::$OBJECT_ID_FIELD_ALIAS . '`=' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '.`' . $select['from']['id'] . '`';
 			$sql.=$joins;
 			if (!empty($select['where'])) {
-				$sql.=' WHERE ' . preg_replace_callback('|`?([\w]+)`?\.`?([\w]+)`?|', function($p) {
+				$sql.=' WHERE ' . preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) {
+				
+							// special case : email
+							if(strpos($p[1],'@')!==false)return $p[0];
 							// special case : floats
 							if (ctype_digit($p[1]))
 								return $p[0];

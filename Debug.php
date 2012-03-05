@@ -266,7 +266,7 @@ namespace CRUDsader {
                  .php-error-top{
                      background-color: #10759C;
                         border-bottom: 1px solid #0E698B;
-                        overflow: hidden;
+                        
                         text-align: left;
 			color: white;
 			font-size:30px;

@@ -187,7 +187,7 @@ namespace CRUDsader\Object\Collection {
                 $alias = $this->_class;
             $this->_initialised = true;
             $formAssociation = $form->add(new \CRUDsader\Form($alias), $this->_definition['name'] ? $this->_definition['name'] : $this->_definition['to']);
-            $formAssociation->setHtmlLabel(\CRUDsader\Instancer::getInstance()->i18n->translate($alias));
+            $formAssociation->setHtmlLabel(\CRUDsader\Instancer::getInstance()->i18n->translate($alias.'.association'));
             $max = $this->_definition['reference']=='internal'?1:($this->_definition['max'] == '*' ? 3 : $this->_definition['max']);
             if ($this->_definition['min'] > $max)
                 $max = $this->_definition['min'];
@@ -207,7 +207,7 @@ namespace CRUDsader\Object\Collection {
                 } else {
                     $class = \CRUDsader\Instancer::getInstance()->configuration->map->defaults->associations->associationComponentSelectClass;
                     $component = $formAssociation->add(new $class(array('class' => $this->_class)), $i, false);
-                    $component->setHtmlLabel($i == 0 ? \CRUDsader\Instancer::getInstance()->i18n->translate($alias) : ' ');
+                    $component->setHtmlLabel($i == 0 ? \CRUDsader\Instancer::getInstance()->i18n->translate($alias.'.object') : ' ');
                     $component->setParameter('compositionIndex', $this->_iterator);
                     if ($object->isPersisted())
                         $component->inputReceive($object->isPersisted());

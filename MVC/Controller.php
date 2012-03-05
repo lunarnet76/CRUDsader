@@ -31,6 +31,10 @@ namespace CRUDsader\MVC {
 		 * @var string
 		 */
 		protected $_classIndex = 'mvc';
+		
+		public function baseHref(){
+			return $this->_dependencies['router']->url(null);
+		}
 
 		// ** CONSTRUCTOR **/
 		public function __construct()
@@ -78,6 +82,10 @@ namespace CRUDsader\MVC {
 		{
 			return call_user_func_array(array($this->_dependencies['frontController'], $name), $arguments);
 		}
+		
+		public function getCurrentURL(){
+			return $this->_dependencies['router']->url(null).  '?'.http_build_query($_GET);
+		}
 
 		/** INFOS * */
 		public function getControllerURL()
@@ -88,10 +96,14 @@ namespace CRUDsader\MVC {
 		// helpers
 		public function redirect($options = array())
 		{
+			if($options === false){
+				$url = $this->getControllerURL().'?'.  http_build_query($_GET);
+			}else 
+				$url =  $this->url($options);
 			if (\CRUDsader\Instancer::getInstance()->debug->getConfiguration()->redirection)
-				echo '<a href="' . $this->url($options) . '">' . $this->url($options) . '</a>';
+				echo '<a href="' . $url . '">' . $url . '</a>';
 			else
-				header('Location: ' . $this->url($options));
+				header('Location: ' . $url);
 			exit;
 		}
 

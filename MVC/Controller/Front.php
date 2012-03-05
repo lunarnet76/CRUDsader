@@ -100,7 +100,7 @@ namespace CRUDsader\MVC\Controller {
 				$cfg = $instancer->getConfiguration();
 				$cfg->{'mvc.plugin.' . $pluginName} = array('class' => 'Plugin\\' . $pluginName, 'singleton' => true);
 				$instancer->setConfiguration($cfg);
-				$this->_dependencies['plugin' . $pluginName] = $instancer->{'mvc.plugin.' . $pluginName};
+				$this->_plugins[$pluginName] =  $this->_dependencies['plugin' . $pluginName] = $instancer->{'mvc.plugin.' . $pluginName};
 				if ($pluginOptions instanceof \CRUDsader\Block)
 					$this->_dependencies['plugin' . $pluginName]->setConfiguration($pluginOptions);
 				$this->_dependencies['plugin' . $pluginName]->postRoute($this->_dependencies['router']);
@@ -123,8 +123,9 @@ namespace CRUDsader\MVC\Controller {
 		public function dispatch()
 		{
 			// plugins
-			foreach ($this->_plugins as $plugin)
+			foreach ($this->_plugins as $plugin){
 				$plugin->preDispatch();
+			}
 			$class = 'Controller\\' . ucFirst($this->_dependencies['router']->getController());
 			$this->_dependencies['actionController'] = new $class();
 			if (method_exists($this->_dependencies['actionController'], $this->_dependencies['router']->getAction() . 'Action'))
@@ -139,7 +140,6 @@ namespace CRUDsader\MVC\Controller {
 			foreach ($this->_plugins as $plugin)
 				$plugin->postDispatch();
 		}
-
 		public function url($options = array())
 		{
 			return $this->_dependencies['router']->url($options);

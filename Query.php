@@ -224,7 +224,7 @@ namespace CRUDsader {
 
         public function paginate(array $options, $args = NULL) {
             if (!isset($options['index']))
-                throw new QueryException('you must specify the index option');
+                throw new QueryException($this->_oql,'you must specify the index option');
             $session = \CRUDsader\Session::useNamespace('\\CRUDsader\\Query\\' . $options['index']);
             $this->_prefetch($args, true);
             return new \CRUDsader\Query\Pagination($this, $options, $args);
@@ -242,6 +242,7 @@ namespace CRUDsader {
                 $db = $this->_db;
                 if (!empty($this->_sql['where']))
                     $this->_sql['where'] = preg_replace_callback('/(\?)|([\w]+)\.([\w]+)=\?/', function($p) use($alias2class, $map, $db, $args, $unlexicalThis) {
+			  
                                 if ($p[0] == '?')
                                     return $args[++$unlexicalThis->_argsIndex];
 				if(!isset($args[$unlexicalThis->_argsIndex+1]))

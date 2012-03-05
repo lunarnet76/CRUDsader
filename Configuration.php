@@ -145,6 +145,8 @@ namespace CRUDsader {
                     'class' => '\\CRUDsader\\Form\\Component', 'singleton' => false),
                 'form.component.text' => array(
                     'class' => '\\CRUDsader\\Form\\Component\\Text', 'singleton' => false),
+                'form.component.submit' => array(
+                    'class' => '\\CRUDsader\\Form\\Component\\Submit', 'singleton' => false),
                 'object.collection.association' => array(
                     'class' => '\\CRUDsader\\Object\\Collection\\Association', 'singleton' => false),
                 'object.collection.initialised' => array(
