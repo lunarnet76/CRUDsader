@@ -193,7 +193,7 @@ namespace CRUDsader\Object\Collection {
                 $max = $this->_definition['min'];
             $this->rewind();
             $this->_formValues = array();
-            for ($i = $this->_definition['min']; $i < $max; $i++) {
+            for ($i = 0; $i < $max; $i++) {
                 if (!$this->valid()) {
                     $object = $this->_objects[$this->_iterator] = \CRUDsader\Object::instance($this->_class);
                     \CRUDsader\Object\Writer::linkToAssociation($object, $this);
@@ -205,13 +205,22 @@ namespace CRUDsader\Object\Collection {
                     $form2->setHtmlLabel(false);
                     $object->getForm($oql, $alias, $form2);
                 } else {
-                    $class = \CRUDsader\Instancer::getInstance()->configuration->map->defaults->associations->associationComponentSelectClass;
-                    $component = $formAssociation->add(new $class(array('class' => $this->_class)), $i, false);
+			if($this->_definition['inputPhpClass']){
+				$class = $this->_definition['inputPhpClass'];
+				$input = new $class($this->_class.$i,array('class' => $this->_class,'definition'=>$this->_definition));
+			}else
+				$input = \CRUDsader\Instancer::getInstance()->{'form.component.association'}(array('class' => $this->_class));
+                    $component = $formAssociation->add($input, $i, false);
                     $component->setHtmlLabel($i == 0 ? \CRUDsader\Instancer::getInstance()->i18n->translate($alias.'.object') : ' ');
                     $component->setParameter('compositionIndex', $this->_iterator);
+		    if($i < $this->_definition['min']){
+			    $component->setInputRequired(true);
+			    $formAssociation->setInputRequired(true);
+		    }
                     if ($object->isPersisted())
                         $component->inputReceive($object->isPersisted());
                     $component->attach($this);
+		    
                 }
                 $this->next();
             }

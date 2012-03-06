@@ -63,6 +63,10 @@ namespace CRUDsader {
 			  require($this->_configuration->view->path . $file . '.php');
 			  return ob_get_clean(); 
 		}
+		
+		public function wasPosted(){
+			return isset($_POST[$this->_htmlAttributes['name']]);
+		}
 
 		/**
 		 * @param Block $configuration
@@ -316,7 +320,7 @@ namespace CRUDsader {
 		{
 			if ($this->_inputError === false)
 				return '';
-			return $this->wrapHtml(is_bool($this->_inputError) && $this->_inputError ? \CRUDsader\Instancer::getInstance()->i18n->translate('error.form.general') : $this->_inputError, 'error');
+			return $this->wrapHtml(is_bool($this->_inputError) && $this->_inputError ? \CRUDsader\Instancer::getInstance()->i18n->translate('error.form.general') : \CRUDsader\Instancer::getInstance()->i18n->translate($this->_inputError), 'error');
 		}
 
 		/**

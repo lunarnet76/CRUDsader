@@ -54,6 +54,10 @@ namespace CRUDsader\Object {
 		{
 			return count($this->_objects);
 		}
+		
+		public function isEmpty(){
+			return empty($this->_objects);
+		}
 
 		public function isInitialised()
 		{

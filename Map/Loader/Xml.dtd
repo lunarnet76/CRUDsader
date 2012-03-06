@@ -41,4 +41,5 @@
                 <!ATTLIST associated databaseTable CDATA                          #IMPLIED>
                 <!ATTLIST associated internalField CDATA                          #IMPLIED>
                 <!ATTLIST associated externalField CDATA                          #IMPLIED>
+                <!ATTLIST associated inputPhpClass CDATA                          #IMPLIED>
 
