@@ -6,31 +6,35 @@
  * @since       0.1
  */
 namespace CRUDsader\Object\Attribute {
-    class Enum extends \CRUDsader\Object\Attribute {
+	class Enum extends \CRUDsader\Object\Attribute {
 
-        protected function _inputValid() {
-            if ($this->_inputValue instanceof \CRUDsader\Expression)
-                $ret=true;
-            else
-                 $ret=in_array($this->_inputValue,$this->_options['choices']);
-            return $ret;
-        }
-	
-	public function toHTML(){
-		$html = '<select '.$this->getHtmlAttributesToHtml().'><option value="-1">choose</option>';
-		
-		foreach($this->_options['choices'] as $k=>$v){
-			$html.= '<option value="'.$k.'" '.(!$this->inputEmpty() && $this->_inputValue == $k ? 'selected="selected"':'').'>'.\CRUDsader\Instancer::getInstance()->i18n->translate($this->_name.'.'.$v).'</option>';
+		protected function _inputValid()
+		{
+			if (!isset($this->_options['choices']))
+				return true;
+			if ($this->_inputValue instanceof \CRUDsader\Expression)
+				$ret = true;
+			else
+				$ret = isset($this->_options['choices'][$this->_inputValue]) || in_array($this->_inputValue, $this->_options['choices']);
+			return $ret;
 		}
-		
-		$html.='</select>';
-		
-		return $html;
+
+		public function toHTML()
+		{
+			$html = '<select ' . $this->getHtmlAttributesToHtml() . '><option value="-1">choose</option>';
+
+			foreach ($this->_options['choices'] as $k => $v) {
+				$html.= '<option value="' . $k . '" ' . (!$this->inputEmpty() && $this->_inputValue == $k ? 'selected="selected"' : '') . '>' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_name . '.' . $v) . '</option>';
+			}
+
+			$html.='</select>';
+
+			return $html;
+		}
+
+		public function inputEmpty()
+		{
+			return $this->_inputValue instanceof \CRUDsader\Expression\Nil || $this->_inputValue == -1;
+		}
 	}
-	
-	public function inputEmpty() {
-            return $this->_inputValue instanceof \CRUDsader\Expression\Nil || $this->_inputValue == -1;
-        }
-        
-    }
 }

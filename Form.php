@@ -20,6 +20,7 @@ namespace CRUDsader {
 		protected $_components = array();
 		protected $wrapHtmlTagIsOpened = false;
 		protected $_componentIndex = 0;
+		protected $_errorComponentIndexes = array();
 		protected static $_helpers = array();
 		protected static $_formIndex = 0;
 
@@ -59,12 +60,13 @@ namespace CRUDsader {
 
 		public function view($file, $context = false)
 		{
-			 ob_start();
-			  require($this->_configuration->view->path . $file . '.php');
-			  return ob_get_clean(); 
+			ob_start();
+			require($this->_configuration->view->path . $file . '.php');
+			return ob_get_clean();
 		}
-		
-		public function wasPosted(){
+
+		public function wasPosted()
+		{
 			return isset($_POST[$this->_htmlAttributes['name']]);
 		}
 
@@ -237,22 +239,34 @@ namespace CRUDsader {
 		 */
 		public function inputValid()
 		{
+			$this->_errorComponentIndexes = array();
 			$ret = true;
 			if ($this->inputEmpty() && !$this->inputRequired()) {
+				if ($this->_inputError !== false)
+					$this->_errorComponentIndexes['this'] = 'required';
 				return $ret && $this->_inputError === false;
 			}
 			foreach ($this->_components as $name => $component) {
 				if ($component->inputEmpty()) {
 					if ($component->inputRequired()) {
+						$this->_errorComponentIndexes[$name] = 'error.form.required';
 						$component->setInputError('error.form.required');
 						$ret = false;
 					}
 				} else if (true !== $error = $component->inputValid()) {
+					$this->_errorComponentIndexes[$name] = $error;
 					$component->setInputError($error);
 					$ret = false;
 				}
 			}
+			if ($this->_inputError !== false)
+				$this->_errorComponentIndexes['this'] = $this->_inputError;
 			return $ret && $this->_inputError === false;
+		}
+
+		public function getErrors()
+		{
+			return $this->_errorComponentIndexes;
 		}
 
 		/**
