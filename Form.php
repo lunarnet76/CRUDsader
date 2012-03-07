@@ -306,7 +306,7 @@ namespace CRUDsader {
 		}
 		/* OUPUTS ************************ */
 
-		public function toHTML()
+		public function toHtml()
 		{
 			$html = $this->htmlTag() . ($this->_htmlLabel ? $this->wrapHtml($this->_htmlLabel, 'title') : '') . $this->htmlError();
 			foreach ($this->_components as $index => $component) {
@@ -345,9 +345,9 @@ namespace CRUDsader {
 		public function htmlRow(\CRUDsader\Form\Component $component)
 		{
 			if ($component instanceof self)
-				return $component->toHTML();
+				return $component->toHtml();
 			$error = $component->getInputError();
-			return $this->wrapHtml(($component->_htmlLabel === false ? '' : $component->labeltoHtml()) . $this->wrapHtml($component->toHTML(), 'component') . (!$error ? '' : $this->wrapHtml(\CRUDsader\Instancer::getInstance()->i18n->translate($error), 'error')), 'row');
+			return $this->wrapHtml(($component->_htmlLabel === false ? '' : $component->labeltoHtml()) . $this->wrapHtml($component->toHtml(), 'component') . (!$error ? '' : $this->wrapHtml(\CRUDsader\Instancer::getInstance()->i18n->translate($error), 'error')), 'row');
 		}
 
 		/** ACCESSORS ************************* */

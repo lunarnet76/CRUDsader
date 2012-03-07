@@ -158,10 +158,6 @@ namespace CRUDsader {
                     'class' => '\\CRUDsader\\Map', 'singleton' => true),
                 'expression' => array(
                     'class' => '\\CRUDsader\\Expression', 'singleton' => false),
-                'expression.null' => array(
-                    'class' => '\\CRUDsader\\Expression\\Nil', 'singleton' => false),
-                'expression.now' => array(
-                    'class' => '\\CRUDsader\\Expression\\Now', 'singleton' => false),
                 'map.extractor' => array(
                     'class' => '\\CRUDsader\\Map\\Extractor\\Database', 'singleton' => true),
                 'map.loader' => array(

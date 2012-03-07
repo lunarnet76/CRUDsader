@@ -8,8 +8,6 @@ digraph G {
 #Autoload 
 #Exception
 #Expression
-#Expression\\Nil->Expression [style=dotted]
-#Expression\\Now->Expression [style=dotted]
 
 Instancer
 Instancer->Configuration

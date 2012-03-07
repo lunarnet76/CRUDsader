@@ -16,7 +16,7 @@ namespace CRUDsader\Object\Attribute {
 		{
 			if (parent::_inputValid())
 				return true;
-			if (!preg_match('|[0-9]{2}/[0-9]{2}/[0-9]{4}|', $this->_inputValue))
+			if (!preg_match('|[0-9]{2}/[0-9]{2}/[0-9]{4}|', $this->_value))
 				return 'error.invalid';
 			return true;
 		}
@@ -27,19 +27,19 @@ namespace CRUDsader\Object\Attribute {
 		 */
 		public function setValueFromDatabase($value)
 		{
-			if (\CRUDsader\Expression::isEmpty($value))
-				$this->_inputValue = \CRUDsader\Instancer::getInstance()->{'expression.null'};
+			if (!isset($value))
+				$this->_value = null;
 			else {
 				$ex = explode('-', $value);
 				switch (count($ex)) {
 					case 3:
-						$this->_inputValue = ($ex[2] == '00' ? '' : $ex[2] . '/') . ($ex[1] == '00' ? '' : $ex[1] . '/') . $ex[0];
+						$this->_value = ($ex[2] == '00' ? '' : $ex[2] . '/') . ($ex[1] == '00' ? '' : $ex[1] . '/') . $ex[0];
 						break;
 					case 2:
-						$this->_inputValue = $ex[1] . '/' . $ex[0];
+						$this->_value = $ex[1] . '/' . $ex[0];
 						break;
 					case 1:
-						$this->_inputValue = $ex[0];
+						$this->_value = $ex[0];
 						break;
 				}
 			}
@@ -48,8 +48,8 @@ namespace CRUDsader\Object\Attribute {
 		public function getValueForDatabase()
 		{
 			if ($this->inputEmpty())
-				return new \CRUDsader\Expression\Nil;
-			$ex = explode('/', $this->_inputValue);
+				return null;
+			$ex = explode('/', $this->_value);
 			switch (count($ex)) {
 				case 3:
 					return $ex[2] . '-' . $ex[1] . '-' . $ex[0];
@@ -61,7 +61,7 @@ namespace CRUDsader\Object\Attribute {
 					return $ex[0] . '-00-00';
 					break;
 			}
-			return new \CRUDsader\Expression\Nil;
+			return null;
 		}
 
 		public function generateRandom()

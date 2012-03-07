@@ -60,7 +60,8 @@ namespace CRUDsader\Database\Descriptor {
 			$fieldValues = '(';
 			foreach ($values as $key => $value) {
 				$fields.=$this->quoteIdentifier($key) . ',';
-				$fieldValues.=$this->quote($value === false ? 0 : $value, $connector) . ',';
+                                
+				$fieldValues.=($value === null ? 'NULL':$this->quote($value === false ? 0 : $value, $connector)) . ',';
 			}
 			$fields[strlen($fields) - 1] = ')';
 			$fieldValues[strlen($fieldValues) - 1] = ')';
@@ -81,7 +82,7 @@ namespace CRUDsader\Database\Descriptor {
 				throw new MysqliException('UPDATE query cannot be without params');
 			$sql = 'UPDATE ' . $this->quoteIdentifier($table) . ' SET ';
 			foreach ($values as $key => $value) {
-				$sql.=$this->quoteIdentifier($key) . '=' . $this->quote($value === false ? 0 : $value) . ',';
+				$sql.=$this->quoteIdentifier($key) . '=' . ($value === null ? 'NULL':$this->quote($value === false ? 0 : $value)) . ',';
 			}
 			$sql[strlen($sql) - 1] = ' ';
 			if ($where)

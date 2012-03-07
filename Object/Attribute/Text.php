@@ -7,10 +7,10 @@
  */
 namespace CRUDsader\Object\Attribute {
     class Text extends \CRUDsader\Object\Attribute\String {
-        public function toHTML() {
+        public function toHtml() {
             if (isset($this->_htmlAttributes['value']))
                 unset($this->_htmlAttributes['value']);
-            return '<textarea ' . $this->getHtmlAttributesToHtml() . '>' . (!\CRUDsader\Expression::isEmpty($this->_inputValue) ? $this->_inputValue : '') . '</textarea>';
+            return '<textarea ' . $this->getHtmlAttributesToHtml() . '>' . (isset($this->_value) ? $this->_value : '') . '</textarea>';
         }
         
         protected function _inputValid() {

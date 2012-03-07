@@ -15,20 +15,18 @@ namespace CRUDsader\Object\Attribute {
         protected function _inputValid() {
             return true;
         }
-        
+
         public function setValueFromDatabase($value) {
-            if (\CRUDsader\Expression::isEmpty($value))
-                $this->_inputValue = \CRUDsader\Instancer::getInstance()->{'expression.null'};
-            else {
-                if(preg_match('|([0-9]{4})-([0-9]{2})-([0-9]{2})\s([0-9]{1,2}):([0-9]{2}):[0-9]{2}|',$value,$m)){
-                    $this->_inputValue=$m[3].'/'.$m[2].'/'.$m[1].' '.$m[4].':'.$m[5];
+            if (isset($value)) {
+                if (preg_match('|([0-9]{4})-([0-9]{2})-([0-9]{2})\s([0-9]{1,2}):([0-9]{2}):[0-9]{2}|', $value, $m)) {
+                    $this->_value = $m[3] . '/' . $m[2] . '/' . $m[1] . ' ' . $m[4] . ':' . $m[5];
                 }
-            }
-        }
-        
-        public function generateRandom() {
-            return date("Y-m-d H:i:s" , strtotime('- '.rand(0,1000).' days'));
+            }else
+                $this->_value = null;
         }
 
+        public function generateRandom() {
+            return date("Y-m-d H:i:s", strtotime('- ' . rand(0, 1000) . ' days'));
+        }
     }
 }

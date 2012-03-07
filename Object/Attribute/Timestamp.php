@@ -16,7 +16,7 @@ namespace CRUDsader\Object\Attribute {
 		{
 			if (parent::_inputValid())
 				return true;
-			if (!preg_match('|[0-9]*|', $this->_inputValue))
+			if (!preg_match('|[0-9]*|', $this->_value))
 				return 'error.invalid';
 			return true;
 		}
@@ -27,33 +27,29 @@ namespace CRUDsader\Object\Attribute {
 		 */
 		public function setValueFromDatabase($value)
 		{
-			if (\CRUDsader\Expression::isEmpty($value))
-				$this->_inputValue = \CRUDsader\Instancer::getInstance()->{'expression.null'};
-			else {
-				$this->_inputValue = strtotime($value);
+			if (isset($value)){
+				$this->_value = strtotime($value);
 			}
 		}
 
 		public function toHumanReadable()
 		{
 			$v = $this->getValue();
-			if (\CRUDsader\Expression::isEmpty($v))
-				return '';
-			return date('d/m/Y h:i', $v);
+			return isset($v)?date('d/m/Y h:i', $v):'';
 		}
 
 		public function getValueForDatabase()
 		{
-			if($this->_inputValue instanceof \CRUDsader\Expression)
-				return $this->_inputValue;
+			if($this->_value instanceof \CRUDsader\Expression)
+				return $this->_value;
 			if ($this->inputEmpty())
-				return new \CRUDsader\Expression\Nil;
-			if(ctype_digit($this->_inputValue))
-				return date('Y-m-d h:i:s',$this->_inputValue);
-			if(preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s([0-9]{2}\:[0-9]{2}))?$|',$this->_inputValue,$match)){
+				return null;
+			if(ctype_digit($this->_value))
+				return date('Y-m-d h:i:s',$this->_value);
+			if(preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s([0-9]{2}\:[0-9]{2}))?$|',$this->_value,$match)){
 				return $match[3].'-'.$match[2].'-'.$match[1].' '.$match[4];
 			}
-			$ex = explode('/', (string)$this->_inputValue);
+			$ex = explode('/', (string)$this->_value);
 			switch (count($ex)) {
 				case 3:
 					return $ex[2] . '-' . $ex[1] . '-' . $ex[0];
@@ -65,7 +61,7 @@ namespace CRUDsader\Object\Attribute {
 					return $ex[0] . '-00-00';
 					break;
 			}
-			return new \CRUDsader\Expression\Nil;
+			return null;
 		}
 	}
 }

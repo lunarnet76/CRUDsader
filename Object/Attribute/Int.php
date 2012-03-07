@@ -14,19 +14,19 @@ namespace CRUDsader\Object\Attribute {
 	
 	public function getValue(){
 		$v = parent::getValue();
-		return \CRUDsader\Expression::isEmpty($v) ? null : (int)$v;
+		return !isset($v) ? null : (int)$v;
 	}
 
         protected function _inputValid() {
-            if ($this->_inputValue instanceof \CRUDsader\Expression)
+            if ($this->_value instanceof \CRUDsader\Expression)
                 $ret=true;
             else
-                 $ret=filter_var($this->_inputValue, FILTER_VALIDATE_INT)!==false;
+                 $ret=filter_var($this->_value, FILTER_VALIDATE_INT)!==false;
             return $ret ? $ret : 'invalid';
         }
         
         public function inputEmpty(){
-            return empty($this->_inputValue) && $this->_inputValue!==0  && $this->_inputValue!=='0';
+            return empty($this->_value) && $this->_value!==0  && $this->_value!=='0';
         }
         
         public function generateRandom() {

@@ -14,7 +14,7 @@ namespace CRUDsader\Object {
          * @var string
          */
         protected $_toArray = array(
-	    '_name','_parameters','_htmlAttributes','_htmlLabel','_inputValue','_inputValueDefault','_options'
+	    '_name','_parameters','_htmlAttributes','_htmlLabel','_value','_valueDefault','_options'
 	);
 
         public function __construct($name=false, $options=array()) {
@@ -34,7 +34,7 @@ namespace CRUDsader\Object {
          * @return bool
          */
         public function inputEmpty() {
-            return \CRUDsader\Expression::isEmpty($this->_inputValue);
+            return !isset($this->_value);
         }
 
         /**
@@ -42,28 +42,26 @@ namespace CRUDsader\Object {
          * @param type $value
          */
         public function setValueFromDatabase($value) {
-            if (\CRUDsader\Expression::isEmpty($value)){
-                $this->_inputValue = $this->_inputValueDefault;
+            if (!isset($value)){
+                $this->_value = $this->_valueDefault;
 	    }else
-                $this->_inputValue = $value;
+                $this->_value = $value;
         }
 
         public function getValueForDatabase() {
-            return $this->inputEmpty() ? new \CRUDsader\Expression\Nil : $this->_inputValue;
+            return $this->_value;
         }
 
         public function getValue() {
-            return $this->inputEmpty() ? $this->_inputValueDefault : $this->_inputValue;
+            return $this->inputEmpty() ? $this->_valueDefault : $this->_value;
         }
 		
 	public function toHumanReadable(){
 		$v = $this->getValue();
-			if ($v instanceof \CRUDsader\Expression\Nil)
-				return '';
-		return $v;
+		return isset($v)?$v:'';
 	}
 
-        public function toHTML() {
+        public function toHtml() {
             $this->_htmlAttributes['validator'] = $this->javascriptValidator();
             return parent::toHtml();
         }
@@ -76,9 +74,13 @@ namespace CRUDsader\Object {
             return base_convert(rand(10e16, 10e20), 10, 36);
         }
 	
+        // it's an input so there is no NULL, only "", null here means that NO value was received
 	public function inputReceive($data=null) {
-            if($data !== null)$this->_inputValue =  $data;
-            $this->_inputReceived = true;
+            if(!empty($data))
+                $this->_value =  $data;
+            else
+                $this->_value = null;
+            if($data!==null)$this->_inputReceived = true;
             $this->notify();
         }
     }

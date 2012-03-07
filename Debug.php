@@ -86,6 +86,10 @@ namespace CRUDsader {
 				exit;
 			return true; // true disable PHP built-in error handler
 		}
+                
+                public function sql(){
+                    echo \CRUDsader\Instancer::getInstance()->database->highLight(\CRUDsader\Instancer::getInstance()->database->getSQL());
+                }
 
 		protected static function preCallback($Parts)
 		{

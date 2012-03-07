@@ -43,15 +43,5 @@ namespace CRUDsader {
         public function isToBeQuoted() {
             return $this->_quote;
         }
-        
-        /**
-         * return if a var is empty or an expression that is null
-         * @static
-         * @param mix $var
-         * @return bool 
-         */
-        public static function isEmpty($var){
-            return empty($var) || $var instanceof Expression\Nil;
-        }
     }
 }

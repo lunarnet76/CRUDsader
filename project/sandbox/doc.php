@@ -215,7 +215,7 @@ class ModelLog extends \CRUDsader\Object {
     function calculateAttribute($attributeName) {
         switch ($attributeName) {
             case 'date':
-                return new \CRUDsader\Expression\Now;
+                return new \CRUDsader\Expression('NOW()');
                 break;
             default:
                 parent::calculateAttribute($attributeName);

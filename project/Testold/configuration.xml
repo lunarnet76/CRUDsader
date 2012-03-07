@@ -15,8 +15,6 @@
             <file>CRUDsader/Block_Test.php</file>
             <file>CRUDsader/Configuration_Test.php</file>
             <file>CRUDsader/Expression_Test.php</file>
-            <file>CRUDsader/Expression/Nil_Test.php</file><!-- empty -->
-            <file>CRUDsader/Expression/Now_Test.php</file><!-- empty -->
             <file>CRUDsader/Session_Test.php</file>
             <file>CRUDsader/Adapter_Test.php</file>
             

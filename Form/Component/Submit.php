@@ -7,7 +7,7 @@ namespace CRUDsader\Form\Component {
         public function setText($text){
             $this->_text=$text;
         }
-        public function toHTML(){
+        public function toHtml(){
             $this->_htmlAttributes['type']='submit';
             if(!isset($this->_htmlAttributes['class']))
 		    $this->_htmlAttributes['class']='submit';

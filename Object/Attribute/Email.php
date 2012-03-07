@@ -15,15 +15,15 @@ namespace CRUDsader\Object\Attribute {
 		protected function _inputValid()
 		{
 			$strict = !isset($this->_options['strict']) || $this->_options['strict'];
-			if (strlen($this->_inputValue) > 320)
+			if (strlen($this->_value) > 320)
 				return 'error.email.tooLong';
-			if (strpos($this->_inputValue, '@') === false)
+			if (strpos($this->_value, '@') === false)
 				return 'error.email.noAtSign';
 			$rf822 = $strict ?
 				'/^([.0-9a-z_-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,4})$/i' :
 				'/^([*+!.&#$¦\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,4})$/i'
 			;
-			if (!preg_match($rf822,$this->_inputValue))
+			if (!preg_match($rf822,$this->_value))
 				return 'error.email.invalid';
 			return true;
 		}

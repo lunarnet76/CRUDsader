@@ -26,18 +26,15 @@ namespace CRUDsader\Object\Attribute {
 
 		public function setValueFromDatabase($val)
 		{
-			if (\CRUDsader\Expression::isEmpty($val))
-				$val = 0;
-			$this->_inputValue = $val == 1 ? true : false;
+			if (!isset($val))
+				$val = null;
+			$this->_value = $val == 1 ? true : false;
 		}
 
 		public function getValue()
 		{
 			$v = parent::getValue();
-			if ($v instanceof \CRUDsader\Expression\Nil)
-				return null;
-
-			return $v ? true : false;
+			return isset($v) ? (boolean)$v: null;
 		}
 
 		public function toHumanReadable()
@@ -45,18 +42,18 @@ namespace CRUDsader\Object\Attribute {
 			return $this->getValue() ? 'yes':'no';
 		}
 
-		public function toHTML()
+		public function toHtml()
 		{
 			$this->_htmlAttributes['value'] = 'yes';
 			$this->_htmlAttributes['type'] = 'checkbox';
-			if ($this->_inputValue == '1')
+			if ($this->_value == '1')
 				$this->_htmlAttributes['checked'] = 'checked';
 			return '<input ' . $this->getHtmlAttributesToHtml() . '/>';
 		}
 
 		public function inputReceive($data = null)
 		{
-			$this->_inputValue = $data == 'yes' ? true : false;
+			$this->_value = $data == 'yes' ? true : false;
 			$this->_inputReceived = true;
 			$this->notify();
 		}

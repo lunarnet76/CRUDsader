@@ -71,7 +71,7 @@ namespace CRUDsader {
 		protected function _($attributeName)
 		{
 			$attr = $this->getAttribute($attributeName)->getInputValue();
-			return \CRUDsader\Expression::isEmpty($attr) ? '' : $attr;
+			return !isset($attr) ? '' : $attr;
 		}
 
 		public function generateRandom()
@@ -97,7 +97,7 @@ namespace CRUDsader {
 			return $this->isPersisted();
 		}
 
-		public function toHTML($base = false, $prefix = false, $allowedClasses = false, $displayTitle = true)
+		public function toHtml($base = false, $prefix = false, $allowedClasses = false, $displayTitle = true)
 		{
 			if (isset($allowedClasses[$this->_class]) && !$allowedClasses[$this->_class])
 				return '';
@@ -111,10 +111,10 @@ namespace CRUDsader {
 				$html.='<div class="title">' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_getFormAttributeLabel($base, $prefix)) . '</div>';
 			foreach ($this->_fields as $name => $attribute) {
 				if (($this->_infos['attributes'][$name]['html']))
-					$html.='<div class="row"><div class="label">' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_getFormAttributeLabel($name, $prefix)) . '</div><div class="value">' . (\CRUDsader\Expression::isEmpty($attribute->getInputValue()) ? '&nbsp;' : $attribute->toHumanReadable()) . '</div></div>';
+					$html.='<div class="row"><div class="label">' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_getFormAttributeLabel($name, $prefix)) . '</div><div class="value">' . ($attribute->inputEmpty() ? '&nbsp;' : $attribute->toHumanReadable()) . '</div></div>';
 			}
 			if ($this->hasParent())
-				$html.=$this->getParent()->toHTML(false, $prefix, $allowedClasses, false);
+				$html.=$this->getParent()->toHtml(false, $prefix, $allowedClasses, false);
 
 			foreach ($this->_associations as $name => $association) {
 				if (isset($allowedClasses[$name]) && !$allowedClasses[$name])
@@ -127,7 +127,7 @@ namespace CRUDsader {
 						$first = false;
 					else
 						$html.='<div class="row">&nbsp;</div>';
-					$html.='<div class="associated">' . $object->toHTML($base, $prefix, $allowedClasses, false) . '</div>';
+					$html.='<div class="associated">' . $object->toHtml($base, $prefix, $allowedClasses, false) . '</div>';
 				}
 			}
 			if (isset($nobase))
@@ -529,7 +529,7 @@ namespace CRUDsader {
 		public function get($attributeName, $valueIsEmpty = false)
 		{
 			$v = $this->$attributeName;
-			return \CRUDsader\Expression::isEmpty($v) ? $valueIsEmpty : $v;
+			return !isset($v) ? $valueIsEmpty : $v;
 		}
 
 		public function readable($attributeName)

@@ -12,19 +12,19 @@ namespace CRUDsader\Object\Attribute {
 		{
 			if (!isset($this->_options['choices']))
 				return true;
-			if ($this->_inputValue instanceof \CRUDsader\Expression)
+			if ($this->_value instanceof \CRUDsader\Expression)
 				$ret = true;
 			else
-				$ret = isset($this->_options['choices'][$this->_inputValue]) || in_array($this->_inputValue, $this->_options['choices']);
+				$ret = isset($this->_options['choices'][$this->_value]) || in_array($this->_value, $this->_options['choices']);
 			return $ret;
 		}
 
-		public function toHTML()
+		public function toHtml()
 		{
 			$html = '<select ' . $this->getHtmlAttributesToHtml() . '><option value="-1">choose</option>';
 
 			foreach ($this->_options['choices'] as $k => $v) {
-				$html.= '<option value="' . $k . '" ' . (!$this->inputEmpty() && $this->_inputValue == $k ? 'selected="selected"' : '') . '>' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_name . '.' . $v) . '</option>';
+				$html.= '<option value="' . $k . '" ' . (!$this->inputEmpty() && $this->_value == $k ? 'selected="selected"' : '') . '>' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_name . '.' . $v) . '</option>';
 			}
 
 			$html.='</select>';
@@ -34,7 +34,7 @@ namespace CRUDsader\Object\Attribute {
 
 		public function inputEmpty()
 		{
-			return $this->_inputValue instanceof \CRUDsader\Expression\Nil || $this->_inputValue == -1;
+			return !isset($this->_value) || $this->_value == -1;
 		}
 	}
 }

@@ -13,16 +13,16 @@ namespace CRUDsader\Object\Attribute {
         }
 
         protected function _inputValid() {
-            if ($this->_inputValue instanceof \CRUDsader\Expression)
+            if ($this->_value instanceof \CRUDsader\Expression)
                 $ret=true;
             else
-                 $ret=filter_var($this->_inputValue, FILTER_VALIDATE_FLOAT)!==false;
+                 $ret=filter_var($this->_value, FILTER_VALIDATE_FLOAT)!==false;
             return $ret;
         }
 	
 	public function getValue(){
 		$v = parent::getValue();
-		return \CRUDsader\Expression::isEmpty($v)?0:(float)($v);
+		return isset($v)?(float)($v):$v;
 	}
         
         

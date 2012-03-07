@@ -16,15 +16,15 @@ namespace CRUDsader\Object\Attribute {
             return $value;
         }
         
-        public function toHTML(){
+        public function toHtml(){
             $this->_htmlAttributes['maxlength']=$this->_options['length'];
-            return parent::toHTML();
+            return parent::toHtml();
         }
 
         protected function _inputValid() {
-            if ($this->_inputValue instanceof \CRUDsader\Expression)
+            if ($this->_value instanceof \CRUDsader\Expression)
                 return true;
-            else if (strlen(filter_var($this->_inputValue, FILTER_SANITIZE_STRING)) > $this->_options['length'])
+            else if (strlen(filter_var($this->_value, FILTER_SANITIZE_STRING)) > $this->_options['length'])
                 return 'error.string.too-long-' . $this->_options['length'];
             return true;
         }

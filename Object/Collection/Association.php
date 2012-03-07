@@ -80,7 +80,7 @@ namespace CRUDsader\Object\Collection {
                     if (isset($this->_objectsToBeDeleted[$index])) {
                         switch ($this->_definition['reference']) {
                             case 'internal':
-                                $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => new \CRUDsader\Expression\Nil), $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
+                                $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => null), $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
                                 break;
                             case 'external':
                                 // in the $object, so it's going to get erased anyway
@@ -155,7 +155,7 @@ namespace CRUDsader\Object\Collection {
                     continue;
                 switch ($this->_definition['reference']) {
                     case 'internal':
-                        $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => new \CRUDsader\Expression\Nil), $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
+                        $unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => null), $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
                         break;
                     case 'external':
                         // in the $object, so it's going to get erased anyway

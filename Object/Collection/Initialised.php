@@ -17,7 +17,7 @@ namespace CRUDsader\Object\Collection {
 				$aggregate = array();
 				foreach ($rowSet as $i => $row) {
 					$id = current($row);
-					if (!\CRUDsader\Expression::isEmpty($id)) {
+					if (isset($id)) {
 						if (!isset($this->_objectIndexes[$id])) {
 							if (\CRUDsader\Object\IdentityMap::exists($this->_class, $id))
 								$this->_objects[$this->_iterator] = \CRUDsader\Object\IdentityMap::get($this->_class, $id);
