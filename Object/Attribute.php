@@ -45,7 +45,7 @@ namespace CRUDsader\Object {
             if (!isset($value)){
                 $this->_value = $this->_valueDefault;
 	    }else
-                $this->_value = $value;
+                $this->_valueDefault = $this->_value = $value;
         }
 
         public function getValueForDatabase() {
@@ -79,7 +79,7 @@ namespace CRUDsader\Object {
             if(!empty($data))
                 $this->_value =  $data;
             else
-                $this->_value = null;
+                $this->_value = $this->_valueDefault;
             if($data!==null)$this->_inputReceived = true;
             $this->notify();
         }

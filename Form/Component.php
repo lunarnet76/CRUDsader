@@ -178,7 +178,7 @@ namespace CRUDsader\Form {
         public function toHtml() {
             if (isset($this->_value))
                 $this->_htmlAttributes['value'] = $this->_value;
-            return '<input ' . $this->getHtmlAttributesToHtml() . '/>';
+            return '<input ' . $this->getHtmlAttributesToHtml() . ' />';
         }
 
         // ** FORM **
