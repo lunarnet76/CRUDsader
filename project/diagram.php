@@ -216,6 +216,7 @@
                 $x = $E.container.offset().left;
                 $y = $E.container.offset().top;
                 if($classXmlTag.match($regexp)){
+                    console.log($classXmlTag);
                     $xml = $xml.replace($classXmlTag,$classXmlTag.replace($regexp,'x="'+$x+'" y="'+$y+'"'));
                 }else{
                     $xml = $xml.replace($classXmlTag,$classXmlTag+' x="'+$x+'" y="'+$y+'"');
@@ -360,19 +361,20 @@
         });
         
         $('#button-xml').bind('click',function(){
+        console.log($xml);
             $('body').append(
-            $('<div/>')
-            .css({border:'1px solid black'})
-            .append(
-            $('<textarea/>')
-            .text($xml)
-        )
-            .append(
-            $('<input type="button" value="close"/>')
-            .bind('click',function(){$(this).parent().remove()})
-        )
-        );
-        })
+                $('<div/>')
+                .css({border:'1px solid black','z-index':3,position:'absolute',background:'white'})
+                .append(
+                    $('<textarea/>')
+                    .text($xml)
+                )
+                .append(
+                    $('<input type="button" value="close"/>')
+                    .bind('click',function(){$(this).parent().remove()})
+                )
+            )
+        });
     });
 
     
