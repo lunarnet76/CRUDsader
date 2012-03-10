@@ -18,6 +18,8 @@
             <!ATTLIST class databaseTable CDATA #IMPLIED>
             <!ATTLIST class databaseIdField CDATA #IMPLIED><!-- col1,col2 -->
             <!ATTLIST class inherit CDATA #IMPLIED>
+            <!ATTLIST class x CDATA #IMPLIED>
+            <!ATTLIST class y CDATA #IMPLIED>
 
             <!ELEMENT attribute EMPTY>
                 <!ATTLIST attribute name                CDATA               #REQUIRED>
