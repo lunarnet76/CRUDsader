@@ -93,9 +93,12 @@ namespace CRUDsader {
 		public function classGetSearchableFields($className)
 		{
 			$ret = array();
-			foreach ($this->_map['classes'][$className]['attributes'] as $attributeName => $attributeInfos)
-				if ($attributeInfos['searchable'])
-					$ret[] = $attributeName;
+			if(!empty($this->_map['classes'][$className]['attributes']))
+				foreach ($this->_map['classes'][$className]['attributes'] as $attributeName => $attributeInfos){
+
+					if ($attributeInfos['searchable'])
+						$ret[] = $attributeName;
+				}
 			return $ret;
 		}
 
@@ -243,6 +246,7 @@ namespace CRUDsader {
 					    'joinField' => $this->_map['classes'][$className]['definition']['databaseIdField'], // id
 					    'type' => 'left'
 					);
+					
 					$joins['table'] = array(
 					    'table' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
 					    'alias' => $joinedAlias,
@@ -267,33 +271,41 @@ namespace CRUDsader {
 			$classes = $this->_map['classes'];
 
 			$ret = array();
+				
 
 			foreach ($classes as $name => $definition) {
+				
 				$ret[$name] = array();
 				$ret[$name][] = 'string polymorphism';
-				$ret[$name][] = 'int id';
-				foreach ($definition['attributes'] as $attributeName => $attributeDefinition) {
-					$type = $this->_map['attributeTypes'][$attributeDefinition['type']];
-					$ret[$name][$attributeName] = (isset($type['options']['dotnetcast']) ? $type['options']['dotnetcast'] : 'string') . ' ' . $attributeName;
-				}
-
+				$ret[$name][] = 'string id';
+				
+				if(!empty($definition['attributes']))
+					foreach ($definition['attributes'] as $attributeName => $attributeDefinition) {
+						$type = $this->_map['attributeTypes'][$attributeDefinition['type']];
+						$ret[$name][$attributeName] = (isset($type['options']['dotnetcast']) ? $type['options']['dotnetcast'] : 'string') . ' ' . $attributeName;
+					}
+				if(!empty($definition['associations']))
 				foreach ($definition['associations'] as $associationName => $associationDefinition) {
 					if ($associationDefinition['reference'] == 'internal') {
-						$ret[$name][$associationDefinition['to']] = $associationDefinition['to'] . ' ' . $associationDefinition['to'];
+						$ret[$name][$associationDefinition['to']] = $associationDefinition['to'] . ' ' . ($associationDefinition['to'] == $name ? 'parent':$associationDefinition['to']);
 					} else {
 						$ret[$associationDefinition['to']][$name] = $name . ' ' . $name;
 					}
 				}
+				
+				
 			}
-			$lines = array('using System.Runtime.Serialization;' . PHP_EOL . 'namespace ' . $appPackage . '{' . PHP_EOL);
+			$lines = array('using System.Runtime.Serialization;' . PHP_EOL .'using System.Collections.Generic;'.PHP_EOL. 'namespace ' . $appPackage . '{' . PHP_EOL);
 
 			foreach ($ret as $className => $classMembers) {
 				$lines[] = PHP_EOL . PHP_EOL . '	[DataContract]' . PHP_EOL . '	public class ' . $className . '{' . PHP_EOL;
 				foreach ($classMembers as $name)
 					$lines[] = '		[DataMember]' . PHP_EOL . '		public ' . $name . ';' . PHP_EOL;
 				$lines[] = '	}';
+				$lines[] = PHP_EOL . PHP_EOL . '	[DataContract]' . PHP_EOL . '	public class ' . $className . 's{' . PHP_EOL.PHP_EOL.'		[DataMember]'.PHP_EOL.'		public List&lt;'.$className.'> '.$className.';'.PHP_EOL.'	}'.PHP_EOL;
 			}
 			$lines[] = '}';
+			
 
 			return $lines;
 		}
