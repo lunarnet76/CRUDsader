@@ -12,8 +12,7 @@
     }
     .entity{
         border:1px solid grey;
-        float:left;
-        width:150px;
+       
         z-index: 1;
         background:white;
     }
@@ -48,8 +47,6 @@
 
     }
     
-    
-
     ul.attributes .required{
         background:url(extra/images/pk16x16.png) 3px 3px no-repeat;
         
