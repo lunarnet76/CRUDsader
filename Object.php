@@ -102,16 +102,19 @@ namespace CRUDsader {
 			if (isset($allowedClasses[$this->_class]) && !$allowedClasses[$this->_class])
 				return '';
 			$html = '';
+                        if(!$prefix)
+                            $prefix = $this->_class;
 			if (!$base) {
 				$html.='<div class="object">';
 				$nobase = true;
 			}
+                        
 			$base.= ( $base ? '.' : '') . 'object';
 			if ($displayTitle)
-				$html.='<div class="title">' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_getFormAttributeLabel($base, $prefix)) . '</div>';
+				$html.='<div class="title">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix.'.'.$base) . '</div>';
 			foreach ($this->_fields as $name => $attribute) {
 				if (($this->_infos['attributes'][$name]['html']))
-					$html.='<div class="row"><div class="label">' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_getFormAttributeLabel($name, $prefix)) . '</div><div class="value">' . ($attribute->inputEmpty() ? '&nbsp;' : $attribute->toHumanReadable()) . '</div></div>';
+					$html.='<div class="row"><div class="label">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix.'.attributes.'.$name) . '</div><div class="value">' . ($attribute->inputEmpty() ? '&nbsp;' : $attribute->toHumanReadable()) . '</div></div>';
 			}
 			if ($this->hasParent())
 				$html.=$this->getParent()->toHtml(false, $prefix, $allowedClasses, false);
@@ -119,7 +122,7 @@ namespace CRUDsader {
 			foreach ($this->_associations as $name => $association) {
 				if (isset($allowedClasses[$name]) && !$allowedClasses[$name])
 					continue;
-				$html.='<div class="title">' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_getFormAttributeLabel($name, $prefix)) . '</div>';
+				$html.='<div class="title">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix.'.'.$name) . '</div>';
 				$collection = $this->getAssociation($name);
 				$first = true;
 				foreach ($collection as $object) {
@@ -127,7 +130,7 @@ namespace CRUDsader {
 						$first = false;
 					else
 						$html.='<div class="row">&nbsp;</div>';
-					$html.='<div class="associated">' . $object->toHtml($base, $prefix, $allowedClasses, false) . '</div>';
+					$html.='<div class="associated">' . $object->toHtml($base, $name, $allowedClasses, false) . '</div>';
 				}
 			}
 			if (isset($nobase))
@@ -402,17 +405,18 @@ namespace CRUDsader {
 					if ($oname == $this->_class)
 						continue;
 					$name = substr($oname, $l);
+                                       
 					if ($name && $this->hasAssociation($name)) {
-						$this->getAssociation($name)->getForm($oql, $this->_getFormAssociationAlias($alias, $name), $form);
+						$this->getAssociation($name)->getForm($oql, $this->_class.'.'.$name, $form);
 					}
 				}
 				if ($this->hasParent())
-					$this->getParent(true)->_getFormAssociations($form, $oql, $this->_getFormAssociationAlias($alias, $this->getParent()->getClass()));
+					$this->getParent(true)->_getFormAssociations($form, $oql, $alias.'_parent');
 			}else {
 				foreach ($this->_associations as $name => $association)
-					$this->getAssociation($name)->getForm($oql, $this->_getFormAssociationAlias($alias, $name), $form);
+					$this->getAssociation($name)->getForm($oql, $name, $form);
 				if ($this->hasParent())
-					$this->getParent(true)->_getFormAssociations($form, $oql, $this->_getFormAssociationAlias($alias, $this->getParent()->getClass()));
+					$this->getParent(true)->_getFormAssociations($form, $oql, $alias.'_parent');
 			}
 		}
 
@@ -421,21 +425,11 @@ namespace CRUDsader {
 			foreach ($this->_infos['attributes'] as $name => $infoAttribute) {
 				if ($infoAttribute['input']) {
 					$form->add($this->getAttribute($name), $name, $infoAttribute['required']);
-					$this->getAttribute($name)->setHtmlLabel(\CRUDsader\Instancer::getInstance()->i18n->translate($this->_getFormAttributeLabel($name)));
+					$this->getAttribute($name)->setHtmlLabel(\CRUDsader\Instancer::getInstance()->i18n->translate($this->_class.'.attributes.'.$name));
 				}
 			}
 			if ($this->hasParent())
 				$this->getParent()->_getFormAttributes($form, $alias);
-		}
-
-		protected function _getFormAttributeLabel($attributeName, $prefix = false)
-		{
-			return ($this->_class . '.attributes.' . $attributeName);
-		}
-
-		protected function _getFormAssociationAlias($alias, $associationName)
-		{
-			return ($alias . '.' . $associationName);
 		}
 
 		public function __toString()
