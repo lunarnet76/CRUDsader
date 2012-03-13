@@ -156,13 +156,15 @@ namespace CRUDsader {
 				throw new ObjectException('Object is not initialised');
 			switch (true) {
 
+                            case $this->hasAssociation($var):
+					return $this->getAssociation($var);
+					break;
+                                    
 				case isset($this->_infos['attributes'][$var]):
 					return $this->getAttribute($var)->getValue();
 					break;
 
-				case $this->hasAssociation($var):
-					return $this->getAssociation($var);
-					break;
+				
 
 				case $this->hasParent():
 					if ($var == 'parent')
