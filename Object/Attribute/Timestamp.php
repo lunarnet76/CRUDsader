@@ -27,10 +27,12 @@ namespace CRUDsader\Object\Attribute {
 		 */
 		public function setValueFromDatabase($value)
 		{
+			//pre($value,'$value');
 			if (isset($value)){
 				$this->_value = strtotime($value);
 			}
 		}
+		
 
 		public function toHumanReadable()
 		{
@@ -44,8 +46,9 @@ namespace CRUDsader\Object\Attribute {
 				return $this->_value;
 			if ($this->inputEmpty())
 				return null;
+			
 			if(ctype_digit($this->_value))
-				return date('Y-m-d h:i:s',$this->_value);
+				return date('Y-m-d H:i:s',$this->_value);
 			if(preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s([0-9]{2}\:[0-9]{2}))?$|',$this->_value,$match)){
 				return $match[3].'-'.$match[2].'-'.$match[1].' '.$match[4];
 			}

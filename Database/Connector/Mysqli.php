@@ -61,6 +61,10 @@ namespace CRUDsader\Database\Connector {
                 $this->connect();
             return $this->_connection->real_escape_string($string);
         }
+	
+	public function last_insert_id(){
+		
+	}
 
         /**
          * execute a pure SQL string

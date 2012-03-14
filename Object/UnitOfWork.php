@@ -39,14 +39,14 @@ namespace CRUDsader\Object {
             try {
                 foreach ($this->_transactions as $id => $transaction) {
                     $params = current($transaction);
-                    if (key($transaction) == 'insert')
+                    if (key($transaction) == 'insert'){
                         $database->insert($params[0], $params[1]);
-                    elseif (key($transaction) == 'delete')
+			//$insert[$params[2]]->setId($database->last_insert_id());
+		    }elseif (key($transaction) == 'delete')
                         $database->delete($params[0], $params[1]);
                     else
                         $database->update($params[0], $params[1], $params[2]);
                     $lastExecuted = $id;
-		    
                 }
                 $database->commit();
                 //$database->setForeignKeyCheck(true);

@@ -96,6 +96,11 @@ namespace CRUDsader {
 		{
 			return $this->isPersisted();
 		}
+		
+		public function setId($id)
+		{
+			$this->_isPersisted = $id;
+		}
 
 		public function toHtml($base = false, $prefix = false, $allowedClasses = false, $displayTitle = true)
 		{
