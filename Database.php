@@ -130,6 +130,7 @@ namespace CRUDsader {
                 case 'isConnected':
                 case 'isInTransaction':
                 case 'escape':
+                case 'last_insert_id':
                     return call_user_func_array(array($this->_dependencies['connector'], $name), $arguments);
                     break;
                 case 'quote':

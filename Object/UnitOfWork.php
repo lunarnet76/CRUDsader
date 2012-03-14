@@ -17,8 +17,8 @@ namespace CRUDsader\Object {
             return true;
         }
 
-        public function insert($table, array $params) {
-            $this->_transactions[] = array('insert' => array($table, $params));
+        public function insert($table, array $params, $object = null) {
+            $this->_transactions[] = array('insert' => array($table, $params,$object));
         }
 
         public function update($table, array $params, $where=false) {
@@ -41,7 +41,11 @@ namespace CRUDsader\Object {
                     $params = current($transaction);
                     if (key($transaction) == 'insert'){
                         $database->insert($params[0], $params[1]);
-			//$insert[$params[2]]->setId($database->last_insert_id());
+			if(isset($params[2])){
+				pre($database->last_insert_id());/*
+				$params[2]->setId($database->last_insert_id());
+				pre($params[2]->toJson());*/
+			}
 		    }elseif (key($transaction) == 'delete')
                         $database->delete($params[0], $params[1]);
                     else

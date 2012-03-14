@@ -63,7 +63,7 @@ namespace CRUDsader\Database\Connector {
         }
 	
 	public function last_insert_id(){
-		
+		return $this->_connection->insert_id;
 	}
 
         /**

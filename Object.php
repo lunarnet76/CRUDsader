@@ -240,8 +240,8 @@ namespace CRUDsader {
 							$unitOfWork->update($this->_infos['definition']['databaseTable'], $paramsToSave, $db->quoteIdentifier($this->_infos['definition']['databaseIdField']) . '=' . $this->_isPersisted);
 				} else {
 					$this->_isPersisted = $oid;
-					$paramsToSave[$this->_infos['definition']['databaseIdField']] = $oid;
-					$unitOfWork->insert($this->_infos['definition']['databaseTable'], $paramsToSave, $db->quoteIdentifier($this->_infos['definition']['databaseIdField']) . '=' . $oid);
+					//$paramsToSave[$this->_infos['definition']['databaseIdField']] = $oid;
+					$unitOfWork->insert($this->_infos['definition']['databaseTable'], $paramsToSave,$this);
 					$unitOfWork->register($this->_class, $this->_isPersisted);
 				}
 				$this->saveAssociations($unitOfWork);
