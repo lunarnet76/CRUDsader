@@ -42,9 +42,7 @@ namespace CRUDsader\Object {
                     if (key($transaction) == 'insert'){
                         $database->insert($params[0], $params[1]);
 			if(isset($params[2])){
-				pre($database->last_insert_id());/*
 				$params[2]->setId($database->last_insert_id());
-				pre($params[2]->toJson());*/
 			}
 		    }elseif (key($transaction) == 'delete')
                         $database->delete($params[0], $params[1]);
