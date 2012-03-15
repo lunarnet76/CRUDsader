@@ -65,6 +65,15 @@ namespace CRUDsader\Object {
 		public static function linkToAssociation(parent $object, \CRUDsader\Object\Collection\Association $association)
 		{
 			$object->_linkedAssociation = $association;
+			$def = $association->getDefinition();
+			switch($def['reference']){
+				case 'internal':
+					if($object->_isPersisted && isset($association->getLinkedObject()->_infos['attributes'][$def['internalField']])){
+						$association->getLinkedObject()->{$def['internalField']} = $object->_isPersisted;
+					}
+					break;
+			}
+			
 		}
 
 		public static function setLinkedAssociationId(parent $object, $id)

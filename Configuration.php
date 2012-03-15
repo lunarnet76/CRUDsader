@@ -63,9 +63,6 @@ namespace CRUDsader {
                 'plugins' => array(
                 )
             ),
-	    'object.identifier'=>array(
-		'highIdLength'=>12
-	    ),
             'map' => array(
                 'defaults' => array(
                     'idField' => 'id',
@@ -130,8 +127,6 @@ namespace CRUDsader {
                     'class' => '\\CRUDsader\\ArrayLoader\\Yaml', 'singleton' => false),
                 'object' => array(
                     'class' => '\\CRUDsader\\Object', 'singleton' => false),
-                'object.identifier' => array(
-                    'class' => '\\CRUDsader\\Object\\Identifier\\Hilo', 'singleton' => true),
                 'object.collection' => array(
                     'class' => '\\CRUDsader\\Object\\Collection', 'singleton' => false),
                 'object.unitOfWork' => array(

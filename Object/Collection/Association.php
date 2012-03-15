@@ -36,6 +36,7 @@ namespace CRUDsader\Object\Collection {
             $value = parent::offsetSet($index, $value);
             \CRUDsader\Object\Writer::linkToAssociation($value, $this);
             \CRUDsader\Object\Writer::setModified($this->_linkedObject);
+	    
             $this->_isModified = true;
             return $value;
         }
@@ -116,10 +117,10 @@ namespace CRUDsader\Object\Collection {
                                     if ($object instanceof \CRUDsader\Object\Proxy) {
                                         $unitOfWork->delete($this->_definition['databaseTable'], $db->quoteIdentifier($this->_definition['externalField']) . '=' . $db->quote($object->isPersisted()) . ' AND ' . $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
                                         $unitOfWork->insert($this->_definition['databaseTable'], array(
-                                            'id' => \CRUDsader\Instancer::getInstance()->{'object.identifier'}->getOID(array('class' => $this->_class)),
+                                            //'id' => \CRUDsader\Instancer::getInstance()->{'object.identifier'}->getOID(array('class' => $this->_class)),
                                             $this->_definition['internalField'] => $this->_linkedObject->isPersisted(),
                                             $this->_definition['externalField'] => $object->isPersisted()
-                                        ));
+                                        ),$object);
                                     } else {
                                         $d = array(
                                             $this->_definition['internalField'] => $this->_linkedObject->isPersisted(),
@@ -129,10 +130,10 @@ namespace CRUDsader\Object\Collection {
                                             // update   
                                             $unitOfWork->update($this->_definition['databaseTable'], $d, $db->quoteIdentifier($this->_definition['databaseIdField']) . '=' . $db->quote($object->getLinkedAssociationId()));
                                         } else {
-                                            $d['id'] = \CRUDsader\Instancer::getInstance()->{'object.identifier'}->getOID(array('class' => $this->_class));
+                                            //$d['id'] = \CRUDsader\Instancer::getInstance()->{'object.identifier'}->getOID(array('class' => $this->_class));
                                             $unitOfWork->delete($this->_definition['databaseTable'], $db->quoteIdentifier($this->_definition['externalField']) . '=' . $db->quote($object->isPersisted()) . ' AND ' . $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
-                                            $unitOfWork->insert($this->_definition['databaseTable'], $d);
-                                            \CRUDsader\Object\Writer::setLinkedAssociationId($object, $d['id']);
+                                            $unitOfWork->insert($this->_definition['databaseTable'], $d,$object);
+                                            //\CRUDsader\Object\Writer::setLinkedAssociationId($object, $d['id']);
                                         }
                                     }
                                 }
