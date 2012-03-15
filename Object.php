@@ -52,6 +52,11 @@ namespace CRUDsader {
 		{
 			return Instancer::getInstance()->object($className);
 		}
+		
+		public function receiveArray(array $array){
+			foreach($array as $k=>$v)
+				$this->$k = $v;
+		}
 
 		public function addExtraAttribute($name, $value = null)
 		{
