@@ -27,7 +27,6 @@ namespace CRUDsader\Object\Attribute {
 		 */
 		public function setValueFromDatabase($value)
 		{
-			//pre($value,'$value');
 			if (isset($value)){
 				$this->_value = strtotime($value);
 			}
