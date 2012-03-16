@@ -59,8 +59,16 @@ namespace CRUDsader {
 
 		public function receiveArray(array $array)
 		{
-			foreach ($array as $k => $v)
-				$this->$k = $v;
+			foreach ($this->_infos['attributes'] as $attributeName => $attributeInfos) {
+				if(isset($array[$attributeName]))
+				$this->$attributeName = $array[$attributeName];
+			}
+			foreach ($this->_infos['associations'] as $associationName => $associationInfos) {
+				
+				if($associationInfos['reference'] == 'internal' && isset($array[$associationInfos['internalField']]))
+					$this->{$associationName}[] = \CRUDsader\Instancer::getInstance ()->{'object.proxy'}($associationInfos['to'],$array[$associationInfos['internalField']]);
+			}
+			
 		}
 
 		public function addExtraAttribute($name, $value = null)
