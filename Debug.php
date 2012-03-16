@@ -27,6 +27,15 @@ namespace CRUDsader {
 			if (\CRUDsader\Instancer::getInstance()->database->hasDependency('profiler'))
 				return \CRUDsader\Instancer::getInstance()->database->getDependency('profiler')->display();
 		}
+		
+		
+
+		public function log($v,$file = 'debug.log')
+		{
+			ob_start();
+			var_dump($v);
+			file_put_contents($file, ob_get_clean(),FILE_APPEND);
+		}
 
 		public static function errorHandler($errno, $errstr, $errfile, $errline, $context)
 		{
