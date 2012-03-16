@@ -84,6 +84,10 @@ namespace CRUDsader {
 		{
 			return $this->_map['attributeTypes']['default'];
 		}
+		
+		public function classGetFieldAttributeIdType(){
+			return $this->_map['attributeTypes']['id'];
+		}
 
 		public function classGetModelClass($className)
 		{

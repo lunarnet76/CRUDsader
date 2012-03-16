@@ -549,7 +549,7 @@ namespace CRUDsader {
 		public function getAttribute($name)
 		{
 			if (!isset($this->_fields[$name]) && isset($this->_infos['attributes'][$name]) && isset($this->_infos['attributes'][$name]['extra']) && $this->_infos['attributes'][$name]['extra']) {
-				$type = $this->_map->classGetFieldAttributeDefaultType();
+				$type = $this->_map->classGetFieldAttributeIdType();
 				$class = $type['phpNamespace'] . $type['class'];
 				$this->_fields[$name] = new $class('default');
 				$this->_fields[$name]->attach($this);
