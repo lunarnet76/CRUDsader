@@ -24,7 +24,7 @@ namespace CRUDsader\Object\Attribute {
         protected function _inputValid() {
             if ($this->_value instanceof \CRUDsader\Expression)
                 return true;
-            else if (strlen(filter_var($this->_value, FILTER_SANITIZE_STRING)) > $this->_options['length'])
+            else if (isset($this->_options['length']) && strlen(filter_var($this->_value, FILTER_SANITIZE_STRING)) > $this->_options['length'])
                 return 'error.string.too-long-' . $this->_options['length'];
             return true;
         }
