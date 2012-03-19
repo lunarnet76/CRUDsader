@@ -9,6 +9,7 @@ namespace CRUDsader\Object {
 	class UnitOfWork {
 		protected $_transaction = false;
 		protected $_transacts = false;
+		protected $_fail = false;
 		protected $_registered = array();
 
 		public function register($class, $id)
@@ -45,7 +46,6 @@ namespace CRUDsader\Object {
 			}
 			if (!$this->_transaction)
 				return;
-
 			try{
 				$params = $this->_transaction;
 				if ($type == 'insert') {
@@ -58,6 +58,7 @@ namespace CRUDsader\Object {
 				else
 					$database->update($params[0], $params[1], $params[2]);
 			}catch (Exception $e) {
+				$this->_fail = true;
 				$database->rollBack();
 				throw new UnitOfWorkException('transaction failed : ' . $e->getMessage());
 			}
@@ -65,7 +66,8 @@ namespace CRUDsader\Object {
 
 		public function commit()
 		{
-			\CRUDsader\Instancer::getInstance()->database->commit();
+			if(!$this->_fail && $this->_transacts)
+				\CRUDsader\Instancer::getInstance()->database->commit();
 		}
 	}
 	class UnitOfWorkException extends \CRUDsader\Exception {

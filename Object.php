@@ -332,7 +332,7 @@ namespace CRUDsader {
 			foreach ($this->_associations as $association)
 				$association->delete($unitOfWork);
 			if (isset($unitOfWorkToBeExecuted)) {
-				$unitOfWork->execute();
+				$unitOfWork->commit();
 			}
 		}
 
