@@ -380,7 +380,7 @@ namespace CRUDsader {
 			foreach ($this->_infos['definition']['identity'] as $fieldName) {
 					$empty = $this->getAttribute($fieldName)->inputEmpty();
 					if (!$this->_infos['attributes'][$fieldName]['calculated'] && $empty)
-						throw new ObjectException('cannot save as attribute "' . $this->_class . '.' . $fieldName . '" is empty');
+						throw new ObjectException('cannot check as attribute "' . $this->_class . '.' . $fieldName . '" is empty');
 					if ($empty)
 						$where[] = $db->quoteIdentifier($this->_infos['attributes'][$fieldName]['databaseField']) . ' IS NULL';
 					else
@@ -389,6 +389,31 @@ namespace CRUDsader {
 			}
 			$ret = 0 == $db->countSelect(array('from' => array('table' => $this->_infos['definition']['databaseTable'], 'alias' => 't', 'id' => $this->_infos['definition']['databaseIdField']), 'where' => implode(' AND ', $where), 'limit' => array('count' => 1)));
 
+			return $ret;
+		}
+		
+		public function getCollectionOfObjectsWithSameIdentity(){
+			if (empty($this->_infos['definition']['identity']))
+				return false;
+			$db = \CRUDsader\Instancer::getInstance()->database;
+			if ($this->_isPersisted){
+				$where = array('o.id=?');
+				$args = array(array('!='=>$this->_isPersisted));
+			}else
+				$args = $where = array();
+			foreach ($this->_infos['definition']['identity'] as $fieldName) {
+					$empty = $this->getAttribute($fieldName)->inputEmpty();
+					if (!$this->_infos['attributes'][$fieldName]['calculated'] && $empty)
+						throw new ObjectException('cannot check as attribute "' . $this->_class . '.' . $fieldName . '" is empty');
+					if ($empty){
+						$where[] = 'o.'.$fieldName.'=?';
+						$args[] = null;
+					}else{
+						$where[] = 'o.'.$fieldName.'=?';
+						$args[] = $this->getAttribute($fieldName)->getValueForDatabase();
+					}
+			}
+			$ret = \CRUDsader\Instancer::getInstance()->query('FROM '.$this->_class.' o WHERE '.implode(' AND ',$where))->fetchAll($args);
 			return $ret;
 		}
 
