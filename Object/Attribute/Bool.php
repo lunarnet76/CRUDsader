@@ -53,7 +53,9 @@ namespace CRUDsader\Object\Attribute {
 
 		public function inputReceive($data = null)
 		{
-			$this->_value = $data == 'yes' ? true : false;
+			
+			$this->_value = $data === 'yes' ? true : false;
+			
 			$this->_inputReceived = true;
 			$this->notify();
 		}
