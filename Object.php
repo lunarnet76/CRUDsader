@@ -37,7 +37,7 @@ namespace CRUDsader {
 				throw new ObjectException('class "' . $className . '" does not exist');
 			foreach ($this->_infos['attributes'] as $attributeName => $attributeInfos) {
 				if (isset($attributeInfos['default'])) {
-					$this->getAttribute($attributeName)->inputReceiveDefault($attributeInfos['default']);
+					$this->getAttribute($attributeName)->setDefaultValue($attributeInfos['default']);
 				}
 			}
 		}
@@ -86,17 +86,11 @@ namespace CRUDsader {
 			$this->getAttribute($name)->setValueFromDatabase($value);
 		}
 
-		protected function _($attributeName)
-		{
-			$attr = $this->getAttribute($attributeName)->getInputValue();
-			return !isset($attr) ? '' : $attr;
-		}
-
 		public function generateRandom()
 		{
 			foreach ($this->_infos['attributes'] as $name => $v) {
 				if (!$v['calculated'])
-					$this->getAttribute($name)->inputReceive($this->getAttribute($name)->generateRandom());
+					$this->getAttribute($name)->setValueFromInput($this->getAttribute($name)->generateRandom());
 			}
 			if ($this->hasParent())
 				$this->getParent()->generateRandom();
@@ -137,7 +131,7 @@ namespace CRUDsader {
 				$html.='<div class="title">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . '.' . $base) . '</div>';
 			foreach ($this->_fields as $name => $attribute) {
 				if (($this->_infos['attributes'][$name]['html']))
-					$html.='<div class="row"><div class="label">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . '.attributes.' . $name) . '</div><div class="value">' . ($attribute->inputEmpty() ? '&nbsp;' : $attribute->toHumanReadable()) . '</div></div>';
+					$html.='<div class="row"><div class="label">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . '.attributes.' . $name) . '</div><div class="value">' . ($attribute->isEmpty() ? '&nbsp;' : $attribute->toHtml()) . '</div></div>';
 			}
 			if ($this->hasParent())
 				$html.=$this->getParent()->toHtml(false, $prefix, $allowedClasses, false);
@@ -210,10 +204,10 @@ namespace CRUDsader {
 		{
 			switch (true) {
 				case isset($this->_infos['attributes'][$var]):
-					$this->getAttribute($var)->inputReceive($value);
-					if (($this->getAttribute($var)->inputEmpty() && $this->_infos['attributes'][$var]['required']) || $this->getAttribute($var)->inputValid() !== true) {
+					$this->getAttribute($var)->setValueFromInput($value);
+					if (($this->getAttribute($var)->isEmpty() && $this->_infos['attributes'][$var]['required']) || $this->getAttribute($var)->isValid() !== true) {
 						// return to base value
-						$this->getAttribute($var)->inputReceive(null);
+						$this->getAttribute($var)->setValueFromInput(null);
 						throw new ObjectException('attribute "' . $var . '" cannot accept "' . $value . '" as a value');
 					}else
 						$this->_initialised = true;
@@ -232,21 +226,25 @@ namespace CRUDsader {
 		 */
 		public function save(\CRUDsader\Object\UnitOfWork $unitOfWork = null)
 		{
+			
 			if (!$this->_checkRequiredFields())
 				throw new ObjectException($this->_class . '.error.fields-required');
 			if ($this->_isModified || $this->_infos['definition']['abstract']) {
+				
 				if ($unitOfWork === null) {
 					$unitOfWork = \CRUDsader\Instancer::getInstance()->{'object.unitOfWork'};
 					$unitOfWorkToBeExecuted = true;
 				}
-
+				
 				// update
 				if ($this->hasParent())
 					$this->getParent()->save($unitOfWork);
 
 				$paramsToSave = $this->_getParamsForSave();
+				
 				// identity check
 				$this->validateForSave();
+				
 				if (!$this->_checkIdentity())
 					throw new ObjectException($this->_class . '.error.already-exists');
 				$db = \CRUDsader\Instancer::getInstance()->database;
@@ -259,6 +257,7 @@ namespace CRUDsader {
 					$unitOfWork->insert($this->_infos['definition']['databaseTable'], $paramsToSave, $this);
 					$unitOfWork->register($this->_class, $this->_isPersisted);
 				}
+				
 				$this->saveAssociations($unitOfWork);
 				if (isset($unitOfWorkToBeExecuted)) {
 					$unitOfWork->commit();
@@ -270,7 +269,7 @@ namespace CRUDsader {
 		{
 			foreach ($this->_infos['attributes'] as $attributeName => $attributeInfos) {
 				if ($attributeInfos['required']) {
-					if (!isset($this->_fields[$attributeName]) || $this->_fields[$attributeName]->inputEmpty()) {
+					if (!isset($this->_fields[$attributeName]) || $this->_fields[$attributeName]->isEmpty()) {
 
 						return false;
 					}
@@ -282,8 +281,10 @@ namespace CRUDsader {
 		public function isEmpty()
 		{
 			foreach ($this->_fields as $fieldName => $field) {
-				if (!$field->inputEmpty())
-					return false;
+				if (!$field->isEmpty()){
+					if(!isset($this->_infos['attributes'][$fieldName]['extra']))
+						return false;
+				}
 			}
 			foreach ($this->_associations as $association)
 				if (!$association->isEmpty())
@@ -307,9 +308,9 @@ namespace CRUDsader {
 				if (isset($attributeInfos['extra']))
 					continue;
 				$attribute = $this->getAttribute($name);
-				if ($attribute->inputEmpty() && $attributeInfos['required'])
+				if ($attribute->isEmpty() && $attributeInfos['required'])
 					throw new ObjectException('class needs attribute "' . $name . '" to be filled');
-				if (!$attribute->inputEmpty() && !$attribute->inputValid()) {
+				if (!$attribute->isEmpty() && !$attribute->isValid()) {
 					throw new ObjectException('class needs attribute "' . $name . '" to be valid');
 				}
 			}
@@ -349,9 +350,11 @@ namespace CRUDsader {
 		public function _getParamsForSave()
 		{
 			$ret = array();
+			if(!$this->_isPersisted)
+				$ret[$this->_infos['definition']['databaseIdField']] = isset($this->_parent)?$this->_parent->_isPersisted:\CRUDsader\Instancer::getInstance()->expression('NULL');
 			foreach ($this->_infos['attributes'] as $k => $attributeInfos) {
 				if ($attributeInfos['calculated']) {
-					$this->getAttribute($k)->inputReceiveDefault($ret[$attributeInfos['databaseField']] = $this->calculateAttribute($k));
+					$this->getAttribute($k)->setDefaultValue($ret[$attributeInfos['databaseField']] = $this->calculateAttribute($k));
 				} else if (isset($this->_fields[$k]) && !isset($this->_infos['attributes'][$k]['extra'])) {
 					$ret[$this->_infos['attributes'][$k]['databaseField']] = $this->_fields[$k]->getValueForDatabase();
 				}
@@ -378,7 +381,7 @@ namespace CRUDsader {
 			else
 				$where = array();
 			foreach ($this->_infos['definition']['identity'] as $fieldName) {
-					$empty = $this->getAttribute($fieldName)->inputEmpty();
+					$empty = $this->getAttribute($fieldName)->isEmpty();
 					if (!$this->_infos['attributes'][$fieldName]['calculated'] && $empty)
 						throw new ObjectException('cannot check as attribute "' . $this->_class . '.' . $fieldName . '" is empty');
 					if ($empty)
@@ -402,7 +405,7 @@ namespace CRUDsader {
 			}else
 				$args = $where = array();
 			foreach ($this->_infos['definition']['identity'] as $fieldName) {
-					$empty = $this->getAttribute($fieldName)->inputEmpty();
+					$empty = $this->getAttribute($fieldName)->isEmpty();
 					if (!$this->_infos['attributes'][$fieldName]['calculated'] && $empty)
 						throw new ObjectException('cannot check as attribute "' . $this->_class . '.' . $fieldName . '" is empty');
 					if ($empty){
@@ -482,7 +485,7 @@ namespace CRUDsader {
 		{
 			$ret = array();
 			foreach ($this->_fields as $name => $field) {
-				$ret[] = $field->inputEmpty() ? '' : $field->getValue();
+				$ret[] = $field->isEmpty() ? '' : $field->getValue();
 			}
 			return implode(',', $ret) . ($this->hasParent() ? ',' . $this->getParent()->__toString() : '');
 		}
@@ -574,11 +577,6 @@ namespace CRUDsader {
 			return !isset($v) ? $valueIsEmpty : $v;
 		}
 
-		public function readable($attributeName)
-		{
-			return $this->getAttribute($attributeName)->toHumanReadable();
-		}
-
 		public function getAttribute($name)
 		{
 			if (!isset($this->_fields[$name]) && isset($this->_infos['attributes'][$name]) && isset($this->_infos['attributes'][$name]['extra']) && $this->_infos['attributes'][$name]['extra']) {
@@ -593,25 +591,23 @@ namespace CRUDsader {
 				$this->_fields[$name] = new $class($name, $type['options']);
 				$this->_fields[$name]->attach($this);
 				if (isset($this->_infos['attributes'][$name]['default']))
-					$this->_fields[$name]->inputReceiveDefault($this->_infos['attributes'][$name]['default']);
+					$this->_fields[$name]->setDefaultValue($this->_infos['attributes'][$name]['default']);
 			}
 			return $this->_fields[$name];
 		}
 
 		// ** INTERFACE ** SplObserver
 		/**
-		 * @todo more test, such as if it's really the parent
 		 * @param \SplSubject $subject 
 		 */
 		public function update(\SplSubject $subject)
 		{
-			if (($subject instanceof \CRUDsader\Object\Attribute && !$subject->inputEmpty()) || $subject instanceof \CRUDsader\Object) {
+			
+			if (($subject instanceof \CRUDsader\Object\Attribute && $subject->isModified()) || $subject instanceof \CRUDsader\Object) {
 				$this->_isModified = true;
 				$this->_initialised = true;
 				if ($this->_linkedAssociation)
 					$this->_linkedAssociation->update($this);
-				if ($this->hasParent() && $subject != $this->getParent())
-					$this->getParent()->update($this);
 				if (isset($this->_child))
 					$this->_child->update($this);
 			}

@@ -12,8 +12,10 @@ namespace CRUDsader\Object\Attribute {
 		 * return true if valid, string or false otherwise
 		 * @return type 
 		 */
-		protected function _inputValid()
+		protected function isValid()
 		{
+			if (true!== $error = parent::isValid())
+				return $error;
 			$strict = !isset($this->_options['strict']) || $this->_options['strict'];
 			if (strlen($this->_value) > 320)
 				return 'error.email.tooLong';

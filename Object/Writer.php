@@ -58,8 +58,8 @@ namespace CRUDsader\Object {
 		public static function setModified(parent $object)
 		{
 			$object->_isModified = true;
-			if ($object->hasParent())
-				self::setModified($object->getParent());
+			if (isset($object->_child))
+				self::setModified($object->_child);
 		}
 
 		public static function linkToAssociation(parent $object, \CRUDsader\Object\Collection\Association $association)

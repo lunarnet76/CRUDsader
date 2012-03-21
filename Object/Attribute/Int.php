@@ -17,15 +17,14 @@ namespace CRUDsader\Object\Attribute {
 		return !isset($v) ? null : (int)$v;
 	}
 
-        protected function _inputValid() {
-            if ($this->_value instanceof \CRUDsader\Expression)
-                $ret=true;
-            else
-                 $ret=filter_var($this->_value, FILTER_VALIDATE_INT)!==false;
+        protected function isValid() {
+            if (true!== $error = parent::isValid())
+				return $error;
+	    $ret=filter_var($this->_value, FILTER_VALIDATE_INT)!==false;
             return $ret ? $ret : 'invalid';
         }
         
-        public function inputEmpty(){
+        public function isEmpty(){
             return empty($this->_value) && $this->_value!==0  && $this->_value!=='0';
         }
         

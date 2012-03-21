@@ -232,9 +232,9 @@ echo '<h1>line ' . __LINE__ . '  10-Form</h1>';
 $form = new \CRUDsader\Form('login');
 $login = $form->add(new CRUDsader\Form\Component);
 $password = $form->add(new CRUDsader\Form\Component\Password);
-if ($form->inputReceive() && $form->inputValid()) {
+if ($form->setValueFromInput() && $form->isValid()) {
     $log = \CRUDsader\Object::instance('log');
-    $log->text = 'login ' . $login->getInputValue() . ',' . $password->getInputValue();
+    $log->text = 'login ' . $login->getValue() . ',' . $password->getValue();
     $log->save();
     echo '<h3>line ' . __LINE__ . ' you have just registered a log from a form which is </h3><b>' . $log . '</b> with a date of <b>' . $log->date . '</b><br>';
 }else
@@ -243,7 +243,7 @@ if ($form->inputReceive() && $form->inputValid()) {
 // 11 AUTOMATIC FORM
 echo '<h1>line ' . __LINE__ . '  11-AUTOMATIC Form</h1>';
 $form = $log->getForm();
-if ($form->inputReceive() && $form->inputValid()) {
+if ($form->setValueFromInput() && $form->isValid()) {
     $log->save();
     echo '<h3>line ' . __LINE__ . ' you have just updated a log from a form which is </h3><b>' . $log . '</b> with a date of <b>' . $log->date . '</b><br>';
 }else
@@ -252,7 +252,7 @@ if ($form->inputReceive() && $form->inputValid()) {
 // 12 AUTOMATIC FORM with association
 echo '<h1>line ' . __LINE__ . '  12-AUTOMATIC Form with association</h1>';
 $form = $contact->getForm();
-if ($form->inputReceive() && $form->inputValid()) {
+if ($form->setValueFromInput() && $form->isValid()) {
     $contact->save();
     echo '<h3>line ' . __LINE__ . ' you have just updated a contact from a form which is </h3><b>' . $contact . '</b> <br>';
 }else
@@ -262,7 +262,7 @@ if ($form->inputReceive() && $form->inputValid()) {
 echo '<h1>line ' . __LINE__ . '  13-AUTOMATIC FORM specifying input</h1>';
 $log2 = \CRUDsader\Object::instance('log2');
 $form = $log2->getForm();
-if ($form->inputReceive() && $form->inputValid()) {
+if ($form->setValueFromInput() && $form->isValid()) {
     $log2->save();
     echo '<h3>line ' . __LINE__ . ' you have just updated a log from a form which is </h3><b>' . $log2 . '</b> <br>';
 }else

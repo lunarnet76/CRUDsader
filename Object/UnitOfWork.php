@@ -7,6 +7,7 @@
  */
 namespace CRUDsader\Object {
 	class UnitOfWork {
+		protected $_transactions = array();
 		protected $_transaction = false;
 		protected $_transacts = false;
 		protected $_fail = false;
@@ -23,18 +24,19 @@ namespace CRUDsader\Object {
 		public function insert($table, array $params, $object = null)
 		{
 			$this->_transaction = array($table, $params, $object);
+			$this->_transactions[] = array($table, $params);
 			$this->transact('insert');
 		}
 
 		public function update($table, array $params, $where = false)
 		{
-			$this->_transaction = array($table, $params, $where);
+			$this->_transactions[] = $this->_transaction = array($table, $params, $where);
 			$this->transact('update');
 		}
 
 		public function delete($table, $id)
 		{
-			$this->_transaction =  array($table, $id);
+			$this->_transactions[] = $this->_transaction =  array($table, $id);
 			$this->transact('delete');
 		}
 
@@ -43,11 +45,13 @@ namespace CRUDsader\Object {
 			$database = \CRUDsader\Instancer::getInstance()->database;
 			if (!$this->_transacts) {
 				$database->beginTransaction();
+				$this->_transacts = true;
 			}
 			if (!$this->_transaction)
 				return;
 			try{
 				$params = $this->_transaction;
+				
 				if ($type == 'insert') {
 					$database->insert($params[0], $params[1]);
 					if (isset($params[2])) {
@@ -66,8 +70,11 @@ namespace CRUDsader\Object {
 
 		public function commit()
 		{
-			if(!$this->_fail && $this->_transacts)
+			if(!$this->_fail && $this->_transacts){
 				\CRUDsader\Instancer::getInstance()->database->commit();
+				$this->_transacts = false;
+				$this->_fail = false;
+			}
 		}
 	}
 	class UnitOfWorkException extends \CRUDsader\Exception {

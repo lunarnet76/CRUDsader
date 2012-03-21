@@ -28,17 +28,17 @@ class Form_Test extends PHPUnit_Framework_TestCase {
                 'token' => $form->getSession()->token
             )
         );
-        $receive = $form->inputReceive();
-        $valid = $form->inputValid();
+        $receive = $form->setValueFromInput();
+        $valid = $form->isValid();
         $token = $form->checkToken();
         $this->assertEquals($receive, true);
         $this->assertEquals($valid, true);
         $this->assertEquals($token, true);
         if ($receive && $valid && $token) {
-            $this->assertEquals($i1->getInputValue(), 'i1v');
-            $this->assertEquals($i2->getInputValue(), 'i2v');
-            $this->assertEquals($i3->getInputValue(), 'i3v');
-            $this->assertEquals($i4->getInputValue(), 'i4v');
+            $this->assertEquals($i1->getValue(), 'i1v');
+            $this->assertEquals($i2->getValue(), 'i2v');
+            $this->assertEquals($i3->getValue(), 'i3v');
+            $this->assertEquals($i4->getValue(), 'i4v');
         }
 
         $_REQUEST = array(
@@ -54,8 +54,8 @@ class Form_Test extends PHPUnit_Framework_TestCase {
                 'token' => $form->getSession()->token
             )
         );
-        $receive = $form->inputReceive();
-        $valid = $form->inputValid();
+        $receive = $form->setValueFromInput();
+        $valid = $form->isValid();
         $token = $form->checkToken();
         $this->assertEquals($receive, true);
         $this->assertEquals($valid, false);
@@ -74,15 +74,15 @@ class Form_Test extends PHPUnit_Framework_TestCase {
                 'token' => ''
             )
         );
-        $receive = $form->inputReceive();
-        $valid = $form->inputValid();
+        $receive = $form->setValueFromInput();
+        $valid = $form->isValid();
         $token = $form->checkToken();
         $this->assertEquals($receive, true);
         $this->assertEquals($valid, false);
         $this->assertEquals($token, false);
 
         $_REQUEST = array();
-        $receive = $form->inputReceive();
+        $receive = $form->setValueFromInput();
         $this->assertEquals($receive, false);
     }
 }

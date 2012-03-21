@@ -8,13 +8,6 @@
 namespace CRUDsader\Object\Attribute {
     class DateTime extends \CRUDsader\Object\Attribute {
 
-        /**
-         * return true if valid, string or false otherwise
-         * @return type 
-         */
-        protected function _inputValid() {
-            return true;
-        }
 
         public function setValueFromDatabase($value) {
             if (isset($value)) {

@@ -12,10 +12,10 @@ namespace CRUDsader\Object\Attribute {
 		 * return true if valid, string or false otherwise
 		 * @return type 
 		 */
-		protected function _inputValid()
+		protected function isValid()
 		{
-			if (parent::_inputValid())
-				return true;
+			if (true!== $error = parent::isValid())
+				return $error;
 			if (!preg_match('|[0-9]*|', $this->_value))
 				return 'error.invalid';
 			return true;
@@ -33,7 +33,7 @@ namespace CRUDsader\Object\Attribute {
 		}
 		
 
-		public function toHumanReadable()
+		public function toHtml()
 		{
 			$v = $this->getValue();
 			return isset($v)?date('d/m/Y h:i', $v):'';
@@ -43,7 +43,7 @@ namespace CRUDsader\Object\Attribute {
 		{
 			if($this->_value instanceof \CRUDsader\Expression)
 				return $this->_value;
-			if ($this->inputEmpty())
+			if ($this->isEmpty())
 				return null;
 			
 			if(ctype_digit($this->_value))

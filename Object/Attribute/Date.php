@@ -12,10 +12,10 @@ namespace CRUDsader\Object\Attribute {
 		 * return true if valid, string or false otherwise
 		 * @return type 
 		 */
-		protected function _inputValid()
+		protected function isValid()
 		{
-			if (parent::_inputValid())
-				return true;
+			if (true!== $error = parent::isValid())
+				return $error;
 			if (!preg_match('|[0-9]{2}/[0-9]{2}/[0-9]{4}|', $this->_value))
 				return 'error.invalid';
 			return true;
@@ -47,7 +47,7 @@ namespace CRUDsader\Object\Attribute {
 
 		public function getValueForDatabase()
 		{
-			if ($this->inputEmpty())
+			if ($this->isEmpty())
 				return null;
 			$ex = explode('/', $this->_value);
 			switch (count($ex)) {
@@ -69,10 +69,10 @@ namespace CRUDsader\Object\Attribute {
 			return date("Y-m-d H:i:s", strtotime('- ' . rand(0, 1000) . ' days'));
 		}
 
-		public function toHtml()
+		public function toInput()
 		{
 			$this->_htmlAttributes['class'] = 'date';
-			return parent::toHtml();
+			return parent::toInput();
 		}
 	}
 }

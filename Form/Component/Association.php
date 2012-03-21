@@ -2,7 +2,7 @@
 namespace CRUDsader\Form\Component {
     class Association extends \CRUDsader\Form\Component {
 
-        public function toHtml(){
+        public function toInput(){
             $query=new \CRUDsader\Query('FROM '.$this->_options['class'].(\CRUDsader\Instancer::getInstance()->map->classHasParent($this->_options['class'])?',parent':''));
             $html='<select '.$this->getHtmlAttributesToHtml().' ><option value="">Select</option>';
             foreach($query->fetchAll() as $object){

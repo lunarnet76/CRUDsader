@@ -14,12 +14,8 @@ namespace CRUDsader\Object\Attribute {
 			return $value ? '1' : '0';
 		}
 
-		protected function _inputValid()
-		{
-			return true;
-		}
 
-		public function inputEmpty()
+		public function isEmpty()
 		{
 			return false;
 		}
@@ -37,12 +33,12 @@ namespace CRUDsader\Object\Attribute {
 			return isset($v) ? (boolean)$v: null;
 		}
 
-		public function toHumanReadable()
+		public function toHtml()
 		{
 			return $this->getValue() ? 'yes':'no';
 		}
 
-		public function toHtml()
+		public function toInput()
 		{
 			$this->_htmlAttributes['value'] = 'yes';
 			$this->_htmlAttributes['type'] = 'checkbox';
@@ -51,7 +47,7 @@ namespace CRUDsader\Object\Attribute {
 			return '<input ' . $this->getHtmlAttributesToHtml() . '/>';
 		}
 
-		public function inputReceive($data = null)
+		public function setValueFromInput($data = null)
 		{
 			
 			$this->_value = $data === 'yes' ? true : false;

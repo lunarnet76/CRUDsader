@@ -182,78 +182,61 @@ namespace CRUDsader {
 			return new \ArrayIterator($this->_components);
 		}
 
-		public function ok($data = null)
-		{
-			return $this->inputReceive($data = null) && $this->inputValid();
+		public function ok()
+		{	
+			$this->_inputReceived = isset($_REQUEST[$this->_htmlAttributes['name']]);
+			if($this->_inputReceived)
+				$this->setValueFromInput($_REQUEST[$this->_htmlAttributes['name']]);
+			return $this->inputReceived($_REQUEST) && $this->isValid();
 		}
 
 		/**
-		 * wether or not the form has received the data, meaning that at least one of its elements has been received
-		 * @param bool|null|array $request
-		 * @return <type>
+		 * set input data 
+		 * @param array $request
 		 */
-		public function inputReceive($data = null)
+		public function setValueFromInput(array $data = null)
 		{
-			$ret = true;
-			if ($data === null && !$this->hasInputParent()) {
-				$ret = isset($_REQUEST[$this->_htmlAttributes['name']]);
-				if (!$ret) {
-					$session = $this->_useSession;
-					if (!$session)
-						return false;
-				}
-				$data = $ret ? $_REQUEST[$this->_htmlAttributes['name']] : array();
-				if ($this->_session->count())
-					$ret = true;
-			}
-			$this->_isReceived = false;
-			if ($data === null) {
-				return false;
-			}
 			foreach ($this->_components as $index => $component) {
-				if (isset($data[$index])) {
+				if (isset($data[$index])) {// $_REQUEST
 					if ($this->_useSession) {
-						$component->inputReceive($data[$index]);
+						$component->setValueFromInput($data[$index]);
 						$this->_session->$index = $data[$index];
 					}else
-						$component->inputReceive($data[$index]);
-				} else if ($this->_useSession && isset($this->_session->$index)) {
+						$component->setValueFromInput($data[$index]);
+				} else if ($this->_useSession && isset($this->_session->$index)) {// session
 					if ($component->hasParameter('isCheckbox'))
-						$component->inputReceive(false);
+						$component->setValueFromInput(false);
 					else
-						$component->inputReceive($component instanceof self ? $this->_session->$index->toArray() : $this->_session->$index);
-				}else
-					$component->inputReceive(null);
+						$component->setValueFromInput($component instanceof self ? $this->_session->$index->toArray() : $this->_session->$index);
+				}
 			}
 			// token
 			if (isset($data['token'])) {
 				$this->_tokenInputReceived = $data['token'];
 			}
-			$this->_inputReceived = true;
-			return isset($session) ? false : $ret;
 		}
 
 		/**
 		 * check if there was error when receiving data (i.e. wrong data validation or missing data)
 		 * @return bool
 		 */
-		public function inputValid()
+		public function isValid()
 		{
 			$this->_errorComponentIndexes = array();
 			$ret = true;
-			if ($this->inputEmpty() && !$this->inputRequired()) {
+			if ($this->isEmpty() && !$this->inputRequired()) {
 				if ($this->_inputError !== false)
 					$this->_errorComponentIndexes['this'] = 'required';
 				return $ret && $this->_inputError === false;
 			}
 			foreach ($this->_components as $name => $component) {
-				if ($component->inputEmpty()) {
+				if ($component->isEmpty()) {
 					if ($component->inputRequired()) {
 						$this->_errorComponentIndexes[$name] = 'error.form.required';
 						$component->setInputError('error.form.required');
 						$ret = false;
 					}
-				} else if (true !== $error = $component->inputValid()) {
+				} else if (true !== $error = $component->isValid()) {
 					$this->_errorComponentIndexes[$name] = $error;
 					$component->setInputError($error);
 					$ret = false;
@@ -285,10 +268,10 @@ namespace CRUDsader {
 		 * wether all the form components are empty
 		 * @return <type>
 		 */
-		public function inputEmpty()
+		public function isEmpty()
 		{
 			foreach ($this->_components as $name => $component)
-				if (!$component->inputEmpty() && !$component instanceof \CRUDsader\Form\Component\Submit)
+				if (!$component->isEmpty() && !$component instanceof \CRUDsader\Form\Component\Submit)
 					return false;
 			return true;
 		}
@@ -306,7 +289,7 @@ namespace CRUDsader {
 		}
 		/* OUPUTS ************************ */
 
-		public function toHtml()
+		public function toInput()
 		{
 			$html = $this->htmlTag() . ($this->_htmlLabel ? $this->wrapHtml($this->_htmlLabel, 'title') : '') . $this->htmlError();
 			foreach ($this->_components as $index => $component) {
@@ -345,9 +328,9 @@ namespace CRUDsader {
 		public function htmlRow(\CRUDsader\Form\Component $component)
 		{
 			if ($component instanceof self)
-				return $component->toHtml();
+				return $component->toInput();
 			$error = $component->getInputError();
-			return $this->wrapHtml(($component->_htmlLabel === false ? '' : $component->labeltoHtml()) . $this->wrapHtml($component->toHtml(), 'component') . (!$error ? '' : $this->wrapHtml(\CRUDsader\Instancer::getInstance()->i18n->translate($error), 'error')), 'row');
+			return $this->wrapHtml(($component->_htmlLabel === false ? '' : $component->labeltoHtml()) . $this->wrapHtml($component->toInput(), 'component') . (!$error ? '' : $this->wrapHtml(\CRUDsader\Instancer::getInstance()->i18n->translate($error), 'error')), 'row');
 		}
 
 		/** ACCESSORS ************************* */
