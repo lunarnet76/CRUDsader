@@ -14,6 +14,8 @@ namespace CRUDsader\Object\Attribute {
 		 */
 		protected function isValid()
 		{
+			if($this->_value instanceof \CRUDsader\Expression)
+				return true;
 			if (true!== $error = parent::isValid())
 				return $error;
 			if (!preg_match('|[0-9]{2}/[0-9]{2}/[0-9]{4}|', $this->_value))
