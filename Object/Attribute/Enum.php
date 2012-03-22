@@ -8,7 +8,7 @@
 namespace CRUDsader\Object\Attribute {
 	class Enum extends \CRUDsader\Object\Attribute {
 
-		protected function isValid()
+		public function isValid()
 		{
 			if (true!== $error = parent::isValid())
 				return $error;

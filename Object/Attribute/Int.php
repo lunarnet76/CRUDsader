@@ -17,7 +17,7 @@ namespace CRUDsader\Object\Attribute {
 		return !isset($v) ? null : (int)$v;
 	}
 
-        protected function isValid() {
+        public function isValid() {
             if (true!== $error = parent::isValid())
 				return $error;
 	    $ret=filter_var($this->_value, FILTER_VALIDATE_INT)!==false;
