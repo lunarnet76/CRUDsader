@@ -114,6 +114,8 @@ namespace CRUDsader\Database\Profiler {
                 .profiler{
                     font-size: 12px;
                     border:2px solid black;
+		    background: white;
+		    color: #666 !important;
                 }
                 .log{
                     padding: 15px;

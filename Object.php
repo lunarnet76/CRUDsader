@@ -86,18 +86,20 @@ namespace CRUDsader {
 			$this->getAttribute($name)->setValueFromDatabase($value);
 		}
 
-		public function generateRandom($deep = true)
+		public function generateRandom()
 		{
 			foreach ($this->_infos['attributes'] as $name => $v) {
 				if (!$v['calculated'])
 					$this->getAttribute($name)->setValueFromInput($this->getAttribute($name)->generateRandom($this));
 			}
 			if ($this->hasParent())
-				$this->getParent()->generateRandom($deep);
-			if($deep)
-				foreach ($this->_infos['associations'] as $name => $v) {
+				$this->getParent()->generateRandom();
+			
+			foreach ($this->_infos['associations'] as $name => $v) {
+				
 					$this->getAssociation($name)->generateRandom();
-				}
+				
+			}
 		}
 
 		public function getPolymorphismClass()

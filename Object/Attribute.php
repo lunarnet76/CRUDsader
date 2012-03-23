@@ -94,7 +94,7 @@ namespace CRUDsader\Object {
 		 */
 		public function generateRandom($object = null)
 		{
-			return base_convert(rand(10e16, 10e20), 10, 36);
+			return '{'.base_convert(rand(10e16, 10e20), 10, 36).'}';
 		}
 	}
 }

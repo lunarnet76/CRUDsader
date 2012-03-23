@@ -52,7 +52,7 @@ namespace CRUDsader\Object\Collection {
 			
 			for ($i = 0; $i < $max; $i++) {
 				if ($this->_definition['composition']) {
-					$this->newObject()->generateRandom(true);
+					$this->newObject()->generateRandom();
 					$this->_isModified = true;
 				} else {
 					$query = \CRUDsader\Instancer::getInstance()->query('FROM ' . $this->_definition['to'] . ' ORDER BY ? LIMIT 1');
@@ -61,10 +61,9 @@ namespace CRUDsader\Object\Collection {
 						$this->_objects[$i] = $found;
 						$this->_isModified = true;
 					} else {
-						$object = $this->newObject();
-						if(!$object->hasParent())
-						$object->generateRandom(false);
-						$this->_isModified = true;
+						/*$object = $this->newObject();
+						$object->generateRandom();
+						$this->_isModified = true;*/
 					}
 				}
 			}
@@ -92,6 +91,7 @@ namespace CRUDsader\Object\Collection {
 			// check
 			$cnt = 0;
 			$db = \CRUDsader\Instancer::getInstance()->database;
+				
 			if ($this->_isModified) {
 				foreach ($this->_objects as $index => $object) {
 					if (isset($this->_objectsToBeDeleted[$index])) {
@@ -259,17 +259,20 @@ namespace CRUDsader\Object\Collection {
 		public function update(\SplSubject $component)
 		{
 			if ($component instanceof \CRUDsader\Form\Component && $component->hasParameter('compositionIndex')) {
+				
 				$index = $component->getParameter('compositionIndex');
 				$value = $component->getValue();
 				$empty = $component->isEmpty();
 				if (!$empty && isset($this->_formValues[$value]))
 					throw new AssociationException($this->_class . '_duplicates');
 				$target = $this->_objects[$index];
+				
 				// has the target changed ???
 				if ($target->isPersisted()) {
 					if ($empty) {// delete the object. in DB as well
 						$this->_objectsToBeDeleted[$index] = true;
 						$this->_isModified = true;
+						\CRUDsader\Object\Writer::setModified($this->_linkedObject);
 					} else
 					if ($value != $target->isPersisted()) {// replace by proxy
 						unset($this->_objects[$index]);
@@ -277,6 +280,7 @@ namespace CRUDsader\Object\Collection {
 							unset($this->_objectIndexes[$target->isPersisted()]);
 						$this->_objects[$index] = \CRUDsader\Instancer::getInstance()->{'object.proxy'}($this->_class, $component->getValue());
 						$this->_isModified = true;
+						\CRUDsader\Object\Writer::setModified($this->_linkedObject);
 					}
 				}else if ($empty) {// delete object
 					unset($this->_objects[$index]);
@@ -285,8 +289,9 @@ namespace CRUDsader\Object\Collection {
 					unset($this->_objects[$index]);
 					if (isset($this->_objectIndexes[$target->isPersisted()]))
 						unset($this->_objectIndexes[$target->isPersisted()]);
-					$this->_objects[$index] = \CRUDsader\Instancer::getInstance()->{'object.proxy'}($this->_class, $component->getValue());
+					$this->_objects[$index] = \CRUDsader\Instancer::getInstance()->{'object.proxy'}($this->_class, $value);
 					$this->_isModified = true;
+					\CRUDsader\Object\Writer::setModified($this->_linkedObject);
 				}
 			}
 			if ($component instanceof \CRUDsader\Object) {
