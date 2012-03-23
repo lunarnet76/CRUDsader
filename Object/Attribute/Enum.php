@@ -32,7 +32,16 @@ namespace CRUDsader\Object\Attribute {
 
 		public function isEmpty()
 		{
-			return !isset($this->_value) || $this->_value == -1;
+			return null === $this->_value || $this->_value == -1;
+		}
+		
+		public function getValueForDatabase(){
+			return $this->_options['choices'][$this->_value];
+		}
+		
+		public function generateRandom(){
+			$ret = rand(0,count($this->_options['choices'])-1);
+			return $ret;
 		}
 	}
 }

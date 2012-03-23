@@ -9,9 +9,9 @@ namespace CRUDsader\Object\Attribute {
 	class Bool extends \CRUDsader\Object\Attribute {
 		protected $_parameters = array('isCheckbox' => true);
 
-		public function formatForDatabase($value)
+		public function getValueForDatabase()
 		{
-			return $value ? '1' : '0';
+			return $this->_value ? '1' : '0';
 		}
 
 
@@ -58,7 +58,7 @@ namespace CRUDsader\Object\Attribute {
 
 		public function generateRandom()
 		{
-			return rand(0, 1);
+			return rand(0, 1) == 1 ?'yes':'no';
 		}
 	}
 }

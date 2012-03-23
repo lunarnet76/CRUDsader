@@ -92,7 +92,7 @@ namespace CRUDsader\Object {
 		 * generate a random value for the attribute
 		 * @return string
 		 */
-		public function generateRandom()
+		public function generateRandom($object = null)
 		{
 			return base_convert(rand(10e16, 10e20), 10, 36);
 		}

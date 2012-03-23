@@ -12,7 +12,7 @@ namespace CRUDsader\Object\Attribute {
 		 * return true if valid, string or false otherwise
 		 * @return type 
 		 */
-		protected function isValid()
+		public function isValid()
 		{
 			if (true!== $error = parent::isValid())
 				return $error;
