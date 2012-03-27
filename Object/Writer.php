@@ -11,7 +11,7 @@ namespace CRUDsader\Object {
 		public static function write(parent $object, $id, $alias, &$rows, &$fields, &$mapFields, &$extraColumns = false)
 		{
 			$map = \CRUDsader\Instancer::getInstance()->map;
-			if (!$object->_initialised) {
+			//if (!$object->_initialised) {
 				$object->_isPersisted = $id;
 				\CRUDsader\Object\IdentityMap::add($object);
 				$object->_initialised = true;
@@ -34,7 +34,7 @@ namespace CRUDsader\Object {
 							$object->_linkedAssociationId = $rows[0][$mapFields[$alias]['from'] - 3];
 					}
 				}
-			}
+			//}
 			// parent
 			$parentClassAlias = $alias . '_parent';
 			if (isset($mapFields[$parentClassAlias])) {

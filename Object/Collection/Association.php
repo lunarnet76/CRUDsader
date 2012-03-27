@@ -33,23 +33,27 @@ namespace CRUDsader\Object\Collection {
 
 		public function offsetSet($index, $value)
 		{
-			if (!isset($this->_objects[$index]) && $this->_definition['max'] != '*' && $this->_iterator == $this->_definition['max'])
-				throw new AssociationException('association "' . $this->_definition['to'] . '" cannot have more than "' . $this->_definition['max'] . '" objects');
-			$value = parent::offsetSet($index, $value);
-			\CRUDsader\Object\Writer::linkToAssociation($value, $this);
-			\CRUDsader\Object\Writer::setModified($this->_linkedObject);
+			if (!$value instanceof \CRUDsader\Object) {
+				$this->offsetSet($index,\CRUDsader\Instancer::getInstance()->{'object.proxy'}($this->_class,$value));
+			} else {
+				if (!isset($this->_objects[$index]) && $this->_definition['max'] != '*' && $this->_iterator == $this->_definition['max'])
+					throw new AssociationException('association "' . $this->_definition['to'] . '" cannot have more than "' . $this->_definition['max'] . '" objects');
+				$value = parent::offsetSet($index, $value);
+				\CRUDsader\Object\Writer::linkToAssociation($value, $this);
+				\CRUDsader\Object\Writer::setModified($this->_linkedObject);
 
-			$this->_isModified = true;
-			return $value;
+				$this->_isModified = true;
+				return $value;
+			}
 		}
 
 		public function generateRandom()
 		{
-			$max = rand((int) $this->_definition['min'],$this->_definition['max'] == '*'?'3': (int) $this->_definition['max']);
+			$max = rand((int) $this->_definition['min'], $this->_definition['max'] == '*' ? '3' : (int) $this->_definition['max']);
 			$this->_objects = array();
 			$this->_initialised = true;
 			$this->rewind();
-			
+
 			for ($i = 0; $i < $max; $i++) {
 				if ($this->_definition['composition']) {
 					$this->newObject()->generateRandom();
@@ -61,9 +65,9 @@ namespace CRUDsader\Object\Collection {
 						$this->_objects[$i] = $found;
 						$this->_isModified = true;
 					} else {
-						/*$object = $this->newObject();
-						$object->generateRandom();
-						$this->_isModified = true;*/
+						/* $object = $this->newObject();
+						  $object->generateRandom();
+						  $this->_isModified = true; */
 					}
 				}
 			}
@@ -91,7 +95,7 @@ namespace CRUDsader\Object\Collection {
 			// check
 			$cnt = 0;
 			$db = \CRUDsader\Instancer::getInstance()->database;
-				
+
 			if ($this->_isModified) {
 				foreach ($this->_objects as $index => $object) {
 					if (isset($this->_objectsToBeDeleted[$index])) {
@@ -259,14 +263,14 @@ namespace CRUDsader\Object\Collection {
 		public function update(\SplSubject $component)
 		{
 			if ($component instanceof \CRUDsader\Form\Component && $component->hasParameter('compositionIndex')) {
-				
+
 				$index = $component->getParameter('compositionIndex');
 				$value = $component->getValue();
 				$empty = $component->isEmpty();
 				if (!$empty && isset($this->_formValues[$value]))
 					throw new AssociationException($this->_class . '_duplicates');
 				$target = $this->_objects[$index];
-				
+
 				// has the target changed ???
 				if ($target->isPersisted()) {
 					if ($empty) {// delete the object. in DB as well
