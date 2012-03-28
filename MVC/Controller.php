@@ -193,7 +193,6 @@ namespace CRUDsader\MVC {
 			$this->preRender();
 			if ($this->_template) {
 				$file = $this->_dependencies['frontController']->getApplicationPath() . $this->_dependencies['router']->getModule() . '/view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
-				
 				$path = file_exists($file) ? $file : $this->_dependencies['frontController']->getApplicationPath() . 'view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
 				require($path);
 			}else
