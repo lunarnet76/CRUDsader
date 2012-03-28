@@ -36,8 +36,6 @@ namespace CRUDsader {
 		 */
 		protected $_toArray = array('_map');
 
-	
-
 		/**
 		 * @param Block $configuration
 		 */
@@ -84,9 +82,15 @@ namespace CRUDsader {
 		{
 			return $this->_map['attributeTypes']['default'];
 		}
-		
-		public function classGetFieldAttributeIdType(){
-			return $this->_map['attributeTypes']['id'];
+
+		public function classGetFieldAttributeIdType()
+		{
+			return array('class' => 'ID',
+			    'phpNamespace' => '\\CRUDsader\\Object\\Attribute\\',
+			    'databaseType' => 'INT',
+			    'length' => 10,
+			    'options' => array()
+			);
 		}
 
 		public function classGetModelClass($className)
@@ -97,8 +101,8 @@ namespace CRUDsader {
 		public function classGetSearchableFields($className)
 		{
 			$ret = array();
-			if(!empty($this->_map['classes'][$className]['attributes']))
-				foreach ($this->_map['classes'][$className]['attributes'] as $attributeName => $attributeInfos){
+			if (!empty($this->_map['classes'][$className]['attributes']))
+				foreach ($this->_map['classes'][$className]['attributes'] as $attributeName => $attributeInfos) {
 
 					if ($attributeInfos['searchable'])
 						$ret[] = $attributeName;
@@ -122,11 +126,11 @@ namespace CRUDsader {
 		public function validate()
 		{
 			$ret = $this->_dependencies['loader']->validate($this->_configuration->defaults);
-			if($ret === true){
-				foreach($this->_map['classes'] as $className=>$classInfo){
-					foreach($classInfo['associations'] as $associationName=>$associationInfos){
-						if(!preg_match('|^[a-zA-Z_0-9]*$|',$associationName))
-							return '"'.$className.'" association name "'.$associationName.'" is not valid, must be [a-zA-Z_0-9]';
+			if ($ret === true) {
+				foreach ($this->_map['classes'] as $className => $classInfo) {
+					foreach ($classInfo['associations'] as $associationName => $associationInfos) {
+						if (!preg_match('|^[a-zA-Z_0-9]*$|', $associationName))
+							return '"' . $className . '" association name "' . $associationName . '" is not valid, must be [a-zA-Z_0-9]';
 					}
 				}
 			}
@@ -159,7 +163,7 @@ namespace CRUDsader {
 
 		public function classGetDatabaseTableField($className, $attributeName)
 		{
-			if(!isset($this->_map['classes'][$className]['attributes'][$attributeName]) && isset($this->_map['classes'][$className]['attributesReversed'][$attributeName])){// fks
+			if (!isset($this->_map['classes'][$className]['attributes'][$attributeName]) && isset($this->_map['classes'][$className]['attributesReversed'][$attributeName])) {// fks
 				return $this->_map['classes'][$className]['attributesReversed'][$attributeName];
 			}
 			return $attributeName == 'id' ? $this->_map['classes'][$className]['definition']['databaseIdField'] : $this->_map['classes'][$className]['attributes'][$attributeName]['databaseField'];
@@ -259,7 +263,7 @@ namespace CRUDsader {
 					    'joinField' => $this->_map['classes'][$className]['definition']['databaseIdField'], // id
 					    'type' => 'left'
 					);
-					
+
 					$joins['table'] = array(
 					    'table' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
 					    'alias' => $joinedAlias,
@@ -284,41 +288,39 @@ namespace CRUDsader {
 			$classes = $this->_map['classes'];
 
 			$ret = array();
-				
+
 
 			foreach ($classes as $name => $definition) {
-				
+
 				$ret[$name] = array();
 				$ret[$name][] = 'string polymorphism';
 				$ret[$name][] = 'string id';
-				
-				if(!empty($definition['attributes']))
+
+				if (!empty($definition['attributes']))
 					foreach ($definition['attributes'] as $attributeName => $attributeDefinition) {
 						$type = $this->_map['attributeTypes'][$attributeDefinition['type']];
 						$ret[$name][$attributeName] = (isset($type['options']['dotnetcast']) ? $type['options']['dotnetcast'] : 'string') . ' ' . $attributeName;
 					}
-				if(!empty($definition['associations']))
-				foreach ($definition['associations'] as $associationName => $associationDefinition) {
-					if ($associationDefinition['reference'] == 'internal') {
-						$ret[$name][$associationDefinition['to']] = $associationDefinition['to'] . ' ' . ($associationDefinition['to'] == $name ? 'parent':$associationDefinition['to']);
-					} else {
-						$ret[$associationDefinition['to']][$name] = $name . ' ' . $name;
+				if (!empty($definition['associations']))
+					foreach ($definition['associations'] as $associationName => $associationDefinition) {
+						if ($associationDefinition['reference'] == 'internal') {
+							$ret[$name][$associationDefinition['to']] = $associationDefinition['to'] . ' ' . ($associationDefinition['to'] == $name ? 'parent' : $associationDefinition['to']);
+						} else {
+							$ret[$associationDefinition['to']][$name] = $name . ' ' . $name;
+						}
 					}
-				}
-				
-				
 			}
-			$lines = array('using System.Runtime.Serialization;' . PHP_EOL .'using System.Collections.Generic;'.PHP_EOL. 'namespace ' . $appPackage . '{' . PHP_EOL);
+			$lines = array('using System.Runtime.Serialization;' . PHP_EOL . 'using System.Collections.Generic;' . PHP_EOL . 'namespace ' . $appPackage . '{' . PHP_EOL);
 
 			foreach ($ret as $className => $classMembers) {
 				$lines[] = PHP_EOL . PHP_EOL . '	[DataContract]' . PHP_EOL . '	public class ' . $className . '{' . PHP_EOL;
 				foreach ($classMembers as $name)
 					$lines[] = '		[DataMember]' . PHP_EOL . '		public ' . $name . ';' . PHP_EOL;
 				$lines[] = '	}';
-				$lines[] = PHP_EOL . PHP_EOL . '	[DataContract]' . PHP_EOL . '	public class ' . $className . 's{' . PHP_EOL.PHP_EOL.'		[DataMember]'.PHP_EOL.'		public List&lt;'.$className.'> '.$className.';'.PHP_EOL.'	}'.PHP_EOL;
+				$lines[] = PHP_EOL . PHP_EOL . '	[DataContract]' . PHP_EOL . '	public class ' . $className . 's{' . PHP_EOL . PHP_EOL . '		[DataMember]' . PHP_EOL . '		public List&lt;' . $className . '> ' . $className . ';' . PHP_EOL . '	}' . PHP_EOL;
 			}
 			$lines[] = '}';
-			
+
 
 			return $lines;
 		}
