@@ -30,7 +30,7 @@ namespace CRUDsader\Object\Attribute {
 		public function getValue()
 		{
 			$v = parent::getValue();
-			return isset($v) ? (boolean)$v: null;
+			return isset($v) ? (boolean)$v: false;
 		}
 
 		public function toHtml()
