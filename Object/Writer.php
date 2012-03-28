@@ -10,7 +10,9 @@ namespace CRUDsader\Object {
 
 		public static function write(parent $object, $id, $alias, &$rows, &$fields, &$mapFields, &$extraColumns = false)
 		{
+			//pre($mapFields);
 			$map = \CRUDsader\Instancer::getInstance()->map;
+		
 			//if (!$object->_initialised) {
 				$object->_isPersisted = $id;
 				\CRUDsader\Object\IdentityMap::add($object);
@@ -36,7 +38,7 @@ namespace CRUDsader\Object {
 				}
 			//}
 			// parent
-			$parentClassAlias = $alias . '_parent';
+			$parentClassAlias = $alias . '.parent';
 			if (isset($mapFields[$parentClassAlias])) {
 				if (!isset($object->_parent)) {
 					$parentClass = $map->classGetParent($object->_class);
@@ -48,9 +50,11 @@ namespace CRUDsader\Object {
 			}
 			
 			// associations
+			
 			foreach ($object->_infos['associations'] as $name => $associationInfos) {
-				if (isset($mapFields[$alias . '_' . $name])) {
-					\CRUDsader\Object\Collection\Association\Writer::write($object->getAssociation($name), $alias . '_' . $name, $rows, $fields, $mapFields, $extraColumns);
+				//pre($alias . '.' . $name);
+				if (isset($mapFields[$alias . '.' . $name])) {
+					\CRUDsader\Object\Collection\Association\Writer::write($object->getAssociation($name), $alias . '.' . $name, $rows, $fields, $mapFields, $extraColumns);
 				}
 			}
 		}

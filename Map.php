@@ -117,11 +117,20 @@ namespace CRUDsader {
 
 		/**
 		 * validate the schema
-		 * @return bool 
+		 * @return true|error 
 		 */
 		public function validate()
 		{
-			return $this->_dependencies['loader']->validate($this->_configuration->defaults);
+			$ret = $this->_dependencies['loader']->validate($this->_configuration->defaults);
+			if($ret === true){
+				foreach($this->_map['classes'] as $className=>$classInfo){
+					foreach($classInfo['associations'] as $associationName=>$associationInfos){
+						if(!preg_match('|^[a-zA-Z_0-9]*$|',$associationName))
+							return '"'.$className.'" association name "'.$associationName.'" is not valid, must be [a-zA-Z_0-9]';
+					}
+				}
+			}
+			return $ret;
 		}
 
 		public function extract()

@@ -102,7 +102,7 @@ namespace CRUDsader {
 						$classToParentAlias[$fromClass] = $joinedAlias;
 						// map fields
 						$countFieldsFrom+=$countFields = $this->_map->classGetAttributeCount($join['table']['class']);
-						$mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '_' . $associationName;
+						$mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '.' . $associationName;
 						$mapFields[$mapFieldsAlias[$joinedAlias]] = array('from' => $countFieldsFrom - $countFields, 'to' => $countFieldsFrom);
 					} else {
 						try {
@@ -113,15 +113,17 @@ namespace CRUDsader {
 								$sql['joins'][] = ($join['association']);
 								// map fields
 								$countFieldsFrom+=$countFields = 3;
-								$mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '_' . $associationName . '_association';
+								$mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '.' . $associationName . '_association';
 								$mapFields[$mapFieldsAlias[$joinedAlias]] = array('from' => $countFieldsFrom - $countFields, 'to' => $countFieldsFrom);
 							}
 							$sql['joins'][] = ($join['table']);
 							// aliases
 							$alias2class[$joinedAlias] = $join['table']['class'];
 							// map fields
+							
+						
 							$countFieldsFrom+=$countFields = $this->_map->classGetAttributeCount($join['table']['class']);
-							$mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '_' . $associationName;
+							$mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '.' . $associationName;
 							$mapFields[$mapFieldsAlias[$joinedAlias]] = array('from' => $countFieldsFrom - $countFields, 'to' => $countFieldsFrom);
 						} catch (MapException $e) {
 							$found = false;
@@ -133,7 +135,7 @@ namespace CRUDsader {
 									$sql['joins'][] = ($join['table']);
 									// map fields
 									$countFieldsFrom+=$countFields = $this->_map->classGetAttributeCount($join['table']['class']);
-									$mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '_' . $join['table']['class'];
+									$mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '.' . $join['table']['class'];
 									$mapFields[$mapFieldsAlias[$joinedAlias]] = array('from' => $countFieldsFrom - $countFields, 'to' => $countFieldsFrom);
 								}else
 									$fromAlias = $classToParentAlias[$fromClass];
@@ -146,14 +148,14 @@ namespace CRUDsader {
 										$sql['joins'][] = ($join['association']);
 										// map fields
 										$countFieldsFrom+=$countFields = 3;
-										$mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '_' . $associationName . '_association';
+										$mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '.' . $associationName . '_association';
 										$mapFields[$mapFieldsAlias[$joinedAlias]] = array('from' => $countFieldsFrom - $countFields, 'to' => $countFieldsFrom);
 									}
 									$sql['joins'][] = ($join['table']);
 									$alias2class[$joinedAlias] = $join['table']['class'];
 									// map fields
 									$countFieldsFrom+=$countFields = $this->_map->classGetAttributeCount($join['table']['class']);
-									$mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '_' . $associationName;
+									$mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '.' . $associationName;
 									$mapFields[$mapFieldsAlias[$joinedAlias]] = array('from' => $countFieldsFrom - $countFields, 'to' => $countFieldsFrom);
 								}
 								$fromAlias = $joinedAlias;
@@ -190,6 +192,7 @@ namespace CRUDsader {
 			$this->_mapFields = $mapFields;
 			$this->_mapFieldsAlias = $mapFieldsAlias;
 			$this->_sql = $sql;
+			
 			return $this->_infos = array('sql' => $this->_sql, 'oql' => $this->_oql, 'mapFields' => $this->_mapFields, 'alias2class' => $this->_alias2class);
 		}
 
@@ -236,13 +239,13 @@ namespace CRUDsader {
 		{
 			if (!isset($options['index']))
 				throw new QueryException($this->_oql, 'you must specify the index option');
-			$session = \CRUDsader\Session::useNamespace('\\CRUDsader\\Query\\' . $options['index']);
 			$this->_prefetch($args, true);
 			return new \CRUDsader\Query\Pagination($this, $options, $args);
 		}
 
 		protected function _prefetch($args = NULL, $all = true)
 		{
+			
 			$this->_argsIndex = -1;
 			$this->getInfos();
 			if (!is_array($args))
@@ -276,6 +279,7 @@ namespace CRUDsader {
 				$aliases = $this->_mapFieldsAlias;
 				$extraColumns = array();
 				$this->_sql['select'] = preg_replace_callback('|([\w]+)\.([\?\#])?([\w\*]+)|', function($p) use($alias2class, $map, $aliases, &$newMapFields, &$index, &$sql, &$extraColumns) {
+					
 						// special case : floats
 						if (ctype_digit($p[1]))
 							return $p[0];
@@ -292,6 +296,7 @@ namespace CRUDsader {
 							}
 						}
 
+						
 						$indexPlus = ($p[3] == '*' ? $map->classGetAttributeCount($alias2class[$p[1]]) : 1);
 
 						if (!isset($newMapFields[$aliases[$p[1]]]))

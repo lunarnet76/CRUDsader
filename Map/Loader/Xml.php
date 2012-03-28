@@ -39,6 +39,7 @@ namespace CRUDsader\Map\Loader {
          * @return true|array array of errors
          */
         public function validate(\CRUDsader\Block $defaults=null) {
+		
             return true;
         }
 
