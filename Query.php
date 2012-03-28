@@ -69,6 +69,7 @@ namespace CRUDsader {
 			if (false === $this->_splitOql())
 				throw new QueryException($this->_oql, 'parse error : ' . $this->explainError());
 			$this->_map = \CRUDsader\Instancer::getInstance()->map;
+			
 			// FROM
 			$this->_class = $className = $this->_matches[2];
 			if (!$this->_map->classExists($this->_class))
@@ -121,7 +122,6 @@ namespace CRUDsader {
 							$alias2class[$joinedAlias] = $join['table']['class'];
 							// map fields
 							
-						
 							$countFieldsFrom+=$countFields = $this->_map->classGetAttributeCount($join['table']['class']);
 							$mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '.' . $associationName;
 							$mapFields[$mapFieldsAlias[$joinedAlias]] = array('from' => $countFieldsFrom - $countFields, 'to' => $countFieldsFrom);

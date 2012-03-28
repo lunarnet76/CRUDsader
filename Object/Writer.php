@@ -10,7 +10,6 @@ namespace CRUDsader\Object {
 
 		public static function write(parent $object, $id, $alias, &$rows, &$fields, &$mapFields, &$extraColumns = false)
 		{
-			//pre($mapFields);
 			$map = \CRUDsader\Instancer::getInstance()->map;
 		
 			//if (!$object->_initialised) {
