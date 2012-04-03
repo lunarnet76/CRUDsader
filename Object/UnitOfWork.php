@@ -55,7 +55,7 @@ namespace CRUDsader\Object {
 				if ($type == 'insert') {
 					$database->insert($params[0], $params[1]);
 					if (isset($params[2])) {
-						$params[2]->setId($database->last_insert_id());
+						$params[2]->setId($database->last_insert_id(),$this);
 					}
 				} elseif ($type == 'delete')
 					$database->delete($params[0], $params[1]);

@@ -330,7 +330,7 @@ namespace CRUDsader {
 			if ($component instanceof self)
 				return $component->toInput();
 			$error = $component->getInputError();
-			return $this->wrapHtml(($component->_htmlLabel === false ? '' : $component->labeltoHtml()) . $this->wrapHtml($component->toInput(), 'component') . (!$error ? '' : $this->wrapHtml(\CRUDsader\Instancer::getInstance()->i18n->translate($error), 'error')), 'row');
+			return $this->wrapHtml(($component->_htmlLabel === false ? '' : $component->labeltoHtml()) . $this->wrapHtml($component->toInput(), 'component'.($error?' component_error':'')) . (!$error ? '' : $this->wrapHtml(\CRUDsader\Instancer::getInstance()->i18n->translate($error), 'error')), 'row');
 		}
 
 		/** ACCESSORS ************************* */

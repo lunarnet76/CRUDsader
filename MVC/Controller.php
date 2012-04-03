@@ -86,6 +86,10 @@ namespace CRUDsader\MVC {
 		public function getCurrentURL(){
 			return $this->_dependencies['router']->url(null).  '?'.http_build_query($_GET);
 		}
+		
+		public function getBaseHref(){
+			return $this->_configuration->baseRewrite;
+		}
 
 		/** INFOS * */
 		public function getControllerURL()

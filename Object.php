@@ -21,6 +21,7 @@ namespace CRUDsader {
 		protected $_child;
 		protected $_isPersisted = false;
 		protected $_infos;
+		protected $_saveId=false;
 		protected $_fields = array();
 		protected $_associations = array();
 		protected $_observers = array();
@@ -117,9 +118,12 @@ namespace CRUDsader {
 			return $this->isPersisted();
 		}
 
-		public function setId($id)
+		public function setId($id,$setter=null)
 		{
-			$this->_isPersisted = $id;
+			if($setter instanceof \CRUDsader\Object\UnitOfWork){
+				$this->_isPersisted = $id;
+			}else
+			$this->_saveId = $id;
 		}
 
 		public function toHtml($base = false, $prefix = false, $allowedClasses = false, $displayTitle = true)
@@ -360,7 +364,7 @@ namespace CRUDsader {
 		{
 			$ret = array();
 			if (!$this->_isPersisted)
-				$ret[$this->_infos['definition']['databaseIdField']] = isset($this->_parent) ? $this->_parent->_isPersisted : \CRUDsader\Instancer::getInstance()->expression('NULL');
+				$ret[$this->_infos['definition']['databaseIdField']] = isset($this->_parent) ? $this->_parent->_isPersisted : ($this->_saveId?$this->_saveId:\CRUDsader\Instancer::getInstance()->expression('NULL'));
 			foreach ($this->_infos['attributes'] as $k => $attributeInfos) {
 				if ($attributeInfos['calculated']) {
 					$this->getAttribute($k)->setDefaultValue($ret[$attributeInfos['databaseField']] = $this->calculateAttribute($k));
