@@ -176,6 +176,7 @@ namespace CRUDsader\MVC {
 			$applicationPath = $this->_dependencies['frontController']->getApplicationPath();
 			foreach ($this->_views as $infos) {
 				switch (true) {
+					
 					case file_exists($applicationPath . $this->_dependencies['router']->getModule() . '/view/'  . ($infos['controller'] ? $infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix):
 						$path = $applicationPath . $this->_dependencies['router']->getModule() . '/view/' .  ($infos['controller'] ? $infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix;
 						break;
