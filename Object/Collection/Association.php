@@ -218,7 +218,7 @@ namespace CRUDsader\Object\Collection {
 				$alias = $this->_class;
 			$this->_initialised = true;
 			$formAssociation = $form->add(new \CRUDsader\Form($alias), $this->_definition['name'] ? $this->_definition['name'] : $this->_definition['to']);
-			$formAssociation->setHtmlLabel(\CRUDsader\Instancer::getInstance()->i18n->translate($alias));
+			$formAssociation->setHtmlLabel(\CRUDsader\Instancer::getInstance()->i18n->translate($alias.'.association'));//.association is mandatory for translation purpose
 			$max = $this->_definition['reference'] == 'internal' ? 1 : ($this->_definition['max'] == '*' ? 3 : $this->_definition['max']);
 			if ($this->_definition['min'] > $max)
 				$max = $this->_definition['min'];
@@ -266,9 +266,10 @@ namespace CRUDsader\Object\Collection {
 
 				$index = $component->getParameter('compositionIndex');
 				$value = $component->getValue();
-				$empty = $component->isEmpty();
+				$empty = $component->inputEmpty();
 				if (!$empty && isset($this->_formValues[$value]))
 					throw new AssociationException($this->_class . '_duplicates');
+				//pre(array($index,$value,$empty,$this->_class));
 				$target = $this->_objects[$index];
 
 				// has the target changed ???

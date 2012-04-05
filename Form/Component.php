@@ -246,11 +246,6 @@ namespace CRUDsader\Form {
 			$this->_value = $this->_valueDefault;
 		}
 
-		public function isEmpty()
-		{
-			return empty($this->_value);
-		}
-
 		/**
 		 * @return bool
 		 */

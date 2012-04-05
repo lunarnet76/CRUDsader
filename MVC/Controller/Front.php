@@ -69,6 +69,11 @@ namespace CRUDsader\MVC\Controller {
 		{
 			return $protocole . $this->_configuration->server . $this->_configuration->baseRewrite;
 		}
+		
+		public function getLastUrl(){
+			$routeInfo = ($this->_dependencies['routerHistoric']->getLast());
+			return $this->url($routeInfo->route);
+		}
 
 		/**
 		 * specify a route or route following the URI

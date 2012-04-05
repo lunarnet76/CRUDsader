@@ -23,7 +23,7 @@ namespace CRUDsader\Object\Attribute {
 
 			if (!empty($this->_options['choices']))
 				foreach ($this->_options['choices'] as $k => $v) {
-					$html.= '<option value="' . $k . '" ' . (!$this->isEmpty() && $this->_value == $k ? 'selected="selected"' : '') . '>' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_name . '.' . $v) . '</option>';
+					$html.= '<option value="' . $k . '" ' . (!$this->isEmpty() && ($this->_value == $k || $this->_value == $this->_options['choices'][$k]) ? 'selected="selected"' : '') . '>' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_name . '.' . $v) . '</option>';
 				}
 
 			$html.='</select>';
@@ -38,7 +38,7 @@ namespace CRUDsader\Object\Attribute {
 
 		public function getValueForDatabase()
 		{
-			return $this->_options['choices'][$this->_value];
+			return isset($this->_options['choices'][$this->_value])?$this->_options['choices'][$this->_value]:$this->_value;
 		}
 
 		public function generateRandom()

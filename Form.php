@@ -69,6 +69,10 @@ namespace CRUDsader {
 		{
 			return isset($_POST[$this->_htmlAttributes['name']]);
 		}
+		public function wasRequested()
+		{
+			return isset($_REQUEST[$this->_htmlAttributes['name']]);
+		}
 
 		/**
 		 * @param Block $configuration
@@ -230,7 +234,7 @@ namespace CRUDsader {
 				return $ret && $this->_inputError === false;
 			}
 			foreach ($this->_components as $name => $component) {
-				if ($component->isEmpty()) {
+				if ($component->inputEmpty()) {
 					if ($component->inputRequired()) {
 						$this->_errorComponentIndexes[$name] = 'error.form.required';
 						$component->setInputError('error.form.required');
@@ -271,7 +275,7 @@ namespace CRUDsader {
 		public function isEmpty()
 		{
 			foreach ($this->_components as $name => $component)
-				if (!$component->isEmpty() && !$component instanceof \CRUDsader\Form\Component\Submit)
+				if (!$component->inputEmpty() && !$component instanceof \CRUDsader\Form\Component\Submit)
 					return false;
 			return true;
 		}

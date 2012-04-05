@@ -48,7 +48,6 @@ namespace CRUDsader\MVC {
 		{
 			
 		}
-
 		/** ACTIONS * */
 		public function defaultAction()
 		{
@@ -72,6 +71,18 @@ namespace CRUDsader\MVC {
                                     default:
                                         return $this->$var;
 			}
+		}
+		
+		public function toast($message,$type='message'){
+			$session = \CRUDsader\Session::useNamespace('toast');
+			$session->add(array('message'=>$message,'type'=>$type));
+		}
+		
+		public function toasts(){
+			$session = \CRUDsader\Session::useNamespace('toast');
+			$ret = $session->toArray();
+			$session->reset();
+			return $ret;
 		}
                 
                /* public function __set($var,$value){
