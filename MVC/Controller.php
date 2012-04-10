@@ -99,7 +99,7 @@ namespace CRUDsader\MVC {
 		}
 		
 		public function getBaseHref(){
-			return $this->_configuration->baseRewrite;
+			return 'http://'.$this->_configuration->server.$this->_configuration->baseRewrite;
 		}
 
 		/** INFOS * */

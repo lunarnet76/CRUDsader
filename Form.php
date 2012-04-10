@@ -313,7 +313,7 @@ namespace CRUDsader {
 				return $tag . ' ' . ($this->inputRequired() ? 'required="true"' : '') . ' >';
 			} else {
 				$this->wrapHtmlTagIsOpened = false;
-				return $this->hasInputParent() ? '</fieldset>' : '<div class="row"><div class="component"><input type="hidden" name="' . $this->_htmlAttributes['name'] . '[token]" value="' . $this->_session->token . '"/></div></div></form>';
+				return $this->hasInputParent() ? '</fieldset>' : '<input type="hidden" name="' . $this->_htmlAttributes['name'] . '[token]" value="' . $this->_session->token . '"/></form>';
 			}
 		}
 

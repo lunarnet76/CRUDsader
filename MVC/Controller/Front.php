@@ -89,7 +89,6 @@ namespace CRUDsader\MVC\Controller {
 			$_SERVER['PHP_SELF'] = $route;
 			
 			$route = $this->_dependencies['router']->route($route);
-
 			if (!$route)
 				throw new FrontException('cannot find the route');
 			$module = $this->_dependencies['router']->getModule();
