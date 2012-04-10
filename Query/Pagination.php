@@ -40,6 +40,7 @@ namespace CRUDsader\Query {
 		public function getObjects()
 		{
 			$this->_query->_sql['limit'] = array('from' => isset($this->_session->start) ? $this->_session->start : 0, 'count' => $this->_options['count']);
+			
 			$results = \CRUDsader\Instancer::getInstance()->database->select($this->_query->_sql, $this->_args);
 			return new \CRUDsader\Object\Collection\Initialised($this->_query->_class, $results, $this->_query->_mapFields);
 		}

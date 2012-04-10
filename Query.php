@@ -178,8 +178,10 @@ namespace CRUDsader {
 				$sql['group'] = $groupBy;
 			}
 			// order by
-			if (!empty($this->_matches[13]))
+			if (!empty($this->_matches[13])){
 				$sql['order'] = $this->_matches[13];
+			}
+			
 			// limit
 			if (!empty($this->_matches[16])) {
 				$sql['limit'] = array('count' => $this->_matches[16]);
@@ -192,7 +194,6 @@ namespace CRUDsader {
 			$this->_mapFields = $mapFields;
 			$this->_mapFieldsAlias = $mapFieldsAlias;
 			$this->_sql = $sql;
-			
 			return $this->_infos = array('sql' => $this->_sql, 'oql' => $this->_oql, 'mapFields' => $this->_mapFields, 'alias2class' => $this->_alias2class);
 		}
 
@@ -265,10 +266,11 @@ namespace CRUDsader {
 							$calculation = (is_array($args[++$unlexicalThis->_argsIndex]) ? key($args[$unlexicalThis->_argsIndex]) . ' ' . $db->quote(current($args[$unlexicalThis->_argsIndex])) : '=' . $db->quote($args[$unlexicalThis->_argsIndex]));
 							return $db->quoteIdentifier($p[2]) . '.' . $db->quoteIdentifier($map->classGetDatabaseTableField($alias2class[$p[2]], $p[3])) . $calculation;
 						}, $this->_sql['where']);
-				if (!empty($this->_sql['order']))
+				if (!empty($this->_sql['order'])){
 					$this->_sql['order'] = preg_replace_callback('|\?|', function($p) use($alias2class, $db, $map, $args, $unlexicalThis) {
 							return $args[++$unlexicalThis->_argsIndex];
 						}, $this->_sql['order']);
+				}
 			}
 			if (!$all)
 				$this->_sql['limit'] = array('count' => 1);
