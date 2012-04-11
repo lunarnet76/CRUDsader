@@ -1,6 +1,6 @@
 <?php
 
-class AdapterMVCRouter_Test extends PHPUnit_Framework_TestCase {
+class AdapterMvcRouter_Test extends PHPUnit_Framework_TestCase {
 
     function test_() {
         

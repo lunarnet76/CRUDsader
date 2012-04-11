@@ -5,15 +5,15 @@
  * @license     see license.txt
  * @since       0.1
  */
-namespace CRUDsader\MVC {
+namespace CRUDsader\Mvc {
     /**
      * @abstract
-     * @package CRUDsader\MVC
+     * @package CRUDsader\Mvc
      */
     abstract class Plugin extends \CRUDsader\MetaClass{
        
 
-        public function postRoute(\CRUDsader\MVC\Router $router) {
+        public function postRoute(\CRUDsader\Mvc\Router $router) {
             
         }
 

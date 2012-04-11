@@ -5,10 +5,10 @@
  * @license     see license.txt
  * @since       0.1
  */
-namespace CRUDsader\MVC {
+namespace CRUDsader\Mvc {
 	/**
-	 * MVC controller must inherit from this
-	 * @package CRUDsader\MVC
+	 * Mvc controller must inherit from this
+	 * @package CRUDsader\Mvc
 	 */
 	abstract class Controller extends \CRUDsader\MetaClass {
 		protected $_views = array();

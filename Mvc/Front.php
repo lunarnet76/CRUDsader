@@ -5,10 +5,10 @@
  * @license     see license.txt
  * @since       0.1
  */
-namespace CRUDsader\MVC\Controller {
+namespace CRUDsader\Mvc\Controller {
 	/**
-	 * MVC Front controller
-	 * @package CRUDsader\MVC\Controller
+	 * Mvc Front controller
+	 * @package CRUDsader\Mvc\Controller
 	 */
 	class Front extends \CRUDsader\MetaClass {
 		/*
@@ -26,7 +26,7 @@ namespace CRUDsader\MVC\Controller {
 		protected $_skipRouterHistoric = false;
 
 		/**
-		 * @var MVC\Controller instance
+		 * @var Mvc\Controller instance
 		 */
 		protected $_instanceController;
 

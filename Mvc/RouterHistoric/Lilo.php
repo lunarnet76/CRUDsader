@@ -5,24 +5,24 @@
  * @license     see license.txt
  * @since       0.1
  */
-namespace CRUDsader\MVC\RouterHistoric {
+namespace CRUDsader\Mvc\RouterHistoric {
     /**
      * Last In Last Out 
-     * @package CRUDsader\MVC\RouterHistoric
+     * @package CRUDsader\Mvc\RouterHistoric
      */
     class Lilo extends \CRUDsader\MetaClass{
         protected $_session;
         protected $_controllerToSkip = array();
       
         public function __construct() {
-            $this->_session = \CRUDsader\Session::useNamespace('CRUDsader\\MVC\\Navigation\\Historic');
+            $this->_session = \CRUDsader\Session::useNamespace('CRUDsader\\Mvc\\Navigation\\Historic');
         }
 
         public function skipRoute($controller) {
             $this->_controllerToSkip[$controller] = true;
         }
 
-        public function registerRoute(\CRUDsader\MVC\Router $router) {
+        public function registerRoute(\CRUDsader\Mvc\Router $router) {
             if (!isset($this->_controllerToSkip[$router->getRoute()])) {
                 $this->_session->last = array(
                     'route' => $router->getRoute(),

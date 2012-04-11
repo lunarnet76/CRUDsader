@@ -5,7 +5,7 @@
  * @license     see license.txt
  * @since       0.1
  */
-namespace CRUDsader\MVC {
+namespace CRUDsader\Mvc {
     /**
      * Controller router
      */
