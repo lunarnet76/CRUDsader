@@ -274,9 +274,10 @@ namespace CRUDsader {
 		 */
 		public function isEmpty()
 		{
-			foreach ($this->_components as $name => $component)
+			foreach ($this->_components as $name => $component){
 				if (!$component->isEmpty() && !$component instanceof \CRUDsader\Form\Component\Submit)
 					return false;
+			}
 			return true;
 		}
 

@@ -115,9 +115,10 @@ namespace CRUDsader\MVC {
 				$url = $this->getControllerURL().'?'.  http_build_query($_GET);
 			}else 
 				$url =  $this->url($options);
-			if (\CRUDsader\Instancer::getInstance()->debug->getConfiguration()->redirection)
+			if (\CRUDsader\Instancer::getInstance()->debug->getConfiguration()->redirection){
 				echo '<a href="' . $url . '">' . $url . '</a>';
-			else
+				echo \CRUDsader\Instancer::getInstance()->debug->profileDatabase();
+			}else
 				header('Location: ' . $url);
 			exit;
 		}

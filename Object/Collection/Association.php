@@ -101,7 +101,7 @@ namespace CRUDsader\Object\Collection {
 					if (isset($this->_objectsToBeDeleted[$index])) {
 						switch ($this->_definition['reference']) {
 							case 'internal':
-								$unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => null), $db->quoteIdentifier($this->_definition['internalField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
+								$unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => null), $db->quoteIdentifier($this->_definition['databaseIdField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
 								break;
 							case 'external':
 								// in the $object, so it's going to get erased anyway
@@ -113,7 +113,8 @@ namespace CRUDsader\Object\Collection {
 								);
 								$unitOfWork->delete($this->_definition['databaseTable'], implode(' AND ', $d));
 						}
-						$object->delete($unitOfWork);
+						if($this->_definition['composition'])
+							$object->delete($unitOfWork);
 						continue;
 					}
 
@@ -162,9 +163,6 @@ namespace CRUDsader\Object\Collection {
 					}
 				}
 				if ($this->_definition['max'] != '*' && $cnt > $this->_definition['max']) {
-					foreach ($this->_objects as $o)
-						pre($o->toArray());;
-					pre($this->_definition['max'], $cnt);
 					throw new AssociationException('error.association.save.max');
 				}
 				if ($cnt < $this->_definition['min'])
