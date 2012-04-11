@@ -102,7 +102,7 @@ namespace CRUDsader\MVC\Controller {
 			$instancer = \CRUDsader\Instancer::getInstance();
 			foreach ($plugins as $pluginName => $pluginOptions) {
 				$cfg = $instancer->getConfiguration();
-				$cfg->{'mvc.plugin.' . $pluginName} = array('class' => 'Plugin\\' . $pluginName, 'singleton' => true);
+				$cfg->{'mvc.plugin.' . $pluginName} = array('class' => 'Plugin\\' . ucfirst($pluginName), 'singleton' => true);
 				$instancer->setConfiguration($cfg);
 				$this->_plugins[$pluginName] =  $this->_dependencies['plugin' . $pluginName] = $instancer->{'mvc.plugin.' . $pluginName};
 				if ($pluginOptions instanceof \CRUDsader\Block)
