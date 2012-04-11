@@ -23,14 +23,6 @@ namespace CRUDsader\Object {
 			$this->_name = $name;
 		}
 
-		/**
-		 * @return bool
-		 */
-		public function isEmpty()
-		{
-			return !isset($this->_value);
-		}
-
 		// !SETTER
 		// null => not received, '' => received
 		public function setValueFromInput($data = null)

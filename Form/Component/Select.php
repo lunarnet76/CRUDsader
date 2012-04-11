@@ -10,7 +10,7 @@ namespace CRUDsader\Form\Component {
             return $html.'</select>';
         }
 	
-	public function inputEmpty()
+	public function isEmpty()
 	{
 		return $this->_value == -1;
 	}

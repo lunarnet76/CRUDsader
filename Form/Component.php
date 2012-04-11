@@ -271,7 +271,7 @@ namespace CRUDsader\Form {
 		 * is the value empty?
 		 * @return bool
 		 */
-		public function inputEmpty()
+		public function isEmpty()
 		{
 			return empty($this->_value);
 		}

@@ -11,7 +11,7 @@ namespace CRUDsader\Form\Component {
             return $html.'</select>';
         }
 	
-	public function inputEmpty(){
+	public function isEmpty(){
 		return empty($this->_value) || $this->_value == -1;
 	}
     }

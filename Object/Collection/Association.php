@@ -266,7 +266,7 @@ namespace CRUDsader\Object\Collection {
 
 				$index = $component->getParameter('compositionIndex');
 				$value = $component->getValue();
-				$empty = $component->inputEmpty();
+				$empty = $component->isEmpty();
 				if (!$empty && isset($this->_formValues[$value]))
 					throw new AssociationException($this->_class . '_duplicates');
 				//pre(array($index,$value,$empty,$this->_class));
