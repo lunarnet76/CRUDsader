@@ -198,7 +198,7 @@ namespace CRUDsader {
 		 * set input data 
 		 * @param array $request
 		 */
-		public function setValueFromInput(array $data = null)
+		public function setValueFromInput($data = null)
 		{
 			foreach ($this->_components as $index => $component) {
 				if (isset($data[$index])) {// $_REQUEST
