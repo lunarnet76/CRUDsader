@@ -281,10 +281,10 @@ namespace CRUDsader {
 				$aliases = $this->_mapFieldsAlias;
 				$extraColumns = array();
 				$this->_sql['select'] = preg_replace_callback('|([\w]+)\.([\?\#])?([\w\*]+)|', function($p) use($alias2class, $map, $aliases, &$newMapFields, &$index, &$sql, &$extraColumns) {
-					
 						// special case : floats
-						if (ctype_digit($p[1]))
+						if (ctype_digit($p[1])){
 							return $p[0];
+						}
 						// special cases
 						if (!empty($p[2])) {
 							switch ($p[2]) {
