@@ -298,13 +298,12 @@ namespace CRUDsader {
 							}
 						}
 
-						
 						$indexPlus = ($p[3] == '*' ? $map->classGetAttributeCount($alias2class[$p[1]]) : 1);
-
-						if (!isset($newMapFields[$aliases[$p[1]]]))
+						
+						if (!isset($newMapFields[$aliases[$p[1]]])){
 							$newMapFields[$aliases[$p[1]]] = array('from' => $index, 'to' => $index + $indexPlus);
-						else {
-							$newMapFields[$aliases[$p[1]]]['to'] = $index + $indexPlus;
+						}else {
+							$newMapFields[$aliases[$p[1]]]['to']+= $indexPlus;
 						}
 						$index+=$indexPlus;
 						return isset($ret) ? $ret : $p[1] . \CRUDsader\Database\Descriptor::$TABLE_ALIAS_SUBQUERY . '.' . $p[3];

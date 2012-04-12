@@ -99,6 +99,14 @@ namespace CRUDsader\Form {
 			foreach ($this->_observers as $observer)
 				$observer->update($this);
 		}
+		
+		/**
+		 * list all observers
+		 * @return array
+		 */
+		public function getObservers(){
+			return $this->_observers;
+		}
 
 		// !HTML
 		/**

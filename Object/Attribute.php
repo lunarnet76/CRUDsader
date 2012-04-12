@@ -46,6 +46,7 @@ namespace CRUDsader\Object {
 		 */
 		public function setValueFromDatabase($value)
 		{
+			
 			if (!isset($value)) {
 				$this->_value = $this->_valueDefault;
 			}else
