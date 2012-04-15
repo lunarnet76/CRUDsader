@@ -5,15 +5,15 @@
  * @license     see license.txt
  * @since       0.1
  */
-namespace CRUDsader\MVC\Router {
+namespace CRUDsader\Mvc\Router {
     /**
      * route like 
      * ${server.baseRewrite}/$language/$moduleControllerName/$function$suffix?$params
      * ${server.baseRewrite}/$language/$function$suffix?$params
      * ${server.baseRewrite}/$function$suffix?$params
-     * @package CRUDsader\MVC\Router
+     * @package CRUDsader\Mvc\Router
      */
-    class Implicit extends \CRUDsader\MVC\Router {
+    class Implicit extends \CRUDsader\Mvc\Router {
 
         /**
          * calculate a route

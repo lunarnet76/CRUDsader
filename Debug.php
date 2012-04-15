@@ -23,18 +23,35 @@ namespace CRUDsader {
 		 */
 		public function profileDatabase()
 		{
-			
+
 			if (\CRUDsader\Instancer::getInstance()->database->hasDependency('profiler'))
 				return \CRUDsader\Instancer::getInstance()->database->getDependency('profiler')->display();
 		}
-		
-		
+		private $_chronos = array();
 
-		public function log($v,$file = 'debug.log')
+		public function chrono($index = false, $microtime = true)
+		{
+			if ($microtime)
+				$this->_chronos[$index] = microtime(true);
+			else
+				$this->_chronos[$index] = time(true);
+		}
+
+		public function time($index = false, $microtime = true)
+		{
+			if ($microtime)
+				$end = microtime(true);
+			else
+				$end = time(true);
+
+			return round($end - $this->_chronos[$index], 4);
+		}
+
+		public function log($v, $file = 'debug.log')
 		{
 			ob_start();
 			var_dump($v);
-			file_put_contents($file, ob_get_clean(),FILE_APPEND);
+			file_put_contents($file, ob_get_clean(), FILE_APPEND);
 		}
 
 		public static function errorHandler($errno, $errstr, $errfile, $errline, $context)
@@ -95,10 +112,11 @@ namespace CRUDsader {
 				exit;
 			return true; // true disable PHP built-in error handler
 		}
-                
-                public function sql(){
-                    echo \CRUDsader\Instancer::getInstance()->database->highLight(\CRUDsader\Instancer::getInstance()->database->getSQL());
-                }
+
+		public function sql()
+		{
+			echo \CRUDsader\Instancer::getInstance()->database->highLight(\CRUDsader\Instancer::getInstance()->database->getSQL());
+		}
 
 		protected static function preCallback($Parts)
 		{
@@ -340,12 +358,11 @@ namespace CRUDsader {
 					echo '<div class="php-error-part-file"><span class="php-error-line">' . $t['line'] . '</span> <span class="php-error-file">' . (strpos($t['file'], __DIR__) !== false ? substr($t['file'], strlen(__DIR__ . '/')) : $t['file']) . '</span></div>';
 				if (!empty($t['args'])) {
 					echo '<ul class="php-error-args">';
-					foreach ($t['args'] as $i=>$arg) {
+					foreach ($t['args'] as $i => $arg) {
 						echo '<li class="php-error-arg">';
-						if(isset($t['class']) && $t['class']=='CRUDsader\Database' && $t['function'] == 'query' && $i==0){
+						if (isset($t['class']) && $t['class'] == 'CRUDsader\Database' && $t['function'] == 'query' && $i == 0) {
 							echo sl()->database->highLight($arg);
-						}
-						else if (is_object($arg)) {
+						} else if (is_object($arg)) {
 							echo '<span class="php-error-arg-object">' . get_class($arg) . '</span>';
 						} elseif (is_null($arg)) {
 							echo '<span class="php-error-arg-null">NULL</span>';

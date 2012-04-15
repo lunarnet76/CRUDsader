@@ -8,9 +8,9 @@
 namespace CRUDsader\Object\Attribute {
 	class Enum extends \CRUDsader\Object\Attribute {
 
-		protected function isValid()
+		public function isValid()
 		{
-			if (true!== $error = parent::isValid())
+			if (true !== $error = parent::isValid())
 				return $error;
 			if (!isset($this->_options['choices']))
 				return true;
@@ -21,9 +21,10 @@ namespace CRUDsader\Object\Attribute {
 		{
 			$html = '<select ' . $this->getHtmlAttributesToHtml() . '><option value="-1">choose</option>';
 
-			foreach ($this->_options['choices'] as $k => $v) {
-				$html.= '<option value="' . $k . '" ' . (!$this->isEmpty() && $this->_value == $k ? 'selected="selected"' : '') . '>' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_name . '.' . $v) . '</option>';
-			}
+			if (!empty($this->_options['choices']))
+				foreach ($this->_options['choices'] as $k => $v) {
+					$html.= '<option value="' . $k . '" ' . (!$this->isEmpty() && ($this->_value == $k || $this->_value == $this->_options['choices'][$k]) ? 'selected="selected"' : '') . '>' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_name . '.' . $v) . '</option>';
+				}
 
 			$html.='</select>';
 
@@ -32,7 +33,18 @@ namespace CRUDsader\Object\Attribute {
 
 		public function isEmpty()
 		{
-			return !isset($this->_value) || $this->_value == -1;
+			return null === $this->_value || $this->_value == -1;
+		}
+
+		public function getValueForDatabase()
+		{
+			return isset($this->_options['choices'][$this->_value])?$this->_options['choices'][$this->_value]:$this->_value;
+		}
+
+		public function generateRandom()
+		{
+			$ret = rand(0, count($this->_options['choices']) - 1);
+			return $ret;
 		}
 	}
 }

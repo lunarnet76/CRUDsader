@@ -23,14 +23,6 @@ namespace CRUDsader\Object {
 			$this->_name = $name;
 		}
 
-		/**
-		 * @return bool
-		 */
-		public function isEmpty()
-		{
-			return !isset($this->_value);
-		}
-
 		// !SETTER
 		// null => not received, '' => received
 		public function setValueFromInput($data = null)
@@ -54,6 +46,7 @@ namespace CRUDsader\Object {
 		 */
 		public function setValueFromDatabase($value)
 		{
+			
 			if (!isset($value)) {
 				$this->_value = $this->_valueDefault;
 			}else
@@ -92,9 +85,9 @@ namespace CRUDsader\Object {
 		 * generate a random value for the attribute
 		 * @return string
 		 */
-		public function generateRandom()
+		public function generateRandom($object = null)
 		{
-			return base_convert(rand(10e16, 10e20), 10, 36);
+			return '{'.base_convert(rand(10e16, 10e20), 10, 36).'}';
 		}
 	}
 }

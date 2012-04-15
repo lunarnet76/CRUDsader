@@ -5,10 +5,10 @@
  * @license     see license.txt
  * @since       0.1
  */
-namespace CRUDsader\MVC {
+namespace CRUDsader\Mvc {
 	/**
-	 * MVC controller must inherit from this
-	 * @package CRUDsader\MVC
+	 * Mvc controller must inherit from this
+	 * @package CRUDsader\Mvc
 	 */
 	abstract class Controller extends \CRUDsader\MetaClass {
 		protected $_views = array();
@@ -48,7 +48,6 @@ namespace CRUDsader\MVC {
 		{
 			
 		}
-
 		/** ACTIONS * */
 		public function defaultAction()
 		{
@@ -73,6 +72,18 @@ namespace CRUDsader\MVC {
                                         return $this->$var;
 			}
 		}
+		
+		public function toast($message,$type='message'){
+			$session = \CRUDsader\Session::useNamespace('toast');
+			$session->add(array('message'=>$message,'type'=>$type));
+		}
+		
+		public function toasts(){
+			$session = \CRUDsader\Session::useNamespace('toast');
+			$ret = $session->toArray();
+			$session->reset();
+			return $ret;
+		}
                 
                /* public function __set($var,$value){
                     $this->$var = $value;
@@ -85,6 +96,10 @@ namespace CRUDsader\MVC {
 		
 		public function getCurrentURL(){
 			return $this->_dependencies['router']->url(null).  '?'.http_build_query($_GET);
+		}
+		
+		public function getBaseHref(){
+			return 'http://'.$this->_configuration->server.$this->_configuration->baseRewrite;
 		}
 
 		/** INFOS * */
@@ -100,9 +115,10 @@ namespace CRUDsader\MVC {
 				$url = $this->getControllerURL().'?'.  http_build_query($_GET);
 			}else 
 				$url =  $this->url($options);
-			if (\CRUDsader\Instancer::getInstance()->debug->getConfiguration()->redirection)
+			if (\CRUDsader\Instancer::getInstance()->debug->getConfiguration()->redirection){
 				echo '<a href="' . $url . '">' . $url . '</a>';
-			else
+				echo \CRUDsader\Instancer::getInstance()->debug->profileDatabase();
+			}else
 				header('Location: ' . $url);
 			exit;
 		}
@@ -172,6 +188,7 @@ namespace CRUDsader\MVC {
 			$applicationPath = $this->_dependencies['frontController']->getApplicationPath();
 			foreach ($this->_views as $infos) {
 				switch (true) {
+					
 					case file_exists($applicationPath . $this->_dependencies['router']->getModule() . '/view/'  . ($infos['controller'] ? $infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix):
 						$path = $applicationPath . $this->_dependencies['router']->getModule() . '/view/' .  ($infos['controller'] ? $infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix;
 						break;
@@ -193,7 +210,6 @@ namespace CRUDsader\MVC {
 			$this->preRender();
 			if ($this->_template) {
 				$file = $this->_dependencies['frontController']->getApplicationPath() . $this->_dependencies['router']->getModule() . '/view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
-				
 				$path = file_exists($file) ? $file : $this->_dependencies['frontController']->getApplicationPath() . 'view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
 				require($path);
 			}else

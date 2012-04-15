@@ -63,6 +63,15 @@ namespace CRUDsader {
 			return $this->_inputRequired || !$this->hasInputParent();
 		}
 
+
+		public function view($file, $context = false)
+		{
+			ob_start();
+			require($this->_configuration->view->path . $file . '.php');
+			return ob_get_clean();
+		}
+
+
 		/**
 		 * @param Block $configuration
 		 * @test see parent
@@ -329,9 +338,10 @@ namespace CRUDsader {
 		 */
 		public function isEmpty()
 		{
-			foreach ($this->_components as $name => $component)
+			foreach ($this->_components as $name => $component){
 				if (!$component->isEmpty() && !$component instanceof \CRUDsader\Form\Component\Submit)
 					return false;
+			}
 			return true;
 		}
 
@@ -368,7 +378,7 @@ namespace CRUDsader {
 				return $tag . ' ' . ($this->inputRequired() ? 'required="true"' : '') . ' >';
 			} else {
 				$this->wrapHtmlTagIsOpened = false;
-				return $this->hasInputParent() ? '</fieldset>' : '<div class="row"><div class="component"><input type="hidden" name="' . $this->_htmlAttributes['name'] . '[token]" value="' . $this->_session->token . '"/></div></div></form>';
+				return $this->hasInputParent() ? '</fieldset>' : '<input type="hidden" name="' . $this->_htmlAttributes['name'] . '[token]" value="' . $this->_session->token . '"/></form>';
 			}
 		}
 
@@ -389,7 +399,7 @@ namespace CRUDsader {
 			if ($component instanceof self)
 				return $component->toInput();
 			$error = $component->getInputError();
-			return $this->wrapHtml(($component->_htmlLabel === false ? '' : $component->labeltoHtml()) . $this->wrapHtml($component->toInput(), 'component') . (!$error ? '' : $this->wrapHtml(\CRUDsader\Instancer::getInstance()->i18n->translate($error), 'error')), 'row');
+			return $this->wrapHtml(($component->_htmlLabel === false ? '' : $component->labeltoHtml()) . $this->wrapHtml($component->toInput(), 'component'.($error?' component_error':'')) . (!$error ? '' : $this->wrapHtml(\CRUDsader\Instancer::getInstance()->i18n->translate($error), 'error')), 'row');
 		}
 		
 		/**

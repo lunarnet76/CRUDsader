@@ -13,7 +13,7 @@ namespace CRUDsader\Object\Attribute {
 			return filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT);
 		}
 
-		protected function isValid()
+		public function isValid()
 		{
 			if (true!== $error = parent::isValid())
 				return $error;

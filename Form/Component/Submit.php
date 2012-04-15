@@ -2,7 +2,6 @@
 namespace CRUDsader\Form\Component {
     class Submit extends \CRUDsader\Form\Component {
         protected $_text='ok';
-        public function isEmpty(){return false;}
 
         public function setText($text){
             $this->_text=$text;

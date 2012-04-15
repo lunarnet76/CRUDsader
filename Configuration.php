@@ -158,11 +158,11 @@ namespace CRUDsader {
                 'map.loader' => array(
                     'class' => '\\CRUDsader\\Map\\Loader\\Xml', 'singleton' => true),
                 'mvc.frontController' => array(
-                    'class' => '\\CRUDsader\\MVC\\Controller\\Front', 'singleton' => true),
+                    'class' => '\\CRUDsader\\Mvc\\Controller\\Front', 'singleton' => true),
                 'mvc.routerHistoric' => array(
-                    'class' => '\\CRUDsader\\MVC\\RouterHistoric\\Lilo', 'singleton' => true),
+                    'class' => '\\CRUDsader\\Mvc\\RouterHistoric\\Lilo', 'singleton' => true),
                 'mvc.router' => array(
-                    'class' => '\\CRUDsader\\MVC\\Router\\Explicit', 'singleton' => true)
+                    'class' => '\\CRUDsader\\Mvc\\Router\\Explicit', 'singleton' => true)
             )
         );
 

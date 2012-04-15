@@ -5,10 +5,10 @@
  * @license     see license.txt
  * @since       0.1
  */
-namespace CRUDsader\MVC\Controller {
+namespace CRUDsader\Mvc\Controller {
 	/**
-	 * MVC Front controller
-	 * @package CRUDsader\MVC\Controller
+	 * Mvc Front controller
+	 * @package CRUDsader\Mvc\Controller
 	 */
 	class Front extends \CRUDsader\MetaClass {
 		/*
@@ -26,7 +26,7 @@ namespace CRUDsader\MVC\Controller {
 		protected $_skipRouterHistoric = false;
 
 		/**
-		 * @var MVC\Controller instance
+		 * @var Mvc\Controller instance
 		 */
 		protected $_instanceController;
 
@@ -69,6 +69,11 @@ namespace CRUDsader\MVC\Controller {
 		{
 			return $protocole . $this->_configuration->server . $this->_configuration->baseRewrite;
 		}
+		
+		public function getLastUrl(){
+			$routeInfo = ($this->_dependencies['routerHistoric']->getLast());
+			return $this->url($routeInfo->route);
+		}
 
 		/**
 		 * specify a route or route following the URI
@@ -84,7 +89,6 @@ namespace CRUDsader\MVC\Controller {
 			$_SERVER['PHP_SELF'] = $route;
 			
 			$route = $this->_dependencies['router']->route($route);
-
 			if (!$route)
 				throw new FrontException('cannot find the route');
 			$module = $this->_dependencies['router']->getModule();
@@ -98,7 +102,7 @@ namespace CRUDsader\MVC\Controller {
 			$instancer = \CRUDsader\Instancer::getInstance();
 			foreach ($plugins as $pluginName => $pluginOptions) {
 				$cfg = $instancer->getConfiguration();
-				$cfg->{'mvc.plugin.' . $pluginName} = array('class' => 'Plugin\\' . $pluginName, 'singleton' => true);
+				$cfg->{'mvc.plugin.' . $pluginName} = array('class' => 'Plugin\\' . ucfirst($pluginName), 'singleton' => true);
 				$instancer->setConfiguration($cfg);
 				$this->_plugins[$pluginName] =  $this->_dependencies['plugin' . $pluginName] = $instancer->{'mvc.plugin.' . $pluginName};
 				if ($pluginOptions instanceof \CRUDsader\Block)

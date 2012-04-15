@@ -99,6 +99,14 @@ namespace CRUDsader\Form {
 			foreach ($this->_observers as $observer)
 				$observer->update($this);
 		}
+		
+		/**
+		 * list all observers
+		 * @return array
+		 */
+		public function getObservers(){
+			return $this->_observers;
+		}
 
 		// !HTML
 		/**
@@ -246,11 +254,6 @@ namespace CRUDsader\Form {
 			$this->_value = $this->_valueDefault;
 		}
 
-		public function isEmpty()
-		{
-			return empty($this->_value);
-		}
-
 		/**
 		 * @return bool
 		 */
@@ -276,7 +279,7 @@ namespace CRUDsader\Form {
 		 * is the value empty?
 		 * @return bool
 		 */
-		public function inputEmpty()
+		public function isEmpty()
 		{
 			return empty($this->_value);
 		}

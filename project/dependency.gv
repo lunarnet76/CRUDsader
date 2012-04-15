@@ -37,15 +37,15 @@ Database->"Database\\Connector"
 "Database\\Descriptor"->"Database\\Connector"
 "Database\\Connector\\Mysqli"->"Database\\Descriptor\\Mysqli"
 
-"MVC\\Controller\\Front"->"MVC\\Router"
-"MVC\\Controller\\Front"->"MVC\\RouterHistoric"
-"MVC\\Controller\\Front"->ActionController
-"MVC\\Controller\\Front"->"MVC\\Plugin"
-"MVC\\Controller"->"MVC\\Router"
-"MVC\\Controller"->"MVC\\RouterHistoric"
+"Mvc\\Controller\\Front"->"Mvc\\Router"
+"Mvc\\Controller\\Front"->"Mvc\\RouterHistoric"
+"Mvc\\Controller\\Front"->ActionController
+"Mvc\\Controller\\Front"->"Mvc\\Plugin"
+"Mvc\\Controller"->"Mvc\\Router"
+"Mvc\\Controller"->"Mvc\\RouterHistoric"
 
-"MVC\\Router\\Explicit"->"MVC\\Router" [style=dotted]
-"MVC\\RouterHistoric\\Lilo"->"MVC\\RouterHistoric" [style=dotted]
+"Mvc\\Router\\Explicit"->"Mvc\\Router" [style=dotted]
+"Mvc\\RouterHistoric\\Lilo"->"Mvc\\RouterHistoric" [style=dotted]
 
 Map->"Map\\Loader"
 Map->"Map\\Extractor"

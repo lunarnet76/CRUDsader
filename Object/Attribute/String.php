@@ -24,7 +24,7 @@ namespace CRUDsader\Object\Attribute {
         public function isValid() {
             if (true!== $error = parent::isValid())
 				return $error;
-            if (isset($this->_options['length']) && strlen(filter_var($this->_value, FILTER_SANITIZE_STRING)) > $this->_options['length'])
+            if (!empty($this->_options['length']) && strlen(filter_var($this->_value, FILTER_SANITIZE_STRING)) > $this->_options['length'])
                 return 'error.string.too-long-' . $this->_options['length'];
             return true;
         }

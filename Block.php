@@ -6,180 +6,208 @@
  * @since       0.1
  */
 namespace CRUDsader {
-    /**
-     * basic block that add functionalities to array
-     * @test Block_Test
-     */
-    class Block implements \Iterator, Interfaces\Arrayable {
-        /**
-         * @var array
-         */
-        protected $_properties = array();
-        /**
-         * @var bool
-         */
-        protected $_locked = false;
-        /**
-         * @var int
-         */
-        protected $_iterator = 0;
+	/**
+	 * basic block that add functionalities to array
+	 * @test Block_Test
+	 */
+	class Block implements \Iterator, Interfaces\Arrayable {
+		/**
+		 * @var array
+		 */
+		protected $_properties = array();
 
-        /**
-         * load an array
-         * @param array $array
-         */
-        public function __construct(array $array=null) {
-            if (isset($array))
-                $this->loadArray($array);
-        }
+		/**
+		 * @var bool
+		 */
+		protected $_locked = false;
 
-        /**
-         * load an array of parameters, without emptying the existing ones unless you use $replaceIfExists
-         * @param array $array
-         * @param bool $replaceIfExists
-         * @test test_loadArray
-         */
-        public function loadArray(array $array, $replaceIfExists=true) {
-            if ($this->_locked)
-                throw new BlockException('Parameters are locked');
-            foreach ($array as $key => $value)
-                if (is_array($value)) {
-                    if (isset($this->_properties[$key]) && $this->_properties[$key] instanceof self)
-                        $this->_properties[$key]->loadArray($value, $replaceIfExists);
-                    else
-                        $this->_properties[$key] = new self($value);
-                }else {
-                    if ((isset($this->_properties[$key]) && $replaceIfExists) || !isset($this->_properties[$key]))
-                        $this->_properties[$key] = $value;
-                }
-        }
+		/**
+		 * @var int
+		 */
+		protected $_iterator = 0;
 
-        /**
-         * 
-         * @param string $var
-         * @return mix
-         * @test test_accessors
-         */
-        public function __isset($var) {
-            return isset($this->_properties[$var]);
-        }
+		/**
+		 * load an array
+		 * @param array $array
+		 */
+		public function __construct(array $array = null)
+		{
+			if (isset($array))
+				$this->loadArray($array);
+		}
 
-        /**
-         *
-         * @param string $var
-         * @return mix 
-         * @test test_accessors
-         */
-        public function __get($var) {
-            return isset($this->_properties[$var]) ? $this->_properties[$var] : null;
-        }
+		/**
+		 * load an array of parameters, without emptying the existing ones unless you use $replaceIfExists
+		 * @param array $array
+		 * @param bool $replaceIfExists
+		 * @test test_loadArray
+		 */
+		public function loadArray(array $array, $replaceIfExists = true)
+		{
+			if ($this->_locked)
+				throw new BlockException('Parameters are locked');
+			foreach ($array as $key => $value)
+				if (is_array($value)) {
+					if (isset($this->_properties[$key]) && $this->_properties[$key] instanceof self)
+						$this->_properties[$key]->loadArray($value, $replaceIfExists);
+					else
+						$this->_properties[$key] = new self($value);
+				}else {
+					if ((isset($this->_properties[$key]) && $replaceIfExists) || !isset($this->_properties[$key]))
+						$this->_properties[$key] = $value;
+				}
+		}
 
-        /**
-         *
-         * @param string $var
-         * @param mix $value 
-         * @test test_accessors
-         */
-        public function __set($var, $value) {
-            if ($this->_locked)
-                throw new BlockException('Parameter <b>' . $var . '</b> is locked');
-            if (is_array($value)) {
-                if (isset($this->_properties[$var]) && $this->_properties[$var] instanceof self)
-                    $this->_properties[$var]->loadArray($value);
-                else
-                    $this->_properties[$var] = new self($value);
-            }else
-                $this->_properties[$var] = $value;
-        }
+		/**
+		 * 
+		 * @param string $var
+		 * @return mix
+		 * @test test_accessors
+		 */
+		public function __isset($var)
+		{
+			return isset($this->_properties[$var]);
+		}
 
-        /**
-         *
-         * @param string $var 
-         * @test test_accessors
-         */
-        public function __unset($var) {
-            if ($this->_locked)
-                throw new BlockException('Parameter <b>' . $var . '</b> is locked');
-            unset($this->_properties[$var]);
-        }
+		/**
+		 *
+		 * @param string $var
+		 * @return mix 
+		 * @test test_accessors
+		 */
+		public function __get($var)
+		{
+			return isset($this->_properties[$var]) ? $this->_properties[$var] : null;
+		}
 
-        /**
-         * empty the parameters
-         * @test test_reset
-         */
-        public function reset() {
-            if ($this->_locked)
-                throw new BlockException('Parameters are locked');
-            $this->_properties = array();
-        }
+		/**
+		 *
+		 * @param string $var
+		 * @param mix $value 
+		 * @test test_accessors
+		 */
+		public function __set($var, $value)
+		{
+			if ($this->_locked)
+				throw new BlockException('Parameter <b>' . $var . '</b> is locked');
+			if (is_array($value)) {
+				if (isset($this->_properties[$var]) && $this->_properties[$var] instanceof self)
+					$this->_properties[$var]->loadArray($value);
+				else
+					$this->_properties[$var] = new self($value);
+			}else
+				$this->_properties[$var] = $value;
+		}
 
-        /**
-         * count the parameters
-         * @return int
-         * @test test_count_
-         */
-        public function count() {
-            return count($this->_properties);
-        }
+		public function add($value)
+		{	$var = count($this->_properties);
+			if (is_array($value)) {
+				if (isset($this->_properties[$var]) && $this->_properties[$var] instanceof self)
+					$this->_properties[$var]->loadArray($value);
+				else
+					$this->_properties[$var] = new self($value);
+			}else
+				$this->_properties[$var] = $value;
+		}
 
-        /**
-         * return the parameters as an array
-         * @test test_toArray
-         */
-        public function toArray() {
-            $return = array();
-            foreach ($this->_properties as $key => $value)
-                if ($value instanceof self) {
-                    $return[$key] = $value->toArray();
-                }else
-                    $return[$key] = $value;
-            return $return;
-        }
+		/**
+		 *
+		 * @param string $var 
+		 * @test test_accessors
+		 */
+		public function __unset($var)
+		{
+			if ($this->_locked)
+				throw new BlockException('Parameter <b>' . $var . '</b> is locked');
+			unset($this->_properties[$var]);
+		}
 
-        /**
-         * lock modification
-         * @test test_lock_
-         */
-        public function lock() {
-            $this->_locked = true;
-            foreach ($this->_properties as $property)
-                if ($property instanceof self)
-                    $property->lock();
-        }
+		/**
+		 * empty the parameters
+		 * @test test_reset
+		 */
+		public function reset()
+		{
+			if ($this->_locked)
+				throw new BlockException('Parameters are locked');
+			$this->_properties = array();
+		}
 
-        /**
-         * unlock modification
-         * @test test_unlock_
-         */
-        public function unLock() {
-            $this->_locked = false;
-            foreach ($this->_properties as $property)
-                if ($property instanceof self)
-                    $property->unLock();
-        }
+		/**
+		 * count the parameters
+		 * @return int
+		 * @test test_count_
+		 */
+		public function count()
+		{
+			return count($this->_properties);
+		}
 
-        
-        function rewind() {
-            reset($this->_properties);
-        }
+		/**
+		 * return the parameters as an array
+		 * @test test_toArray
+		 */
+		public function toArray()
+		{
+			$return = array();
+			foreach ($this->_properties as $key => $value)
+				if ($value instanceof self) {
+					$return[$key] = $value->toArray();
+				}else
+					$return[$key] = $value;
+			return $return;
+		}
 
-        function current() {
-            return current($this->_properties);
-        }
+		/**
+		 * lock modification
+		 * @test test_lock_
+		 */
+		public function lock()
+		{
+			$this->_locked = true;
+			foreach ($this->_properties as $property)
+				if ($property instanceof self)
+					$property->lock();
+		}
 
-        function key() {
-            return key($this->_properties);
-        }
+		/**
+		 * unlock modification
+		 * @test test_unlock_
+		 */
+		public function unLock()
+		{
+			$this->_locked = false;
+			foreach ($this->_properties as $property)
+				if ($property instanceof self)
+					$property->unLock();
+		}
 
-        function next() {
-            next($this->_properties);
-        }
+		function rewind()
+		{
+			reset($this->_properties);
+		}
 
-        function valid() {
-            return current($this->_properties)!==false;
-        }
-    }
-    class BlockException extends \CRUDsader\Exception {
-        
-    }
+		function current()
+		{
+			return current($this->_properties);
+		}
+
+		function key()
+		{
+			return key($this->_properties);
+		}
+
+		function next()
+		{
+			next($this->_properties);
+		}
+
+		function valid()
+		{
+			return current($this->_properties) !== false;
+		}
+	}
+	class BlockException extends \CRUDsader\Exception {
+		
+	}
 }

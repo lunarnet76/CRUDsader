@@ -9,9 +9,9 @@ namespace CRUDsader\Object\Attribute {
 	class Bool extends \CRUDsader\Object\Attribute {
 		protected $_parameters = array('isCheckbox' => true);
 
-		public function formatForDatabase($value)
+		public function getValueForDatabase()
 		{
-			return $value ? '1' : '0';
+			return $this->_value ? '1' : '0';
 		}
 
 
@@ -30,7 +30,7 @@ namespace CRUDsader\Object\Attribute {
 		public function getValue()
 		{
 			$v = parent::getValue();
-			return isset($v) ? (boolean)$v: null;
+			return isset($v) ? (boolean)$v: false;
 		}
 
 		public function toHtml()
@@ -49,8 +49,7 @@ namespace CRUDsader\Object\Attribute {
 
 		public function setValueFromInput($data = null)
 		{
-			
-			$this->_value = $data === 'yes' ? true : false;
+			$this->_value = $data === 'yes' || $data === true ? true : false;
 			
 			$this->_inputReceived = true;
 			$this->notify();
@@ -58,7 +57,7 @@ namespace CRUDsader\Object\Attribute {
 
 		public function generateRandom()
 		{
-			return rand(0, 1);
+			return rand(0, 1) == 1 ?'yes':'no';
 		}
 	}
 }

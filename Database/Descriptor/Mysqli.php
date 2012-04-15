@@ -60,8 +60,8 @@ namespace CRUDsader\Database\Descriptor {
 			$fieldValues = '(';
 			foreach ($values as $key => $value) {
 				$fields.=$this->quoteIdentifier($key) . ',';
-                                
-				$fieldValues.=($value === null ? 'NULL':$this->quote($value === false ? 0 : $value, $connector)) . ',';
+
+				$fieldValues.=($value === null ? 'NULL' : $this->quote($value === false ? 0 : $value, $connector)) . ',';
 			}
 			$fields[strlen($fields) - 1] = ')';
 			$fieldValues[strlen($fieldValues) - 1] = ')';
@@ -82,7 +82,7 @@ namespace CRUDsader\Database\Descriptor {
 				throw new MysqliException('UPDATE query cannot be without params');
 			$sql = 'UPDATE ' . $this->quoteIdentifier($table) . ' SET ';
 			foreach ($values as $key => $value) {
-				$sql.=$this->quoteIdentifier($key) . '=' . ($value === null ? 'NULL':$this->quote($value === false ? 0 : $value)) . ',';
+				$sql.=$this->quoteIdentifier($key) . '=' . ($value === null ? 'NULL' : $this->quote($value === false ? 0 : $value)) . ',';
 			}
 			$sql[strlen($sql) - 1] = ' ';
 			if ($where)
@@ -221,18 +221,31 @@ namespace CRUDsader\Database\Descriptor {
 				$sql.=' ORDER BY ' . $select['order'];
 			if (!empty($select['limit']))
 				$sql.=' LIMIT ' . (isset($select['limit']['from']) ? $select['limit']['from'] . ',' : '') . $select['limit']['count'];
-			$sql.=') AS `' . self::$OBJECT_TMP_TABLE_ALIAS . '` LEFT JOIN `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '` ON `' . self::$OBJECT_TMP_TABLE_ALIAS . '`.`' . self::$OBJECT_ID_FIELD_ALIAS . '`=' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '.`' . $select['from']['id'] . '`';
+			$sql.=') AS `' . self::$OBJECT_TMP_TABLE_ALIAS . '` JOIN `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '` ON `' . self::$OBJECT_TMP_TABLE_ALIAS . '`.`' . self::$OBJECT_ID_FIELD_ALIAS . '`=' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '.`' . $select['from']['id'] . '`';
 			$sql.=$joins;
 			if (!empty($select['where'])) {
 				$sql.=' WHERE ' . preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) {
-				
+
 							// special case : email
-							if(strpos($p[1],'@')!==false)return $p[0];
-							// special case : floats
-							if (ctype_digit($p[1]))
+							if (strpos($p[1], '@') !== false)
 								return $p[0];
+							// special case : floats
+							if (ctype_digit($p[1])) {
+								return $p[0];
+							}
 							return '`' . $p[1] . Mysqli::$TABLE_ALIAS_SUBQUERY . '`.`' . $p[2] . '`';
 						}, $select['where']);
+			}
+			if (!empty($select['order'])) {
+				$sql.=' ORDER BY ' . preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) {
+							// special case : floats
+							if (ctype_digit($p[1])) {
+								return $p[0];
+							}
+
+
+							return '`' . $p[1] . Mysqli::$TABLE_ALIAS_SUBQUERY . '`.`' . $p[2] . '`';
+						}, $select['order']);
 			}
 			if (!empty($select['group'])) {// array(1=>array('u'),2=>array('id'));
 				$sql.=' GROUP BY ';
