@@ -53,10 +53,16 @@ namespace CRUDsader {
 			$this->add(new \CRUDsader\Form\Component\Submit(), 'submit')->setHtmlLabel(false);
 		}
 
+		// !Form\Component
+		/**
+		 * @return boolean
+		 * @test test_inputRequired
+		 */
 		public function inputRequired()
 		{
 			return $this->_inputRequired || !$this->hasInputParent();
 		}
+
 
 		public function view($file, $context = false)
 		{
@@ -65,17 +71,10 @@ namespace CRUDsader {
 			return ob_get_clean();
 		}
 
-		public function wasPosted()
-		{
-			return isset($_POST[$this->_htmlAttributes['name']]);
-		}
-		public function wasRequested()
-		{
-			return isset($_REQUEST[$this->_htmlAttributes['name']]);
-		}
 
 		/**
 		 * @param Block $configuration
+		 * @test see parent
 		 */
 		public function setConfiguration(\CRUDsader\Block $configuration = null)
 		{
@@ -84,42 +83,71 @@ namespace CRUDsader {
 
 		/**
 		 * @return Block
+		 * @test see parent
 		 */
 		public function getConfiguration()
 		{
 			return $this->_configuration;
 		}
 
+		// !HELPER
+		/**
+		 * was received via POST
+		 * @test test_wasPosted
+		 * @return boolean 
+		 */
+		public function wasPosted()
+		{
+			return isset($_POST[$this->_htmlAttributes['name']]);
+		}
+
+		/**
+		 * was received via $_REQUEST
+		 * @test test_wasPosted
+		 * @return boolean 
+		 */
+		public function wasRequested()
+		{
+			return isset($_REQUEST[$this->_htmlAttributes['name']]);
+		}
+
+		/**
+		 * check if it has already posted once
+ 		 * @return type 
+		 * @test token
+		 */
 		public function checkToken()
 		{
 			return $this->_session->oldToken == $this->_tokenInputReceived;
 		}
 
 		// ** SESSION **
+		/**
+		 * activate/deactivate the use of session
+		 * @param bool $bool who would have guessed!
+		 * @test test_session
+		 */
 		public function useSession($bool)
 		{
 			$this->_useSession = $bool;
 		}
 
+		/**
+		 * 
+		 * @return \CRUDsader\Session 
+		 * @test test_session
+		 */
 		public function getSession()
 		{
 			return $this->_session;
 		}
 
+		/*
+		 * @test test_session
+		 */
 		public function resetSession()
 		{
 			$this->_session->reset();
-		}
-
-		public function _setId($id)
-		{
-			$this->_htmlAttributes['name'] = $id;
-			foreach ($this->_components as $index => $component) {
-				if ($component instanceof self)
-					$component->_setId($this->_htmlAttributes['name'] . '[' . $index . ']');
-				else
-					$component->setHtmlAttribute('name', $this->_htmlAttributes['name'] . '[' . $index . ']');
-			}
 		}
 
 		/**
@@ -127,6 +155,7 @@ namespace CRUDsader {
 		 * @param Form\Component $component
 		 * @param string $label
 		 * @return Form\Component
+		 * @test test_components,test_session
 		 */
 		public function add(\CRUDsader\Form\Component $component, $label = false, $required = false)
 		{
@@ -146,6 +175,7 @@ namespace CRUDsader {
 		/**
 		 * remove input or element from form
 		 * @param string $index
+		 * @test test_components
 		 */
 		public function remove($index)
 		{
@@ -156,40 +186,74 @@ namespace CRUDsader {
 			unset($this->_components[$index]);
 		}
 
-		// ** INTERFACE ** ArrayAccess
+		// !INTERFACE ArrayAccess
+		/**
+		 *
+		 * @param string $offset
+		 * @return bool
+		 * @test test_components
+		 */
 		public function offsetExists($offset)
 		{
 			return isset($this->_components[$offset]);
 		}
 
+		/**
+		 * @param string $offset
+		 * @return \CRUDsader\Form\Component  
+		 * @test test_components
+		 */
 		public function offsetGet($offset)
 		{
 			return $this->_components[$offset];
 		}
 
+		/**
+		 * @param string $offset
+		 * @param \CRUDsader\Form\Component  $value
+		 * @test test_components
+		 */
 		public function offsetSet($offset, $value)
 		{
 			$this->add($value, $offset);
 		}
 
+		/**
+		 * @param string $offset
+		 * @test test_components
+		 */
 		public function offsetUnset($offset)
 		{
 			$this->remove($offset);
+		}
+		
+		/**
+		 * @return array
+		 * @test test_components
+		 */
+		public function getComponents()
+		{
+			return $this->_components;
 		}
 
 		/**
 		 * Iterator to foreach the components
 		 * @return ArrayIterator
+		 * @test test_components
 		 */
 		public function getIterator()
 		{
 			return new \ArrayIterator($this->_components);
 		}
 
+		/**
+		 * 
+		 * @return boolean 
+		 */
 		public function ok()
-		{	
+		{
 			$this->_inputReceived = isset($_REQUEST[$this->_htmlAttributes['name']]);
-			if($this->_inputReceived)
+			if ($this->_inputReceived)
 				$this->setValueFromInput($_REQUEST[$this->_htmlAttributes['name']]);
 			return $this->inputReceived($_REQUEST) && $this->isValid();
 		}
@@ -292,8 +356,8 @@ namespace CRUDsader {
 				$ret[$name] = $component->toArray();
 			return $ret;
 		}
+		
 		/* OUPUTS ************************ */
-
 		public function toInput()
 		{
 			$html = $this->htmlTag() . ($this->_htmlLabel ? $this->wrapHtml($this->_htmlLabel, 'title') : '') . $this->htmlError();
@@ -337,36 +401,84 @@ namespace CRUDsader {
 			$error = $component->getInputError();
 			return $this->wrapHtml(($component->_htmlLabel === false ? '' : $component->labeltoHtml()) . $this->wrapHtml($component->toInput(), 'component'.($error?' component_error':'')) . (!$error ? '' : $this->wrapHtml(\CRUDsader\Instancer::getInstance()->i18n->translate($error), 'error')), 'row');
 		}
-
-		/** ACCESSORS ************************* */
-		public function getComponents()
+		
+		/**
+		 * set view path (without base folder)
+		 * @test test_view
+		 * @param type $viewPath 
+		 */
+		public function setView($viewIndex)
 		{
-			return $this->_components;
+			$this->_view = $viewIndex;
+		}
+		
+		
+		/**
+		 * return an HTML view
+		 * @param string $file
+		 * @param mix $context to specify special vas
+		 * @return string 
+		 * @test test_view
+		 */
+		public function getView($context = false)
+		{
+			ob_start();
+			require($this->_configuration->view->path . $this->_view . '.php');
+			return ob_get_clean();
 		}
 
+		// !ACCESSORS
+
+		/**
+		 * @return false|string $url 
+		 * @test null
+		 */
 		public function getUrl()
 		{
 			return isset($this->_htmlAttributes['action']) ? $this->_htmlAttributes['action'] : false;
 		}
 
+		/**
+		 * @param string $url 
+		 * @test null
+		 */
 		public function setUrl($url)
 		{
 			$this->_htmlAttributes['action'] = $url;
 		}
 
-		public function setView($viewPath)
-		{
-			$this->_view = $viewPath;
-		}
-
+		/**
+		 * inner function
+		 * @param string $name
+		 * @return mix
+		 * @test null
+		 */
 		public static function hasHelper($name)
 		{
 			return isset($this->_helper[$name]);
 		}
 
+		/**
+		 * inner function
+		 * @param string $name
+		 * @return mix 
+		 * @test null
+		 */
 		public static function getHelper($name)
 		{
 			return $this->_helper[$name];
+		}
+
+		// !PROTECTED
+		protected function _setId($id)
+		{
+			$this->_htmlAttributes['name'] = $id;
+			foreach ($this->_components as $index => $component) {
+				if ($component instanceof self)
+					$component->_setId($this->_htmlAttributes['name'] . '[' . $index . ']');
+				else
+					$component->setHtmlAttribute('name', $this->_htmlAttributes['name'] . '[' . $index . ']');
+			}
 		}
 	}
 	class FormException extends \CRUDsader\Exception {
