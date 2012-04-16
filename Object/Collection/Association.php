@@ -98,7 +98,7 @@ namespace CRUDsader\Object\Collection {
 
 			if ($this->_isModified) {
 				foreach ($this->_objects as $index => $object) {
-					if (isset($this->_objectsToBeDeleted[$index])) {
+					if ($object->isPersisted() && isset($this->_objectsToBeDeleted[$object->getId()])) {
 						switch ($this->_definition['reference']) {
 							case 'internal':
 								$unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => null), $db->quoteIdentifier($this->_definition['databaseIdField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
@@ -115,6 +115,8 @@ namespace CRUDsader\Object\Collection {
 						}
 						if($this->_definition['composition'])
 							$object->delete($unitOfWork);
+						
+						unset($this->_objects[$index]);
 						continue;
 					}
 
@@ -167,6 +169,15 @@ namespace CRUDsader\Object\Collection {
 				}
 				if ($cnt < $this->_definition['min'])
 					throw new AssociationException('error.association.save.min');
+			}
+		}
+		
+		public function offsetUnset($id)
+		{
+			if (isset($this->_objectIndexes[$id])) {
+				$this->_objectsToBeDeleted[$id] = true;
+				$this->_isModified = true;
+				\CRUDsader\Object\Writer::setModified($this->_linkedObject);
 			}
 		}
 

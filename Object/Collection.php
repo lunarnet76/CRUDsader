@@ -27,7 +27,7 @@ namespace CRUDsader\Object {
 			$ret = array('class' => $this->_class, 'initialised' => $this->_initialised ? 'yes' : 'no', 'objects' => array(), 'indexMap' => $this->_objectIndexes);
 			$ret['objects'] = array('modified' => $this instanceof \CRUDsader\Object\Collection\Association && $this->_isModified ? 'yes' : 'no');
 			foreach ($this->_objects as $k => $object) {
-				$ret['objects'][$k . ':' . $this->_objects[$k]->isPersisted() . '@' . $this->_objects[$k]->getLinkedAssociationId()] = $object->toArray($full);
+				$ret['objects']['index:'.$k . ',id:' . $this->_objects[$k]->isPersisted() . ',linked id:' . $this->_objects[$k]->getLinkedAssociationId().' '.(isset($this->_objectsToBeDeleted) && isset($this->_objectsToBeDeleted[$k])?'@to be deleted':'')] = $object->toArray($full);
 			}
 			return $full ? $ret : $ret['objects'];
 		}

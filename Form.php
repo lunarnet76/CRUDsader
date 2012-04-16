@@ -310,7 +310,7 @@ namespace CRUDsader {
 			if (!$this->wrapHtmlTagIsOpened) {
 				$this->wrapHtmlTagIsOpened = true;
 				$htmlAttributes = $this->getHtmlAttributesToHtml();
-				$tag = $this->hasInputParent() ? '<fieldset' : '<form enctype="multipart/form-data"  ' . $htmlAttributes;
+				$tag = $this->hasInputParent() ? '<fieldset' .(isset($this->_htmlAttributes['class'])?' class='.$this->_htmlAttributes['class']:'').(isset($this->_htmlAttributes['id'])?' id='.$this->_htmlAttributes['id']:''): '<form enctype="multipart/form-data"  ' . $htmlAttributes;
 				return $tag . ' ' . ($this->inputRequired() ? 'required="true"' : '') . ' >';
 			} else {
 				$this->wrapHtmlTagIsOpened = false;
