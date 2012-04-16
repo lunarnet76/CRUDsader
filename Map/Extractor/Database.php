@@ -21,7 +21,7 @@ namespace CRUDsader\Map\Extractor {
                     'name' => $classInfos['definition']['databaseTable'],
                     'identity' => array(),
                     'fields' => array(),
-                    'surrogateKey' => array('type' => 'bigint', 'length' => 20, 'name' => $classInfos['definition']['databaseIdField']),
+                    'surrogateKey' => array('type' => 'int', 'length' => 10, 'name' => $classInfos['definition']['databaseIdField']),
                     'foreignKeys' => array(),
                     'indexes' => array()
                 );
@@ -44,8 +44,8 @@ namespace CRUDsader\Map\Extractor {
                             // add fk in external table
                             $tables[$associationInfos['to']]['fields'][$associationInfos['externalField']] = array(
                                 'null' => true,
-                                'type' => 'bigint',
-                                'length' => 20
+                                'type' => 'int',
+                                'length' => 10
                             );
                             // define the fk as a reference
                             $fks[$map['classes'][$associationInfos['to']]['definition']['databaseTable']][$associationInfos['externalField']] = array('table' => $tables[$className]['name'], 'field' => $classInfos['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
@@ -54,8 +54,8 @@ namespace CRUDsader\Map\Extractor {
                             // add fk in internal table
                             $tables[$className]['fields'][$associationInfos['internalField']] = array(
                                 'null' => true,
-                                'type' => 'bigint',
-                                'length' => 20
+                                'type' => 'int',
+                                'length' => 10
                             );
                             // define the fk as a reference
                             $fks[$className][$associationInfos['internalField']] = array('table' => $tables[$associationInfos['to']]['name'], 'field' => $map['classes'][$associationInfos['to']]['definition']['databaseIdField'], 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
@@ -67,7 +67,7 @@ namespace CRUDsader\Map\Extractor {
                                     'name' => $associationTable,
                                     'identity' => array(),
                                     'fields' => array(),
-                                    'surrogateKey' => array('type' => 'bigint', 'length' => 20, 'name' => $this->_configuration->idField),
+                                    'surrogateKey' => array('type' => 'int', 'length' => 10, 'name' => $this->_configuration->idField),
                                     'association' => array(),
                                     'foreignKeys' => array(),
                                     'indexes' => array()
@@ -76,13 +76,13 @@ namespace CRUDsader\Map\Extractor {
                             // add fk in association table
                             $tables[$associationTable]['fields'][$associationInfos['internalField']] = array(
                                 'null' => false,
-                                'type' => 'bigint',
-                                'length' => 20
+                                'type' => 'int',
+                                'length' => 10
                             );
                             $tables[$associationTable]['fields'][$associationInfos['externalField']] = array(
                                 'null' => false,
-                                'type' => 'bigint',
-                                'length' => 20
+                                'type' => 'int',
+                                'length' => 10
                             );
                             // define the fk as a reference
                             $fks[$associationTable][$associationInfos['externalField']] = array(
