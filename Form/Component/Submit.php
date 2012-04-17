@@ -1,6 +1,7 @@
 <?php
 namespace CRUDsader\Form\Component {
     class Submit extends \CRUDsader\Form\Component {
+		protected $_parameters = array('isSubmit' => true);
         protected $_text='ok';
 
         public function setText($text){

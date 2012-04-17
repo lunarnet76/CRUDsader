@@ -310,14 +310,20 @@ namespace CRUDsader\Form {
 		}
 
 		// !SETTER
-		/**
-		 * receive from $_REQUEST
-		 * @param mix $data 
-		 */
+		// null => not received, '' => received
 		public function setValueFromInput($data = null)
 		{
-			$this->_value = $data;
-			$this->_inputReceived = true;
+			if($data === null){
+				$this->_value = $this->_valueDefault;
+				$this->_inputReceived = false;
+			}
+			else if ($data === '') {
+				$this->_inputReceived = true;
+				$this->_value = null;
+			}else{
+				$this->_inputReceived = true;
+				$this->_value = $data;
+			}
 			$this->notify();
 		}
 
