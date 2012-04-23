@@ -375,7 +375,7 @@ namespace CRUDsader {
 			return $ret;
 		}
 
-		public function calculateAttribute($attributeName, $oid)
+		public function calculateAttribute($attributeName)
 		{
 			return $this->_fields[$attributeName]->getValueForDatabase();
 		}

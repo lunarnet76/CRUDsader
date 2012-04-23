@@ -113,6 +113,10 @@ namespace CRUDsader\Object {
 			}
 			throw new CollectionException('no object with id "' . $index . '"');
 		}
+		
+		public function hasObjectId($index){
+			return isset($this->_objectIndexes[$index]);
+		}
 
 		/**
 		 * rewind the iterator,   reset the write mode iterator at the same time

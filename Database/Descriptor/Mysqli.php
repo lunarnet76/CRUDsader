@@ -223,7 +223,7 @@ namespace CRUDsader\Database\Descriptor {
 				$sql.=' LIMIT ' . (isset($select['limit']['from']) ? $select['limit']['from'] . ',' : '') . $select['limit']['count'];
 			$sql.=') AS `' . self::$OBJECT_TMP_TABLE_ALIAS . '` JOIN `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '` ON `' . self::$OBJECT_TMP_TABLE_ALIAS . '`.`' . self::$OBJECT_ID_FIELD_ALIAS . '`=' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '.`' . $select['from']['id'] . '`';
 			$sql.=$joins;
-			if (!empty($select['where'])) {
+			if (!empty($select['where']) && $this->_configuration->restrictiveWhere) {
 				$sql.=' WHERE ' . preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) {
 
 							// special case : email

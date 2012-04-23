@@ -20,7 +20,9 @@ namespace CRUDsader {
          * @var array
          */
         protected static $_defaults = array(
-            'database' => array(),
+            'database' => array(
+		'restrictiveWhere'=>true
+	    ),
             'database.connector' => array(
                 'host' => 'localhost',
                 'user' => 'root',
