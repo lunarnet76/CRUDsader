@@ -63,5 +63,7 @@ class ArrayLoader_Yaml_Test extends PHPUnit_Framework_TestCase {
         ));
         
         $this->assertEquals($ret['default'],$ret['same']);
+	
+	$ret = $y->load(array('file'=>'Parts/Mock/ArrayLoader/Yaml2.php'));
     }
 }
