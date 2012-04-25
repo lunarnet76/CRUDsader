@@ -50,22 +50,28 @@ namespace CRUDsader\ArrayLoader {
                         break;
                     default:// config line
                         if (preg_match('|^(\s*)([^:=]*)([:=])(.*)\s*$|', $line, $match)) {// key:
-                            $depth = strlen($match[1]) / 4;
+                            $depth = strlen($match[1]);
+			    if($depth%4!=0)
+				    throw new YamlException('depth separator must be 4 spaces and not '.$depth.' at line '.$lineNumber.':'.$line);
+			    $depth=$depth/4;
                             $name = $match[2];
                             if ($depth == 0) {// depth 0
-                                if (!isset($configuration[$namespace][$match[2]]))
-                                    $configuration[$namespace][$match[2]] = array();
-                                $depths[$depth] = &$configuration[$namespace][$match[2]];
+                                if (!isset($configuration[$namespace][$name]))
+                                    $configuration[$namespace][$name] = array();
+                                $depths[$depth] = &$configuration[$namespace][$name];
                             } else if ($depth == $lastDepth) {// same depth
-                                if (!isset($depths[$depth - 1][$match[2]]))
-                                    $depths[$depth - 1][$match[2]] = array();
-                                $depths[$depth] = &$depths[$depth - 1][$match[2]];
+                                if (!isset($depths[$depth - 1][$name]))
+                                    $depths[$depth - 1][$name] = array();
+				if(!isset($depths[$depth - 1]) || !is_array($depths[$depth - 1])){
+					throw new YamlException('error: should be at depth '.($depth - 1).' at line '.$lineNumber.':'.$line);
+				}
+                                $depths[$depth] = &$depths[$depth - 1][$name];
                             } else if ($depth > $lastDepth) {// >
-                                if (!isset($depths[$lastDepth][$match[2]]))
-                                    $depths[$lastDepth][$match[2]] = array();
-                                $depths[$depth] = &$depths[$lastDepth][$match[2]];
+                                if (!isset($depths[$lastDepth][$name]))
+                                    $depths[$lastDepth][$name] = array();
+                                $depths[$depth] = &$depths[$lastDepth][$name];
                             } else {
-                                $depths[$depth] = &$depths[$depth - 1][$match[2]];
+                                $depths[$depth] = &$depths[$depth - 1][$name];
                             }
                             $lastDepth = $depth;
                             if ($match[3]=='=') {
