@@ -190,7 +190,7 @@ namespace CRUDsader\Database\Descriptor {
 		 * SELECT statment
 		 * @param array $select
 		 */
-		public function select($select)
+		public function select($select, $args = null)
 		{
 			$sql = 'SELECT ';
 
@@ -223,9 +223,11 @@ namespace CRUDsader\Database\Descriptor {
 				$sql.=' LIMIT ' . (isset($select['limit']['from']) ? $select['limit']['from'] . ',' : '') . $select['limit']['count'];
 			$sql.=') AS `' . self::$OBJECT_TMP_TABLE_ALIAS . '` JOIN `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '` ON `' . self::$OBJECT_TMP_TABLE_ALIAS . '`.`' . self::$OBJECT_ID_FIELD_ALIAS . '`=' . $select['from']['alias'] . self::$TABLE_ALIAS_SUBQUERY . '.`' . $select['from']['id'] . '`';
 			$sql.=$joins;
-			if (!empty($select['where']) && $this->_configuration->restrictiveWhere) {
-				$sql.=' WHERE ' . preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) {
 
+
+			$restrictiveWhere = !empty($select['where']) && $this->_configuration->restrictiveWhere;
+			if ($restrictiveWhere) {
+				$sql.=' WHERE ' . preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) {
 							// special case : email
 							if (strpos($p[1], '@') !== false)
 								return $p[0];
@@ -236,17 +238,57 @@ namespace CRUDsader\Database\Descriptor {
 							return '`' . $p[1] . Mysqli::$TABLE_ALIAS_SUBQUERY . '`.`' . $p[2] . '`';
 						}, $select['where']);
 			}
-			if (!empty($select['order'])) {
-				$sql.=' ORDER BY ' . preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) {
-							// special case : floats
-							if (ctype_digit($p[1])) {
-								return $p[0];
-							}
 
+			// replace args
+			if ($args != null) {
+				$this->i = 0;
+				$this->t = 0;
 
-							return '`' . $p[1] . Mysqli::$TABLE_ALIAS_SUBQUERY . '`.`' . $p[2] . '`';
-						}, $select['order']);
+				$unLexicalThis = $this;
+
+				$sql = preg_replace_callback('|(\=\?)|', function($p) use($args, $restrictiveWhere, $unLexicalThis) {
+						if ($restrictiveWhere) {
+
+							$arg = $args[$unLexicalThis->t];
+						}else
+							$arg = $args[$unLexicalThis->i];
+
+						$unLexicalThis->i++;
+						if ($unLexicalThis->i % 2 == 0)
+							$unLexicalThis->t++;
+						return (is_array($arg) ? key($arg) . ' ' . $unLexicalThis->quote(current($arg)) : '=' . $unLexicalThis->quote($arg));
+					}, $sql);
 			}
+
+
+			if (!empty($select['order'])) {
+				$select['order'] = preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) {
+						// special case : floats
+						if (ctype_digit($p[1])) {
+							return $p[0];
+						}
+
+
+						return '`' . $p[1] . Mysqli::$TABLE_ALIAS_SUBQUERY . '`.`' . $p[2] . '`';
+					}, $select['order']);
+
+				if ($args != null) {
+					$this->i = 0;
+
+					$unLexicalThis = $this;
+
+					$select['order'] = preg_replace_callback('|(\?)|', function($p) use($args, $unLexicalThis) {
+							$arg = $args[$unLexicalThis->i];
+							$unLexicalThis->i++;
+							if ($unLexicalThis->i % 2 == 0)
+								$unLexicalThis->t++;
+							return (is_array($arg) ? key($arg) . ' ' . $unLexicalThis->quote(current($arg)) : '=' . $unLexicalThis->quote($arg));
+						}, $select['order']);
+				}
+				$sql.=' ORDER BY ' . $select['order'];
+			}
+
+
 			if (!empty($select['group'])) {// array(1=>array('u'),2=>array('id'));
 				$sql.=' GROUP BY ';
 				$groups = array();
@@ -254,6 +296,9 @@ namespace CRUDsader\Database\Descriptor {
 					$groups[] = $v . self::$TABLE_ALIAS_SUBQUERY . '.' . $select['group'][2][$k];
 				$sql.=implode(',', $groups);
 			}
+
+
+
 			return $sql;
 		}
 
