@@ -228,7 +228,7 @@ namespace CRUDsader {
 					return $this->getParent()->__set($var, $value);
 					break;
 				default:
-					throw new ObjectException('cannot set "' . $var . '"');
+					throw new ObjectException('var does not exist "' . $var . '"');
 			}
 		}
 
