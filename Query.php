@@ -222,6 +222,8 @@ namespace CRUDsader {
 
 		public function fetchAll($args = NULL)
 		{
+			if (!is_array($args))
+				$args = array($args);
 			$this->_prefetch($args);
 			$results = $this->_db->select($this->_sql,$args);
 			$collection = \CRUDsader\Instancer::getInstance()->{'object.collection.initialised'}($this->_class, $results, $this->_mapFields, $this->_extraColumns);
@@ -230,6 +232,8 @@ namespace CRUDsader {
 
 		public function fetch($args = NULL)
 		{
+			if (!is_array($args))
+				$args = array($args);
 			$this->_prefetch($args, false);
 			$results = $this->_db->select($this->_sql,$args);
 			$collection = \CRUDsader\Instancer::getInstance()->{'object.collection.initialised'}($this->_class, $results, $this->_mapFields, $this->_extraColumns);
@@ -249,12 +253,13 @@ namespace CRUDsader {
 			
 			$this->_argsIndex = -1;
 			$this->getInfos();
-			if (!is_array($args))
-				$args = array($args);
+			
 			$alias2class = $this->_alias2class;
 			$map = \CRUDsader\Instancer::getInstance()->map;
 			if (!$all)
 				$this->_sql['limit'] = array('count' => 1);
+			
+			
 
 			if ($this->_oqlSelect) {
 				$newMapFields = array();

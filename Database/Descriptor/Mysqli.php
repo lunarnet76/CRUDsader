@@ -214,8 +214,19 @@ namespace CRUDsader\Database\Descriptor {
 					$joins.=' LEFT JOIN `' . $join['table'] . '` AS `' . $join['alias'] . self::$TABLE_ALIAS_SUBQUERY . '` ON `' . $join['alias'] . self::$TABLE_ALIAS_SUBQUERY . '`.`' . $join['field'] . '`=`' . $join['joinAlias'] . self::$TABLE_ALIAS_SUBQUERY . '`.`' . $join['joinField'] . '`';
 				}
 			}
-			if (!empty($select['where']))
-				$sql.=' WHERE ' . $select['where'];
+			if (!empty($select['where'])){
+				$sql.=' WHERE ' . preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) {
+					
+							// special case : email
+							if (strpos($p[1], '@') !== false)
+								return $p[0];
+							// special case : floats
+							if (ctype_digit($p[1])) {
+								return $p[0];
+							}
+							return '`' . $p[1] .  '`.`' . $p[2] . '`';
+						}, $select['where']);
+			}
 			$sql.=' GROUP BY `' . $select['from']['alias'] . '`.`' . $select['from']['id'] . '`';
 			if (!empty($select['order']))
 				$sql.=' ORDER BY ' . $select['order'];
@@ -228,6 +239,7 @@ namespace CRUDsader\Database\Descriptor {
 			$restrictiveWhere = !empty($select['where']) && $this->_configuration->restrictiveWhere;
 			if ($restrictiveWhere) {
 				$sql.=' WHERE ' . preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) {
+					
 							// special case : email
 							if (strpos($p[1], '@') !== false)
 								return $p[0];
@@ -238,9 +250,9 @@ namespace CRUDsader\Database\Descriptor {
 							return '`' . $p[1] . Mysqli::$TABLE_ALIAS_SUBQUERY . '`.`' . $p[2] . '`';
 						}, $select['where']);
 			}
-
 			// replace args
 			if ($args != null) {
+				
 				$this->i = 0;
 				$this->t = 0;
 
