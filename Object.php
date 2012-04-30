@@ -375,7 +375,7 @@ namespace CRUDsader {
 			return $ret;
 		}
 
-		public function calculateAttribute($attributeName, $oid)
+		public function calculateAttribute($attributeName)
 		{
 			return $this->_fields[$attributeName]->getValueForDatabase();
 		}
@@ -564,7 +564,7 @@ namespace CRUDsader {
 			$ret['id'] = $this->_isPersisted;
 			foreach ($this->_fields as $name => $field)
 				if ($this->_infos['attributes'][$name]['json']) {
-					$ret[$name] = $this->filter($field->getValue(), $name, 'json');
+					$ret[$name] = $this->filter(utf8_encode($field->getValue()), $name, 'json');//utf8_encode for special chars
 				}
 			if (!empty($this->_associations))
 				foreach ($this->_associations as $name => $association)

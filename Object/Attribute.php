@@ -23,22 +23,7 @@ namespace CRUDsader\Object {
 			$this->_name = $name;
 		}
 
-		// !SETTER
-		// null => not received, '' => received
-		public function setValueFromInput($data = null)
-		{
-			if($data === null){
-				$this->_value = $this->_valueDefault;
-				$this->_inputReceived = false;
-			}
-			else if ($data === '') {
-				$this->_inputReceived = true;
-				$this->_value = null;
-			}else{
-				$this->_value = $data;
-			}
-			$this->notify();
-		}
+		
 
 		/**
 		 * when writing object from database

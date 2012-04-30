@@ -272,10 +272,10 @@ namespace CRUDsader {
 					}else
 						$component->setValueFromInput($data[$index]);
 				} else if ($this->_useSession && isset($this->_session->$index)) {// session
-					if ($component->hasParameter('isCheckbox'))
-						$component->setValueFromInput(false);
-					else
-						$component->setValueFromInput($component instanceof self ? $this->_session->$index->toArray() : $this->_session->$index);
+					if ($component->hasParameter('isCheckbox') || $component->hasParameter('isSubmit')){
+						$component->setValueFromInput(null);
+					}else
+						$component->setDefaultValue($component instanceof self ? $this->_session->$index->toArray() : $this->_session->$index);
 				}
 			}
 			// token

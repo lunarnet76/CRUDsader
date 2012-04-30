@@ -222,16 +222,20 @@ namespace CRUDsader {
 
 		public function fetchAll($args = NULL)
 		{
+			if (!is_array($args))
+				$args = array($args);
 			$this->_prefetch($args);
-			$results = $this->_db->select($this->_sql);
+			$results = $this->_db->select($this->_sql,$args);
 			$collection = \CRUDsader\Instancer::getInstance()->{'object.collection.initialised'}($this->_class, $results, $this->_mapFields, $this->_extraColumns);
 			return $collection;
 		}
 
 		public function fetch($args = NULL)
 		{
+			if (!is_array($args))
+				$args = array($args);
 			$this->_prefetch($args, false);
-			$results = $this->_db->select($this->_sql);
+			$results = $this->_db->select($this->_sql,$args);
 			$collection = \CRUDsader\Instancer::getInstance()->{'object.collection.initialised'}($this->_class, $results, $this->_mapFields, $this->_extraColumns);
 			return $collection->count() ? $collection[0] : false;
 		}
@@ -249,31 +253,13 @@ namespace CRUDsader {
 			
 			$this->_argsIndex = -1;
 			$this->getInfos();
-			if (!is_array($args))
-				$args = array($args);
+			
 			$alias2class = $this->_alias2class;
 			$map = \CRUDsader\Instancer::getInstance()->map;
-			if (!$this->_fetched) {
-				$unlexicalThis = $this;
-				$db = $this->_db;
-				if (!empty($this->_sql['where']))
-					$this->_sql['where'] = preg_replace_callback('/(\?)|([\w]+)\.([\w]+)=\?/', function($p) use($alias2class, $map, $db, $args, $unlexicalThis) {
-
-							if ($p[0] == '?')
-								return $args[++$unlexicalThis->_argsIndex];
-							if (!isset($args[$unlexicalThis->_argsIndex + 1]))
-								throw new QueryException('', 'not enough arg');
-							$calculation = (is_array($args[++$unlexicalThis->_argsIndex]) ? key($args[$unlexicalThis->_argsIndex]) . ' ' . $db->quote(current($args[$unlexicalThis->_argsIndex])) : '=' . $db->quote($args[$unlexicalThis->_argsIndex]));
-							return $db->quoteIdentifier($p[2]) . '.' . $db->quoteIdentifier($map->classGetDatabaseTableField($alias2class[$p[2]], $p[3])) . $calculation;
-						}, $this->_sql['where']);
-				if (!empty($this->_sql['order'])){
-					$this->_sql['order'] = preg_replace_callback('|\?|', function($p) use($alias2class, $db, $map, $args, $unlexicalThis) {
-							return $args[++$unlexicalThis->_argsIndex];
-						}, $this->_sql['order']);
-				}
-			}
 			if (!$all)
 				$this->_sql['limit'] = array('count' => 1);
+			
+			
 
 			if ($this->_oqlSelect) {
 				$newMapFields = array();
