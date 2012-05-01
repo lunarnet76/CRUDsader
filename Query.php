@@ -8,6 +8,7 @@
 namespace CRUDsader {
 	/**
 	 * @package CRUDsader
+	 * security: SELECT is NOT checked
 	 */
 	class Query implements Interfaces\Configurable {
 		protected $_oql;

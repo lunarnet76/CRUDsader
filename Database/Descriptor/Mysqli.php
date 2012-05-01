@@ -352,7 +352,8 @@ namespace CRUDsader\Database\Descriptor {
 				    'ON',
 				    'ORDER BY',
 				    ' AS ',
-				    'NULL'
+				    'NULL',
+				    'LIMIT'
 					), array(
 				    '<span style="color:#ae1414;font-weight:bold">CREATE TABLE</span><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
 				    '<span style="color:#ae1414;font-weight:bold">SELECT</span><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
@@ -367,7 +368,8 @@ namespace CRUDsader\Database\Descriptor {
 				    '<span style="color:#ae1414;font-weight:bold">ON</span>',
 				    '<br><span style="color:#ae1414;font-weight:bold">ORDER BY</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
 				    '<span style="font-weight:bold"> AS </span>',
-				    '<span style="font-weight:bold"> NULL </span>'
+				    '<span style="font-weight:bold"> NULL </span>',
+				    '<br><span style="color:#ae1414;font-weight:bold">LIMIT</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
 					), $sql) . '</div>';
 		}
 

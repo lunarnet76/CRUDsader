@@ -22,11 +22,11 @@ namespace CRUDsader\Object\Collection {
 			$this->_fromClass = $fromClass;
 		}
 
-		public function toJson()
+		public function toJson($base = true)
 		{
-			$ret = parent::toJson();
+			$ret = parent::toJson($base);
 			if ($this->_definition['reference'] == 'internal' || $this->_definition['max'] == 1) {
-				return count($ret[$this->_class]) ? current($ret[$this->_class]) : null;
+				return $base?(count($ret[$this->_class]) ? current($ret[$this->_class]) : null):(isset($ret[0])?$ret[0]:null);
 			}
 			return $ret;
 		}

@@ -567,8 +567,9 @@ namespace CRUDsader {
 					$ret[$name] = $this->filter(utf8_encode($field->getValue()), $name, 'json');//utf8_encode for special chars
 				}
 			if (!empty($this->_associations))
-				foreach ($this->_associations as $name => $association)
-					$ret[$name] = $association->toJson();
+				foreach ($this->_associations as $name => $association){
+				$ret[$name] = $association->toJson(false);
+				}
 			if ($this->_parent)
 				$ret[$this->_parent->getClass()] = $this->_parent->toJson();
 			return $ret;
