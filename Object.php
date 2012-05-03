@@ -64,15 +64,18 @@ namespace CRUDsader {
 			if ($this->_isPersisted)
 				\CRUDsader\Instancer::getInstance()->query('FROM ' . $this->_class . ' o WHERE o.id=?')->fetch($this->_isPersisted);
 		}
+		
+		public function setAttributesFromArray(array $array){
+			foreach ($this->_infos['attributes'] as $attributeName => $attributeInfos) {
+				if ($attributeName!='id' && isset($array[$attributeName]))
+					$this->$attributeName = $array[$attributeName];
+			}
+		}
 
 		public function receiveArray(array $array)
 		{
-			foreach ($this->_infos['attributes'] as $attributeName => $attributeInfos) {
-				if (isset($array[$attributeName]))
-					$this->$attributeName = $array[$attributeName];
-			}
+			$this->setAttributesFromArray($array);
 			foreach ($this->_infos['associations'] as $associationName => $associationInfos) {
-
 				if ($associationInfos['reference'] == 'internal' && isset($array[$associationInfos['internalField']]))
 					$this->{$associationName}[] = \CRUDsader\Instancer::getInstance()->{'object.proxy'}($associationInfos['to'], $array[$associationInfos['internalField']]);
 			}
@@ -561,7 +564,9 @@ namespace CRUDsader {
 		public function toJson()
 		{
 			$ret = array();
-			$ret['id'] = $this->_isPersisted;
+			
+			$ret[$this->_infos['definition']['databaseIdField']] = $this->_isPersisted;
+			
 			foreach ($this->_fields as $name => $field)
 				if ($this->_infos['attributes'][$name]['json']) {
 					$ret[$name] = $this->filter(utf8_encode($field->getValue()), $name, 'json');//utf8_encode for special chars

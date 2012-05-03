@@ -226,7 +226,7 @@ namespace CRUDsader {
 			if (!is_array($args))
 				$args = array($args);
 			$this->_prefetch($args);
-			$results = $this->_db->select($this->_sql,$args);
+			$results = $this->_db->select($this->_sql,$args,$this->_alias2class);
 			$collection = \CRUDsader\Instancer::getInstance()->{'object.collection.initialised'}($this->_class, $results, $this->_mapFields, $this->_extraColumns);
 			return $collection;
 		}
@@ -236,7 +236,7 @@ namespace CRUDsader {
 			if (!is_array($args))
 				$args = array($args);
 			$this->_prefetch($args, false);
-			$results = $this->_db->select($this->_sql,$args);
+			$results = $this->_db->select($this->_sql,$args,$this->_alias2class);
 			$collection = \CRUDsader\Instancer::getInstance()->{'object.collection.initialised'}($this->_class, $results, $this->_mapFields, $this->_extraColumns);
 			return $collection->count() ? $collection[0] : false;
 		}

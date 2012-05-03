@@ -198,6 +198,10 @@ namespace CRUDsader {
 		{
 			return $this->_map['classes'][$className]['inherit'];
 		}
+		
+		public function classGetAttributeDatabaseName($className,$attributeName){
+			return isset($this->_map['classes'][$className]['attributes'][$attributeName])?$this->_map['classes'][$className]['attributes'][$attributeName]['databaseField']:$attributeName;
+		}
 
 		public function classInheritsFrom($className, $inheritFrom)
 		{
