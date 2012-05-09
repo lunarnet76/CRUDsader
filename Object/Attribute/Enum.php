@@ -7,6 +7,11 @@
  */
 namespace CRUDsader\Object\Attribute {
 	class Enum extends \CRUDsader\Object\Attribute {
+		
+		public function __construct($name,$options){
+			parent::__construct($name,$options);
+			$this->_options['choices'] = explode(',',str_replace('\'','',substr($options['definition']['databaseType'],strlen('enum('),-1)));
+		}
 
 		public function isValid()
 		{
@@ -43,8 +48,9 @@ namespace CRUDsader\Object\Attribute {
 
 		public function generateRandom($object = null)
 		{
+			
 			$ret = rand(0, count($this->_options['choices']) - 1);
-			return $ret;
+			return $this->_options['choices'][$ret];
 		}
 	}
 }

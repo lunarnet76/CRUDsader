@@ -148,6 +148,8 @@ namespace CRUDsader {
                     'class' => '\\CRUDsader\\Form\\Component\\Association', 'singleton' => false),
                 'object.collection.association' => array(
                     'class' => '\\CRUDsader\\Object\\Collection\\Association', 'singleton' => false),
+                'object.collection' => array(
+                    'class' => '\\CRUDsader\\Object\\Collection', 'singleton' => false),
                 'object.collection.initialised' => array(
                     'class' => '\\CRUDsader\\Object\\Collection\\Initialised', 'singleton' => false),
                 'query' => array(

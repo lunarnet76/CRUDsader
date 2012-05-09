@@ -608,7 +608,10 @@ namespace CRUDsader {
 			} else if (!isset($this->_fields[$name])) {
 				$type = $this->_map->classGetFieldAttributeType($this->_class, $name);
 				$class = $type['phpNamespace'] . $type['class'];
-				$this->_fields[$name] = new $class($name, $type['options']);
+				$ret = $type['options'];
+				$ret['definition'] = $type;
+				unset($ret['definition']['options']);
+				$this->_fields[$name] = new $class($name, $ret);
 				$this->_fields[$name]->attach($this);
 				if (isset($this->_infos['attributes'][$name]['default']))
 					$this->_fields[$name]->setDefaultValue($this->_infos['attributes'][$name]['default']);
