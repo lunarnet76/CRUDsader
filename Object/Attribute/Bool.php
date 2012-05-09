@@ -55,7 +55,7 @@ namespace CRUDsader\Object\Attribute {
 			$this->notify();
 		}
 
-		public function generateRandom()
+		public function generateRandom($data =null)
 		{
 			return rand(0, 1) == 1 ?'yes':'no';
 		}

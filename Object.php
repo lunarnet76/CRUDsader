@@ -401,7 +401,7 @@ namespace CRUDsader {
 			foreach ($this->_infos['definition']['identity'] as $fieldName) {
 				$empty = $this->getAttribute($fieldName)->isEmpty();
 				if (!$this->_infos['attributes'][$fieldName]['calculated'] && $empty)
-					throw new ObjectException('cannot check as attribute "' . $this->_class . '.' . $fieldName . '" is empty');
+					throw new ObjectException('cannot check identity as attribute "' . $this->_class . '.' . $fieldName . '" is empty');
 				if ($empty)
 					$where[] = $db->quoteIdentifier($this->_infos['attributes'][$fieldName]['databaseField']) . ' IS NULL';
 				else
@@ -425,7 +425,7 @@ namespace CRUDsader {
 			foreach ($this->_infos['definition']['identity'] as $fieldName) {
 				$empty = $this->getAttribute($fieldName)->isEmpty();
 				if (!$this->_infos['attributes'][$fieldName]['calculated'] && $empty)
-					throw new ObjectException('cannot check as attribute "' . $this->_class . '.' . $fieldName . '" is empty');
+					throw new ObjectException('cannot check identity as attribute "' . $this->_class . '.' . $fieldName . '" is empty');
 				if ($empty) {
 					$where[] = 'o.' . $fieldName . '=?';
 					$args[] = null;

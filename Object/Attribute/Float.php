@@ -26,7 +26,7 @@ namespace CRUDsader\Object\Attribute {
 			return isset($v) ? (float) ($v) : $v;
 		}
 
-		public function generateRandom()
+		public function generateRandom($object = null)
 		{
 			return rand(0, 1000) . '.' . rand(0, 100);
 		}

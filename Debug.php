@@ -297,11 +297,11 @@ namespace CRUDsader {
                  .php-error-top{
                      background-color: #10759C;
                         border-bottom: 1px solid #0E698B;
-                        
                         text-align: left;
 			color: white;
 			font-size:30px;
 			padding:5px;
+			float:left;
                 }
                 .php-error-title{
 			color:black !important;
@@ -315,6 +315,7 @@ namespace CRUDsader {
                     padding: 0;
                 }
                 .php-error-separator{
+			clear:both;
                     background-color: #334C60;
                     border-bottom: 1px solid #617789;
                     border-top: 2px solid #2E4456;
@@ -331,9 +332,7 @@ namespace CRUDsader {
                 </style>';
 			echo '<div class="php-error-separator"></div>
                     <div class="php-error">
-                        <div class="php-error-top">
-                            ' . $message . '
-                        </div>
+                        <div class="php-error-top">' . trim($message) . '</div>
                         <div class="php-error-separator"></div>';
 			foreach ($trace as $i => $t) {
 				if ($i == 0) {
