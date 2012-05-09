@@ -25,7 +25,7 @@ namespace CRUDsader\Query {
 			$this->_args = $args;
 			$this->_session = \CRUDsader\Session::useNamespace('\\CRUDsader\\Query\\Pagination\\' . $this->_index);
 			if (!isset($session->numRows)) {
-				$this->_session->numRows = \CRUDsader\Instancer::getInstance()->database->countSelect($query->_sql);
+				$this->_session->numRows = \CRUDsader\Instancer::getInstance()->database->countSelect($query->_sql,$args);
 				$this->_session->start = 0;
 			}
 			if (isset($_REQUEST[$this->_index]))

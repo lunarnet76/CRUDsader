@@ -38,6 +38,12 @@ namespace CRUDsader\Object\Attribute {
 			$v = $this->getValue();
 			return isset($v)?date('d/m/Y h:i', $v):'';
 		}
+		
+		public function format($f)
+		{
+			$v = $this->getValue();
+			return isset($v)?date($f, $v):'';
+		}
 
 		public function getValueForDatabase()
 		{

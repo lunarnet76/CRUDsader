@@ -21,7 +21,7 @@ namespace CRUDsader {
 		protected $_child;
 		protected $_isPersisted = false;
 		protected $_infos;
-		protected $_saveId=false;
+		protected $_saveId = false;
 		protected $_fields = array();
 		protected $_associations = array();
 		protected $_observers = array();
@@ -64,10 +64,11 @@ namespace CRUDsader {
 			if ($this->_isPersisted)
 				\CRUDsader\Instancer::getInstance()->query('FROM ' . $this->_class . ' o WHERE o.id=?')->fetch($this->_isPersisted);
 		}
-		
-		public function setAttributesFromArray(array $array){
+
+		public function setAttributesFromArray(array $array)
+		{
 			foreach ($this->_infos['attributes'] as $attributeName => $attributeInfos) {
-				if ($attributeName!='id' && isset($array[$attributeName]))
+				if ($attributeName != 'id' && isset($array[$attributeName]))
 					$this->$attributeName = $array[$attributeName];
 			}
 		}
@@ -121,12 +122,12 @@ namespace CRUDsader {
 			return $this->isPersisted();
 		}
 
-		public function setId($id,$setter=null)
+		public function setId($id, $setter = null)
 		{
-			if($setter instanceof \CRUDsader\Object\UnitOfWork){
+			if ($setter instanceof \CRUDsader\Object\UnitOfWork) {
 				$this->_isPersisted = $id;
 			}else
-			$this->_saveId = $id;
+				$this->_saveId = $id;
 		}
 
 		public function toHtml($base = false, $prefix = false, $allowedClasses = false, $displayTitle = true)
@@ -367,7 +368,8 @@ namespace CRUDsader {
 		{
 			$ret = array();
 			if (!$this->_isPersisted)
-				$ret[$this->_infos['definition']['databaseIdField']] = isset($this->_parent) ? $this->_parent->_isPersisted : ($this->_saveId?$this->_saveId:\CRUDsader\Instancer::getInstance()->expression('NULL'));
+				$ret[$this->_infos['definition']['databaseIdField']] = isset($this->_parent) ? $this->_parent->_isPersisted : ($this->_saveId ? $this->_saveId : \CRUDsader\Instancer::getInstance()->expression('NULL'));
+
 			foreach ($this->_infos['attributes'] as $k => $attributeInfos) {
 				if ($attributeInfos['calculated']) {
 					$this->getAttribute($k)->setDefaultValue($ret[$attributeInfos['databaseField']] = $this->calculateAttribute($k));
@@ -564,16 +566,16 @@ namespace CRUDsader {
 		public function toJson()
 		{
 			$ret = array();
-			
+
 			$ret[$this->_infos['definition']['databaseIdField']] = $this->_isPersisted;
-			
+
 			foreach ($this->_fields as $name => $field)
 				if ($this->_infos['attributes'][$name]['json']) {
-					$ret[$name] = $this->filter(utf8_encode($field->getValue()), $name, 'json');//utf8_encode for special chars
+					$ret[$name] = $field->isEmpty()?null:$this->filter(utf8_encode($field->getValue()), $name, 'json'); //utf8_encode for special chars
 				}
 			if (!empty($this->_associations))
-				foreach ($this->_associations as $name => $association){
-				$ret[$name] = $association->toJson(false);
+				foreach ($this->_associations as $name => $association) {
+					$ret[$name] = $association->toJson(false);
 				}
 			if ($this->_parent)
 				$ret[$this->_parent->getClass()] = $this->_parent->toJson();
@@ -599,7 +601,7 @@ namespace CRUDsader {
 		public function getAttribute($name)
 		{
 			if (!isset($this->_fields[$name]) && isset($this->_infos['attributes'][$name]) && isset($this->_infos['attributes'][$name]['extra']) && $this->_infos['attributes'][$name]['extra']) {
-				$type = strpos($name,'_id')!==false?$this->_map->classGetFieldAttributeIdType():$this->_map->classGetFieldAttributeDefaultType();
+				$type = strpos($name, '_id') !== false ? $this->_map->classGetFieldAttributeIdType() : $this->_map->classGetFieldAttributeDefaultType();
 				$class = $type['phpNamespace'] . $type['class'];
 				$this->_fields[$name] = new $class('default');
 				$this->_fields[$name]->attach($this);

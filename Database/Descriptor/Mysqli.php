@@ -133,10 +133,18 @@ namespace CRUDsader\Database\Descriptor {
 		public function createTable($name, array $fields, array $identity = array(), array $surrogateKey = array(), array $indexes = array())
 		{
 			$sql = 'CREATE TABLE ' . $this->quoteIdentifier($name) . '(';
+			$fieldsAdded = array();
 			if (!empty($surrogateKey)) {
+				if(isset($fieldsAdded[$surrogateKey['name']]))
+					continue;
+				$fieldsAdded[$surrogateKey['name']] = true;
 				$sql.=$this->quoteIdentifier($surrogateKey['name']) . ' ' . $surrogateKey['type'] . (isset($surrogateKey['length']) ? '(' . $surrogateKey['length'] . ')' : '') . ' NOT NULL AUTO_INCREMENT,';
 			}
+			
 			foreach ($fields as $name => $field) {
+				if(isset($fieldsAdded[$name]))
+					continue;
+				$fieldsAdded[$name] = true;
 				$sql.=$this->quoteIdentifier($name) . ' ' . $field['type'] . ($field['length'] ? '(' . $field['length'] . ')' : '') . (isset($field['null']) && $field['null'] ? ' NULL' : ' NOT NULL') . ',';
 			}
 			$sql[strlen($sql) - 1] = ' ';
@@ -173,7 +181,7 @@ namespace CRUDsader\Database\Descriptor {
 		 *  count object in a SELECT statment
 		 * @param array $select
 		 */
-		public function countSelect($select)
+		public function countSelect($select, $args = null)
 		{
 			$sql = 'SELECT count(`' . $select['from']['alias'] . '`.`' . $select['from']['id'] . '`)  AS `' . self::$OBJECT_ID_FIELD_ALIAS . '` FROM `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . '`';
 			if (!empty($select['joins'])) {
@@ -181,8 +189,35 @@ namespace CRUDsader\Database\Descriptor {
 					$sql.=' LEFT JOIN `' . $join['table'] . '` AS `' . $join['alias'] . '` ON `' . $join['alias'] . '`.`' . $join['field'] . '`=`' . $join['joinAlias'] . '`.`' . $join['joinField'] . '`';
 				}
 			}
+			
+			
 			if (!empty($select['where']))
-				$sql.=' WHERE ' . $select['where'];
+				$sql.=' WHERE ' . preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) {
+
+							// special case : email
+							if (strpos($p[1], '@') !== false)
+								return $p[0];
+							// special case : floats
+							if (ctype_digit($p[1])) {
+								return $p[0];
+							}
+							return '`' . $p[1] . '`.`' . $p[2] . '`';
+						}, $select['where']);
+						
+			// replace args
+			if ($args != null) {
+
+				$this->i = 0;
+
+				$unLexicalThis = $this;
+
+				$sql = preg_replace_callback('|(\=\?)|', function($p) use($args, $unLexicalThis) {
+						$arg = $args[$unLexicalThis->i];
+						$unLexicalThis->i++;
+						return (is_array($arg) ? key($arg) . ' ' . $unLexicalThis->quote(current($arg)) : '=' . $unLexicalThis->quote($arg));
+					}, $sql);
+			}
+
 			return $sql;
 		}
 
@@ -190,7 +225,7 @@ namespace CRUDsader\Database\Descriptor {
 		 * SELECT statment
 		 * @param array $select
 		 */
-		public function select($select, $args = null,$classAliases = null)
+		public function select($select, $args = null, $classAliases = null)
 		{
 			$sql = 'SELECT ';
 
@@ -214,9 +249,9 @@ namespace CRUDsader\Database\Descriptor {
 					$joins.=' LEFT JOIN `' . $join['table'] . '` AS `' . $join['alias'] . self::$TABLE_ALIAS_SUBQUERY . '` ON `' . $join['alias'] . self::$TABLE_ALIAS_SUBQUERY . '`.`' . $join['field'] . '`=`' . $join['joinAlias'] . self::$TABLE_ALIAS_SUBQUERY . '`.`' . $join['joinField'] . '`';
 				}
 			}
-			if (!empty($select['where'])){
+			if (!empty($select['where'])) {
 				$sql.=' WHERE ' . preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) {
-					
+
 							// special case : email
 							if (strpos($p[1], '@') !== false)
 								return $p[0];
@@ -224,20 +259,20 @@ namespace CRUDsader\Database\Descriptor {
 							if (ctype_digit($p[1])) {
 								return $p[0];
 							}
-							return '`' . $p[1] .  '`.`' . $p[2] . '`';
+							return '`' . $p[1] . '`.`' . $p[2] . '`';
 						}, $select['where']);
 			}
 			$sql.=' GROUP BY `' . $select['from']['alias'] . '`.`' . $select['from']['id'] . '`';
-			if (!empty($select['order'])){
+			if (!empty($select['order'])) {
 				$map = \CRUDsader\Instancer::getInstance()->map;
-				
-				$sql.=' ORDER BY ' . preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) use($map,$classAliases) {
-						// special case : floats
-						if (ctype_digit($p[1])) {
-							return $p[0];
-						}
-						return '`' . $p[1] . '`.`' . $map->classGetAttributeDatabaseName($classAliases[$p[1]],$p[2]) . '`';
-					}, $select['order']);
+
+				$sql.=' ORDER BY ' . preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) use($map, $classAliases) {
+							// special case : floats
+							if (ctype_digit($p[1])) {
+								return $p[0];
+							}
+							return '`' . $p[1] . '`.`' . $map->classGetAttributeDatabaseName($classAliases[$p[1]], $p[2]) . '`';
+						}, $select['order']);
 			}
 			if (!empty($select['limit']))
 				$sql.=' LIMIT ' . (isset($select['limit']['from']) ? $select['limit']['from'] . ',' : '') . $select['limit']['count'];
@@ -248,7 +283,7 @@ namespace CRUDsader\Database\Descriptor {
 			$restrictiveWhere = !empty($select['where']) && $this->_configuration->restrictiveWhere;
 			if ($restrictiveWhere) {
 				$sql.=' WHERE ' . preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) {
-					
+
 							// special case : email
 							if (strpos($p[1], '@') !== false)
 								return $p[0];
@@ -261,13 +296,13 @@ namespace CRUDsader\Database\Descriptor {
 			}
 			// replace args
 			if ($args != null) {
-				
+
 				$this->i = 0;
 
 				$unLexicalThis = $this;
-				
-				if($restrictiveWhere)
-					$args = array_merge ($args,$args);
+
+				if ($restrictiveWhere)
+					$args = array_merge($args, $args);
 
 				$sql = preg_replace_callback('|(\=\?)|', function($p) use($args, $restrictiveWhere, $unLexicalThis) {
 						$arg = $args[$unLexicalThis->i];
@@ -276,17 +311,17 @@ namespace CRUDsader\Database\Descriptor {
 					}, $sql);
 			}
 
-			
+
 
 			if (!empty($select['order'])) {
 				$map = \CRUDsader\Instancer::getInstance()->map;
-				
-				$select['order']=preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) use($map,$classAliases) {
+
+				$select['order'] = preg_replace_callback('|`?([@\w]+)`?\.`?([\w]+)`?|', function($p) use($map, $classAliases) {
 						// special case : floats
 						if (ctype_digit($p[1])) {
 							return $p[0];
 						}
-						return '`' . $p[1] . Mysqli::$TABLE_ALIAS_SUBQUERY . '`.`' . $map->classGetAttributeDatabaseName($classAliases[$p[1]],$p[2]) . '`';
+						return '`' . $p[1] . Mysqli::$TABLE_ALIAS_SUBQUERY . '`.`' . $map->classGetAttributeDatabaseName($classAliases[$p[1]], $p[2]) . '`';
 					}, $select['order']);
 
 				if ($args != null) {
@@ -295,8 +330,8 @@ namespace CRUDsader\Database\Descriptor {
 					$unLexicalThis = $this;
 
 					$select['order'] = preg_replace_callback('|(\?)|', function($p) use($args, $unLexicalThis) {
-						
-						
+
+
 							$arg = $args[$unLexicalThis->i];
 							$unLexicalThis->i++;
 							if ($unLexicalThis->i % 2 == 0)

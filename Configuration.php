@@ -47,6 +47,7 @@ namespace CRUDsader {
             ),
             'mvc' => array(
                 'baseRewrite' => '',
+                'server' => '',
                 'applicationPath' => '',
                 'controllerDir' => '',
                 'default' => array(

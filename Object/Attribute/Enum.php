@@ -41,7 +41,7 @@ namespace CRUDsader\Object\Attribute {
 			return isset($this->_options['choices'][$this->_value])?$this->_options['choices'][$this->_value]:$this->_value;
 		}
 
-		public function generateRandom()
+		public function generateRandom($object = null)
 		{
 			$ret = rand(0, count($this->_options['choices']) - 1);
 			return $ret;

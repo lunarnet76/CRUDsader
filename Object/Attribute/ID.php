@@ -28,7 +28,7 @@ namespace CRUDsader\Object\Attribute {
             return empty($this->_value) && $this->_value!==0  && $this->_value!=='0';
         }
         
-        public function generateRandom() {
+        public function generateRandom($object = null) {
             return rand(0,1000);
         }
     }

@@ -17,6 +17,7 @@
             <!ATTLIST class identity CDATA #IMPLIED><!-- col1,col2 -->
             <!ATTLIST class databaseTable CDATA #IMPLIED>
             <!ATTLIST class databaseIdField CDATA #IMPLIED><!-- col1,col2 -->
+            <!ATTLIST class databaseFieldCount CDATA #IMPLIED><!-- col1,col2 -->
             <!ATTLIST class inherit CDATA #IMPLIED>
             <!ATTLIST class x CDATA #IMPLIED>
             <!ATTLIST class y CDATA #IMPLIED>

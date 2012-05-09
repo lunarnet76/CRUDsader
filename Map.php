@@ -171,7 +171,7 @@ namespace CRUDsader {
 
 		public function classGetAttributeCount($className)
 		{
-			return $className == self::BASE_ASSOCIATION_CLASS ? 2 : count($this->_map['classes'][$className]['definition']['attributeCount']);
+			return $className == self::BASE_ASSOCIATION_CLASS ? 2 : ($this->_map['classes'][$className]['definition']['databaseFieldCount']?$this->_map['classes'][$className]['definition']['databaseFieldCount']:count($this->_map['classes'][$className]['definition']['attributeCount']));
 		}
 
 		public function classHasAssociation($className, $associationName)

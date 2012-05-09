@@ -225,7 +225,7 @@ namespace CRUDsader {
 		{
 			if (!is_array($args))
 				$args = array($args);
-			$this->_prefetch($args);
+			$this->_prefetch(true);
 			$results = $this->_db->select($this->_sql,$args,$this->_alias2class);
 			$collection = \CRUDsader\Instancer::getInstance()->{'object.collection.initialised'}($this->_class, $results, $this->_mapFields, $this->_extraColumns);
 			return $collection;
@@ -235,7 +235,7 @@ namespace CRUDsader {
 		{
 			if (!is_array($args))
 				$args = array($args);
-			$this->_prefetch($args, false);
+			$this->_prefetch(false);
 			$results = $this->_db->select($this->_sql,$args,$this->_alias2class);
 			$collection = \CRUDsader\Instancer::getInstance()->{'object.collection.initialised'}($this->_class, $results, $this->_mapFields, $this->_extraColumns);
 			return $collection->count() ? $collection[0] : false;
@@ -243,13 +243,15 @@ namespace CRUDsader {
 
 		public function paginate(array $options, $args = NULL)
 		{
+			if (!is_array($args))
+				$args = array($args);
 			if (!isset($options['index']))
 				throw new QueryException($this->_oql, 'you must specify the index option');
-			$this->_prefetch($args, true);
+			$this->_prefetch(true);
 			return new \CRUDsader\Query\Pagination($this, $options, $args);
 		}
 
-		protected function _prefetch($args = NULL, $all = true)
+		protected function _prefetch($all = true)
 		{
 			
 			$this->_argsIndex = -1;
