@@ -19,6 +19,13 @@ namespace CRUDsader\Object {
 			$this->_class = $className;
 			$this->_classInfos = \CRUDsader\Instancer::getInstance()->map->classGetInfos($this->_class);
 		}
+		
+		public function save(\CRUDsader\Object\UnitOfWork $unitOfWork = null)
+		{
+			foreach($this->_objects as $object){
+				$object->save($unitOfWork);
+			}
+		}
 
 		public function toArray($full = false)
 		{
@@ -46,13 +53,13 @@ namespace CRUDsader\Object {
 
 		public function receiveArray(array $array)
 		{
+			$this->_initialised = true;
 			foreach ($array as $objectArray) {
 				if (isset($objectArray[$this->_class]))// special json
 					$objectArray = $objectArray[$this->_class];
-				pre($objectArray);
+				
 				$o = $this->newObject();
 				$o->receiveArray($objectArray,true);
-				pre($o->toJson());
 			}
 		}
 

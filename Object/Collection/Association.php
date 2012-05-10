@@ -21,6 +21,24 @@ namespace CRUDsader\Object\Collection {
 			$this->_definition = $definition;
 			$this->_fromClass = $fromClass;
 		}
+		
+		public function receiveArray(array $array)
+		{
+			
+			$this->_initialised = true;
+			// array is in fact an object
+			if ($this->_definition['reference'] == 'internal' || $this->_definition['max'] == 1) {
+				$o = $this->newObject();
+				$o->receiveArray($array,true);
+				return;
+			}
+			foreach ($array as $objectArray) {
+				if (isset($objectArray[$this->_class]))// special json
+					$objectArray = $objectArray[$this->_class];
+				$o = $this->newObject();
+				$o->receiveArray($objectArray,true);
+			}
+		}
 
 		public function toJson($base = true)
 		{
@@ -127,7 +145,8 @@ namespace CRUDsader\Object\Collection {
 						switch ($this->_definition['reference']) {
 							case 'internal':
 								$object->save($unitOfWork);
-								$unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => $object->isPersisted()), 'id=' . $this->_linkedObject->isPersisted());
+								$definition = $this->_linkedObject->getDefinition();
+								$unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => $object->isPersisted()), $db->quoteIdentifier($definition['definition']['databaseIdField']) .'=' . $this->_linkedObject->isPersisted());
 								break;
 							case 'external':
 								$infos = $object->getInfos();
@@ -278,7 +297,6 @@ namespace CRUDsader\Object\Collection {
 				$empty = $component->isEmpty();
 				if (!$empty && isset($this->_formValues[$value]))
 					throw new AssociationException($this->_class . '_duplicates');
-				//pre(array($index,$value,$empty,$this->_class));
 				$target = $this->_objects[$index];
 
 				// has the target changed ???

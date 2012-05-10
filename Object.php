@@ -68,10 +68,12 @@ namespace CRUDsader {
 		public function setAttributesFromArray(array $array, $evenIdField = false)
 		{
 			if ($evenIdField && isset($array['id'])) {
-					$this->_isPersisted = $array['id'];
+					$this->_saveId = $array['id'];
+					$this->_isModified = true;
 			} 
 			foreach ($this->_infos['attributes'] as $attributeName => $attributeInfos) {
-				$this->$attributeName = $array[$attributeName];
+				if(isset($array[$attributeName]))
+					$this->$attributeName = $array[$attributeName];
 			}
 		}
 
@@ -79,8 +81,16 @@ namespace CRUDsader {
 		{
 			$this->setAttributesFromArray($array, $evenIdField);
 			foreach ($this->_infos['associations'] as $associationName => $associationInfos) {
-				if ($associationInfos['reference'] == 'internal' && isset($array[$associationInfos['internalField']]))
-					$this->{$associationName}[] = \CRUDsader\Instancer::getInstance()->{'object.proxy'}($associationInfos['to'], $array[$associationInfos['internalField']]);
+				if(isset($array[$associationName])){
+					if(is_int($array[$associationName])){
+						$this->{$associationName}[] = $array[$associationName];
+					}else
+						$this->{$associationName}->receiveArray($array[$associationName]);
+				// fks
+				}else if($associationInfos['reference'] == 'internal' && !empty($array[$associationInfos['internalField']])){
+					$this->{$associationName}[] = $array[$associationInfos['internalField']];
+				}
+					
 			}
 		}
 
@@ -248,6 +258,7 @@ namespace CRUDsader {
 			if (!$this->_checkRequiredFields())
 				throw new ObjectException($this->_class . '.error.fields-required');
 			if ($this->_isModified || $this->_infos['definition']['abstract']) {
+				
 
 				if ($unitOfWork === null) {
 					$unitOfWork = \CRUDsader\Instancer::getInstance()->{'object.unitOfWork'};
