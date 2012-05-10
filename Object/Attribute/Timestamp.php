@@ -27,10 +27,10 @@ namespace CRUDsader\Object\Attribute {
 		 */
 		public function setValueFromDatabase($value)
 		{
-			if (isset($value)){
-				$this->_value = strtotime($value);
-			}
+			if (isset($value))
+				$this->_value = strtotime(str_replace('+0000','',$value));
 		}
+		
 		
 
 		public function toHtml()
@@ -55,7 +55,8 @@ namespace CRUDsader\Object\Attribute {
 			if(ctype_digit($this->_value))
 				return date('Y-m-d H:i:s',$this->_value);
 			if(preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s([0-9]{2}\:[0-9]{2}))?$|',$this->_value,$match)){
-				return $match[3].'-'.$match[2].'-'.$match[1].' '.$match[4];
+				
+				return $match[3].'-'.$match[2].'-'.$match[1].' '.(isset($match[4])?$match[4]:'');
 			}
 			$ex = explode('/', (string)$this->_value);
 			switch (count($ex)) {
