@@ -61,7 +61,6 @@ namespace CRUDsader\Object\Collection {
 				} else {
 					$query = \CRUDsader\Instancer::getInstance()->query('FROM ' . $this->_definition['to'] . ' ORDER BY ? LIMIT 1');
 					$found = $query->fetch(array(sl()->expression('rand()')));
-					echo sl()->debug->sql();
 					if ($found) {
 						$this->_objects[$i] = $found;
 						$this->_isModified = true;
