@@ -275,7 +275,7 @@ namespace CRUDsader {
 				$this->validateForSave();
 
 				if (!$this->_checkIdentity())
-					throw new ObjectException($this->_class . '.error.already-exists');
+					throw new ObjectException($this->_class . '.error.already-exists',$this);
 				$db = \CRUDsader\Instancer::getInstance()->database;
 
 				if ($this->_isPersisted) {
@@ -688,6 +688,16 @@ namespace CRUDsader {
 		}
 	}
 	class ObjectException extends \Exception {
+		protected $_object;
 		
+		public function __construct($message = false,$object= null){
+			$this->message = $message;
+			$this->_object = $object;
+			
+		}
+		
+		public function getObject(){
+			return $this->_object;
+		}
 	}
 }

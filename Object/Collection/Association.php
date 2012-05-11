@@ -24,7 +24,6 @@ namespace CRUDsader\Object\Collection {
 		
 		public function receiveArray(array $array)
 		{
-			
 			$this->_initialised = true;
 			// array is in fact an object
 			if ($this->_definition['reference'] == 'internal' || $this->_definition['max'] == 1) {
@@ -32,9 +31,11 @@ namespace CRUDsader\Object\Collection {
 				$o->receiveArray($array,true);
 				return;
 			}
+			
 			foreach ($array as $objectArray) {
 				if (isset($objectArray[$this->_class]))// special json
 					$objectArray = $objectArray[$this->_class];
+				//if($this->_)
 				$o = $this->newObject();
 				$o->receiveArray($objectArray,true);
 			}
