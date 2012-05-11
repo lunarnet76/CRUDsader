@@ -31,7 +31,7 @@ namespace CRUDsader {
 		const REGEXP_WHERE_INSIDE = '((?:\(*?(?:\?|(?:\w+\.\w+=\?)\)*?(?:\s+(?:AND|OR)\s+)?))*)\s*';
 		const REGEXP_GROUPBY = '(?:\s+(GROUP BY)\s+((?:\s*(?:\w+\.\w+)\s*\,?)*))?';
 		const REGEXP_GROUPBY_INSIDE = '\s*(\w+)\.(\w+)\s*\,?';
-		const REGEXP_ORDERBY = '(?:\s+(ORDER BY)\s+((?:\s*(?:[\w]+\.)\w+|\?|[a-z_]*\s*(DESC|ASC)?\,?)*))?';
+		const REGEXP_ORDERBY = '(?:\s+(ORDER BY)\s+((?:\s*(?:[\w]+\.)[\w]+|\?|[a-z_\?]*\s*(DESC|ASC)?\,?)*))?';
 		const REGEXP_LIMIT = '(?:\s+(LIMIT)\s+([0-9]*)(?:\s*\,\s*([0-9]*))?)?';
 		const REGEXP_FROM_JOINS = '\,\s*(\w+)(?:\s+(\w+))?(?:\s+ON\s+(\w+))?';
 

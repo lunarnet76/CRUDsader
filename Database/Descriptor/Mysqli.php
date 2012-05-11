@@ -319,6 +319,10 @@ namespace CRUDsader\Database\Descriptor {
 					$args = array_merge($args, $args);
 
 				$sql = preg_replace_callback('|(\=\?)|', function($p) use($args, $restrictiveWhere, $unLexicalThis) {
+					if(!isset($args[$unLexicalThis->i])){
+						pre($args);
+						throw new \Exception('missing arg $'.$unLexicalThis->i);
+					}
 						$arg = $args[$unLexicalThis->i];
 						$unLexicalThis->i++;
 						return (is_array($arg) ? key($arg) . ' ' . $unLexicalThis->quote(current($arg)) : '=' . $unLexicalThis->quote($arg));
