@@ -220,6 +220,8 @@ namespace CRUDsader\Database\Descriptor {
 
 			return $sql;
 		}
+                
+               
 
 		/**
 		 * SELECT statment
@@ -320,7 +322,6 @@ namespace CRUDsader\Database\Descriptor {
 
 				$sql = preg_replace_callback('|(\=\?)|', function($p) use($args, $restrictiveWhere, $unLexicalThis) {
 					if(!isset($args[$unLexicalThis->i])){
-						pre($args);
 						throw new \Exception('missing arg $'.$unLexicalThis->i);
 					}
 						$arg = $args[$unLexicalThis->i];
