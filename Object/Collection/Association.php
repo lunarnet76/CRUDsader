@@ -315,6 +315,13 @@ namespace CRUDsader\Object\Collection {
             }
             if ($component instanceof \CRUDsader\Object) {
                 \CRUDsader\Object\Writer::setModified($this->_linkedObject);
+		 switch ($this->_definition['reference']) {
+                    case 'internal':
+			    $field= $this->_definition['internalField'];
+                        $this->_linkedObject->addExtraAttribute($field,$component->getId());
+                        break;
+                    default:
+		 }
                 $this->_isModified = true;
             }
         }
