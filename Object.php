@@ -491,16 +491,16 @@ namespace CRUDsader {
 					$name = substr($oname, $l);
 
 					if ($name && $this->hasAssociation($name)) {
-						$this->getAssociation($name)->getForm($oql, $this->_class . '.' . $name, $form);
+						$this->getAssociation($name)->getForm($oql, $alias . '.' . $name, $form);
 					}
 				}
 				if ($this->hasParent())
-					$this->getParent(true)->_getFormAssociations($form, $oql, $alias . '_parent');
+					$this->getParent(true)->_getFormAssociations($form, $oql, $alias . '.parent');
 			}else {
 				foreach ($this->_associations as $name => $association)
 					$this->getAssociation($name)->getForm($oql, $name, $form);
 				if ($this->hasParent())
-					$this->getParent(true)->_getFormAssociations($form, $oql, $alias . '_parent');
+					$this->getParent(true)->_getFormAssociations($form, $oql, $alias . '.parent');
 			}
 		}
 
