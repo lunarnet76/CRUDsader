@@ -5,4 +5,4 @@ ob_start();
 print_r(shell_exec($cmd));
 $content = ob_get_clean();
 echo '<pre>' . ($content) . '</pre>';
-echo '<img src="dependency.png">';
+echo '<img src="dependency.png">' ;
