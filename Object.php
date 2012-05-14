@@ -96,6 +96,7 @@ namespace CRUDsader {
 
 		public function addExtraAttribute($name, $value = null)
 		{
+			
 			$this->_infos['attributes'][$name] = array(
 			    'json' => true,
 			    'extra' => true,

@@ -318,7 +318,7 @@ namespace CRUDsader\Object\Collection {
 		 switch ($this->_definition['reference']) {
                     case 'internal':
 			    $field= $this->_definition['internalField'];
-                        $this->_linkedObject->addExtraAttribute($field,$component->getId());
+                        $this->_linkedObject->addExtraAttribute($field,(int)$component->getId());// fks
                         break;
                     default:
 		 }
