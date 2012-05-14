@@ -139,6 +139,7 @@ namespace CRUDsader {
 		{
 			if ($setter instanceof \CRUDsader\Object\UnitOfWork) {
 				$this->_isPersisted = $id;
+				
 				if($this->_linkedAssociation)
 					$this->_linkedAssociation->update($this);
 			}else
