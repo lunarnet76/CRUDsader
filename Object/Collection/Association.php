@@ -338,7 +338,7 @@ namespace CRUDsader\Object\Collection {
 						break;
 					case 'external':
 						$field = $this->_definition['externalField'];
-						$component->addExtraAttribute($field, (int) $component->getId()); // fks
+						$component->addExtraAttribute($field, (int) $this->_linkedObject->getId()); // fks
 						break;
 					default:
 				}
