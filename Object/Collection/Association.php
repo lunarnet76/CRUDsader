@@ -52,8 +52,10 @@ namespace CRUDsader\Object\Collection {
 
 		public function offsetSet($index, $value)
 		{
-			if (!$value instanceof \CRUDsader\Object) {
-				$this->offsetSet($index, \CRUDsader\Instancer::getInstance()->{'object.proxy'}($this->_class, $value));
+			if (!$value instanceof \CRUDsader\Object) {// fk
+				$object = \CRUDsader\Instancer::getInstance()->{'object.proxy'}($this->_class, (int)$value);
+				$this->offsetSet($index, $object);
+				$this->update($object);
 			} else {
 				if (!isset($this->_objects[$index]) && $this->_definition['max'] != '*' && $this->_iterator == $this->_definition['max'])
 					throw new AssociationException('association "' . $this->_definition['to'] . '" cannot have more than "' . $this->_definition['max'] . '" objects');
