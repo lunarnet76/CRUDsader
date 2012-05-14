@@ -187,7 +187,7 @@ namespace CRUDsader\Object\Collection {
 					}
 				}
 				if ($this->_definition['max'] != '*' && $cnt > $this->_definition['max']) {
-					throw new AssociationException('error.association.save.max');
+					throw new AssociationException('error.association.'.$this->_class.'.save.max');
 				}
 				if ($cnt < $this->_definition['min'])
 					throw new AssociationException('error.association.save.min');
