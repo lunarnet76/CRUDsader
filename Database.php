@@ -56,7 +56,7 @@ namespace CRUDsader {
          * @param string $type
          * @return \CRUDsader\Database\Rows
          */
-        public function query($sql, $type='') {
+        public function query($sql, $type='select') {
             $this->_sql = $sql;
             if (!$this->_profile)
                 return $this->_dependencies['connector']->query($sql, $type);
