@@ -23,6 +23,7 @@ namespace CRUDsader {
 		protected $_errorComponentIndexes = array();
 		protected static $_helpers = array();
 		protected static $_formIndex = 0;
+                protected $_exception = false;
 
 		/**
 		 * identify the class
@@ -360,6 +361,7 @@ namespace CRUDsader {
 		/* OUPUTS ************************ */
 		public function toInput()
 		{
+                    try{
 			$html = $this->htmlTag() . ($this->_htmlLabel ? $this->wrapHtml($this->_htmlLabel, 'title') : '') . $this->htmlError();
 			foreach ($this->_components as $index => $component) {
 				if ($index === 'submit')
@@ -367,7 +369,15 @@ namespace CRUDsader {
 				$html.=$this->htmlRow($component);
 			}
 			return $html . (!$this->hasInputParent() && isset($this->_components['submit']) ? $this->htmlRow($this->_components['submit']) : '') . $this->htmlTag();
+                    }catch(\Exception $e){
+                        $this->_exception = $e;
+                        throw $e;
+                    }
 		}
+                
+                public function getLastException(){
+                    return $this->_exception;
+                }
 
 		public function htmlTag()
 		{
