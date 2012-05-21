@@ -324,7 +324,7 @@ namespace CRUDsader\Database\Descriptor {
 
 
 
-			// order also inside the object?
+			// order also inside the object ?
 			if (!empty($select['order']) && $this->_configuration->restrictiveOrderBy) {
 				$map = \CRUDsader\Instancer::getInstance()->map;
 
