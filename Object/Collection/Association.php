@@ -21,6 +21,16 @@ namespace CRUDsader\Object\Collection {
 			$this->_definition = $definition;
 			$this->_fromClass = $fromClass;
 		}
+                
+                public function forceDeleteAll(){
+                    $uow = \CRUDsader\Instancer::getInstance()->{'object.unitOfWork'};
+                    foreach($this->_objects as $object){
+                        if($object->isPersisted())
+                            $object->delete($uow);
+                    }
+                    $uow->commit();
+                    $this->_objects = array();
+                }
 
 		public function receiveArray(array $array)
 		{
