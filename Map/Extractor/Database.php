@@ -18,11 +18,13 @@ namespace CRUDsader\Map\Extractor {
 			$mapObject = \CRUDsader\Instancer::getInstance()->map;
 			$tables = array();
 			foreach ($map['classes'] as $className => $classInfos) {
+				$infoSurrogateKey = $mapObject->classGetFieldAttributeIdType($className);
+				$surrogateKey = array('type' => $infoSurrogateKey['databaseType'], 'length' => $infoSurrogateKey['length'], 'name' => $classInfos['definition']['databaseIdField']);
 				$tables[$className] = array(
 				    'name' => $classInfos['definition']['databaseTable'],
 				    'identity' => array(),
 				    'fields' => array(),
-				    'surrogateKey' => array('type' => 'int', 'length' => 10, 'name' => $classInfos['definition']['databaseIdField']),
+				    'surrogateKey' => $surrogateKey,
 				    'foreignKeys' => array(),
 				    'indexes' => array()
 				);

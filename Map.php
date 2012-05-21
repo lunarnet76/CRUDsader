@@ -83,8 +83,11 @@ namespace CRUDsader {
 			return $this->_map['attributeTypes']['default'];
 		}
 
-		public function classGetFieldAttributeIdType()
+		public function classGetFieldAttributeIdType($className)
 		{
+			if(isset($this->_map['classes'][$className]['definition']['databaseIdFieldType']) && $this->_map['classes'][$className]['definition']['databaseIdFieldType']!==false){
+				return $this->_map['attributeTypes'][$this->_map['classes'][$className]['definition']['databaseIdFieldType']];
+			}
 			return array('class' => 'ID',
 			    'phpNamespace' => '\\CRUDsader\\Object\\Attribute\\',
 			    'databaseType' => 'INT',

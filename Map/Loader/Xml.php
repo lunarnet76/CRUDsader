@@ -74,6 +74,7 @@ namespace CRUDsader\Map\Loader {
                         'identity' => isset($class['identity']) ? explode(',', (string) $class['identity']) : array(),
                         'databaseIdField' => isset($class['databaseIdField']) ? (string) $class['databaseIdField'] : $defaults->idField,
                         'databaseFieldCount' => isset($class['databaseFieldCount']) ? (int) $class['databaseFieldCount'] : false,
+                        'databaseIdFieldType' => isset($class['databaseIdFieldType']) ? (string) $class['databaseIdFieldType'] : false,
                         'attributeCount' => array('id' => false),
                         'phpClass' => isset($class['phpClass']) ? (string) $class['phpClass'] : false,
                     ),
