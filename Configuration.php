@@ -21,7 +21,8 @@ namespace CRUDsader {
          */
         protected static $_defaults = array(
             'database' => array(
-		'restrictiveWhere'=>true
+		'restrictiveWhere'=>true,
+		'restrictiveOrderBy'=>true
 	    ),
             'database.connector' => array(
                 'host' => 'localhost',

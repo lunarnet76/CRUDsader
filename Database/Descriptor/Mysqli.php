@@ -267,22 +267,17 @@ namespace CRUDsader\Database\Descriptor {
 			if (!empty($select['order'])) {
 				$map = \CRUDsader\Instancer::getInstance()->map;
 				$aliasSubquery = self::$TABLE_ALIAS_SUBQUERY;
-				
+
 				$order = preg_replace_callback('_([\w]+)\.([\w]+)\s*(DESC|ASC)?_', function($p) use($map, $classAliases, $aliasSubquery) {
-						return '`' . $p[1]  . '`.`'  . $map->classGetAttributeDatabaseName($classAliases[$p[1]], $p[2]) . '`'.' '.(isset($p[3])?$p[3]:'');
+						return '`' . $p[1] . '`.`' . $map->classGetAttributeDatabaseName($classAliases[$p[1]], $p[2]) . '`' . ' ' . (isset($p[3]) ? $p[3] : '');
 					}, $select['order']);
-					
+
 				if ($args != null) {
 					$this->i = 0;
 					$unLexicalThis = $this;
 
 					$order = preg_replace_callback('|(\?)|', function($p) use($args, $unLexicalThis) {
-
-							$arg = $args[$unLexicalThis->i];
-							$unLexicalThis->i++;
-							if ($unLexicalThis->i % 2 == 0)
-								$unLexicalThis->t++;
-							return $unLexicalThis->quote($arg);
+							return '=?#';
 						}, $order);
 				}
 				$sql.=' ORDER BY ' . $order;
@@ -318,22 +313,23 @@ namespace CRUDsader\Database\Descriptor {
 				if ($restrictiveWhere)
 					$args = array_merge($args, $args);
 
-				$sql = preg_replace_callback('|(\=\?)|', function($p) use($args, $restrictiveWhere, $unLexicalThis) {
+				$sql = preg_replace_callback('|(\=\?)(\#?)|', function($p) use($args, $restrictiveWhere, $unLexicalThis) {
+					
 						$arg = $args[$unLexicalThis->i];
 						$unLexicalThis->i++;
-						return (is_array($arg) ? key($arg) . ' ' . $unLexicalThis->quote(current($arg)) : '=' . $unLexicalThis->quote($arg));
+						return (is_array($arg) ? key($arg) . ' ' . $unLexicalThis->quote(current($arg)) : (empty($p[2])?'=':'') . $unLexicalThis->quote($arg));
 					}, $sql);
 			}
 
 
 
-			if (!empty($select['order'])) {
+			if (!empty($select['order']) && $this->_configuration->restrictiveOrderBy) {
 				$map = \CRUDsader\Instancer::getInstance()->map;
 
 				$aliasSubquery = self::$TABLE_ALIAS_SUBQUERY;
 				$order = preg_replace_callback('_([\w]+)\.([\w]+)\s*(DESC|ASC)?_', function($p) use($map, $classAliases, $aliasSubquery) {
-					
-						return '`' . $p[1]  .$aliasSubquery. '`.`'  . $map->classGetAttributeDatabaseName($classAliases[$p[1]], $p[2]) . '`'.' '.(isset($p[3])?$p[3]:'');
+
+						return '`' . $p[1] . $aliasSubquery . '`.`' . $map->classGetAttributeDatabaseName($classAliases[$p[1]], $p[2]) . '`' . ' ' . (isset($p[3]) ? $p[3] : '');
 					}, $select['order']);
 				if ($args != null) {
 					$this->i = 0;
