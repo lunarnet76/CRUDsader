@@ -241,6 +241,7 @@ namespace CRUDsader\Database\Descriptor {
 				$sql.=self::$OBJECT_TMP_TABLE_ALIAS . '.' . self::$OBJECT_ID_FIELD_ALIAS . ',' . $select['select'];
 			}else
 				$sql.='*';
+			
 			$sql.=' FROM (SELECT `' . $select['from']['alias'] . '`.`' . $select['from']['id'] . '` AS `' . self::$OBJECT_ID_FIELD_ALIAS . '` FROM `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . '`';
 			$joins = '';
 			if (!empty($select['joins'])) {
