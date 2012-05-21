@@ -216,8 +216,6 @@ namespace CRUDsader {
 					return $this->getAttribute($var)->getValue();
 					break;
 
-
-
 				case $this->hasParent():
 					if ($var == 'parent')
 						return $this->getParent();
