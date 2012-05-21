@@ -92,11 +92,14 @@ namespace CRUDsader {
                     )
                 )
             ),
+	    'identityMap'=>array(
+		'sync'=>true
+	    ),
             'map.loader' => array(
                 'file' => 'orm.xml'
             ),
             'query' => array(
-                'limit' => 50// limit the number of object to that, all the time
+                'limit' => 50,// limit the number of object to that, all the time
             ),
             'session' => array(
                 'path' => false

@@ -401,10 +401,14 @@ namespace CRUDsader {
 		{
 			return $this->_fields[$attributeName]->getValueForDatabase();
 		}
+		
+		public function alreadyExists(){
+			return !$this->_checkIdentity();
+		}
 
 		/**
 		 * check if an object with the same identity exists in database
-		 * @return bool 
+		 * @return false if object exists
 		 */
 		protected function _checkIdentity()
 		{
@@ -424,9 +428,9 @@ namespace CRUDsader {
 				else
 					$where[] = $db->quoteIdentifier($this->_infos['attributes'][$fieldName]['databaseField']) . '=' . $db->quote($this->getAttribute($fieldName)->getValueForDatabase());
 			}
-			$ret = 0 == $db->countSelect(array('from' => array('table' => $this->_infos['definition']['databaseTable'], 'alias' => 't', 'id' => $this->_infos['definition']['databaseIdField']), 'where' => implode(' AND ', $where), 'limit' => array('count' => 1)));
-
-			return $ret;
+			$count = ($db->countSelect(array('from' => array('table' => $this->_infos['definition']['databaseTable'], 'alias' => 't', 'id' => $this->_infos['definition']['databaseIdField']), 'where' => implode(' AND ', $where), 'limit' => array('count' => 1))));
+			
+			return $count == 0;
 		}
 
 		public function getCollectionOfObjectsWithSameIdentity()
