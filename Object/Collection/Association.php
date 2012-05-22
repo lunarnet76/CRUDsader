@@ -136,6 +136,7 @@ namespace CRUDsader\Object\Collection {
 								break;
 							case 'external':
 								// in the $object, so it's going to get erased anyway
+								
 								break;
 							default:
 								$d = array(
