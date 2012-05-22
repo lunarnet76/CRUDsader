@@ -30,6 +30,8 @@ namespace CRUDsader\Object\Collection {
                     }
                     $uow->commit();
                     $this->_objects = array();
+                    $this->_objectsToBeDeleted = array();
+                    $this->_objectIndexes = array();
                 }
 
 		public function receiveArray(array $array)
