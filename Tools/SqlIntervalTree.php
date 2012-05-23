@@ -13,13 +13,6 @@ namespace CRUDsader\Tools {
 			$this->_parent = $parent;
 			$this->_depth = $depth;
 		}
-		
-		public function setAsRoot(\CRUDsader\Object $object){
-			$object->inf=1;
-			$object->sup=2;
-			$object->depth=0;
-			$object->save();
-		}
 
 		public function insert(\CRUDsader\Object $object, \CRUDsader\Object $root = null)
 		{
@@ -36,7 +29,7 @@ namespace CRUDsader\Tools {
 				$root->{$this->_sup}+=2;
 			} else {
 				// the inf 
-				$node = $db->query('SELECT MAX(sup) themax FROM ' . $object->getDatabaseTable());
+				$node = $db->query('SELECT MAX(sup) themax FROM ' . $object->getDatabaseTable(),'select')->current();
 
 				// if table is empty then this is a root
 				if (!empty($node[0])) {
