@@ -260,7 +260,6 @@ namespace CRUDsader {
 			if (!$this->_checkRequiredFields())
 				throw new ObjectException($this->_class . '.error.fields-required');
 			if ($this->_isModified || $this->_infos['definition']['abstract']) {
-				
 
 				if ($unitOfWork === null) {
 					$unitOfWork = \CRUDsader\Instancer::getInstance()->{'object.unitOfWork'};
