@@ -13,7 +13,7 @@ namespace CRUDsader\Map\Extractor {
 	 */
 	class Database extends \CRUDsader\Map\Extractor {
 
-		public function extract(array $map)
+		public function extract(array $map,array $doNotDeleteTable = null)
 		{
 			$mapObject = \CRUDsader\Instancer::getInstance()->map;
 			$tables = array();
@@ -108,6 +108,7 @@ namespace CRUDsader\Map\Extractor {
 			$q = $database->setForeignKeyCheck(false);
 			$q = $database->listTables();
 			foreach ($q as $d) {
+				if($doNotDeleteTable!= null && in_array($doNotDeleteTable[current($d)]))
 				$database->query('DROP TABLE `' . current($d) . '`','drop');
 			}
 			$q = $database->setForeignKeyCheck(true);
