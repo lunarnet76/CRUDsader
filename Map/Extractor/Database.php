@@ -13,7 +13,7 @@ namespace CRUDsader\Map\Extractor {
 	 */
 	class Database extends \CRUDsader\Map\Extractor {
 
-		public function extract(array $map,array $doNotDeleteTable = null)
+		public function extract(array $map, array $doNotDeleteTable = null)
 		{
 			$mapObject = \CRUDsader\Instancer::getInstance()->map;
 			$tables = array();
@@ -107,26 +107,30 @@ namespace CRUDsader\Map\Extractor {
 			$database = \CRUDsader\Instancer::getInstance()->database;
 			$q = $database->setForeignKeyCheck(false);
 			$q = $database->listTables();
-			
+
 			foreach ($q as $d) {
-				if($doNotDeleteTable== null || !in_array(current($d),$doNotDeleteTable))
-					$database->query('DROP TABLE `' . current($d) . '`','drop');
+				if ($doNotDeleteTable == null || !in_array(current($d), $doNotDeleteTable))
+					$database->query('DROP TABLE `' . current($d) . '`', 'drop');
 			}
 			$q = $database->setForeignKeyCheck(true);
 			foreach ($tables as $class => $infos) {
-				if($doNotDeleteTable== null || !in_array($infos['name'],$doNotDeleteTable))
+				if ($doNotDeleteTable == null || !in_array($infos['name'], $doNotDeleteTable))
 					$database->createTable($infos['name'], $infos['fields'], $infos['identity'], $infos['surrogateKey'], $infos['foreignKeys'], $infos['indexes']);
 			}
 			foreach ($fks as $classFrom => $fkeys) {
 				foreach ($fkeys as $fieldFrom => $infos) {
-					$database->createTableReference(array(
-					    'fromTable' => isset($map['classes'][$classFrom]) ? $map['classes'][$classFrom]['definition']['databaseTable'] : $classFrom,
-					    'toTable' => $infos['table'],
-					    'fromField' => $fieldFrom,
-					    'toField' => $infos['field'],
-					    'onUpdate' => $infos['onUpdate'],
-					    'onDelete' => $infos['onDelete']
-					));
+					$fromTable = isset($map['classes'][$classFrom]) ? $map['classes'][$classFrom]['definition']['databaseTable'] : $classFrom;
+					if ($doNotDeleteTable == null || !in_array($fromTable, $doNotDeleteTable)) {
+						
+						$database->createTableReference(array(
+						    'fromTable' => $fromTable,
+						    'toTable' => $infos['table'],
+						    'fromField' => $fieldFrom,
+						    'toField' => $infos['field'],
+						    'onUpdate' => $infos['onUpdate'],
+						    'onDelete' => $infos['onDelete']
+						));
+					}
 				}
 			}
 		}

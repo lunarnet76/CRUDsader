@@ -13,6 +13,13 @@ namespace CRUDsader\Tools {
 			$this->_parent = $parent;
 			$this->_depth = $depth;
 		}
+		
+		public function setAsRoot(\CRUDsader\Object $object){
+			$object->inf=1;
+			$object->sup=2;
+			$object->depth=0;
+			$object->save();
+		}
 
 		public function insert(\CRUDsader\Object $object, \CRUDsader\Object $root = null)
 		{
