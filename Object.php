@@ -629,6 +629,7 @@ namespace CRUDsader {
 				$class = $type['phpNamespace'] . $type['class'];
 				$ret = $type['options'];
 				$ret['definition'] = $type;
+				$ret['required'] = $this->_infos['attributes'][$name]['required'];
 				unset($ret['definition']['options']);
 				$this->_fields[$name] = new $class($name, $ret);
 				$this->_fields[$name]->attach($this);
