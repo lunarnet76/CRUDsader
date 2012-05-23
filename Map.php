@@ -140,11 +140,11 @@ namespace CRUDsader {
 			return $ret;
 		}
 
-		public function extract()
+		public function extract(array $doNotDeleteTable = null)
 		{
 			$this->setDependency('extractor', 'map.extractor');
 			$this->_dependencies['extractor']->setConfiguration($this->_configuration->defaults);
-			return $this->_dependencies['extractor']->extract($this->_map);
+			return $this->_dependencies['extractor']->extract($this->_map,$doNotDeleteTable);
 		}
 
 		/**

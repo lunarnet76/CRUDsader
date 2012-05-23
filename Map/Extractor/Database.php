@@ -108,8 +108,8 @@ namespace CRUDsader\Map\Extractor {
 			$q = $database->setForeignKeyCheck(false);
 			$q = $database->listTables();
 			foreach ($q as $d) {
-				if($doNotDeleteTable!= null && in_array($doNotDeleteTable[current($d)]))
-				$database->query('DROP TABLE `' . current($d) . '`','drop');
+				if($doNotDeleteTable== null || !in_array($doNotDeleteTable[current($d)]))
+					$database->query('DROP TABLE `' . current($d) . '`','drop');
 			}
 			$q = $database->setForeignKeyCheck(true);
 			foreach ($tables as $class => $infos) {
