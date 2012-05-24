@@ -22,26 +22,6 @@ namespace CRUDsader\Object\Collection {
 			$this->_fromClass = $fromClass;
 		}
 
-		public function hackForceResetObjectList()
-		{
-			$this->_objects = array();
-			$this->_objectsToBeDeleted = array();
-			$this->_objectIndexes = array();
-		}
-
-		public function forceDeleteAll()
-		{
-			$uow = \CRUDsader\Instancer::getInstance()->{'object.unitOfWork'};
-			foreach ($this->_objects as $object) {
-				if ($object->isPersisted())
-					$object->delete($uow);
-			}
-			$uow->commit();
-			$this->_objects = array();
-			$this->_objectsToBeDeleted = array();
-			$this->_objectIndexes = array();
-		}
-
 		public function receiveArray(array $array)
 		{
 			$this->_initialised = true;
