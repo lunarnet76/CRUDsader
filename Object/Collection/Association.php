@@ -125,8 +125,9 @@ namespace CRUDsader\Object\Collection {
 								$unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => null), $db->quoteIdentifier($this->_definition['databaseIdField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
 								break;
 							case 'external':
-								// in the $object, so it's going to get erased anyway
-
+								// here when object have been manually removed
+								if($this->_definition['composition'])
+									$object->delete($unitOfWork);
 								break;
 							default:
 								$d = array(
@@ -141,6 +142,7 @@ namespace CRUDsader\Object\Collection {
 						unset($this->_objects[$index]);
 						continue;
 					}
+					
 
 					if ($object->isEmpty()) {
 						$object->delete($unitOfWork);
@@ -201,7 +203,8 @@ namespace CRUDsader\Object\Collection {
 				$this->_objectsToBeDeleted[$id] = true;
 				$this->_isModified = true;
 				\CRUDsader\Object\Writer::setModified($this->_linkedObject);
-			}
+			}else
+				throw new AssociationException('object id "'.$id.'" does not exist',$this);
 		}
 
 		public function delete(\CRUDsader\Object\UnitOfWork $unitOfWork = null)
