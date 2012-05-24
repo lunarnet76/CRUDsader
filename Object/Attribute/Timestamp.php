@@ -31,7 +31,13 @@ namespace CRUDsader\Object\Attribute {
 				$this->_value = strtotime(str_replace('+0000','',$value));
 		}
 		
-		
+		public function toInput()
+		{
+			$this->_htmlAttributes['class'] = 'date';
+			if (isset($this->_value))
+				$this->_htmlAttributes['value'] = $this->format('d/m/Y');
+			return '<input ' . $this->getHtmlAttributesToHtml() . ' />';
+		}
 
 		public function toHtml()
 		{

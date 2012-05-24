@@ -128,8 +128,8 @@ namespace CRUDsader\Map\Loader {
                         'externalField' => isset($association['externalField']) ? (string) $association['externalField'] : ($ref=='table'?$to:$name),
                         'inputPhpClass' => isset($association['inputPhpClass']) ? (string) $association['inputPhpClass'] : false
                     );
-                    if ($ret['classes'][$name]['associations'][$associationName]['internalField'] == $ret['classes'][$name]['associations'][$associationName]['externalField'])
-                        $ret['classes'][$name]['associations'][$associationName]['externalField'] .='2';
+                  //  if ($ret['classes'][$name]['associations'][$associationName]['internalField'] == $ret['classes'][$name]['associations'][$associationName]['externalField'])
+                    //    $ret['classes'][$name]['associations'][$associationName]['externalField'] .='2';
                 }
             }
             foreach ($ret['classes'] as $name => $infos) {
