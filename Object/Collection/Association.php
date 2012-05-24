@@ -21,18 +21,26 @@ namespace CRUDsader\Object\Collection {
 			$this->_definition = $definition;
 			$this->_fromClass = $fromClass;
 		}
-                
-                public function forceDeleteAll(){
-                    $uow = \CRUDsader\Instancer::getInstance()->{'object.unitOfWork'};
-                    foreach($this->_objects as $object){
-                        if($object->isPersisted())
-                            $object->delete($uow);
-                    }
-                    $uow->commit();
-                    $this->_objects = array();
-                    $this->_objectsToBeDeleted = array();
-                    $this->_objectIndexes = array();
-                }
+
+		public function hackForceResetObjectList()
+		{
+			$this->_objects = array();
+			$this->_objectsToBeDeleted = array();
+			$this->_objectIndexes = array();
+		}
+
+		public function forceDeleteAll()
+		{
+			$uow = \CRUDsader\Instancer::getInstance()->{'object.unitOfWork'};
+			foreach ($this->_objects as $object) {
+				if ($object->isPersisted())
+					$object->delete($uow);
+			}
+			$uow->commit();
+			$this->_objects = array();
+			$this->_objectsToBeDeleted = array();
+			$this->_objectIndexes = array();
+		}
 
 		public function receiveArray(array $array)
 		{
@@ -65,12 +73,12 @@ namespace CRUDsader\Object\Collection {
 		public function offsetSet($index, $value)
 		{
 			if (!$value instanceof \CRUDsader\Object) {// fk
-				$object = \CRUDsader\Instancer::getInstance()->{'object.proxy'}($this->_class, (int)$value);
+				$object = \CRUDsader\Instancer::getInstance()->{'object.proxy'}($this->_class, (int) $value);
 				$this->offsetSet($index, $object);
 				$this->update($object);
 			} else {
 				if (!isset($this->_objects[$index]) && $this->_definition['max'] != '*' && $this->_iterator == $this->_definition['max'])
-					throw new AssociationException('association "' . $this->_definition['to'] . '" cannot have more than "' . $this->_definition['max'] . '" objects',$this);
+					throw new AssociationException('association "' . $this->_definition['to'] . '" cannot have more than "' . $this->_definition['max'] . '" objects', $this);
 				$value = parent::offsetSet($index, $value);
 				\CRUDsader\Object\Writer::linkToAssociation($value, $this);
 				\CRUDsader\Object\Writer::setModified($this->_linkedObject);
@@ -138,7 +146,7 @@ namespace CRUDsader\Object\Collection {
 								break;
 							case 'external':
 								// in the $object, so it's going to get erased anyway
-								
+
 								break;
 							default:
 								$d = array(
@@ -200,10 +208,10 @@ namespace CRUDsader\Object\Collection {
 					}
 				}
 				if ($this->_definition['max'] != '*' && $cnt > $this->_definition['max']) {
-					throw new AssociationException('error.association.'.$this->_linkedObject->getClass().'.'.$this->_class.'.save.max',$this);
+					throw new AssociationException('error.association.' . $this->_linkedObject->getClass() . '.' . $this->_class . '.save.max', $this);
 				}
 				if ($cnt < $this->_definition['min'])
-					throw new AssociationException('error.association.'.$this->_linkedObject->getClass().'.'.$this->_class.'.min',$this);
+					throw new AssociationException('error.association.' . $this->_linkedObject->getClass() . '.' . $this->_class . '.min', $this);
 			}
 		}
 
@@ -219,7 +227,7 @@ namespace CRUDsader\Object\Collection {
 		public function delete(\CRUDsader\Object\UnitOfWork $unitOfWork = null)
 		{
 			if ($unitOfWork === null)
-				throw new AssociationException('no UnitOfWork',$this);
+				throw new AssociationException('no UnitOfWork', $this);
 			$db = \CRUDsader\Instancer::getInstance()->database;
 			foreach ($this->_objects as $object) {
 				if (!$object->isPersisted())
@@ -362,16 +370,20 @@ namespace CRUDsader\Object\Collection {
 		public function rewind()
 		{
 			if (!$this->_initialised)
-				throw new AssociationException('collection is not initialised',$this);
+				throw new AssociationException('collection is not initialised', $this);
 			parent::rewind();
 		}
 	}
 	class AssociationException extends \CRUDsader\Exception {
-		public function __construct($message,$association = false){
+
+		public function __construct($message, $association = false)
+		{
 			$this->message = $message;
 			$this->_association = $association;
 		}
-		public function getAssociation(){
+
+		public function getAssociation()
+		{
 			return $this->_association;
 		}
 	}
