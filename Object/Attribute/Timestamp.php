@@ -34,8 +34,9 @@ namespace CRUDsader\Object\Attribute {
 		public function toInput()
 		{
 			$this->_htmlAttributes['class'] = 'date';
+			
 			if (isset($this->_value))
-				$this->_htmlAttributes['value'] = $this->format('d/m/Y');
+				$this->_htmlAttributes['value'] = strpos($this->_value,'/')!==false?$this->_value:$this->format('d/m/Y');
 			return '<input ' . $this->getHtmlAttributesToHtml() . ' />';
 		}
 
