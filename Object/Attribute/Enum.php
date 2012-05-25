@@ -26,10 +26,13 @@ namespace CRUDsader\Object\Attribute {
 		{
 			$html = '<select ' . $this->getHtmlAttributesToHtml() . '><option value="-1">choose</option>';
 
-			if (!empty($this->_options['choices']))
+			if (!empty($this->_options['choices'])){
+				$value = ctype_digit($this->_value)?$this->_value:array_search($this->_value,$this->_options['choices']);
+			
 				foreach ($this->_options['choices'] as $k => $v) {
-					$html.= '<option value="' . $k . '" ' . (!$this->isEmpty() && ($this->_value == $k || $this->_value == $this->_options['choices'][$k]) ? 'selected="selected"' : '') . '>' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_name . '.' . $v) . '</option>';
+					$html.= '<option value="' . $k . '" ' . (!$this->isEmpty() && ($k == $value) ? 'selected="selected"' : '') . '>' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_name . '.' . $v) . '</option>';
 				}
+			}
 
 			$html.='</select>';
 

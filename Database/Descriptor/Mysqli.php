@@ -241,7 +241,7 @@ namespace CRUDsader\Database\Descriptor {
 				$sql.=self::$OBJECT_TMP_TABLE_ALIAS . '.' . self::$OBJECT_ID_FIELD_ALIAS . ',' . $select['select'];
 			}else
 				$sql.='*';
-			
+
 			$sql.=' FROM (SELECT `' . $select['from']['alias'] . '`.`' . $select['from']['id'] . '` AS `' . self::$OBJECT_ID_FIELD_ALIAS . '` FROM `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . '`';
 			$joins = '';
 			if (!empty($select['joins'])) {
@@ -313,12 +313,11 @@ namespace CRUDsader\Database\Descriptor {
 
 				if ($restrictiveWhere)
 					$args = array_merge($args, $args);
-
 				$sql = preg_replace_callback('|(\=\?)(\#?)|', function($p) use($args, $restrictiveWhere, $unLexicalThis) {
-					
+
 						$arg = $args[$unLexicalThis->i];
 						$unLexicalThis->i++;
-						return (is_array($arg) ? key($arg) . ' ' . $unLexicalThis->quote(current($arg)) : (empty($p[2])?'=':'') . $unLexicalThis->quote($arg));
+						return (is_array($arg) ? key($arg) . ' ' . $unLexicalThis->quote(current($arg)) : (empty($p[2]) ? '=' : '') . $unLexicalThis->quote($arg));
 					}, $sql);
 			}
 

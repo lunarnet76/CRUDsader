@@ -57,8 +57,10 @@ namespace CRUDsader\Object\Collection {
 				$this->offsetSet($index, $object);
 				$this->update($object);
 			} else {
-				if (!isset($this->_objects[$index]) && $this->_definition['max'] != '*' && $this->_iterator == $this->_definition['max'])
+				if (!isset($this->_objects[$index]) && $this->_definition['max'] != '*' && count($this->_objects) == $this->_definition['max']){
+					
 					throw new AssociationException('association "' . $this->_definition['to'] . '" cannot have more than "' . $this->_definition['max'] . '" objects', $this);
+				}
 				$value = parent::offsetSet($index, $value);
 				\CRUDsader\Object\Writer::linkToAssociation($value, $this);
 				\CRUDsader\Object\Writer::setModified($this->_linkedObject);
@@ -67,6 +69,8 @@ namespace CRUDsader\Object\Collection {
 				return $value;
 			}
 		}
+		
+		
 
 		public function generateRandom()
 		{
@@ -99,8 +103,11 @@ namespace CRUDsader\Object\Collection {
 		 */
 		public function newObject()
 		{
-			if ($this->_definition['max'] != '*' && $this->_iterator == $this->_definition['max'])
+			
+			if ($this->_definition['max'] != '*' && count($this->_objects) == $this->_definition['max']){
+				
 				throw new AssociationException('association cannot have more than "' . $this->_definition['max'] . '" objects');
+			}
 			$object = parent::newObject();
 			\CRUDsader\Object\Writer::linkToAssociation($object, $this);
 			return $object;
@@ -205,6 +212,17 @@ namespace CRUDsader\Object\Collection {
 				\CRUDsader\Object\Writer::setModified($this->_linkedObject);
 			}else
 				throw new AssociationException('object id "'.$id.'" does not exist',$this);
+		}
+		
+		public function unsetIndex($index){
+			if (isset($this->_object[$index])) {
+				if($this->_object[$index]->isPersisted())
+					$this->_objectsToBeDeleted[$this->_object[$index]->getId()] = true;
+				else
+					unset($this->_object[$index]);
+				$this->_isModified = true;
+				\CRUDsader\Object\Writer::setModified($this->_linkedObject);
+			}
 		}
 
 		public function delete(\CRUDsader\Object\UnitOfWork $unitOfWork = null)
