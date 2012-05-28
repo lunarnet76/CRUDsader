@@ -132,6 +132,7 @@ namespace CRUDsader\Database\Descriptor {
 		 */
 		public function createTable($name, array $fields, array $identity = array(), array $surrogateKey = array(), array $indexes = array())
 		{
+
 			$sql = 'CREATE TABLE ' . $this->quoteIdentifier($name) . '(';
 			$fieldsAdded = array();
 			if (!empty($surrogateKey)) {
@@ -154,13 +155,15 @@ namespace CRUDsader\Database\Descriptor {
 					$sql.= $this->quoteIdentifier($key) . ',';
 				$sql[strlen($sql) - 1] = ')';
 			}
+
 			foreach ($indexes as $name => $keys) {
-				if (!empty($keys))
+				if (empty($keys))
 					continue;
 				$sql.=',KEY ' . $this->quoteIdentifier($name) . ' (';
+				$tmp = array();
 				foreach ($keys as $key)
-					$sql.=$this->quoteIdentifier($key) . ',';
-				$sql.= ')';
+					$tmp[]=$this->quoteIdentifier($key);
+				$sql.= implode(',',$tmp).')';
 			}
 			if (!empty($surrogateKey)) {
 				$sql.=',PRIMARY KEY (' . $this->quoteIdentifier($surrogateKey['name']) . ')';
