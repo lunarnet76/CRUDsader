@@ -215,11 +215,11 @@ namespace CRUDsader\Object\Collection {
 		}
 		
 		public function unsetIndex($index){
-			if (isset($this->_object[$index])) {
-				if($this->_object[$index]->isPersisted())
-					$this->_objectsToBeDeleted[$this->_object[$index]->getId()] = true;
+			if (isset($this->_objects[$index])) {
+				if($this->_objects[$index]->isPersisted())
+					$this->_objectsToBeDeleted[$this->_objects[$index]->getId()] = true;
 				else
-					unset($this->_object[$index]);
+					unset($this->_objects[$index]);
 				$this->_isModified = true;
 				\CRUDsader\Object\Writer::setModified($this->_linkedObject);
 			}
