@@ -38,7 +38,7 @@ namespace CRUDsader\Object {
 			self::$_objects = array();
 		}
 		
-		public static function listObjects(){
+		public static function listObjects(){ 
 			$ret = array();
 			foreach(self::$_objects as $class=>$objects)
 				foreach($objects as $obj)
