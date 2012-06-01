@@ -14,7 +14,7 @@ namespace CRUDsader\Object {
 
 			$object->_isPersisted = $id;
 			if(!\CRUDsader\Object\IdentityMap::exists($object->getClass(), $id))
-			\CRUDsader\Object\IdentityMap::add($object);
+				\CRUDsader\Object\IdentityMap::add($object);
 			$object->_initialised = true;
 			if (isset($mapFields[$alias])) {
 				for ($i = $mapFields[$alias]['from'] + 1; $i < $mapFields[$alias]['to']; $i++) {
