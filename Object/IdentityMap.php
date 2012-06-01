@@ -7,14 +7,10 @@
  */
 namespace CRUDsader\Object {
 	abstract class IdentityMap {
-		protected static $_objects = array();
+		public static $_objects = array();
 
 		public static function exists($class, $id)
 		{
-			if(isset(self::$_objects[$class][$id]) && $class  == 'swarm'){
-				pre($id,'IM'.$class);
-				var_dump(self::$_objects[$class][$id]);
-			}
 			if (!\CRUDsader\Instancer::getInstance()->configuration->identityMap->sync)
 				return false;
 			return isset(self::$_objects[$class][$id]);
@@ -40,6 +36,14 @@ namespace CRUDsader\Object {
 		public static function reset()
 		{
 			self::$_objects = array();
+		}
+		
+		public static function listObjects(){
+			$ret = array();
+			foreach(self::$_objects as $class=>$objects)
+				foreach($objects as $obj)
+					$ret[$class][]=$obj->getId();
+			return $ret;
 		}
 	}
 	class IdentityMapException extends \CRUDsader\Exception {

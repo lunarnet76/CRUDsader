@@ -13,6 +13,7 @@ namespace CRUDsader\Object {
 			$map = \CRUDsader\Instancer::getInstance()->map;
 
 			$object->_isPersisted = $id;
+			if(!\CRUDsader\Object\IdentityMap::exists($object->getClass(), $id))
 			\CRUDsader\Object\IdentityMap::add($object);
 			$object->_initialised = true;
 			if (isset($mapFields[$alias])) {
