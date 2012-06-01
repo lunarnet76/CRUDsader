@@ -11,6 +11,10 @@ namespace CRUDsader\Object {
 
 		public static function exists($class, $id)
 		{
+			if(isset(self::$_objects[$class][$id]) && $class  == 'swarm'){
+				pre($id,'IM'.$class);
+				var_dump(self::$_objects[$class][$id]);
+			}
 			if (!\CRUDsader\Instancer::getInstance()->configuration->identityMap->sync)
 				return false;
 			return isset(self::$_objects[$class][$id]);
