@@ -345,7 +345,6 @@ namespace CRUDsader\Database\Descriptor {
 							$unLexicalThis->i++;
 							if ($unLexicalThis->i % 2 == 0)
 								$unLexicalThis->t++;
-							
 							return $unLexicalThis->quote($arg);
 						}, $order);
 				}

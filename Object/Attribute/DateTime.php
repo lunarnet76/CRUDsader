@@ -16,12 +16,22 @@ namespace CRUDsader\Object\Attribute {
 
 		public function setValueFromDatabase($value)
 		{
+
 			if (isset($value)) {
 				if (preg_match('|([0-9]{4})-([0-9]{2})-([0-9]{2})\s([0-9]{1,2}):([0-9]{2}):[0-9]{2}|', $value, $m)) {
 					$this->_value = $m[3] . '/' . $m[2] . '/' . $m[1] . ' ' . $m[4] . ':' . $m[5];
 				}
 			}else
 				$this->_value = null;
+		}
+
+		public function getValueForDatabase()
+		{
+			if (preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})\s([0-9]{1,2}):([0-9]{2})(:[0-9]{2})?$|', $this->_value, $m)) {
+				
+				$this->_value = $m[3] . '-' . $m[2] . '-' . $m[1] . ' ' . $m[4] . ':' . $m[5];
+			}
+			return $this->_value;
 		}
 
 		public function generateRandom()
