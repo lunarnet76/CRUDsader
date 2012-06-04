@@ -132,6 +132,7 @@ namespace CRUDsader\Database\Descriptor {
 		 */
 		public function createTable($name, array $fields, array $identity = array(), array $surrogateKey = array(), array $indexes = array())
 		{
+
 			$sql = 'CREATE TABLE ' . $this->quoteIdentifier($name) . '(';
 			$fieldsAdded = array();
 			if (!empty($surrogateKey)) {
@@ -154,13 +155,15 @@ namespace CRUDsader\Database\Descriptor {
 					$sql.= $this->quoteIdentifier($key) . ',';
 				$sql[strlen($sql) - 1] = ')';
 			}
+
 			foreach ($indexes as $name => $keys) {
-				if (!empty($keys))
+				if (empty($keys))
 					continue;
 				$sql.=',KEY ' . $this->quoteIdentifier($name) . ' (';
+				$tmp = array();
 				foreach ($keys as $key)
-					$sql.=$this->quoteIdentifier($key) . ',';
-				$sql.= ')';
+					$tmp[]=$this->quoteIdentifier($key);
+				$sql.= implode(',',$tmp).')';
 			}
 			if (!empty($surrogateKey)) {
 				$sql.=',PRIMARY KEY (' . $this->quoteIdentifier($surrogateKey['name']) . ')';
@@ -241,7 +244,7 @@ namespace CRUDsader\Database\Descriptor {
 				$sql.=self::$OBJECT_TMP_TABLE_ALIAS . '.' . self::$OBJECT_ID_FIELD_ALIAS . ',' . $select['select'];
 			}else
 				$sql.='*';
-			
+
 			$sql.=' FROM (SELECT `' . $select['from']['alias'] . '`.`' . $select['from']['id'] . '` AS `' . self::$OBJECT_ID_FIELD_ALIAS . '` FROM `' . $select['from']['table'] . '` AS `' . $select['from']['alias'] . '`';
 			$joins = '';
 			if (!empty($select['joins'])) {
@@ -313,12 +316,11 @@ namespace CRUDsader\Database\Descriptor {
 
 				if ($restrictiveWhere)
 					$args = array_merge($args, $args);
-
 				$sql = preg_replace_callback('|(\=\?)(\#?)|', function($p) use($args, $restrictiveWhere, $unLexicalThis) {
-					
+
 						$arg = $args[$unLexicalThis->i];
 						$unLexicalThis->i++;
-						return (is_array($arg) ? key($arg) . ' ' . $unLexicalThis->quote(current($arg)) : (empty($p[2])?'=':'') . $unLexicalThis->quote($arg));
+						return (is_array($arg) ? key($arg) . ' ' . $unLexicalThis->quote(current($arg)) : (empty($p[2]) ? '=' : '') . $unLexicalThis->quote($arg));
 					}, $sql);
 			}
 
@@ -343,6 +345,7 @@ namespace CRUDsader\Database\Descriptor {
 							$unLexicalThis->i++;
 							if ($unLexicalThis->i % 2 == 0)
 								$unLexicalThis->t++;
+							
 							return $unLexicalThis->quote($arg);
 						}, $order);
 				}

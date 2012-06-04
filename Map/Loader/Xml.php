@@ -124,12 +124,12 @@ namespace CRUDsader\Map\Loader {
                         'composition' => isset($association['composition']) ? ((string) $association['composition']) == 'true' : false,
                         'databaseTable' => isset($association['databaseTable']) ? (string) $association['databaseTable'] : \CRUDsader\Map::getDatabaseAssociationTable(isset($association['name']) ? (string) $association['name'] : false, $to, $name),
                         'databaseIdField' => isset($association['databaseIdField']) ? (string) $association['databaseIdField'] : $defaults->associations->databaseIdField,
-                        'internalField' => isset($association['internalField']) ? (string) $association['internalField'] : ($ref=='table'?$name:$to),
-                        'externalField' => isset($association['externalField']) ? (string) $association['externalField'] : ($ref=='table'?$to:$name),
+                        'internalField' => isset($association['internalField']) ? (string) $association['internalField'] : ($ref=='table'?$name:false),
+                        'externalField' => isset($association['externalField']) ? (string) $association['externalField'] : ($ref=='table'?$to:false),
                         'inputPhpClass' => isset($association['inputPhpClass']) ? (string) $association['inputPhpClass'] : false
                     );
-                    if ($ret['classes'][$name]['associations'][$associationName]['internalField'] == $ret['classes'][$name]['associations'][$associationName]['externalField'])
-                        $ret['classes'][$name]['associations'][$associationName]['externalField'] .='2';
+                  //  if ($ret['classes'][$name]['associations'][$associationName]['internalField'] == $ret['classes'][$name]['associations'][$associationName]['externalField'])
+                    //    $ret['classes'][$name]['associations'][$associationName]['externalField'] .='2';
                 }
             }
             foreach ($ret['classes'] as $name => $infos) {
@@ -146,6 +146,7 @@ namespace CRUDsader\Map\Loader {
                     }
                 }
             }
+	    
             // to avoid cache problems
             unset($this->_dom);
             return $ret;

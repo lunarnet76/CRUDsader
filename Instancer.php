@@ -88,6 +88,8 @@ namespace CRUDsader {
 				$rc = new \ReflectionClass($this->_configuration->$serviceName->class);
 				$ret = $this->_singletonInstances[$serviceName] = empty($args) ? $rc->newInstance() : $rc->newInstanceArgs($args);
 			}
+			if($ret == null)
+				throw new InstancerException('cannot instantiate "' . $serviceName . '", returned null');
 			return $ret;
 		}
 

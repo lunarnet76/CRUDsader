@@ -140,11 +140,11 @@ namespace CRUDsader {
 			return $ret;
 		}
 
-		public function extract()
+		public function extract(array $doNotDeleteTable = null)
 		{
 			$this->setDependency('extractor', 'map.extractor');
 			$this->_dependencies['extractor']->setConfiguration($this->_configuration->defaults);
-			return $this->_dependencies['extractor']->extract($this->_map);
+			return $this->_dependencies['extractor']->extract($this->_map,$doNotDeleteTable);
 		}
 
 		/**
@@ -252,7 +252,7 @@ namespace CRUDsader {
 					$joins['table'] = array(
 					    'table' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
 					    'alias' => $joinedAlias,
-					    'field' => $this->_map['classes'][$association['to']]['definition']['databaseIdField'],
+					    'field' => $association['externalField']?$association['externalField']:$this->_map['classes'][$association['to']]['definition']['databaseIdField'],
 					    'joinAlias' => $fromAlias,
 					    'joinField' => $association['internalField'],
 					    'class' => $association['to'],

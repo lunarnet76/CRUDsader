@@ -21,16 +21,6 @@ namespace CRUDsader\Object\Collection {
 			$this->_definition = $definition;
 			$this->_fromClass = $fromClass;
 		}
-                
-                public function forceDeleteAll(){
-                    $uow = \CRUDsader\Instancer::getInstance()->{'object.unitOfWork'};
-                    foreach($this->_objects as $object){
-                        if($object->isPersisted())
-                            $object->delete($uow);
-                    }
-                    $uow->commit();
-                    $this->_objects = array();
-                }
 
 		public function receiveArray(array $array)
 		{
@@ -63,12 +53,14 @@ namespace CRUDsader\Object\Collection {
 		public function offsetSet($index, $value)
 		{
 			if (!$value instanceof \CRUDsader\Object) {// fk
-				$object = \CRUDsader\Instancer::getInstance()->{'object.proxy'}($this->_class, (int)$value);
+				$object = \CRUDsader\Instancer::getInstance()->{'object.proxy'}($this->_class, (int) $value);
 				$this->offsetSet($index, $object);
 				$this->update($object);
 			} else {
-				if (!isset($this->_objects[$index]) && $this->_definition['max'] != '*' && $this->_iterator == $this->_definition['max'])
-					throw new AssociationException('association "' . $this->_definition['to'] . '" cannot have more than "' . $this->_definition['max'] . '" objects',$this);
+				if (!isset($this->_objects[$index]) && $this->_definition['max'] != '*' && count($this->_objects) == $this->_definition['max']){
+					
+					throw new AssociationException('association "' . $this->_definition['to'] . '" cannot have more than "' . $this->_definition['max'] . '" objects', $this);
+				}
 				$value = parent::offsetSet($index, $value);
 				\CRUDsader\Object\Writer::linkToAssociation($value, $this);
 				\CRUDsader\Object\Writer::setModified($this->_linkedObject);
@@ -77,6 +69,8 @@ namespace CRUDsader\Object\Collection {
 				return $value;
 			}
 		}
+		
+		
 
 		public function generateRandom()
 		{
@@ -109,8 +103,11 @@ namespace CRUDsader\Object\Collection {
 		 */
 		public function newObject()
 		{
-			if ($this->_definition['max'] != '*' && $this->_iterator == $this->_definition['max'])
+			
+			if ($this->_definition['max'] != '*' && count($this->_objects) == $this->_definition['max']){
+				
 				throw new AssociationException('association cannot have more than "' . $this->_definition['max'] . '" objects');
+			}
 			$object = parent::newObject();
 			\CRUDsader\Object\Writer::linkToAssociation($object, $this);
 			return $object;
@@ -135,7 +132,9 @@ namespace CRUDsader\Object\Collection {
 								$unitOfWork->update($this->_linkedObject->getDatabaseTable(), array($this->_definition['internalField'] => null), $db->quoteIdentifier($this->_definition['databaseIdField']) . '=' . $db->quote($this->_linkedObject->isPersisted()));
 								break;
 							case 'external':
-								// in the $object, so it's going to get erased anyway
+								// here when object have been manually removed
+								if($this->_definition['composition'])
+									$object->delete($unitOfWork);
 								break;
 							default:
 								$d = array(
@@ -150,6 +149,7 @@ namespace CRUDsader\Object\Collection {
 						unset($this->_objects[$index]);
 						continue;
 					}
+					
 
 					if ($object->isEmpty()) {
 						$object->delete($unitOfWork);
@@ -197,10 +197,10 @@ namespace CRUDsader\Object\Collection {
 					}
 				}
 				if ($this->_definition['max'] != '*' && $cnt > $this->_definition['max']) {
-					throw new AssociationException('error.association.'.$this->_linkedObject->getClass().'.'.$this->_class.'.save.max',$this);
+					throw new AssociationException('error.association.' . $this->_linkedObject->getClass() . '.' . $this->_class . '.save.max', $this);
 				}
 				if ($cnt < $this->_definition['min'])
-					throw new AssociationException('error.association.'.$this->_linkedObject->getClass().'.'.$this->_class.'.min',$this);
+					throw new AssociationException('error.association.' . $this->_linkedObject->getClass() . '.' . $this->_class . '.min', $this);
 			}
 		}
 
@@ -210,13 +210,25 @@ namespace CRUDsader\Object\Collection {
 				$this->_objectsToBeDeleted[$id] = true;
 				$this->_isModified = true;
 				\CRUDsader\Object\Writer::setModified($this->_linkedObject);
+			}else
+				throw new AssociationException('object id "'.$id.'" does not exist',$this);
+		}
+		
+		public function unsetIndex($index){
+			if (isset($this->_objects[$index])) {
+				if($this->_objects[$index]->isPersisted())
+					$this->_objectsToBeDeleted[$this->_objects[$index]->getId()] = true;
+				else
+					unset($this->_objects[$index]);
+				$this->_isModified = true;
+				\CRUDsader\Object\Writer::setModified($this->_linkedObject);
 			}
 		}
 
 		public function delete(\CRUDsader\Object\UnitOfWork $unitOfWork = null)
 		{
 			if ($unitOfWork === null)
-				throw new AssociationException('no UnitOfWork',$this);
+				throw new AssociationException('no UnitOfWork', $this);
 			$db = \CRUDsader\Instancer::getInstance()->database;
 			foreach ($this->_objects as $object) {
 				if (!$object->isPersisted())
@@ -359,16 +371,20 @@ namespace CRUDsader\Object\Collection {
 		public function rewind()
 		{
 			if (!$this->_initialised)
-				throw new AssociationException('collection is not initialised',$this);
+				throw new AssociationException('collection is not initialised', $this);
 			parent::rewind();
 		}
 	}
 	class AssociationException extends \CRUDsader\Exception {
-		public function __construct($message,$association = false){
+
+		public function __construct($message, $association = false)
+		{
 			$this->message = $message;
 			$this->_association = $association;
 		}
-		public function getAssociation(){
+
+		public function getAssociation()
+		{
 			return $this->_association;
 		}
 	}

@@ -25,8 +25,10 @@ namespace CRUDsader\Database\Connector {
          * connect to the DB
          */
         public function connect($force=false) {
+		
             if (!isset($this->_connection) || $force) {
-                $instanceConnection = @new \mysqli($this->_configuration->host, $this->_configuration->user, $this->_configuration->password, $this->_configuration->name);
+                $instanceConnection = new \mysqli($this->_configuration->host, $this->_configuration->user, $this->_configuration->password, $this->_configuration->name);
+		
                 if ($instanceConnection->connect_error)
                     throw new MysqliException('Connection failed: ' . $instanceConnection->connect_error);
                 $this->_connection = $instanceConnection;

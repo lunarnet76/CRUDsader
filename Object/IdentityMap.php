@@ -7,7 +7,7 @@
  */
 namespace CRUDsader\Object {
 	abstract class IdentityMap {
-		protected static $_objects = array();
+		public static $_objects = array();
 
 		public static function exists($class, $id)
 		{
@@ -36,6 +36,14 @@ namespace CRUDsader\Object {
 		public static function reset()
 		{
 			self::$_objects = array();
+		}
+		
+		public static function listObjects(){ 
+			$ret = array();
+			foreach(self::$_objects as $class=>$objects)
+				foreach($objects as $obj)
+					$ret[$class][]=$obj->getId();
+			return $ret;
 		}
 	}
 	class IdentityMapException extends \CRUDsader\Exception {

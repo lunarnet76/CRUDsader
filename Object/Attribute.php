@@ -74,5 +74,9 @@ namespace CRUDsader\Object {
 		{
 			return '{'.base_convert(rand(10e16, 10e20), 10, 36).'}';
 		}
+		
+		public function forceSetValue($value){
+			$this->_value = $value;
+		}
 	}
 }

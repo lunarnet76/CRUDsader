@@ -216,8 +216,6 @@ namespace CRUDsader {
 					return $this->getAttribute($var)->getValue();
 					break;
 
-
-
 				case $this->hasParent():
 					if ($var == 'parent')
 						return $this->getParent();
@@ -571,7 +569,7 @@ namespace CRUDsader {
 					foreach ($this->_associations as $name => $association)
 						$ret['associations'][$name] = $association->toArray($full);
 			}else {
-				$ret = array('id' => $this->_isPersisted . '[' . $this->_class . ']' . ($this->_isModified ? '(modified)' : ''));
+				$ret = array('id' => $this->_isPersisted . '[' . $this->_class . ']' . ($this->_isModified ? '(modified)' : '').str_replace('0','_',spl_object_hash($this)));
 				foreach ($this->_fields as $name => $field)
 					$ret[$name] = $field->getValue();
 				if (!empty($this->_associations))
@@ -630,6 +628,7 @@ namespace CRUDsader {
 				$class = $type['phpNamespace'] . $type['class'];
 				$ret = $type['options'];
 				$ret['definition'] = $type;
+				$ret['required'] = $this->_infos['attributes'][$name]['required'];
 				unset($ret['definition']['options']);
 				$this->_fields[$name] = new $class($name, $ret);
 				$this->_fields[$name]->attach($this);
