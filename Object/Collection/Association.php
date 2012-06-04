@@ -21,6 +21,13 @@ namespace CRUDsader\Object\Collection {
 			$this->_definition = $definition;
 			$this->_fromClass = $fromClass;
 		}
+                
+                public function invalidate(){
+                    $this->_objectsToBeDeleted = array();
+                    $this->_iterator = 0;
+                    $this->_objectIndexes = array();
+                    $this->_objects = array();
+                }
 
 		public function receiveArray(array $array)
 		{
