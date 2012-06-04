@@ -112,6 +112,7 @@ namespace CRUDsader\Map\Loader {
                 // associations
                 $associations = $class->associated;
                 foreach ($associations as $association) {
+                    
                     $associationName = isset($association['name']) ? (string) $association['name'] : (string) $association['to'];
                     $ref = isset($association['reference']) ? (string) $association['reference'] : $defaults->associations->reference;
                     $to = (string) $association['to'];
@@ -124,28 +125,44 @@ namespace CRUDsader\Map\Loader {
                         'composition' => isset($association['composition']) ? ((string) $association['composition']) == 'true' : false,
                         'databaseTable' => isset($association['databaseTable']) ? (string) $association['databaseTable'] : \CRUDsader\Map::getDatabaseAssociationTable(isset($association['name']) ? (string) $association['name'] : false, $to, $name),
                         'databaseIdField' => isset($association['databaseIdField']) ? (string) $association['databaseIdField'] : $defaults->associations->databaseIdField,
-                        'internalField' => isset($association['internalField']) ? (string) $association['internalField'] : ($ref=='table'?$name:false),
-                        'externalField' => isset($association['externalField']) ? (string) $association['externalField'] : ($ref=='table'?$to:false),
+                        'internalField' => isset($association['internalField']) ? (string) $association['internalField'] : false,
+                        'externalField' => isset($association['externalField']) ? (string) $association['externalField'] : false,
                         'inputPhpClass' => isset($association['inputPhpClass']) ? (string) $association['inputPhpClass'] : false
                     );
                   //  if ($ret['classes'][$name]['associations'][$associationName]['internalField'] == $ret['classes'][$name]['associations'][$associationName]['externalField'])
                     //    $ret['classes'][$name]['associations'][$associationName]['externalField'] .='2';
                 }
             }
+           
             foreach ($ret['classes'] as $name => $infos) {
                 foreach ($infos['associations'] as $associationName => $association) {
                     switch ($association['reference']) {
                         case 'internal':
+                            if(!$association['internalField'])
+                                $association['internalField'] = $association['to'];
+                            if(!$association['externalField'])
+                                $association['externalField'] = $infos['definition']['databaseIdField'];
+                            $ret['classes'][$name]['associations'][$associationName]['internalField'] = $association['internalField'];
+                            $ret['classes'][$name]['associations'][$associationName]['externalField'] = $association['externalField'];
                             $ret['classes'][$name]['definition']['attributeCount'][$association['internalField']] = true;
 			    $ret['classes'][$name]['attributesReversed'][$association['internalField']] = $association['internalField'];
+                           
                             break;
                         case 'external':
+                            if(empty($association['internalField']))
+                                $association['internalField'] = $infos['definition']['databaseIdField'];
+                            if(!$association['externalField'])
+                                $association['externalField'] = $association['to'];
+                            $ret['classes'][$name]['associations'][$associationName]['internalField'] = $association['internalField'];
+                            $ret['classes'][$name]['associations'][$associationName]['externalField'] = $association['externalField'];
                             $ret['classes'][$association['to']]['definition']['attributeCount'][$association['externalField']] = true;
 			    $ret['classes'][$association['to']]['attributesReversed'][$association['externalField']] = $association['externalField'];
                             break;
                     }
                 }
             }
+            
+           // pre($ret['classes']);
 	    
             // to avoid cache problems
             unset($this->_dom);
