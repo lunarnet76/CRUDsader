@@ -28,7 +28,7 @@ namespace CRUDsader\Map\Extractor {
                     'indexes' => array()
                 );
                 foreach ($classInfos['attributes'] as $attributeName => $attributeInfos) {
-                    $tables[$className]['fields'][$attributeInfos['databaseField']] = array('null' => true, 'type' => $map['attributeTypes'][$attributeInfos['type']]['databaseType'], 'length' => $map['attributeTypes'][$attributeInfos['type']]['length'] ? $map['attributeTypes'][$attributeInfos['type']]['length'] : false);
+                    $tables[$className]['fields'][$attributeInfos['databaseField']] = array('null' => true, 'type' => $map['attributeTypes'][$attributeInfos['type']]['databaseType'], 'length' => $map['attributeTypes'][$attributeInfos['type']]['length'] ? $map['attributeTypes'][$attributeInfos['type']]['length'] : false,'charset'=>$attributeInfos['searchable']?'utf8_general_ci':'utf8_bin');
                 }
                 /* if($classInfos['inherit']){
                   $clDef=$map['classes'][$className]['definition'];
@@ -55,7 +55,13 @@ namespace CRUDsader\Map\Extractor {
 
                             // define the fk as a reference
                             $toField = $associationInfos['databaseIdField'];
-                            $fks[$map['classes'][$associationInfos['to']]['definition']['databaseTable']][$exField] = array('reference' => 'external', 'table' => $tables[$className]['name'], 'field' => $toField, 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
+                            $fks[$map['classes'][$associationInfos['to']]['definition']['databaseTable']][$exField] = array(
+                                'reference' => 'external', 
+                                'table' => $tables[$className]['name'], 
+                                'field' => $toField, 
+                                'onUpdate' => 'restrict', 
+                                'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null')
+                            );
                             break;
                         case 'internal':
                             // add fk in internal table
@@ -73,8 +79,13 @@ namespace CRUDsader\Map\Extractor {
                             }
                             $tables[$className]['indexes'][$if] = array($if);
                             // define the fk as a reference
-
-                            $fks[$className][$if] = array('reference' => 'internal', 'table' => $tables[$associationInfos['to']]['name'], 'field' => $toField, 'onUpdate' => 'restrict', 'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null'));
+                            $fks[$className][$if] = array(
+                                'reference' => 'internal', 
+                                'table' => $tables[$associationInfos['to']]['name'], 
+                                'field' => $toField,
+                                'onUpdate' => 'restrict', 
+                                'onDelete' => ($associationInfos['composition'] ? 'cascade' : 'set null')
+                            );
                             break;
                         case 'table':
                             $associationTable = $associationInfos['databaseTable'];

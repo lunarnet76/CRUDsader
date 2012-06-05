@@ -28,6 +28,13 @@ namespace CRUDsader\Object\Collection {
                     $this->_objectIndexes = array();
                     $this->_objects = array();
                 }
+                
+                public function invalidateEmptyAndUnpersisted(){
+                    foreach($this->_objects as $k=>$obj){
+                        if($obj->isEmpty())
+                            unset($this->_objects[$k]);
+                    }
+                }
 
 		public function receiveArray(array $array)
 		{

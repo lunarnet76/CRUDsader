@@ -346,6 +346,10 @@ namespace CRUDsader\Form {
 		{
 			return $this->_valueDefault;
 		}
+                
+                public function getValueForDatabase(){
+                    return $this->_value;
+                }
 
 		// !VALIDATION
 		/**
