@@ -73,7 +73,7 @@ namespace CRUDsader\Map\Extractor {
                                     'type' => 'int',
                                     'length' => 10
                                 );
-                            $toField = $associationInfos['externalField'] ? $associationInfos['externalField'] : $map['classes'][$associationInfos['to']]['definition']['databaseIdField'];
+                            $toField = $associationInfos['externalField'] ? $associationInfos['externalField'] : $map['classes'][$className]['definition']['databaseIdField'];
                             if ($associationInfos['externalField']) {
                                 $tables[$associationInfos['to']]['indexes'][$associationInfos['externalField']] = array($associationInfos['externalField']);
                             }

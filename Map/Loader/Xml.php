@@ -141,7 +141,7 @@ namespace CRUDsader\Map\Loader {
                             if(!$association['internalField'])
                                 $association['internalField'] = $association['to'];
                             if(!$association['externalField'])
-                                $association['externalField'] = $infos['definition']['databaseIdField'];
+                                $association['externalField'] = $ret['classes'][$association['to']]['definition']['databaseIdField'];
                             $ret['classes'][$name]['associations'][$associationName]['internalField'] = $association['internalField'];
                             $ret['classes'][$name]['associations'][$associationName]['externalField'] = $association['externalField'];
                             $ret['classes'][$name]['definition']['attributeCount'][$association['internalField']] = true;
@@ -150,7 +150,7 @@ namespace CRUDsader\Map\Loader {
                             break;
                         case 'external':
                             if(empty($association['internalField']))
-                                $association['internalField'] = $infos['definition']['databaseIdField'];
+                                $association['internalField'] = $ret['classes'][$name]['definition']['databaseIdField'];
                             if(!$association['externalField'])
                                 $association['externalField'] = $name;
                             $ret['classes'][$name]['associations'][$associationName]['internalField'] = $association['internalField'];

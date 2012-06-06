@@ -34,7 +34,7 @@ namespace CRUDsader\Object\Attribute {
 			return $this->_value;
 		}
 
-		public function generateRandom()
+		public function generateRandom($data = null)
 		{
 			return date("Y-m-d H:i:s", strtotime('- ' . rand(0, 1000) . ' days'));
 		}
