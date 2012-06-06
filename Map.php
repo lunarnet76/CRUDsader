@@ -241,12 +241,13 @@ namespace CRUDsader {
 					$joins['table'] = array(
 					    'table' => $this->_map['classes'][$association['to']]['definition']['databaseTable'],
 					    'alias' => $joinedAlias,
-					    'field' => $association['externalField'],
+					    'field' => $association['externalField']?$association['externalField']:$association['to'],
 					    'joinAlias' => $fromAlias,
 					    'joinField' => $this->_map['classes'][$className]['definition']['databaseIdField'],
 					    'class' => $association['to'],
 					    'type' => 'left'
 					);
+                                   
 					break;
 				case 'internal':
 					$joins['table'] = array(
@@ -254,7 +255,7 @@ namespace CRUDsader {
 					    'alias' => $joinedAlias,
 					    'field' => $association['externalField']?$association['externalField']:$this->_map['classes'][$association['to']]['definition']['databaseIdField'],
 					    'joinAlias' => $fromAlias,
-					    'joinField' => $association['internalField'],
+					    'joinField' => $association['internalField']?$association['internalField']:$association['to'],
 					    'class' => $association['to'],
 					    'type' => 'left'
 					);

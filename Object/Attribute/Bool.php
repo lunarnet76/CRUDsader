@@ -42,6 +42,7 @@ namespace CRUDsader\Object\Attribute {
 		{
 			$this->_htmlAttributes['value'] = 'yes';
 			$this->_htmlAttributes['type'] = 'checkbox';
+			$this->_htmlAttributes['class'] = 'checkbox';
 			if ($this->_value == '1')
 				$this->_htmlAttributes['checked'] = 'checked';
 			return '<input ' . $this->getHtmlAttributesToHtml() . '/>';
