@@ -93,6 +93,10 @@ namespace CRUDsader\Mvc {
 		{
 			return call_user_func_array(array($this->_dependencies['frontController'], $name), $arguments);
 		}
+                
+                public function getRequestUri(){
+                    return (string)substr($_SERVER['REQUEST_URI'],strlen($this->_configuration->baseRewrite));
+                }
 		
 		public function getCurrentURL(){
 			return $this->_dependencies['router']->url(null).  '?'.http_build_query($_GET);
