@@ -187,8 +187,11 @@ namespace CRUDsader {
             }
 
             $base.= ( $base ? '.' : '') . 'object';
-            if ($displayTitle)
-                $html.='<div class="title">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . '.' . $base) . '</div>';
+            if ($displayTitle) {
+                $title = \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . '.' . $base);
+                if (!empty($title))
+                    $html.='<div class="title">' . $title . '</div>';
+            }
             foreach ($this->_fields as $name => $attribute) {
                 if (($this->_infos['attributes'][$name]['html']))
                     $html.='<div class="row"><div class="label">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . '.attributes.' . $name) . '</div><div class="value">' . ($attribute->isEmpty() ? '&nbsp;' : $attribute->toHtml()) . '</div></div>';
@@ -199,7 +202,9 @@ namespace CRUDsader {
             foreach ($this->_associations as $name => $association) {
                 if (isset($allowedClasses[$name]) && !$allowedClasses[$name])
                     continue;
-                $html.='<div class="title">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . '.' . $name) . '</div>';
+                $title = \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . '.' . $name);
+                if(!empty($title))
+                $html.='<div class="title">' . $title . '</div>';
                 $collection = $this->getAssociation($name);
                 $first = true;
                 foreach ($collection as $object) {

@@ -41,8 +41,11 @@ namespace CRUDsader\Database\Connector {
         public function disconnect() {
             if (!isset($this->_connection))
                 return;
-            if (false === $this->_connection->close())
-                throw new MysqliException('can\'t disconnect from database');
+            // seems that this need to be called
+            $this->_connection->kill($this->_connection->thread_id);
+            if (!$this->_connection->close())
+               throw new MysqliException('can\'t disconnect from database');
+             
             unset($this->_connection);
         }
         

@@ -29,6 +29,7 @@ namespace CRUDsader\I18n\Translation {
         public function __construct() {
             parent::__construct();
             $this->_translations = $this->_dependencies['arrayLoader']->load(array('file' => $this->_configuration->file, 'section' => 'default'));
+            
         }
 
         public function toArray() {
@@ -37,7 +38,7 @@ namespace CRUDsader\I18n\Translation {
 
         public function translate($index) {
             $ret = $this->_getPath($index);
-            return $ret ? $ret : '{' . $index . '}';
+            return $ret!==false ? $ret : '{' . $index . '}';
         }
 
         protected function _getPath($path, &$where=null, $pathIsExploded=false, $partIndex=0) {
