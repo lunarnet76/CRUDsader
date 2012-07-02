@@ -19,6 +19,10 @@ namespace CRUDsader\Object {
 			$this->_class = $className;
 			$this->_classInfos = \CRUDsader\Instancer::getInstance()->map->classGetInfos($this->_class);
 		}
+                
+                public function getClass(){
+                    return $this->_class;
+                }
 		
 		public function save(\CRUDsader\Object\UnitOfWork $unitOfWork = null)
 		{

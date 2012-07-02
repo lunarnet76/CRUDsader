@@ -38,6 +38,7 @@ namespace CRUDsader {
 		 */
 		public function setConfiguration(\CRUDsader\Block $block = null)
 		{
+                    
 			parent::setConfiguration($block);
 			if (\CRUDsader\instancer::getInstance()->debug->getConfiguration()->databaseProfiler)
 				$this->_profile = true;
@@ -45,8 +46,10 @@ namespace CRUDsader {
 
 		function __destruct()
 		{
+                   
 			try {
 				$this->_dependencies['connector']->disconnect();
+                               
 			} catch (\Exception $e) {
 				pre($e);
 			}
