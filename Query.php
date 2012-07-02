@@ -318,7 +318,8 @@ namespace CRUDsader {
 				$this->_oqlSelect = substr($this->_oql, $posSelect + $l, $posFrom - $l - 5);
 				$this->_oql = substr($this->_oql, $posFrom);
 				if(isset($_REQUEST['debug'])){
-					var_dump( substr($this->_oql, $posSelect + $l, $posFrom - $l - 5));
+					var_dump($this->_oql);
+					var_dump($posFrom);
 				}
 			}
 			return preg_match('/^' . self::REGEXP_FROM . self::REGEXP_WHERE . self::REGEXP_GROUPBY . self::REGEXP_ORDERBY . self::REGEXP_LIMIT . '\s*$/', $this->_oql, $this->_matches) === 1;
