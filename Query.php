@@ -318,7 +318,7 @@ namespace CRUDsader {
 					var_dump($this->_oql);
 				}
 				$l = strlen('SELECT');
-				$this->_oqlSelect = substr($this->_oql, $posSelect + $l, $posFrom - $l - 5);
+				$this->_oqlSelect = substr($this->_oql, $posSelect + $l, $posFrom - $posSelect - $l);
 				$this->_oql = substr($this->_oql, $posFrom);
 				if(isset($_REQUEST['debug'])){
 					var_dump($this->_oql);
