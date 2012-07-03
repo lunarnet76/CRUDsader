@@ -266,8 +266,10 @@ namespace CRUDsader {
                         // return to base value
                         $this->getAttribute($var)->setValueFromInput(null);
                         throw new ObjectException('attribute "' . $var . '" cannot accept "' . $value . '" as a value');
-                    }else
+                    }else{
                         $this->_initialised = true;
+			$this->_isModified = true;
+		    }
                     break;
                 case $this->hasParent():
                     return $this->getParent()->__set($var, $value);
@@ -282,7 +284,7 @@ namespace CRUDsader {
          * @param \CRUDsader\Object\UnitOfWork $unitOfWork 
          */
         public function save(\CRUDsader\Object\UnitOfWork $unitOfWork = null) {
-
+		
             if (!$this->_checkRequiredFields())
                 throw new ObjectException($this->_class . '.error.fields-required');
             if ($this->_isModified || $this->_infos['definition']['abstract']) {
