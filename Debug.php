@@ -44,7 +44,10 @@ namespace CRUDsader {
 			else
 				$end = time(true);
 
-			return round($end - $this->_chronos[$index], 4);
+			if (isset($this->_chronos[$index]))
+				return round($end - $this->_chronos[$index], 4);
+			else
+				return 0;
 		}
 
 		public function log($v, $file = 'debug.log')
@@ -115,7 +118,7 @@ namespace CRUDsader {
 
 		public function sql($highlight = false)
 		{
-			if($highlight)
+			if ($highlight)
 				echo \CRUDsader\Instancer::getInstance()->database->highLight(\CRUDsader\Instancer::getInstance()->database->getSQL());
 			else
 				echo \CRUDsader\Instancer::getInstance()->database->getSQL();
