@@ -34,6 +34,7 @@ namespace CRUDsader\ArrayLoader {
                 switch ($line[0]) {
                     case '#':break; // comments
                     case '[':// namespace
+                        
                         if (!preg_match('|^\[([^\:\]\s]*)(\:([^\]\s\:]*)){0,1}\]\s*$|', $line, $match))
                             throw new ExtendedIniException('file "' . $filePath . '":' . ($lineNumber+1) . ' error :"' . $line . '" is not a proper namespace');
 
@@ -47,8 +48,7 @@ namespace CRUDsader\ArrayLoader {
                             if (!isset($configuration[$match[3]]))
                                 throw new ExtendedIniException('section "' . $namespace . '" cannot inherit from unexistant section "' . $match[3] . '"');
                             // copy the parent
-			   // pre($configuration[$match[3]]);
-                            $configuration[$namespace]= $this->unreference($configuration[$match[3]]);
+                            $configuration[$namespace] = $this->unreference($configuration[$match[3]]);
                         }
                         break;
                     default:// config line
@@ -85,6 +85,10 @@ namespace CRUDsader\ArrayLoader {
             return isset($configuration[$section])?$configuration[$section]:$configuration;
         }
         
+        /**
+         * @param array $a
+         * @return type @
+         */
         protected function unreference(array $a){
             $ret = array();
             foreach($a as $k=>$v)
