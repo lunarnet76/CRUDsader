@@ -20,12 +20,12 @@ namespace CRUDsader\ArrayLoader {
          */
         public function load(array $options){
             if(!isset($options['file']))
-                throw new ExtendedIniException('you must specify a file');
+                throw new YamlException('you must specify a file');
             $filePath=$options['file'];
             $section=isset($options['section'])?$options['section']:false;
             $lines = file($filePath);
             if ($lines === false)
-                throw new ExtendedIniException('file "' . $filePath . '" could not be read properly');
+                throw new YamlException('file "' . $filePath . '" could not be read properly');
             $configuration = array();
             $depths = array();
             $lastDepth = $depth = 0;
@@ -36,7 +36,7 @@ namespace CRUDsader\ArrayLoader {
                     case '[':// namespace
                         
                         if (!preg_match('|^\[([^\:\]\s]*)(\:([^\]\s\:]*)){0,1}\]\s*$|', $line, $match))
-                            throw new ExtendedIniException('file "' . $filePath . '":' . ($lineNumber+1) . ' error :"' . $line . '" is not a proper namespace');
+                            throw new YamlException('file "' . $filePath . '":' . ($lineNumber+1) . ' error :"' . $line . '" is not a proper namespace');
 
                         if ($section && $namespace == $section) {
                             break 2;
@@ -46,7 +46,7 @@ namespace CRUDsader\ArrayLoader {
                         // inheritance
                         if (isset($match[3])) {
                             if (!isset($configuration[$match[3]]))
-                                throw new ExtendedIniException('section "' . $namespace . '" cannot inherit from unexistant section "' . $match[3] . '"');
+                                throw new YamlException('section "' . $namespace . '" cannot inherit from unexistant section "' . $match[3] . '"');
                             // copy the parent
                             $configuration[$namespace] = $this->unreference($configuration[$match[3]]);
                         }
@@ -55,7 +55,7 @@ namespace CRUDsader\ArrayLoader {
                         if (preg_match('|^(\s*)([^:=]*)([:=])(.*)\s*$|', $line, $match)) {// key:
                             $depth = strlen($match[1]);
 			    if($depth%4)
-				    throw new ExtendedIniException('depth separator must be 4 spaces and not '.($depth).' at line '.($lineNumber+1).':'.$match[0]);
+				    throw new YamlException('depth separator must be 4 spaces and not '.($depth).' at line '.($lineNumber+1).':'.$match[0]);
 			    $depth=$depth/4;
                             $name = $match[2];
                             if ($depth == 0) {// depth 0
@@ -81,7 +81,7 @@ namespace CRUDsader\ArrayLoader {
                 }
             }
             if ($section && !isset($configuration[$section]))
-                throw new ExtendedIniException('section "' . $section . '" does not exist');
+                throw new YamlException('section "' . $section . '" does not exist');
             return isset($configuration[$section])?$configuration[$section]:$configuration;
         }
         

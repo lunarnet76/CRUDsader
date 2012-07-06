@@ -54,14 +54,11 @@ namespace CRUDsader\Map\Loader {
 		 */
 		public function getSchema(\CRUDsader\Block $defaults=null)
 		{
-
-
 			if (!file_exists($this->_file))
 				throw new LoaderException('XML Map File "' . $this->_file . '" does not exist');
 			$this->_dom = simplexml_load_file($this->_file);
 			if (!$this->_dom)
 				throw new LoaderException('XML Map File "' . $this->_file . '" could not be loaded');
-
 
 			$ret = array('attributeTypes' => array(), 'classes' => array());
 			// attributeTypes
