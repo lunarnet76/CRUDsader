@@ -16,8 +16,12 @@ namespace CRUDsader\Object\Attribute {
 		{
 			if (true!== $error = parent::isValid())
 				return $error;
-			if (!preg_match('|[0-9]*|', $this->_value))
+                        $t = preg_match('|([0-9]{2})/([0-9]{2})/([0-9]{4})|', $this->_value,$match);
+                        if (!$t)
 				return 'error.invalid';
+                        $date = $match[3].'-'.$match[2].'-'.$match[1];
+                        if(isset($this->_options['inTheFuture']) && strtotime($date)<time())
+                                return 'error.date.inthefuture';
 			return true;
 		}
 
