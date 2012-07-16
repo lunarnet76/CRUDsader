@@ -20,7 +20,7 @@ namespace CRUDsader\Object\Attribute {
                         if (!$t)
 				return 'error.invalid';
                         $date = $match[3].'-'.$match[2].'-'.$match[1];
-                        if(isset($this->_options['inTheFuture']) && strtotime($date)<time())
+                        if(isset($this->_options['inTheFuture']) && $this->_options['inTheFuture'] && strtotime($date)<time())
                                 return 'error.date.inthefuture';
 			return true;
 		}
