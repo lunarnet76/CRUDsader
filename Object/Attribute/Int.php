@@ -20,7 +20,7 @@ namespace CRUDsader\Object\Attribute {
 			if (true !== $error = parent::isValid())
 				return $error;
 			$ret = filter_var($this->_value, FILTER_VALIDATE_INT) !== false;
-			return $ret ? $ret : 'invalid';
+			return $ret ? $ret : 'error.invalid';
 		}
 
 		public function isEmpty()

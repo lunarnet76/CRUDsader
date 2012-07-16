@@ -47,7 +47,7 @@ namespace CRUDsader\Object\Attribute {
 		public function toHtml()
 		{
 			$v = $this->getValue();
-			return isset($v)?date('d/m/Y h:i', $v):'';
+			return isset($v)?date('d/m/Y'.(isset($this->_options['showHours']) && !$this->_options['showHours']?'':' h:i'), $v):'';
 		}
 		
 		public function format($f)
