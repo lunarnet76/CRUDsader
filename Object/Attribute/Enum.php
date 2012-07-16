@@ -26,8 +26,7 @@ namespace CRUDsader\Object\Attribute {
 		{
 			$html = '<select ' . $this->getHtmlAttributesToHtml() . '><option value="-1">choose</option>';
                         
-                                var_dump($this->_value);
-                                var_dump(ctype_digit($this->_value) || is_int($this->_value)?$this->_value:array_search($this->_value,$this->_options['choices']));
+                              
                         
 			if (!empty($this->_options['choices'])){
 				$value = ctype_digit($this->_value) || is_int($this->_value)?$this->_value:array_search($this->_value,$this->_options['choices']);
