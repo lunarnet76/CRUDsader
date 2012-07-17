@@ -259,13 +259,14 @@ namespace CRUDsader {
         }
 
         public function __set($var, $value) {
+                die();
             switch (true) {
                 case isset($this->_infos['attributes'][$var]):
                     $this->getAttribute($var)->setValueFromInput($value);
                     if (($this->getAttribute($var)->isEmpty() && $this->_infos['attributes'][$var]['required']) || $this->getAttribute($var)->isValid() !== true) {
                         // return to base value
                         $this->getAttribute($var)->setValueFromInput(null);
-                        throw new ObjectException('attribute "' . $var . '" cannot accept "' . $value . '" as a value');
+                        throw new ObjectException('attribute "' . $var . '" of type "'.$this->_infos['attributes'][$var]['type'].'" cannot accept "' . $value . '" as a value');
                     }else{
                         $this->_initialised = true;
 			$this->_isModified = true;
