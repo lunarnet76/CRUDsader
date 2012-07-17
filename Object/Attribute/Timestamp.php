@@ -18,7 +18,7 @@ namespace CRUDsader\Object\Attribute {
                                 return true;
 			/*if (true!== $error = parent::isValid())
 				return $error;*/
-                        $t = preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s([0-9]{2}\:[0-9]{2}))?$|', $this->_value,$match);
+                        $t = preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s([0-9]{2}\:[0-9]{2}))?(?:\s[0-9]{4})?$|', $this->_value,$match);
                         if (!$t)
 				return 'error.invalid';
                         $date = $match[3].'-'.$match[2].'-'.$match[1];
@@ -67,7 +67,7 @@ namespace CRUDsader\Object\Attribute {
 			
 			if(ctype_digit($this->_value))
 				return date('Y-m-d H:i:s',$this->_value);
-			if(preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s([0-9]{2}\:[0-9]{2}))?$|',$this->_value,$match)){
+			if(preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s([0-9]{2}\:[0-9]{2}))?(?:\s[0-9]{4})?$|',$this->_value,$match)){
 				
 				return $match[3].'-'.$match[2].'-'.$match[1].' '.(isset($match[4])?$match[4]:'');
 			}
