@@ -17,7 +17,7 @@ namespace CRUDsader\Object\Attribute {
                         if(preg_match('|^[0-9]*$|',$this->_value))
                                 return true;
                         // date + hours
-                        $t1 = preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s([0-9]{2}:[0-9]{2})?$|', $this->_value,$match);
+                        $t1 = preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s[0-9]{2}:[0-9]{2})?$|', $this->_value,$match);
                      
                         $t2 = preg_match('|^([0-9]{4})-([0-9]{2})-([0-9]{2})(.*)$|', $this->_value,$match);
                         
