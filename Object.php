@@ -259,7 +259,6 @@ namespace CRUDsader {
         }
 
         public function __set($var, $value) {
-                die();
             switch (true) {
                 case isset($this->_infos['attributes'][$var]):
                     $this->getAttribute($var)->setValueFromInput($value);
