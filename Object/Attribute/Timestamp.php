@@ -15,6 +15,8 @@ namespace CRUDsader\Object\Attribute {
 		public function isValid()
 		{
                         return true;
+                        if(preg_match('|^[0-9]*$|',$this->_value))
+                                return true;
 			/*if (true!== $error = parent::isValid())
 				return $error;*/
                         $t = preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s([0-9]{2}\:[0-9]{2}))?$|', $this->_value,$match);
