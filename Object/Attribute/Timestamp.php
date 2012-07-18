@@ -6,88 +6,88 @@
  * @since       21/02/2012
  */
 namespace CRUDsader\Object\Attribute {
-	class timestamp extends \CRUDsader\Object\Attribute {
+        class timestamp extends \CRUDsader\Object\Attribute {
 
-		/**
-		 * return true if valid, string or false otherwise
-		 * @return type 
-		 */
-		public function isValid()
-		{
-                        if(preg_match('|^[0-9]*$|',$this->_value))
+                /**
+                 * return true if valid, string or false otherwise
+                 * @return type 
+                 */
+                public function isValid() {
+                        if (preg_match('|^[0-9]*$|', $this->_value))
                                 return true;
                         // date + hours
-                        $t1 = preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s[0-9]{2}:[0-9]{2})?$|', $this->_value,$match);
-                     
-                        $t2 = preg_match('|^([0-9]{4})-([0-9]{2})-([0-9]{2})(.*)$|', $this->_value,$match);
-                        
+                        $t1 = preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s[0-9]{2}:[0-9]{2})?$|', $this->_value, $match);
+
+                        $t2 = preg_match('|^([0-9]{4})-([0-9]{2})-([0-9]{2})(.*)$|', $this->_value, $match);
+
                         if (!$t1 && !$t2)
-				return 'error.invalid';
-                        $date = $match[3].'-'.$match[2].'-'.$match[1];
-                        if(isset($this->_options['inTheFuture']) && $this->_options['inTheFuture'] && strtotime($date)<time())
-                                return 'error.date.inthefuture';
-			return true;
-		}
+                                return 'error.invalid';
 
-		/**
-		 * when writing object from database
-		 * @param type $value
-		 */
-		public function setValueFromDatabase($value)
-		{
-			if (isset($value))
-				$this->_value = strtotime(str_replace('+0000','',$value));
-		}
-		
-		public function toInput()
-		{
-			$this->_htmlAttributes['class'] = 'date';
-			
-			if (isset($this->_value))
-				$this->_htmlAttributes['value'] = strpos($this->_value,'/')!==false?$this->_value:$this->format('d/m/Y');
-			return '<input ' . $this->getHtmlAttributesToHtml() . ' />';
-		}
+                        if (isset($this->_options['inTheFuture']) && $this->_options['inTheFuture']) {
+                                if ($t1)
+                                        $date = $match[3] . '-' . $match[2] . '-' . $match[1];
+                                if ($t2)
+                                        $date = $match[1] . '-' . $match[2] . '-' . $match[3];
+                                if (strtotime($date) < time())
+                                        return 'error.date.inthefuture';
+                        }
+                        return true;
+                }
 
-		public function toHtml()
-		{
-			$v = $this->getValue();
-			return isset($v)?date('d/m/Y'.(isset($this->_options['showHours']) && !$this->_options['showHours']?'':' h:i'), $v):'';
-		}
-		
-		public function format($f)
-		{
-			$v = $this->getValue();
-			return isset($v)?date($f, $v):'';
-		}
+                /**
+                 * when writing object from database
+                 * @param type $value
+                 */
+                public function setValueFromDatabase($value) {
+                        if (isset($value))
+                                $this->_value = strtotime(str_replace('+0000', '', $value));
+                }
 
-		public function getValueForDatabase()
-		{
-			if($this->_value instanceof \CRUDsader\Expression)
-				return $this->_value;
-                        
-			if ($this->isEmpty())
-				return null;
-			
-			if(ctype_digit($this->_value))
-				return date('Y-m-d H:i:s',$this->_value);
-                        
-                        
-			if(preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s([0-9]{2}\:[0-9]{2}))?$|',$this->_value,$match)){
-				return $match[3].'-'.$match[2].'-'.$match[1].' '.(isset($match[4])?$match[4]:'');
-			}
-			$ex = explode('/', (string)$this->_value);
-			switch (count($ex)) {
-				case 3:
-					return $ex[2] . '-' . $ex[1] . '-' . $ex[0];
-					break;
-				case 2:
-					return $ex[1] . '-' . $ex[0] . '-00';
-					break;
-				case 1:
-					return $ex[0] . '-00-00';
-					break;
-			}
-			return null;
-		}
-	}
+                public function toInput() {
+                        $this->_htmlAttributes['class'] = 'date';
+
+                        if (isset($this->_value))
+                                $this->_htmlAttributes['value'] = strpos($this->_value, '/') !== false ? $this->_value : $this->format('d/m/Y');
+                        return '<input ' . $this->getHtmlAttributesToHtml() . ' />';
+                }
+
+                public function toHtml() {
+                        $v = $this->getValue();
+                        return isset($v) ? date('d/m/Y' . (isset($this->_options['showHours']) && !$this->_options['showHours'] ? '' : ' h:i'), $v) : '';
+                }
+
+                public function format($f) {
+                        $v = $this->getValue();
+                        return isset($v) ? date($f, $v) : '';
+                }
+
+                public function getValueForDatabase() {
+                        if ($this->_value instanceof \CRUDsader\Expression)
+                                return $this->_value;
+
+                        if ($this->isEmpty())
+                                return null;
+
+                        if (ctype_digit($this->_value))
+                                return date('Y-m-d H:i:s', $this->_value);
+
+
+                        if (preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s([0-9]{2}\:[0-9]{2}))?$|', $this->_value, $match)) {
+                                return $match[3] . '-' . $match[2] . '-' . $match[1] . ' ' . (isset($match[4]) ? $match[4] : '');
+                        }
+                        $ex = explode('/', (string) $this->_value);
+                        switch (count($ex)) {
+                                case 3:
+                                        return $ex[2] . '-' . $ex[1] . '-' . $ex[0];
+                                        break;
+                                case 2:
+                                        return $ex[1] . '-' . $ex[0] . '-00';
+                                        break;
+                                case 1:
+                                        return $ex[0] . '-00-00';
+                                        break;
+                        }
+                        return null;
+                }
+        }
 }
