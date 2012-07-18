@@ -48,6 +48,7 @@ namespace CRUDsader\Object\Attribute {
 
 		public function getValueForDatabase()
 		{
+                       
 			return isset($this->_options['choices'][$this->_value])?$this->_options['choices'][$this->_value]:$this->_value;
 		}
 
