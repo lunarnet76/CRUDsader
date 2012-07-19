@@ -314,9 +314,6 @@ namespace CRUDsader {
 			$this->_syntaxValidated = true;
 			$posFrom = strpos($this->_oql, 'FROM');
 			if (false !== $posSelect = strpos($this->_oql, 'SELECT')) {
-				if(isset($_REQUEST['debug'])){
-					var_dump($this->_oql);
-				}
 				$l = strlen('SELECT');
 				$this->_oqlSelect = substr($this->_oql, $posSelect + $l, $posFrom - $posSelect - $l);
 				$this->_oql = substr($this->_oql, $posFrom);

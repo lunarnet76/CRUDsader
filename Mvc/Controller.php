@@ -116,7 +116,7 @@ namespace CRUDsader\Mvc {
                                 echo \CRUDsader\Instancer::getInstance()->debug->profileDatabase();
                         }else
                                 header('Location: ' . $url);
-                        exit;
+                        exit(0);
                 }
 
                 // accessor
