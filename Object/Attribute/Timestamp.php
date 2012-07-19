@@ -16,18 +16,18 @@ namespace CRUDsader\Object\Attribute {
                         if (preg_match('|^[0-9]*$|', $this->_value))
                                 return true;
                         // date + hours
-                        $t1 = preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s[0-9]{2}:[0-9]{2})?$|', $this->_value, $match);
+                        $t1 = preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s[0-9]{2}:[0-9]{2})?$|', $this->_value, $match1);
 
-                        $t2 = preg_match('|^([0-9]{4})-([0-9]{2})-([0-9]{2})(.*)$|', $this->_value, $match);
+                        $t2 = preg_match('|^([0-9]{4})-([0-9]{2})-([0-9]{2})(.*)$|', $this->_value, $match2);
 
                         if (!$t1 && !$t2)
                                 return 'error.invalid';
 
                         if (isset($this->_options['inTheFuture']) && $this->_options['inTheFuture']) {
                                 if ($t1)
-                                        $date = $match[3] . '-' . $match[2] . '-' . $match[1];
+                                        $date = $match1[3] . '-' . $match1[2] . '-' . $match1[1];
                                 if ($t2)
-                                        $date = $match[1] . '-' . $match[2] . '-' . $match[3];
+                                        $date = $match2[1] . '-' . $match2[2] . '-' . $match2[3];
                                 if (strtotime($date) < time())
                                         return 'error.date.inthefuture';
                         }
