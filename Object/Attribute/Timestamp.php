@@ -13,6 +13,8 @@ namespace CRUDsader\Object\Attribute {
                  * @return type 
                  */
                 public function isValid() {
+                        if($this->_value instanceof \CRUDsader\Expression)
+                                return true;
                         if (preg_match('|^[0-9]*$|', $this->_value))
                                 return true;
                         // date + hours
