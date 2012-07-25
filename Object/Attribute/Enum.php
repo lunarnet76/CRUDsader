@@ -6,57 +6,52 @@
  * @since       0.1
  */
 namespace CRUDsader\Object\Attribute {
-	class Enum extends \CRUDsader\Object\Attribute {
-		
-		public function __construct($name,$options){
-			parent::__construct($name,$options);
-			$this->_options['choices'] = explode(',',str_replace('\'','',substr($options['definition']['databaseType'],strlen('enum('),-1)));
-		}
+        class Enum extends \CRUDsader\Object\Attribute {
 
-		public function isValid()
-		{
-			if (true !== $error = parent::isValid())
-				return $error;
-			if (!isset($this->_options['choices']))
-				return true;
-			return isset($this->_options['choices'][$this->_value]) || in_array($this->_value, $this->_options['choices']);
-		}
-
-		public function toInput()
-		{
-			$html = '<select ' . $this->getHtmlAttributesToHtml() . '><option value="-1">choose</option>';
+                public function __construct($name, $options) {
+                        parent::__construct($name, $options);
+                        $this->_options['choices'] = explode(',', str_replace('\'', '', substr($options['definition']['databaseType'], strlen('enum('), -1)));
                         
-                              
-                        
-			if (!empty($this->_options['choices'])){
-				$value = ctype_digit($this->_value) || is_int($this->_value)?$this->_value:array_search($this->_value,$this->_options['choices']);
-			
-				foreach ($this->_options['choices'] as $k => $v) {
-					$html.= '<option value="' . $k . '" ' . (!$this->isEmpty() && $k == $value ? 'selected="selected"' : '') . '>' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_name . '.' . $v) . '</option>';
-				}
-			}
+                }
 
-			$html.='</select>';
+                public function isValid() {
+                        if (true !== $error = parent::isValid())
+                                return $error;
+                        if (!isset($this->_options['choices']))
+                                return true;
+                        return isset($this->_options['choices'][$this->_value]) || in_array($this->_value, $this->_options['choices']);
+                }
 
-			return $html;
-		}
+                public function toInput() {
+                        $html = '<select ' . $this->getHtmlAttributesToHtml() . '><option value="-1">choose</option>';
 
-		public function isEmpty()
-		{
-			return null === $this->_value || $this->_value == -1;
-		}
 
-		public function getValueForDatabase()
-		{
-                       
-			return isset($this->_options['choices'][$this->_value])?$this->_options['choices'][$this->_value]:$this->_value;
-		}
+                        if (!empty($this->_options['choices'])) {
+                                $value = ctype_digit($this->_value) || is_int($this->_value) ? $this->_value : array_search($this->_value, $this->_options['choices']);
 
-		public function generateRandom($object = null)
-		{
-			
-			$ret = rand(0, count($this->_options['choices']) - 1);
-			return $this->_options['choices'][$ret];
-		}
-	}
+                                foreach ($this->_options['choices'] as $k => $v) {
+                                        $html.= '<option value="' . $k . '" ' . (!$this->isEmpty() && $k == $value ? 'selected="selected"' : '') . '>' . \CRUDsader\Instancer::getInstance()->i18n->translate($this->_name . '.' . $v) . '</option>';
+                                }
+                        }
+
+                        $html.='</select>';
+
+                        return $html;
+                }
+
+                public function isEmpty() {
+                        return null === $this->_value || $this->_value == -1;
+                }
+
+                public function getValueForDatabase() {
+                        if($this->_value == -1)return null;
+                        return isset($this->_options['choices'][$this->_value]) ? $this->_options['choices'][$this->_value] : $this->_value;
+                }
+
+                public function generateRandom($object = null) {
+
+                        $ret = rand(0, count($this->_options['choices']) - 1);
+                        return $this->_options['choices'][$ret];
+                }
+        }
 }
