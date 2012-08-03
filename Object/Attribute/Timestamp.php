@@ -6,7 +6,7 @@
  * @since       21/02/2012
  */
 namespace CRUDsader\Object\Attribute {
-        class timestamp extends \CRUDsader\Object\Attribute {
+        class Timestamp extends \CRUDsader\Object\Attribute {
 
                 /**
                  * return true if valid, string or false otherwise
