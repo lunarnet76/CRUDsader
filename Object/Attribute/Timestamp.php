@@ -15,8 +15,9 @@ namespace CRUDsader\Object\Attribute {
                 public function isValid() {
                         if($this->_value instanceof \CRUDsader\Expression)
                                 return true;
-                        if (preg_match('|^[0-9]*$|', $this->_value))
-                                return true;
+                        if (preg_match('|^[0-9]*$|', $this->_value)){
+                                return isset($this->_options['inTheFuture']) && $this->_options['inTheFuture'] ? $this->_value > time() : true;
+                        }
                         // date + hours
                         $t1 = preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s[0-9]{2}:[0-9]{2})?$|', $this->_value, $match1);
 
