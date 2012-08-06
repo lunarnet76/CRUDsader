@@ -76,6 +76,7 @@ namespace CRUDsader\Object\Attribute {
 
 
                         if (preg_match('|^([0-9]{2})/([0-9]{2})/([0-9]{4})(?:\s([0-9]{2}\:[0-9]{2}))?$|', $this->_value, $match)) {
+                                
                                 return $match[3] . '-' . $match[2] . '-' . $match[1] . ' ' . (isset($match[4]) ? $match[4] : '');
                         }
                         $ex = explode('/', (string) $this->_value);
