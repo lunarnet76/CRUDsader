@@ -184,9 +184,10 @@ namespace CRUDsader {
 			}
 			
 			// limit
+                        
 			if (isset($this->_matches[16])) {
 				$sql['limit'] = array('count' => $this->_matches[16]);
-				if (!empty($this->_matches[17]))
+				if (isset($this->_matches[17]))
 					$sql['limit']['from'] = $this->_matches[17];
 			}else
 				$sql['limit'] = array('count' => $this->_configuration->limit);
