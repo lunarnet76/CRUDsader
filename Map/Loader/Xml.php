@@ -157,7 +157,6 @@ namespace CRUDsader\Map\Loader {
 							$ret['classes'][$name]['associations'][$associationName]['externalField'] = $association['externalField'];
 							$ret['classes'][$name]['definition']['attributeCount'][$association['internalField']] = true;
 							$ret['classes'][$name]['attributesReversed'][$association['internalField']] = $association['internalField'];
-
 							break;
 						case 'external':
 							if (empty($association['internalField']))

@@ -24,7 +24,7 @@ namespace CRUDsader\Object {
 		public static function add($object)
 		{
 			if (!$object->isPersisted())
-				throw new IdentityMapException('Object cannot be added as it is not persisted');
+				throw new IdentityMapException('Object cannot be added as it is not persisted ');
 			self::$_objects[$object->getClass()][$object->isPersisted()] = $object;
 		}
 

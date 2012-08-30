@@ -80,6 +80,7 @@ namespace CRUDsader\Object\Attribute {
                                 return $match[3] . '-' . $match[2] . '-' . $match[1] . ' ' . (isset($match[4]) ? $match[4] : '');
                         }
                         $ex = explode('/', (string) $this->_value);
+                        
                         switch (count($ex)) {
                                 case 3:
                                         return $ex[2] . '-' . $ex[1] . '-' . $ex[0];
