@@ -38,7 +38,7 @@ namespace CRUDsader\Object {
 			$ret = array('class' => $this->_class, 'initialised' => $this->_initialised ? 'yes' : 'no', 'objects' => array(), 'indexMap' => $this->_objectIndexes);
 			$ret['objects'] = array('modified' => $this instanceof \CRUDsader\Object\Collection\Association && $this->_isModified ? 'yes' : 'no');
 			foreach ($this->_objects as $k => $object) {
-				$ret['objects']['index:' . $k . ',id:' . $this->_objects[$k]->isPersisted() . ',owner id:' . $this->_linkedObject->getId() . ' ' . (isset($this->_objectsToBeDeleted) && isset($this->_objectsToBeDeleted[$k]) ? '@to be deleted' : '').(','.  str_replace('0','_',spl_object_hash($object)))] = $object->toArray($full);
+				$ret['objects']['index:' . $k . ',id:' . $this->_objects[$k]->isPersisted() . ',owner id:' . (isset($this->_linkedObject)?$this->_linkedObject->getId():'') . ' ' . (isset($this->_objectsToBeDeleted) && isset($this->_objectsToBeDeleted[$k]) ? '@to be deleted' : '').(','.  str_replace('0','_',spl_object_hash($object)))] = $object->toArray($full);
 			}
 			return $full ? $ret : $ret['objects'];
 		}
