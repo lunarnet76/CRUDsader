@@ -40,6 +40,7 @@
                 <!ATTLIST associated name           CDATA                                   #IMPLIED>
                 <!ATTLIST associated min            CDATA                                   #IMPLIED>
                 <!ATTLIST associated max            CDATA                                   #IMPLIED>
+                <!ATTLIST associated constraint (true|false)                    #IMPLIED>
                 <!ATTLIST associated composition (true|false)                    #IMPLIED>
                 <!ATTLIST associated databaseTable CDATA                          #IMPLIED>
                 <!ATTLIST associated internalField CDATA                          #IMPLIED>

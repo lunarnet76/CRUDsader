@@ -102,7 +102,8 @@ namespace CRUDsader {
 				'reference' => 'internal',
 				'min' => 0,
 				'max' => '*',
-				'databaseIdField' => 'id'
+				'databaseIdField' => 'id',
+				'constraint' => true
 			    ),
 			    'attribute' => array(
 				'searchable' => true,
