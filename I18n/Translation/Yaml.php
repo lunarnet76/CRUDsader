@@ -24,16 +24,21 @@ namespace CRUDsader\I18n\Translation {
         protected $_hasDependencies = array('arrayLoader');
         
         protected $_translations;
+        protected $_language = 'default';
         
 
         public function __construct() {
             parent::__construct();
-            $this->_translations = $this->_dependencies['arrayLoader']->load(array('file' => $this->_configuration->file, 'section' => 'default'));
-            
+            $this->_translations = $this->_dependencies['arrayLoader']->load(array('file' => $this->_configuration->file));
+        
+        }
+        
+        public function setLanguage($language){
+                $this->_language = $language;
         }
 
         public function toArray() {
-            return $this->_translations;
+            return $this->_translations[$this->_language];
         }
 
         public function translate($index) {
@@ -51,7 +56,7 @@ namespace CRUDsader\I18n\Translation {
                 $partOfPath = $path[$partIndex];
             }
             if ($where === null)
-                $where = $this->_translations;
+                $where = $this->_translations[$this->_language];
             return isset($where[$partOfPath]) ? (
                     is_array($where[$partOfPath]) ?
                             $this->_getPath($path, $where[$partOfPath], true, $partIndex + 1) : $where[$partOfPath]

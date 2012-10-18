@@ -38,6 +38,7 @@ namespace CRUDsader {
          */
         public function __call($name, $arguments) {
             switch($name){
+                case 'setLanguage':
                 case 'translate':
                     return call_user_func_array(array($this->_dependencies['translation'],$name), $arguments);
                     break;
