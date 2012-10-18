@@ -24,7 +24,6 @@ namespace CRUDsader\I18n\Translation {
         protected $_hasDependencies = array('arrayLoader');
         
         protected $_translations;
-        protected $_language = 'default';
         
 
         public function __construct() {
@@ -32,21 +31,17 @@ namespace CRUDsader\I18n\Translation {
             $this->_translations = $this->_dependencies['arrayLoader']->load(array('file' => $this->_configuration->file));
         
         }
-        
-        public function setLanguage($language){
-                $this->_language = $language;
+
+        public function toArray($language = false) {
+            return $language?$this->_translations[$language]:$this->_translations;
         }
 
-        public function toArray() {
-            return $this->_translations[$this->_language];
-        }
-
-        public function translate($index) {
-            $ret = $this->_getPath($index);
+        public function translate($language,$index) {
+            $ret = $this->_getPath($language,$index);
             return $ret!==false ? $ret : '{' . $index . '}';
         }
 
-        protected function _getPath($path, &$where=null, $pathIsExploded=false, $partIndex=0) {
+        protected function _getPath($language,$path, &$where=null, $pathIsExploded=false, $partIndex=0) {
             if ($pathIsExploded === false) {
                 $path = explode('.', $path);
                 $partOfPath = $path[0];
@@ -56,10 +51,10 @@ namespace CRUDsader\I18n\Translation {
                 $partOfPath = $path[$partIndex];
             }
             if ($where === null)
-                $where = $this->_translations[$this->_language];
+                $where = $this->_translations[$language];
             return isset($where[$partOfPath]) ? (
                     is_array($where[$partOfPath]) ?
-                            $this->_getPath($path, $where[$partOfPath], true, $partIndex + 1) : $where[$partOfPath]
+                            $this->_getPath($language,$path, $where[$partOfPath], true, $partIndex + 1) : $where[$partOfPath]
                     ) : false;
         }
     }

@@ -15,18 +15,25 @@ namespace CRUDsader\I18n {
         /**
          * @abstract
          * @param string $index
-         * @return string;
+         * @return string
          */
-        abstract public function translate($index);
+        abstract public function translate($language,$index);
+        
+        /**
+         * @abstract
+         * @param string|bool $language
+         * return array 
+         */
+        abstract public function toArray($language = false);
         /**
          * @param array $indexes
          * @param string $glue
          * @return string;
          */
-        public function translateArray(array $indexes,$glue){
+        public function translateArray($language,array $indexes,$glue){
             $ret=array();
             foreach($indexes as $index)
-                $ret[]=$this->translate($index);
+                $ret[]=$this->translate($language,$index);
             return implode($glue, $ret);
         }
     }
