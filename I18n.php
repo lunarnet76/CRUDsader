@@ -65,7 +65,7 @@ namespace CRUDsader {
                                         $language = 'en';
                                         break;
                         }
-                        $this->_language = isset($this->_session->language)?$this->_session->language:$language;
+                        $this->_language = isset($this->_session->language) ? $this->_session->language : $language;
                         $this->_timezone = $timezone;
                         date_default_timezone_set($timezone);
                 }
@@ -87,9 +87,9 @@ namespace CRUDsader {
                 }
 
                 public function detectLanguage($availableLanguages = array(), $default = false, $useSession = true) {
-                        if($useSession && isset($this->_session->language)){
+                        if ($useSession && isset($this->_session->language)) {
                                 $this->setLanguage($this->_session->language);
-                        }else if (!empty($_SERVER["HTTP_ACCEPT_LANGUAGE"])) {
+                        } else if (!empty($_SERVER["HTTP_ACCEPT_LANGUAGE"])) {
                                 // regex borrowed from Gabriel Anderson on http://stackoverflow.com/questions/6038236/http-accept-language
                                 preg_match_all('/([a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i', $_SERVER["HTTP_ACCEPT_LANGUAGE"], $lang_parse);
                                 $langs = $lang_parse[1];
@@ -140,9 +140,11 @@ namespace CRUDsader {
                                         }else
                                                 $language = key($lang2pref);
                                 }
-                                $this->_language = $language;
-                                if ($useSession)
-                                        $this->setLanguage($language,true);
+                                if ($language) {
+                                        $this->_language = $language;
+                                        if ($useSession)
+                                                $this->setLanguage($language, true);
+                                }
                         }
                 }
 
