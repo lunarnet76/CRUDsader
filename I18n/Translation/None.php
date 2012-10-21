@@ -15,6 +15,6 @@ namespace CRUDsader\I18n\Translation {
          * @param string $index
          * @return string;
          */
-        public function translate($index){return $index;}
+        public function translate($index,$language){return $index;}
     }
 }

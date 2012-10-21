@@ -57,7 +57,8 @@ namespace CRUDsader {
 			'redirection' => false
 		    ),
 		    'i18n' => array(
-			'timezone' => 'Europe/London'
+			'locale' => 'en_GB',
+                        'timezone'=>'Europe/London'
 		    ),
 		    'i18n.translation' => array(
 			'file' => ''

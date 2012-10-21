@@ -136,6 +136,9 @@ namespace CRUDsader {
 									$sql['joins'][] = ($join['table']);
 									// map fields
 									$countFieldsFrom+=$countFields = $this->_map->classGetAttributeCount($join['table']['class']);
+                                                                        if(!isset($mapFieldsAlias[$fromAlias])){
+                                                                                throw new QueryException($this->_oql,'problem with alias "'.$fromAlias.'" related to parent');
+                                                                        }
 									$mapFieldsAlias[$joinedAlias] = $mapFieldsAlias[$fromAlias] . '.' . $join['table']['class'];
 									$mapFields[$mapFieldsAlias[$joinedAlias]] = array('from' => $countFieldsFrom - $countFields, 'to' => $countFieldsFrom);
 								}else
