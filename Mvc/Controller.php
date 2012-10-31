@@ -69,7 +69,7 @@ namespace CRUDsader\Mvc {
                         }
                 }
 
-                public function toast($message, $type='message') {
+                public function toast($message, $type = 'message') {
                         $session = \CRUDsader\Session::useNamespace('toast');
                         $session->add(array('message' => $message, 'type' => $type));
                 }
@@ -171,7 +171,7 @@ namespace CRUDsader\Mvc {
 
                         foreach ($this->_views as $infos) {
                                 $path = $this->getViewPath($infos);
-                                require($path);
+                                require(strtolower($path));
                         }
                 }
 
@@ -179,13 +179,17 @@ namespace CRUDsader\Mvc {
                         $router = $this->_dependencies['router'];
                         $suffix = $this->_configuration->view->suffix;
                         $applicationPath = $this->_dependencies['frontController']->getApplicationPath();
+                        $path = strtolower($applicationPath . $this->_dependencies['router']->getModule() . '/view/' . ($infos['controller'] ? $infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix);
                         switch (true) {
-                                case file_exists($applicationPath . $this->_dependencies['router']->getModule() . '/view/' . ($infos['controller'] ? $infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix):
-                                        $path = $applicationPath . $this->_dependencies['router']->getModule() . '/view/' . ($infos['controller'] ? $infos['controller'] . '/' : '') . $infos['action'] . '.' . $suffix;
-                                        break;
-                                default:
+                                case!file_exists($path):
                                         $path = $this->_dependencies['frontController']->getApplicationPath() . $this->_dependencies['router']->getModule() . '/view/default.' . $suffix;
                         }
+                        return $path;
+                }
+
+                public function getTemplateViewPath() {
+                        $file = $this->_dependencies['frontController']->getApplicationPath() . $this->_dependencies['router']->getModule() . '/view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
+                        $path = file_exists($file) ? $file : $this->_dependencies['frontController']->getApplicationPath() . 'view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
                         return $path;
                 }
 
@@ -198,8 +202,7 @@ namespace CRUDsader\Mvc {
                                 $this->_template = $this->_configuration->view->template;
                         $this->preRender();
                         if ($this->_template) {
-                                $file = $this->_dependencies['frontController']->getApplicationPath() . $this->_dependencies['router']->getModule() . '/view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
-                                $path = file_exists($file) ? $file : $this->_dependencies['frontController']->getApplicationPath() . 'view/template/' . $this->_template . '.' . $this->_configuration->view->suffix;
+                                $path = $this->getTemplateViewPath();
                                 require($path);
                         }else
                                 $this->render();
