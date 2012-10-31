@@ -381,6 +381,14 @@ namespace CRUDsader\Object\Collection {
 				$this->_isModified = true;
 			}
 		}
+                
+                public function __get($var){
+                        if($this->_definition['max'] == 1){
+                                return current($this->_objects)->$var;
+                        }  else {
+                                throw new \AssociationException('var "'.$var.'" does not exist in this association');
+                        }
+                }
 
 		public function rewind()
 		{
