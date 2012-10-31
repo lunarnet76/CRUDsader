@@ -1,1 +1,1 @@
-for more info on this framework visit crudsader.com
+for more info on this framework visit http://www.crudsader.com
