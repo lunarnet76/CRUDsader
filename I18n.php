@@ -43,6 +43,12 @@ namespace CRUDsader {
                 protected $_hasDependencies = array('translation');
 
                 /**
+                 *
+                 * @var null | array 
+                 */
+                protected $_availablesLanguages = null;
+
+                /**
                  * @param Block $configuration
                  */
                 public function __construct() {
@@ -70,12 +76,20 @@ namespace CRUDsader {
                         date_default_timezone_set($timezone);
                 }
 
+                public function setAvailableLanguages($languages) {
+                        $this->_availablesLanguages = $languages;
+                }
+
                 public function getLanguage() {
                         return $this->_language;
                 }
 
                 public function setLanguage($language, $useSession = true) {
-                        $this->_language = $this->_session->language = $language;
+                        if (in_array($language, $this->_availablesLanguages)) {
+                                $this->_language = $this->_session->language = $language;
+                        } else {
+                                throw new I18nException('language does not exist "' . $language . '"');
+                        }
                 }
 
                 public function getTimezone() {
@@ -86,7 +100,7 @@ namespace CRUDsader {
                         return $this->_locale;
                 }
 
-                public function detectLanguage($availableLanguages = array(), $default = false, $useSession = true) {
+                public function detectLanguage($default = false, $useSession = true) {
                         if ($useSession && isset($this->_session->language)) {
                                 $this->setLanguage($this->_session->language);
                         } else if (!empty($_SERVER["HTTP_ACCEPT_LANGUAGE"])) {
@@ -129,8 +143,8 @@ namespace CRUDsader {
                                         // sort the languages by prefered language and by the most specific region
                                         uksort($lang2pref, $cmpLangs);
 
-                                        if (!empty($availableLanguages)) {
-                                                $availableLanguages = array_flip($availableLanguages);
+                                        if (!empty($this->_availablesLanguages)) {
+                                                $availableLanguages = array_flip($this->_availablesLanguages);
                                                 foreach ($lang2pref as $k => $v) {
                                                         if (isset($availableLanguages[$k])) {
                                                                 $language = $k;
