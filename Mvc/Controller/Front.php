@@ -142,7 +142,9 @@ namespace CRUDsader\Mvc\Controller {
 			if (!$this->_skipRouterHistoric)
 				$this->_dependencies['routerHistoric']->registerRoute($this->_dependencies['router']);
 			foreach ($this->_plugins as $plugin)
+                                
 				$plugin->postDispatch();
+                        $this->_dependencies['actionController']->postDispatch();
 		}
 		public function url($options = array())
 		{

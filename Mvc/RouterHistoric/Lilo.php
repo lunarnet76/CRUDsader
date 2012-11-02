@@ -33,6 +33,10 @@ namespace CRUDsader\Mvc\RouterHistoric {
                 );
             }
         }
+        
+        public function setLastRoute($route){
+                $this->_session->last = $route;
+        }
 
         public function getLast() {
             return isset($this->_session->last) ? $this->_session->last : false;

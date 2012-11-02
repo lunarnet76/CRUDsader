@@ -161,6 +161,10 @@ namespace CRUDsader\Mvc {
                 public function postRender() {
                         
                 }
+                
+                public function postDispatch(){
+                        
+                }
 
                 // ** RENDERING VIEW **/
                 public function render() {
