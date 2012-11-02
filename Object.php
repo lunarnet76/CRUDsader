@@ -188,9 +188,7 @@ namespace CRUDsader {
 
             $base.= ( $base ? '.' : '') . 'object';
             if ($displayTitle) {
-                $title = \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . '.' . $base);
-                if (!empty($title))
-                    $html.='<div class="title">' . $title . '</div>';
+                $html .= $this->getHtmlTitle($prefix,$base);
             }
             foreach ($this->_fields as $name => $attribute) {
                 if (($this->_infos['attributes'][$name]['html']))
@@ -218,6 +216,13 @@ namespace CRUDsader {
             if (isset($nobase))
                 $html.='</div>';
             return $html;
+        }
+        
+        public function getHtmlTitle($prefix = false,$base = false){
+                $title = \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . '.' . $base);
+                if (!empty($title))
+                    return '<div class="title">' . $title . '</div>';
+                return false;
         }
 
         public function getInfos() {
