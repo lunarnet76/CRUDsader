@@ -52,7 +52,7 @@ namespace CRUDsader\Query {
 
 		public function getPagesCount()
 		{
-			return floor($this->_session->numRows / $this->_options['count']);
+			return ceil($this->_session->numRows / $this->_options['count']);
 		}
 
 		// pages + prev / next

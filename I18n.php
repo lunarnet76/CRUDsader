@@ -85,10 +85,13 @@ namespace CRUDsader {
                 }
 
                 public function setLanguage($language, $useSession = true) {
-                        if (in_array($language, $this->_availablesLanguages)) {
-                                $this->_language = $this->_session->language = $language;
+                        if (null !== $this->_availablesLanguages) {
+                                if (in_array($language, $this->_availablesLanguages))
+                                        $this->_language = $this->_session->language = $language;
+                                else
+                                        throw new I18nException('language does not exist "' . $language . '"');
                         } else {
-                                throw new I18nException('language does not exist "' . $language . '"');
+                                $this->_language = $this->_session->language = $language;
                         }
                 }
 
