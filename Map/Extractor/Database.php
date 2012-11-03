@@ -145,7 +145,7 @@ namespace CRUDsader\Map\Extractor {
                                 foreach ($fkeys as $fieldFrom => $infos) {
                                         $fromTable = isset($map['classes'][$classFrom]) ? $map['classes'][$classFrom]['definition']['databaseTable'] : $classFrom;
                                         if ($doNotDeleteTable == null || !in_array($fromTable, $doNotDeleteTable)) {
-
+                                                
                                                 $database->createTableReference(array(
                                                     'fromTable' => $fromTable,
                                                     'toTable' => $infos['table'],
