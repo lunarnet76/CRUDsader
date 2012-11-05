@@ -174,6 +174,15 @@ namespace CRUDsader {
                         }else
                                 $this->_saveId = $id;
                 }
+                
+                public function fieldsToHtml($prefix = false){
+                        $html ='';
+                        foreach ($this->_fields as $name => $attribute) {
+                                if (($this->_infos['attributes'][$name]['html']))
+                                        $html.='<div class="row"><div class="label">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . '.attributes.' . $name) . '</div><div class="value">' . ($attribute->isEmpty() ? '&nbsp;' : $attribute->toHtml()) . '</div></div>';
+                        }
+                        return $html;
+                }
 
                 public function toHtml($base = false, $prefix = false, $allowedClasses = false, $displayTitle = true) {
                         if (isset($allowedClasses[$this->_class]) && !$allowedClasses[$this->_class])
@@ -190,10 +199,9 @@ namespace CRUDsader {
                         if ($displayTitle) {
                                 $html .= $this->getHtmlTitle($prefix, $base);
                         }
-                        foreach ($this->_fields as $name => $attribute) {
-                                if (($this->_infos['attributes'][$name]['html']))
-                                        $html.='<div class="row"><div class="label">' . \CRUDsader\Instancer::getInstance()->i18n->translate($prefix . '.attributes.' . $name) . '</div><div class="value">' . ($attribute->isEmpty() ? '&nbsp;' : $attribute->toHtml()) . '</div></div>';
-                        }
+                        
+                        $html.=$this->fieldsToHtml($prefix);
+                        
                         if ($this->hasParent())
                                 $html.=$this->getParent()->toHtml(false, $prefix, $allowedClasses, false);
 

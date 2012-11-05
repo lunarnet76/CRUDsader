@@ -386,7 +386,7 @@ namespace CRUDsader\Object\Collection {
                         if($this->_definition['max'] == 1){
                                 return current($this->_objects)->$var;
                         }  else {
-                                throw new \AssociationException('var "'.$var.'" does not exist in this association');
+                                throw new AssociationException('var "'.$var.'" does not exist in this association');
                         }
                 }
 
