@@ -161,6 +161,7 @@ namespace CRUDsader {
 				case 'insert':
 				case 'update':
 				case 'delete':
+				case 'deleteTable':
 				case 'createTable':
 				case 'createTableReference':
 					return $this->query(call_user_func_array(array($this->_dependencies['descriptor'], $name), $arguments), $name);
