@@ -129,17 +129,14 @@ namespace CRUDsader\Map\Extractor {
                         }
                         $database = \CRUDsader\Instancer::getInstance()->database;
                         $q = $database->setForeignKeyCheck(false);
-                        $q = $database->listTables();
-
-                        foreach ($q as $d) {
-                                if ($doNotDeleteTable == null || !in_array(current($d), $doNotDeleteTable))
-                                        $database->query('DROP TABLE `' . current($d) . '`', 'drop');
-                        }
+                        
                         $q = $database->setForeignKeyCheck(false);
 
                         foreach ($tables as $class => $infos) {
-                                if ($doNotDeleteTable == null || !in_array($infos['name'], $doNotDeleteTable))
+                                if ($doNotDeleteTable == null || !in_array($infos['name'], $doNotDeleteTable)){
+                                        $database->deleteTable($infos['name']);
                                         $database->createTable($infos['name'], $infos['fields'], $infos['identity'], $infos['surrogateKey'], $infos['indexes']);
+                                }
                         }
                         foreach ($fks as $classFrom => $fkeys) {
                                 foreach ($fkeys as $fieldFrom => $infos) {
