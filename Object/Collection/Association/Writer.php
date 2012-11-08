@@ -8,7 +8,7 @@
 namespace CRUDsader\Object\Collection\Association {
 	class Writer extends \CRUDsader\Object\Collection\Association {
 
-		public static function write(parent $collection, $alias, &$rows, &$fields, &$mapFields, &$extraColumns = false)
+		public static function write(\CRUDsader\Object\Collection\Association $collection, $alias, &$rows, &$fields, &$mapFields, &$extraColumns = false)
 		{
 			// simply create an object for each different id
 			$collection->_initialised = true;
