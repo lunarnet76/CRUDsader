@@ -86,9 +86,10 @@ namespace CRUDsader\Database {
          * delete a table
          * @abstract
          * @param string $tableName
+         * @param bool $ifExists
          * @return string
          */
-        abstract public function deleteTable($tableName);
+        abstract public function deleteTable($tableName,$ifExists = true) ;
 
         /**
          * CREATE TABLE

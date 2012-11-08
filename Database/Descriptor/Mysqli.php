@@ -108,9 +108,11 @@ namespace CRUDsader\Database\Descriptor {
                  * @param string $tableName
                  * @return string
                  */
-                public function deleteTable($tableName) {
-                        return 'DROP TABLE ' . $this->quoteIdentifier($tableName);
+                public function deleteTable($tableName,$ifExists = true) {
+                        return 'DROP TABLE '.($ifExists?'IF EXISTS':'').' '. $this->quoteIdentifier($tableName);
                 }
+                
+                
 
                 /**
                  * create a table
