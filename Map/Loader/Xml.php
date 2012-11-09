@@ -66,7 +66,7 @@ namespace CRUDsader\Map\Loader {
 			foreach ($attributeTypes as $attributeType) {
 				$alias = (string) $attributeType['alias'];
 				$ret['attributeTypes'][$alias] = array(
-				    'length' => (int) $attributeType['length'],
+				    'length' => (string) $attributeType['length'],
 				    'class' => (isset($attributeType['class']) ? ucfirst((string) $attributeType['class']) : $defaults->attributeType->class),
 				    'phpNamespace' => (isset($attributeType['phpNamespace']) ? ucfirst((string) $attributeType['phpNamespace']) : $defaults->attributeType->phpNamespace),
 				    'databaseType' => isset($attributeType['databaseType']) ? (string) $attributeType['databaseType'] : $defaults->attributeType->databaseType,
