@@ -139,7 +139,7 @@ namespace CRUDsader\Database\Descriptor {
                                 if (isset($fieldsAdded[$name]))
                                         continue;
                                 $fieldsAdded[$name] = true;
-                                $sql.=$this->quoteIdentifier($name) . ' ' . $field['type'] . ($field['length'] ? '(' . $field['length'] . ')' : '') . (isset($field['charset']) ? ' COLLATE ' . $field['charset'] . ' ' : '') . (isset($field['null']) && $field['null'] ? ' NULL' : ' NOT NULL') . ',';
+                                $sql.=$this->quoteIdentifier($name) . ' ' . $field['type'] . (!empty($field['length']) ? '(' . $field['length'] . ')' : '') . (isset($field['charset']) ? ' COLLATE ' . $field['charset'] . ' ' : '') . (isset($field['null']) && $field['null'] ? ' NULL' : ' NOT NULL') . ',';
                         }
                         $sql[strlen($sql) - 1] = ' ';
                         if (!empty($surrogateKey)) {
