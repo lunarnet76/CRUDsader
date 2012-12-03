@@ -287,6 +287,7 @@ namespace CRUDsader\Object\Collection {
                                 if ($this->_definition['composition']) {
                                         $form2 = $formAssociation->add(new \CRUDsader\Form());
                                         $form2->setHtmlLabel(false);
+                                        $form2->setHtmlAttribute('class','composition');
                                         $object->getForm($oql, $alias, $form2);
                                 } else {
                                         if ($this->_definition['inputPhpClass']) {
