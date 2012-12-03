@@ -103,6 +103,7 @@ namespace CRUDsader {
 				'reference' => 'internal',
 				'min' => 0,
 				'max' => '*',
+                                'compositionObjectDisplayInForm'=>3,
 				'databaseIdField' => 'id',
 				'constraint' => true
 			    ),
