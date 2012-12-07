@@ -19,7 +19,7 @@ namespace CRUDsader\Object\Attribute {
                 }
 
                 public function toHtml() {
-                        return nl2br($this->_Value);
+                        return nl2br($this->_value);
                 }
         }
 }
