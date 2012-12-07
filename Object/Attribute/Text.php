@@ -20,7 +20,7 @@ namespace CRUDsader\Object\Attribute {
 
                 public function toHtml() {
                         $ret = parent::toHtml();
-                        return nl2br($this->_value);
+                        return nl2br($ret);
                 }
         }
 }
